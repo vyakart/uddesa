@@ -284,13 +284,22 @@ button {
   padding: 2rem;
   background: rgba(255, 255, 255, 0.6);
   min-height: 360px;
-  display: grid;
-  place-items: center;
-  text-align: center;
+  display: block;
+}
+
+.diary--scratchpad .diary__content {
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .diary-placeholder h2 {
   margin: 0 0 0.5rem;
+}
+
+.diary__content .diary-placeholder {
+  min-height: 360px;
+  display: grid;
+  place-items: center;
+  text-align: center;
 }
 
 .diary__status {
@@ -329,6 +338,165 @@ button {
   margin-bottom: 0.5rem;
 }
 
+.scratchpad {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 1.5rem;
+  min-height: 520px;
+}
+
+.scratchpad__rail {
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 1rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 620px;
+  overflow-y: auto;
+}
+
+.scratchpad__workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 520px;
+}
+
+.scratchpad__canvas {
+  flex: 1;
+  min-height: 520px;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+}
+
+.scratchpad__canvas .excalidraw {
+  height: 100%;
+}
+
+.scratchpad__status {
+  padding: 2rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.8);
+  text-align: center;
+}
+
+.scratchpad__status--error {
+  color: #b91c1c;
+  border-color: rgba(185, 28, 28, 0.35);
+  background: rgba(254, 226, 226, 0.7);
+}
+
+.page-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.page-rail__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+}
+
+.page-rail__add {
+  border: none;
+  background: rgba(0, 0, 0, 0.08);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.75rem;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.page-rail__add:hover {
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.page-rail__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.page-rail__item {
+  position: relative;
+}
+
+.page-rail__item--active .page-rail__thumb {
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.6), 0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+.page-rail__thumb {
+  width: 100%;
+  min-height: 140px;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.page-rail__thumb:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 28px rgba(0, 0, 0, 0.12);
+}
+
+.page-rail__thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.page-rail__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: rgba(30, 41, 59, 0.6);
+  font-weight: 600;
+}
+
+.page-rail__delete {
+  position: absolute;
+  top: -0.5rem;
+  right: -0.5rem;
+  border: none;
+  background: rgba(0, 0, 0, 0.1);
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  cursor: pointer;
+  line-height: 1;
+  font-size: 1rem;
+  transition: background 0.2s ease;
+}
+
+.page-rail__delete:hover:not(:disabled) {
+  background: rgba(220, 38, 38, 0.85);
+  color: #ffffff;
+}
+
+.page-rail__delete:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
 @media (max-width: 720px) {
   .app-shell__main {
     padding: 1.25rem;
@@ -341,5 +509,14 @@ button {
   .diary__header {
     flex-wrap: wrap;
     gap: 0.75rem;
+  }
+
+  .scratchpad {
+    grid-template-columns: 1fr;
+  }
+
+  .scratchpad__rail {
+    max-height: none;
+    order: 2;
   }
 }

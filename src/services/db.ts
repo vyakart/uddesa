@@ -88,9 +88,11 @@ export function loadDiary(id: string): Promise<Diary | undefined> {
 }
 
 export async function saveDiary(diary: Diary): Promise<void> {
+  const now = Date.now();
   await db.diaries.put({
     ...diary,
-    updatedAt: Date.now(),
+    createdAt: diary.createdAt ?? now,
+    updatedAt: now,
   });
 }
 
@@ -99,10 +101,16 @@ export function loadPages(diaryId: string): Promise<Page[]> {
 }
 
 export async function savePage(page: Page): Promise<void> {
+  const now = Date.now();
   await db.pages.put({
     ...page,
-    updatedAt: Date.now(),
+    createdAt: page.createdAt ?? now,
+    updatedAt: now,
   });
+}
+
+export function deletePage(id: string): Promise<void> {
+  return db.pages.delete(id);
 }
 
 export async function deleteDiary(id: string): Promise<void> {

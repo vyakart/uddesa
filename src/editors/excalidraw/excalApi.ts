@@ -1,53 +1,112 @@
-export type Scene = {
-  elements: unknown[];
-  appState: Record<string, unknown>;
-  files: Record<string, unknown>;
-};
+import type {
+  AppState,
+  BinaryFiles,
+  ExcalidrawImperativeAPI,
+} from '@excalidraw/excalidraw/types';
+import type { ExcalidrawElement } from '@excalidraw/excalidraw/element/types';
+import { exportToBlob as excalExportToBlob, exportToSvg as excalExportToSvg } from './export';
 
-function clone<T>(value: T): T {
-  if (typeof structuredClone === 'function') {
-    return structuredClone(value);
-  }
-  return JSON.parse(JSON.stringify(value)) as T;
+export interface Scene {
+  elements: readonly ExcalidrawElement[];
+  appState: Partial<AppState>;
+  files: BinaryFiles;
 }
 
+let api: ExcalidrawImperativeAPI | null = null;
 let memoryScene: Scene = {
   elements: [],
   appState: {},
   files: {},
 };
 
-export function load(scene: Scene): void {
-  memoryScene = {
-    elements: clone(scene.elements),
-    appState: clone(scene.appState),
-    files: clone(scene.files),
+function cloneFiles(files: BinaryFiles | Record<string, unknown> | undefined): BinaryFiles {
+  if (!files) {
+    return {} as BinaryFiles;
+  }
+  return Object.fromEntries(
+    Object.entries(files).map(([key, value]) => [key, { ...(value as Record<string, unknown>) }]),
+  ) as BinaryFiles;
+}
+
+function cloneScene(scene: Scene): Scene {
+  return {
+    elements: scene.elements.map((element) => ({ ...element })),
+    appState: { ...scene.appState },
+    files: cloneFiles(scene.files),
   };
+}
+
+export function registerApi(instance: ExcalidrawImperativeAPI): void {
+  api = instance;
+}
+
+export function unregisterApi(instance: ExcalidrawImperativeAPI): void {
+  if (api === instance) {
+    api = null;
+  }
+}
+
+export function load(scene: Scene): void {
+  memoryScene = cloneScene(scene);
+  if (api && Object.keys(memoryScene.files).length > 0) {
+    api.addFiles(Object.values(memoryScene.files));
+  }
+  const payload = {
+    elements: memoryScene.elements,
+    appState: memoryScene.appState as AppState,
+  } satisfies Parameters<ExcalidrawImperativeAPI['updateScene']>[0];
+  api?.updateScene(payload);
 }
 
 export function read(): Scene {
-  return {
-    elements: clone(memoryScene.elements),
-    appState: clone(memoryScene.appState),
-    files: clone(memoryScene.files),
+  if (!api) {
+    return cloneScene(memoryScene);
+  }
+  const elements = api.getSceneElements().map((element) => ({ ...element }));
+  const appState = { ...api.getAppState() };
+  const files = cloneFiles(api.getFiles());
+  memoryScene = {
+    elements,
+    appState,
+    files,
   };
+  return cloneScene(memoryScene);
 }
 
 export function update(partial: Partial<Scene>): void {
+  const nextElements = partial.elements
+    ? partial.elements.map((element: ExcalidrawElement) => ({ ...element }))
+    : memoryScene.elements;
+  const nextAppState = partial.appState ? { ...memoryScene.appState, ...partial.appState } : memoryScene.appState;
+  const mergedFiles = partial.files ? { ...memoryScene.files, ...partial.files } : memoryScene.files;
+
   memoryScene = {
-    elements: partial.elements ? clone(partial.elements) : memoryScene.elements,
-    appState: partial.appState ? clone(partial.appState) : memoryScene.appState,
-    files: partial.files ? clone(partial.files) : memoryScene.files,
+    elements: nextElements,
+    appState: nextAppState,
+    files: cloneFiles(mergedFiles),
   };
+
+  if (api && partial.files && Object.keys(partial.files).length > 0) {
+    api.addFiles(Object.values(partial.files));
+  }
+
+  const sceneUpdate: Parameters<ExcalidrawImperativeAPI['updateScene']>[0] = {
+    ...(partial.elements ? { elements: partial.elements } : {}),
+    ...(partial.appState ? { appState: partial.appState as AppState } : {}),
+  };
+  api?.updateScene(sceneUpdate);
 }
 
 export async function exportScene(kind: 'png' | 'svg'): Promise<Blob> {
-  const payload = JSON.stringify({ kind, scene: memoryScene });
-  const type = kind === 'svg' ? 'image/svg+xml' : 'image/png';
-  return new Blob([payload], { type });
+  const current = read();
+  if (kind === 'png') {
+    return excalExportToBlob(current);
+  }
+  const svg = await excalExportToSvg(current);
+  return new Blob([svg], { type: 'image/svg+xml' });
 }
 
 export function centerOn(bounds: { x: number; y: number; width: number; height: number }): void {
   void bounds;
-  // Placeholder until Excalidraw integration ships in PR2.
+  // TODO: implement via zoomToFitBounds in PR3 when Outline navigation arrives.
 }

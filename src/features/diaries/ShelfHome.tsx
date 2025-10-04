@@ -9,17 +9,11 @@ import {
   type DiaryKind,
 } from '../../services/db';
 import { DIARY_PRESETS, type DiaryPreset } from './diaryPresets';
+import { createId } from '../../utils/id';
 
 interface ShelfEntry {
   diary: Diary;
   pageCount: number;
-}
-
-function createId() {
-  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
-    return crypto.randomUUID();
-  }
-  return `diary-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
 export function ShelfHome() {
@@ -62,7 +56,7 @@ export function ShelfHome() {
 
     const now = Date.now();
     const diary: Diary = {
-      id: createId(),
+      id: createId('diary'),
       kind: preset.kind,
       title: preset.title,
       settings: preset.defaults,
