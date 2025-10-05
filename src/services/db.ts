@@ -1,4 +1,5 @@
-import Dexie, { type Table } from 'dexie';
+import type Dexie from 'dexie';
+import type { Table } from 'dexie';
 
 export type DiaryKind =
   | 'scratchpad'
@@ -60,22 +61,6 @@ export interface ExportBundle {
   locks: Lock[];
 }
 
-class UddesaDatabase extends Dexie {
-  diaries!: Table<Diary, string>;
-  pages!: Table<Page, string>;
-  locks!: Table<Lock, string>;
-
-  constructor() {
-    super('uddesa');
-
-    this.version(1).stores({
-      diaries: '&id, kind, updatedAt, createdAt',
-      pages: '&id, diaryId, kind, updatedAt, createdAt',
-      locks: '&id, diaryId, pageId, locked',
-    });
-  }
-}
-
 const supportsIndexedDb = (() => {
   if (typeof indexedDB === 'undefined') {
     return false;
@@ -95,12 +80,81 @@ const memoryStore = {
   locks: new Map<string, Lock>(),
 };
 
-let db: UddesaDatabase | null = supportsIndexedDb ? new UddesaDatabase() : null;
+type DexieModule = typeof import('dexie');
+type DatabaseInstance = Dexie & {
+  diaries: Table<Diary, string>;
+  pages: Table<Page, string>;
+  locks: Table<Lock, string>;
+};
+
+let dexieModule: DexieModule | null = null;
+let db: DatabaseInstance | null = null;
 let dexieUnavailable = !supportsIndexedDb;
 
-async function ensureDb(): Promise<UddesaDatabase | null> {
-  if (!db || dexieUnavailable) {
+function isDexieModuleLoaded(module: DexieModule | null): module is DexieModule {
+  return module !== null;
+}
+
+async function loadDexieModule(): Promise<DexieModule | null> {
+  if (dexieUnavailable) {
     return null;
+  }
+
+  if (isDexieModuleLoaded(dexieModule)) {
+    return dexieModule;
+  }
+
+  if (typeof indexedDB === 'undefined') {
+    dexieUnavailable = true;
+    return null;
+  }
+
+  try {
+    dexieModule = await import('dexie');
+    return dexieModule;
+  } catch (err) {
+    console.warn('Dexie import failed, continuing with in-memory persistence.', err);
+    dexieUnavailable = true;
+    dexieModule = null;
+    return null;
+  }
+}
+
+function memoryListDiaries(): Diary[] {
+  return Array.from(memoryStore.diaries.values()).sort((a, b) => a.createdAt - b.createdAt);
+}
+
+function memoryListPages(diaryId: string): Page[] {
+  return Array.from(memoryStore.pages.values())
+    .filter((page) => page.diaryId === diaryId)
+    .sort((a, b) => a.createdAt - b.createdAt);
+}
+
+function createDatabaseInstance(module: DexieModule): DatabaseInstance {
+  const DexieCtor = module.default as unknown as new (name: string, options?: unknown) => Dexie;
+  const instance = new DexieCtor('uddesa') as DatabaseInstance;
+
+  instance.version(1).stores({
+    diaries: '&id, kind, updatedAt, createdAt',
+    pages: '&id, diaryId, kind, updatedAt, createdAt',
+    locks: '&id, diaryId, pageId, locked',
+  });
+
+  return instance;
+}
+
+async function ensureDb(): Promise<DatabaseInstance | null> {
+  if (dexieUnavailable) {
+    return null;
+  }
+
+  const module = await loadDexieModule();
+  if (!module) {
+    return null;
+  }
+
+  if (!db) {
+    db = createDatabaseInstance(module);
   }
 
   if (db.isOpen()) {
@@ -119,18 +173,9 @@ async function ensureDb(): Promise<UddesaDatabase | null> {
     }
     dexieUnavailable = true;
     db = null;
+    dexieModule = null;
     return null;
   }
-}
-
-function memoryListDiaries(): Diary[] {
-  return Array.from(memoryStore.diaries.values()).sort((a, b) => a.createdAt - b.createdAt);
-}
-
-function memoryListPages(diaryId: string): Page[] {
-  return Array.from(memoryStore.pages.values())
-    .filter((page) => page.diaryId === diaryId)
-    .sort((a, b) => a.createdAt - b.createdAt);
 }
 
 export async function listDiaries(): Promise<Diary[]> {
