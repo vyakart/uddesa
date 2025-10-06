@@ -188,11 +188,12 @@ export async function listDiaries(): Promise<Diary[]> {
   return diaries.sort((a, b) => a.createdAt - b.createdAt);
 }
 
-export function loadDiary(id: string): Promise<Diary | undefined> {
-  if (!db || dexieUnavailable) {
-    return Promise.resolve(memoryStore.diaries.get(id));
+export async function loadDiary(id: string): Promise<Diary | undefined> {
+  const dexieDb = await ensureDb();
+  if (!dexieDb) {
+    return memoryStore.diaries.get(id);
   }
-  return ensureDb().then((dexieDb) => (dexieDb ? dexieDb.diaries.get(id) : memoryStore.diaries.get(id)));
+  return dexieDb.diaries.get(id);
 }
 
 export async function saveDiary(diary: Diary): Promise<void> {
@@ -212,13 +213,20 @@ export async function saveDiary(diary: Diary): Promise<void> {
   await dexieDb.diaries.put(persisted);
 }
 
-export function loadPages(diaryId: string): Promise<Page[]> {
-  if (!db || dexieUnavailable) {
-    return Promise.resolve(memoryListPages(diaryId));
+export async function loadPages(diaryId: string): Promise<Page[]> {
+  const dexieDb = await ensureDb();
+  if (!dexieDb) {
+    return memoryListPages(diaryId);
   }
-  return ensureDb().then((dexieDb) =>
-    dexieDb ? dexieDb.pages.where('diaryId').equals(diaryId).sortBy('createdAt') : memoryListPages(diaryId),
-  );
+  return dexieDb.pages.where('diaryId').equals(diaryId).sortBy('createdAt');
+}
+
+export async function countPages(diaryId: string): Promise<number> {
+  const dexieDb = await ensureDb();
+  if (!dexieDb) {
+    return memoryListPages(diaryId).length;
+  }
+  return dexieDb.pages.where('diaryId').equals(diaryId).count();
 }
 
 export async function savePage(page: Page): Promise<void> {
@@ -238,12 +246,13 @@ export async function savePage(page: Page): Promise<void> {
   await dexieDb.pages.put(persisted);
 }
 
-export function deletePage(id: string): Promise<void> {
-  if (!db || dexieUnavailable) {
+export async function deletePage(id: string): Promise<void> {
+  const dexieDb = await ensureDb();
+  if (!dexieDb) {
     memoryStore.pages.delete(id);
-    return Promise.resolve();
+    return;
   }
-  return ensureDb().then((dexieDb) => (dexieDb ? dexieDb.pages.delete(id) : (memoryStore.pages.delete(id), Promise.resolve())));
+  await dexieDb.pages.delete(id);
 }
 
 export async function deleteDiary(id: string): Promise<void> {

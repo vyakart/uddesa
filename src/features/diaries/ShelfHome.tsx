@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
+  countPages,
   deleteDiary,
   listDiaries,
-  loadPages,
   saveDiary,
   type Diary,
   type DiaryKind,
@@ -36,10 +36,10 @@ export function ShelfHome() {
       setIsLoading(true);
       const diaries = await listDiaries();
       const withCounts: ShelfEntry[] = await Promise.all(
-        diaries.map(async (diary) => {
-          const pages = await loadPages(diary.id);
-          return { diary, pageCount: pages.length };
-        }),
+        diaries.map(async (diary) => ({
+          diary,
+          pageCount: await countPages(diary.id),
+        })),
       );
       setEntries(withCounts);
       setError(null);

@@ -1,23 +1,35 @@
-import { useEffect, useMemo, useState, type ComponentType } from 'react';
+import { Suspense, lazy, useEffect, useMemo, useState, type ComponentType, type LazyExoticComponent } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import type { Diary, DiaryKind } from '../../services/db';
 import { loadDiary } from '../../services/db';
 import { DIARY_PRESETS } from './diaryPresets';
 import type { DiaryScreenProps } from './types';
-import { AcademicView } from './academic/AcademicView';
-import { BlackboardView } from './blackboard/BlackboardView';
-import { DraftsView } from './drafts/DraftsView';
-import { JournalView } from './journal/JournalView';
-import { LongformView } from './longform/LongformView';
-import { ScratchpadView } from './scratchpad/ScratchpadView';
 
-const VIEW_BY_KIND: Record<DiaryKind, ComponentType<DiaryScreenProps>> = {
-  scratchpad: ScratchpadView,
-  blackboard: BlackboardView,
-  journal: JournalView,
-  drafts: DraftsView,
-  longform: LongformView,
-  academic: AcademicView,
+function lazyDiaryView(
+  importer: () => Promise<{ default: ComponentType<DiaryScreenProps> }>,
+): LazyExoticComponent<ComponentType<DiaryScreenProps>> {
+  return lazy(importer);
+}
+
+const VIEW_BY_KIND: Record<DiaryKind, LazyExoticComponent<ComponentType<DiaryScreenProps>>> = {
+  scratchpad: lazyDiaryView(() =>
+    import('./scratchpad/ScratchpadView').then((module) => ({ default: module.ScratchpadView })),
+  ),
+  blackboard: lazyDiaryView(() =>
+    import('./blackboard/BlackboardView').then((module) => ({ default: module.BlackboardView })),
+  ),
+  journal: lazyDiaryView(() =>
+    import('./journal/JournalView').then((module) => ({ default: module.JournalView })),
+  ),
+  drafts: lazyDiaryView(() =>
+    import('./drafts/DraftsView').then((module) => ({ default: module.DraftsView })),
+  ),
+  longform: lazyDiaryView(() =>
+    import('./longform/LongformView').then((module) => ({ default: module.LongformView })),
+  ),
+  academic: lazyDiaryView(() =>
+    import('./academic/AcademicView').then((module) => ({ default: module.AcademicView })),
+  ),
 };
 
 export function DiaryRouter() {
@@ -73,6 +85,15 @@ export function DiaryRouter() {
 
   const View = VIEW_BY_KIND[diary.kind];
 
+  if (!View) {
+    return (
+      <div className="diary__status">
+        <p>Unsupported diary type.</p>
+        <Link to="/">Return to the shelf</Link>
+      </div>
+    );
+  }
+
   return (
     <div className={`diary diary--${diary.kind}`}>
       <header className="diary__header">
@@ -89,7 +110,9 @@ export function DiaryRouter() {
       </header>
       {preset?.description ? <p className="diary__description">{preset.description}</p> : null}
       <main className="diary__content">
-        <View diary={diary} />
+        <Suspense fallback={<div className="diary__status">Loading editor…</div>}>
+          <View diary={diary} />
+        </Suspense>
       </main>
     </div>
   );
