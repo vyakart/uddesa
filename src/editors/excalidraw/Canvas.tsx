@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Excalidraw } from '@excalidraw/excalidraw';
 import type { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types';
 import '@excalidraw/excalidraw/index.css';
@@ -14,26 +14,33 @@ export interface CanvasProps {
 export function Canvas({ pageKey, scene, onSceneChange, className }: CanvasProps) {
   const apiRef = useRef<ExcalidrawImperativeAPI | null>(null);
   const currentPageKey = useRef<string | null>(null);
+  const skipNextLoad = useRef(false);
+  const [apiVersion, bumpApiVersion] = useState(0);
 
   useEffect(() => {
     if (!apiRef.current) {
       return;
     }
 
-    if (currentPageKey.current === pageKey) {
-      return;
+    const isNewPage = currentPageKey.current !== pageKey;
+    const shouldSkip = skipNextLoad.current;
+
+    if (isNewPage || !shouldSkip) {
+      currentPageKey.current = pageKey;
+      load(scene);
     }
 
-    currentPageKey.current = pageKey;
-    load(scene);
-  }, [pageKey, scene]);
+    skipNextLoad.current = false;
+  }, [apiVersion, pageKey, scene]);
 
   useEffect(() => {
-    const api = apiRef.current;
     return () => {
-      if (api) {
-        unregisterApi(api);
+      if (apiRef.current) {
+        unregisterApi(apiRef.current);
+        apiRef.current = null;
       }
+      skipNextLoad.current = false;
+      currentPageKey.current = null;
     };
   }, []);
 
@@ -44,13 +51,21 @@ export function Canvas({ pageKey, scene, onSceneChange, className }: CanvasProps
       <Excalidraw
         initialData={initialData}
         excalidrawAPI={(api) => {
+          if (!api) {
+            return;
+          }
+
+          const hasChanged = apiRef.current !== api;
           apiRef.current = api;
           registerApi(api);
-          currentPageKey.current = pageKey;
-          load(scene);
+
+          if (hasChanged) {
+            bumpApiVersion((version) => version + 1);
+          }
         }}
         viewModeEnabled={false}
         onChange={() => {
+          skipNextLoad.current = true;
           onSceneChange(read());
         }}
         UIOptions={{
