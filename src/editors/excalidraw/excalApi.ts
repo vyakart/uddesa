@@ -106,7 +106,42 @@ export async function exportScene(kind: 'png' | 'svg'): Promise<Blob> {
   return new Blob([svg], { type: 'image/svg+xml' });
 }
 
-export function centerOn(bounds: { x: number; y: number; width: number; height: number }): void {
-  void bounds;
-  // TODO: implement via zoomToFitBounds in PR3 when Outline navigation arrives.
+interface CenterTarget {
+  elementId?: string;
+  bounds?: { x: number; y: number; width: number; height: number };
+}
+
+export function centerOn(target: CenterTarget): void {
+  if (!api) {
+    return;
+  }
+
+  const options: Parameters<ExcalidrawImperativeAPI['scrollToContent']>[1] = {
+    fitToViewport: true,
+    viewportZoomFactor: 0.45,
+    animate: true,
+    duration: 240,
+  };
+
+  if (target.elementId) {
+    api.scrollToContent(target.elementId, options);
+    return;
+  }
+
+  if (target.bounds) {
+    const { x, y, width, height } = target.bounds;
+    const maxX = x + width;
+    const maxY = y + height;
+    const elements = api.getSceneElements();
+    const withinBounds = elements.filter((element) => {
+      const elementMaxX = element.x + element.width;
+      const elementMaxY = element.y + element.height;
+      return element.x >= x && element.y >= y && elementMaxX <= maxX && elementMaxY <= maxY;
+    });
+    if (withinBounds.length > 0) {
+      api.scrollToContent(withinBounds, options);
+    } else {
+      api.scrollToContent(undefined, options);
+    }
+  }
 }
