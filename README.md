@@ -1,6 +1,6 @@
 # uddesa
 
-Local-first writing environment blending spatial and linear editors. This first milestone (PR1) sets up the Vite + React + TypeScript scaffold, IndexedDB persistence via Dexie, application routing, the diary shelf, and a settings placeholder.
+Local-first writing environment blending spatial and linear editors. PR4 adds the journal preset powered by Tiptap with paste clean-up and HTML/Markdown export, building on the Vite + React + TypeScript scaffold, Dexie persistence, scratchpad canvas, and blackboard outline flows delivered in earlier milestones.
 
 ## Available scripts
 
