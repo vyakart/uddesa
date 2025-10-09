@@ -9,24 +9,6 @@ export interface DiaryPreset {
 
 export const DIARY_PRESETS: DiaryPreset[] = [
   {
-    kind: 'scratchpad',
-    title: 'Scratchpad',
-    description: 'Colorful cards for quick sketches and thoughts.',
-    defaults: {
-      background: '#f6f2db',
-      pageSize: 'a5',
-    },
-  },
-  {
-    kind: 'blackboard',
-    title: 'Blackboard',
-    description: 'Infinite hand-drawn canvas for spatial planning.',
-    defaults: {
-      background: '#111111',
-      pageSize: 'infinite',
-    },
-  },
-  {
     kind: 'journal',
     title: 'Personal Diary',
     description: 'Daily entries with date headers and calm typography.',
