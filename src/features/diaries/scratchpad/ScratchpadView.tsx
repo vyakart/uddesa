@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { Suspense, useMemo } from 'react';
 import { Canvas } from '../../../editors/excalidraw/Canvas';
 import type { Scene } from '../../../editors/excalidraw/excalApi';
 import { PageRail } from '../../../ui/PageRail';
@@ -53,12 +53,14 @@ export function ScratchpadView({ diary }: DiaryScreenProps) {
         ) : error ? (
           <div className="scratchpad__status scratchpad__status--error">{error}</div>
         ) : activePage ? (
-          <Canvas
-            pageKey={activePage.id}
-            scene={activePage.scene}
-            onSceneChange={(scene) => updateScene(activePage.id, scene)}
-            className="scratchpad__canvas"
-          />
+          <Suspense fallback={<div className="scratchpad__status">Loading canvas…</div>}>
+            <Canvas
+              pageKey={activePage.id}
+              scene={activePage.scene}
+              onSceneChange={(scene) => updateScene(activePage.id, scene)}
+              className="scratchpad__canvas"
+            />
+          </Suspense>
         ) : (
           <div className="scratchpad__status">No pages yet.</div>
         )}

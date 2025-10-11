@@ -44,7 +44,14 @@ export function Canvas({ pageKey, scene, onSceneChange, className }: CanvasProps
     };
   }, []);
 
-  const initialData = useMemo(() => scene, [scene]);
+  const initialData = useMemo(() => {
+    // Ensure we have valid initial data structure for Excalidraw
+    return {
+      elements: Array.isArray(scene.elements) ? scene.elements : [],
+      appState: scene.appState || {},
+      files: scene.files || {},
+    };
+  }, [scene]);
 
   return (
     <div className={className ?? 'excalidraw-canvas'}>
