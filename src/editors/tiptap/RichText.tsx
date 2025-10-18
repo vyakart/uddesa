@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
-import type { JSONContent } from '@tiptap/core';
+import type { JSONContent, Editor } from '@tiptap/core';
 import { createSchema, type SchemaOptions } from './schema';
 import { configurePaste } from './paste';
 
@@ -27,6 +27,7 @@ export interface RichTextProps {
   readOnly?: boolean;
   autofocus?: boolean;
   schemaOptions?: SchemaOptions;
+  onEditorReady?: (editor: Editor) => void;
 }
 
 export function RichText({
@@ -37,6 +38,7 @@ export function RichText({
   readOnly = false,
   autofocus = false,
   schemaOptions,
+  onEditorReady,
 }: RichTextProps) {
   const options = useMemo<SchemaOptions>(() => ({ ...(schemaOptions ?? {}), placeholder }), [
     placeholder,
@@ -72,8 +74,11 @@ export function RichText({
     if (!pasteConfiguredRef.current) {
       configurePaste(editor);
       pasteConfiguredRef.current = true;
+      if (onEditorReady) {
+        onEditorReady(editor);
+      }
     }
-  }, [editor]);
+  }, [editor, onEditorReady]);
 
   useEffect(() => {
     if (!editor) {
