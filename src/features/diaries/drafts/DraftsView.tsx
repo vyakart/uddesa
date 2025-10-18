@@ -2,7 +2,6 @@ import { useState, useCallback } from 'react';
 import type { DiaryScreenProps } from '../types';
 import { useDrafts } from './useDrafts';
 import { RichText } from '../../../editors/tiptap/RichText';
-import { TitleNode } from '../../../editors/tiptap/extensions/TitleNode';
 import { WordCount } from '../../../ui/WordCount';
 import type { Editor } from '@tiptap/core';
 

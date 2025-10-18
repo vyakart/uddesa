@@ -1,11 +1,10 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, type FormEvent } from 'react';
 import type { DiaryScreenProps } from '../types';
 import { useAcademic } from './useAcademic';
 import { Bibliography } from './Bibliography';
 import { RichText } from '../../../editors/tiptap/RichText';
 import { MATH_TEMPLATES } from '../../../editors/tiptap/extensions/MathNode';
 import type { Editor } from '@tiptap/core';
-import type { Citation } from './citations';
 
 export function AcademicView({ diary }: DiaryScreenProps) {
   const {
@@ -24,6 +23,52 @@ export function AcademicView({ diary }: DiaryScreenProps) {
   const [editor, setEditor] = useState<Editor | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [showCitationForm, setShowCitationForm] = useState(false);
+  const [citationAuthor, setCitationAuthor] = useState('');
+  const [citationTitle, setCitationTitle] = useState('');
+  const [citationYear, setCitationYear] = useState(String(new Date().getFullYear()));
+  const [citationUrl, setCitationUrl] = useState('');
+
+  const resetCitationForm = useCallback(() => {
+    setCitationAuthor('');
+    setCitationTitle('');
+    setCitationYear(String(new Date().getFullYear()));
+    setCitationUrl('');
+  }, []);
+
+  const handleCitationSubmit = useCallback(
+    (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+
+      const authors = citationAuthor
+        .split(',')
+        .map((author) => author.trim())
+        .filter((author) => author.length > 0);
+
+      if (authors.length === 0) {
+        authors.push('Unknown Author');
+      }
+
+      const parsedYear = Number.parseInt(citationYear, 10);
+      const yearValue = Number.isFinite(parsedYear) ? parsedYear : new Date().getFullYear();
+
+      addCitation({
+        type: 'article',
+        authors,
+        title: citationTitle || 'Untitled Source',
+        year: yearValue,
+        url: citationUrl || undefined,
+      });
+
+      resetCitationForm();
+      setShowCitationForm(false);
+    },
+    [addCitation, citationAuthor, citationTitle, citationYear, citationUrl, resetCitationForm],
+  );
+
+  const handleCitationCancel = useCallback(() => {
+    resetCitationForm();
+    setShowCitationForm(false);
+  }, [resetCitationForm]);
 
   const handleEditorReady = useCallback((editorInstance: Editor) => {
     setEditor(editorInstance);
@@ -141,6 +186,8 @@ export function AcademicView({ diary }: DiaryScreenProps) {
               className="academic__add-citation"
               onClick={() => setShowCitationForm(true)}
               aria-label="Add citation"
+              aria-expanded={showCitationForm}
+              disabled={showCitationForm}
             >
               +
             </button>
@@ -158,6 +205,67 @@ export function AcademicView({ diary }: DiaryScreenProps) {
                 </li>
               ))}
             </ul>
+          )}
+          {showCitationForm && (
+            <form className="academic__citation-form" onSubmit={handleCitationSubmit}>
+              <label className="academic__citation-label">
+                Authors
+                <input
+                  type="text"
+                  className="academic__citation-input"
+                  value={citationAuthor}
+                  onChange={(event) => setCitationAuthor(event.target.value)}
+                  placeholder="Separate multiple authors with commas"
+                  autoFocus
+                  required
+                />
+              </label>
+              <label className="academic__citation-label">
+                Title
+                <input
+                  type="text"
+                  className="academic__citation-input"
+                  value={citationTitle}
+                  onChange={(event) => setCitationTitle(event.target.value)}
+                  placeholder="Article or book title"
+                  required
+                />
+              </label>
+              <label className="academic__citation-label">
+                Year
+                <input
+                  type="number"
+                  className="academic__citation-input"
+                  value={citationYear}
+                  onChange={(event) => setCitationYear(event.target.value)}
+                  min="0"
+                  max="3000"
+                  required
+                />
+              </label>
+              <label className="academic__citation-label">
+                URL (optional)
+                <input
+                  type="url"
+                  className="academic__citation-input"
+                  value={citationUrl}
+                  onChange={(event) => setCitationUrl(event.target.value)}
+                  placeholder="https://example.com"
+                />
+              </label>
+              <div className="academic__citation-actions">
+                <button type="submit" className="academic__citation-save">
+                  Save citation
+                </button>
+                <button
+                  type="button"
+                  className="academic__citation-cancel"
+                  onClick={handleCitationCancel}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           )}
         </section>
       </aside>

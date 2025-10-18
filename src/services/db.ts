@@ -24,8 +24,8 @@ export interface Diary {
   kind: DiaryKind;
   title: string;
   settings: DiarySettings;
-  createdAt: number;
-  updatedAt: number;
+  createdAt?: number;
+  updatedAt?: number;
 }
 
 export interface CanvasScene {
@@ -51,6 +51,10 @@ export interface Lock {
   pageId?: string;
   salt: string;
   locked: boolean;
+  passwordHash: string;
+  payload?: string;
+  createdAt: number;
+  updatedAt: number;
 }
 
 export interface ExportBundle {
@@ -120,14 +124,20 @@ async function loadDexieModule(): Promise<DexieModule | null> {
   }
 }
 
+function timestamp(value?: number): number {
+  return typeof value === 'number' && Number.isFinite(value) ? value : 0;
+}
+
 function memoryListDiaries(): Diary[] {
-  return Array.from(memoryStore.diaries.values()).sort((a, b) => a.createdAt - b.createdAt);
+  return Array.from(memoryStore.diaries.values()).sort(
+    (a, b) => timestamp(a.createdAt) - timestamp(b.createdAt),
+  );
 }
 
 function memoryListPages(diaryId: string): Page[] {
   return Array.from(memoryStore.pages.values())
     .filter((page) => page.diaryId === diaryId)
-    .sort((a, b) => a.createdAt - b.createdAt);
+    .sort((a, b) => timestamp(a.createdAt) - timestamp(b.createdAt));
 }
 
 function createDatabaseInstance(module: DexieModule): DatabaseInstance {
@@ -185,7 +195,7 @@ export async function listDiaries(): Promise<Diary[]> {
   }
 
   const diaries = await dexieDb.diaries.toArray();
-  return diaries.sort((a, b) => a.createdAt - b.createdAt);
+  return diaries.sort((a, b) => timestamp(a.createdAt) - timestamp(b.createdAt));
 }
 
 export async function loadDiary(id: string): Promise<Diary | undefined> {
@@ -330,4 +340,45 @@ export async function importAll(file: Blob): Promise<void> {
       await dexieDb.locks.bulkPut(parsed.locks);
     }
   });
+}
+
+export async function loadLock(diaryId: string): Promise<Lock | undefined> {
+  const dexieDb = await ensureDb();
+  if (!dexieDb) {
+    for (const lock of memoryStore.locks.values()) {
+      if (lock.diaryId === diaryId) {
+        return lock;
+      }
+    }
+    return undefined;
+  }
+
+  return dexieDb.locks.where('diaryId').equals(diaryId).first();
+}
+
+export async function saveLock(lock: Lock): Promise<void> {
+  const now = Date.now();
+  const persisted: Lock = {
+    ...lock,
+    createdAt: lock.createdAt ?? now,
+    updatedAt: now,
+  };
+
+  const dexieDb = await ensureDb();
+  if (!dexieDb) {
+    memoryStore.locks.set(persisted.id, persisted);
+    return;
+  }
+
+  await dexieDb.locks.put(persisted);
+}
+
+export async function deleteLock(id: string): Promise<void> {
+  const dexieDb = await ensureDb();
+  if (!dexieDb) {
+    memoryStore.locks.delete(id);
+    return;
+  }
+
+  await dexieDb.locks.delete(id);
 }

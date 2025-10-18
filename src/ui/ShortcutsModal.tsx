@@ -37,7 +37,14 @@ export function ShortcutsModal({ isOpen, onClose }: ShortcutsModalProps) {
   const editorShortcuts = allShortcuts.filter((s) => s.context === 'editor');
 
   return (
-    <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="shortcuts-title">
+    <div
+      id="shortcuts-modal"
+      className="modal-overlay"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="shortcuts-title"
+    >
       <div className="modal-content shortcuts-modal" onClick={(e) => e.stopPropagation()}>
         <header className="modal-header">
           <h2 id="shortcuts-title">Keyboard Shortcuts</h2>

@@ -27,7 +27,7 @@ function HeadingItem({ heading, level, isActive, activeId, onNavigate }: Heading
   }, [heading.id, heading.position, onNavigate]);
 
   const handleToggle = useCallback(
-    (e: React.MouseEvent) => {
+    (e: React.MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
       setIsExpanded(!isExpanded);
     },
@@ -42,13 +42,15 @@ function HeadingItem({ heading, level, isActive, activeId, onNavigate }: Heading
         aria-current={isActive ? 'true' : undefined}
       >
         {hasChildren && (
-          <span
+          <button
+            type="button"
             className="longform-outline__toggle"
             onClick={handleToggle}
-            aria-label={isExpanded ? 'Collapse' : 'Expand'}
+            aria-label={isExpanded ? 'Collapse section' : 'Expand section'}
+            aria-expanded={isExpanded}
           >
             {isExpanded ? '▼' : '▶'}
-          </span>
+          </button>
         )}
         <span className="longform-outline__text">{heading.text}</span>
       </button>

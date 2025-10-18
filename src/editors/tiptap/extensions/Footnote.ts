@@ -1,5 +1,5 @@
 import { Node, mergeAttributes } from '@tiptap/core';
-import type { Editor } from '@tiptap/core';
+import type { JSONContent } from '@tiptap/core';
 
 export interface FootnoteOptions {
   HTMLAttributes: Record<string, unknown>;
@@ -93,7 +93,7 @@ export const Footnote = Node.create<FootnoteOptions>({
     return {
       addFootnote:
         (content: string) =>
-        ({ commands, state, tr }) => {
+        ({ commands, state }) => {
           // Generate unique ID
           const id = `footnote-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
           
@@ -168,7 +168,7 @@ export const Footnote = Node.create<FootnoteOptions>({
 
   addKeyboardShortcuts() {
     return {
-      'Mod-f': ({ editor }: { editor: Editor }) => {
+      'Mod-f': () => {
         // Trigger footnote insertion UI
         // This would be handled by the parent component
         return false; // Let parent handle
@@ -202,6 +202,3 @@ export function extractFootnotes(doc: JSONContent): FootnoteAttrs[] {
   // Sort by number
   return footnotes.sort((a, b) => a.number - b.number);
 }
-
-// Add missing import
-import type { JSONContent } from '@tiptap/core';

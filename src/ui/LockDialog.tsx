@@ -4,8 +4,8 @@ import { validatePasswordStrength } from '../services/crypto';
 export interface LockDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onLock?: (password: string) => void;
-  onUnlock?: (password: string) => void;
+  onLock?: (password: string) => void | Promise<void>;
+  onUnlock?: (password: string, rememberSession: boolean) => void | Promise<void>;
   isLocked: boolean;
   diaryTitle: string;
 }
@@ -36,6 +36,7 @@ export function LockDialog({
       setConfirmPassword('');
       setError('');
       setShowPassword(false);
+      setRememberSession(false);
     }
   }, [isOpen]);
 
@@ -74,7 +75,7 @@ export function LockDialog({
         // Unlocking the diary
         setIsProcessing(true);
         try {
-          await onUnlock?.(password);
+          await onUnlock?.(password, rememberSession);
           onClose();
         } catch (err) {
           setError('Incorrect password');
@@ -119,8 +120,13 @@ export function LockDialog({
 
   return (
     <div
+      id="lock-dialog"
       className="modal-overlay"
-      onClick={onClose}
+      onClick={() => {
+        if (!isProcessing) {
+          onClose();
+        }
+      }}
       role="dialog"
       aria-modal="true"
       aria-labelledby="lock-dialog-title"

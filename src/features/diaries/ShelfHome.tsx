@@ -84,51 +84,71 @@ export function ShelfHome() {
       </header>
       <div className="shelf__actions">
         <details className="shelf__creator">
-          <summary>New diary</summary>
+          <summary aria-label="Create a new diary from a preset">New diary</summary>
           <div className="shelf__preset-grid">
-            {DIARY_PRESETS.map((preset) => (
-              <button
-                key={preset.kind}
-                type="button"
-                className="shelf__preset"
-                onClick={() => void handleCreate(preset.kind)}
-              >
-                <span className="shelf__preset-title">{preset.title}</span>
-                <span className="shelf__preset-description">{preset.description}</span>
-              </button>
-            ))}
+            {DIARY_PRESETS.map((preset) => {
+              const descriptionId = `preset-${preset.kind}-description`;
+              return (
+                <button
+                  key={preset.kind}
+                  type="button"
+                  className="shelf__preset"
+                  onClick={() => void handleCreate(preset.kind)}
+                  aria-describedby={descriptionId}
+                >
+                  <span className="shelf__preset-title">{preset.title}</span>
+                  <span id={descriptionId} className="shelf__preset-description">
+                    {preset.description}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </details>
       </div>
       {isLoading ? (
-        <p className="shelf__status">Loading diaries…</p>
+        <p className="shelf__status" role="status" aria-live="polite">
+          Loading diaries…
+        </p>
       ) : error ? (
-        <p className="shelf__error">{error}</p>
+        <p className="shelf__error" role="alert">
+          {error}
+        </p>
       ) : entries.length === 0 ? (
-        <p className="shelf__status">No diaries yet. Create one to begin.</p>
+        <p className="shelf__status" role="status" aria-live="polite">
+          No diaries yet. Create one to begin.
+        </p>
       ) : (
         <div className="shelf__grid">
-          {entries.map(({ diary, pageCount }) => (
-            <article key={diary.id} className={`shelf__card shelf__card--${diary.kind}`}>
-              <button
-                type="button"
-                className="shelf__card-body"
-                onClick={() => navigate(`/diary/${diary.id}`)}
-              >
-                <span className="shelf__card-kind">{presetByKind.get(diary.kind)?.title ?? diary.kind}</span>
-                <h2>{diary.title}</h2>
-                <span className="shelf__card-meta">{pageCount} pages</span>
-              </button>
-              <button
-                type="button"
-                className="shelf__delete"
-                onClick={() => void handleDelete(diary)}
-                aria-label={`Delete ${diary.title}`}
-              >
-                ×
-              </button>
-            </article>
-          ))}
+          {entries.map(({ diary, pageCount }) => {
+            const presetTitle = presetByKind.get(diary.kind)?.title ?? diary.kind;
+            const metaId = `diary-${diary.id}-meta`;
+            return (
+              <article key={diary.id} className={`shelf__card shelf__card--${diary.kind}`}>
+                <button
+                  type="button"
+                  className="shelf__card-body"
+                  onClick={() => navigate(`/diary/${diary.id}`)}
+                  aria-describedby={metaId}
+                  aria-label={`Open ${diary.title}`}
+                >
+                  <span className="shelf__card-kind">{presetTitle}</span>
+                  <h2>{diary.title}</h2>
+                  <span id={metaId} className="shelf__card-meta">
+                    {pageCount} {pageCount === 1 ? 'page' : 'pages'}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  className="shelf__delete"
+                  onClick={() => void handleDelete(diary)}
+                  aria-label={`Delete ${diary.title}`}
+                >
+                  ×
+                </button>
+              </article>
+            );
+          })}
         </div>
       )}
     </div>

@@ -9,7 +9,7 @@ const ACTIVITY_EVENTS = ['mousedown', 'keydown', 'scroll', 'touchstart'];
 
 interface SessionData {
   diaryId: string;
-  passwordHash: string;
+  password: string;
   expiresAt: number;
 }
 
@@ -21,7 +21,7 @@ class SessionManager {
   /**
    * Start a new session for a diary
    */
-  startSession(diaryId: string, passwordHash: string, remember: boolean = false): void {
+  startSession(diaryId: string, password: string, remember: boolean = false): void {
     if (!remember) {
       // Don't persist session
       return;
@@ -30,7 +30,7 @@ class SessionManager {
     const expiresAt = Date.now() + SESSION_TIMEOUT_MS;
     this.sessions.set(diaryId, {
       diaryId,
-      passwordHash,
+      password,
       expiresAt,
     });
 
@@ -91,12 +91,12 @@ class SessionManager {
   /**
    * Get session password hash for verification
    */
-  getSessionPasswordHash(diaryId: string): string | null {
+  getSessionPassword(diaryId: string): string | null {
     const session = this.sessions.get(diaryId);
     if (!session || !this.hasValidSession(diaryId)) {
       return null;
     }
-    return session.passwordHash;
+    return session.password;
   }
 
   /**
