@@ -1,0 +1,212 @@
+/**
+ * Print-specific styles for Uddesa
+ * 
+ * Ensures clean, professional output when printing diary entries
+ */
+
+@media print {
+  /* Hide UI chrome */
+  .app-shell__header,
+  .app-shell__toasts,
+  .shelf__actions,
+  .shelf__delete,
+  .diary__back,
+  .diary__settings,
+  .drafts__footer,
+  .drafts__actions,
+  .journal__sidebar,
+  .journal__editor-actions,
+  .journal__entry-meta,
+  .longform__outline,
+  .scratchpad__rail,
+  .blackboard__sidebar,
+  .page-rail,
+  .page-rail__delete,
+  .outline-panel,
+  .modal-overlay,
+  button,
+  .word-count {
+    display: none !important;
+  }
+
+  /* Reset page margins */
+  @page {
+    margin: 2cm;
+    size: auto;
+  }
+
+  /* Body and root */
+  body {
+    background: #ffffff;
+    color: #000000;
+    font-size: 12pt;
+    line-height: 1.6;
+  }
+
+  /* Container adjustments */
+  .app-shell,
+  .diary,
+  .drafts,
+  .journal,
+  .longform {
+    max-width: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Editor content */
+  .rich-text__content,
+  .drafts__editor,
+  .journal__editor-content {
+    background: #ffffff;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    min-height: auto;
+  }
+
+  /* Typography */
+  .rich-text__content {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 12pt;
+    line-height: 1.6;
+    color: #000000;
+  }
+
+  /* Headings */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    page-break-inside: avoid;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    color: #000000;
+  }
+
+  h1 {
+    font-size: 24pt;
+    margin: 0 0 12pt;
+  }
+
+  h2 {
+    font-size: 18pt;
+    margin: 18pt 0 12pt;
+  }
+
+  h3 {
+    font-size: 14pt;
+    margin: 14pt 0 10pt;
+  }
+
+  /* Title node */
+  .title-node {
+    font-size: 24pt;
+    font-weight: bold;
+    margin: 0 0 18pt;
+    page-break-after: avoid;
+  }
+
+  /* Paragraphs */
+  p {
+    margin: 0 0 12pt;
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Lists */
+  ul, ol {
+    margin: 0 0 12pt;
+    padding-left: 24pt;
+  }
+
+  li {
+    margin-bottom: 6pt;
+  }
+
+  /* Blockquotes */
+  blockquote {
+    margin: 12pt 0;
+    padding: 6pt 18pt;
+    border-left: 3pt solid #000000;
+    page-break-inside: avoid;
+  }
+
+  /* Code blocks */
+  pre {
+    background: #f5f5f5;
+    border: 1pt solid #cccccc;
+    padding: 12pt;
+    margin: 12pt 0;
+    page-break-inside: avoid;
+    font-size: 10pt;
+    overflow: hidden;
+  }
+
+  code {
+    font-family: 'Courier New', 'Courier', monospace;
+    font-size: 10pt;
+  }
+
+  /* Images */
+  img {
+    max-width: 100%;
+    page-break-inside: avoid;
+  }
+
+  /* Tables */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 12pt 0;
+    page-break-inside: avoid;
+  }
+
+  th, td {
+    border: 1pt solid #000000;
+    padding: 6pt;
+    text-align: left;
+  }
+
+  th {
+    background: #f5f5f5;
+    font-weight: bold;
+  }
+
+  /* Footnotes */
+  .footnote {
+    page-break-inside: avoid;
+    font-size: 10pt;
+    margin: 6pt 0;
+  }
+
+  .footnote-marker {
+    vertical-align: super;
+    font-size: 8pt;
+  }
+
+  /* Links */
+  a {
+    color: #000000;
+    text-decoration: underline;
+  }
+
+  a[href]:after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    color: #666666;
+  }
+
+  /* Avoid breaks */
+  .no-break {
+    page-break-inside: avoid;
+  }
+
+  /* Force page breaks */
+  .page-break {
+    page-break-after: always;
+  }
+
+  /* Hide empty elements */
+  *:empty {
+    display: none;
+  }
+}

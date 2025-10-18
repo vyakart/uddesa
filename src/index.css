@@ -1053,3 +1053,389 @@ button {
 .word-count__separator {
   color: rgba(0, 0, 0, 0.3);
 }
+
+/* Modal overlay and base styles */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 540px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.modal-close {
+  border: none;
+  background: rgba(0, 0, 0, 0.05);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.25rem;
+  line-height: 1;
+  transition: background 0.2s ease;
+}
+
+.modal-close:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.modal-close:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.modal-body {
+  padding: 1.5rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.modal-button {
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-button--primary {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.modal-button--primary:hover:not(:disabled) {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.modal-button--secondary {
+  background: rgba(0, 0, 0, 0.05);
+  color: #1c1c1c;
+}
+
+.modal-button--secondary:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.modal-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Shortcuts Modal */
+.shortcuts-modal {
+  max-width: 640px;
+}
+
+.shortcuts-section {
+  margin-bottom: 1.5rem;
+}
+
+.shortcuts-section:last-child {
+  margin-bottom: 0;
+}
+
+.shortcuts-section h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.shortcuts-list {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.shortcuts-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.shortcuts-key kbd {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.03);
+  font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.shortcuts-description {
+  margin: 0;
+  flex: 1;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+/* Lock Dialog */
+.lock-dialog {
+  max-width: 480px;
+}
+
+.lock-dialog__description {
+  margin: 0 0 1.5rem;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.lock-dialog__field {
+  margin-bottom: 1.25rem;
+}
+
+.lock-dialog__label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.lock-dialog__input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.lock-dialog__input {
+  width: 100%;
+  padding: 0.75rem;
+  padding-right: 3rem;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lock-dialog__input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.lock-dialog__input:disabled {
+  background: rgba(0, 0, 0, 0.03);
+  cursor: not-allowed;
+}
+
+.lock-dialog__toggle {
+  position: absolute;
+  right: 0.5rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.25rem;
+  padding: 0.25rem;
+  line-height: 1;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.lock-dialog__toggle:hover:not(:disabled) {
+  opacity: 1;
+}
+
+.lock-dialog__toggle:disabled {
+  cursor: not-allowed;
+}
+
+.lock-dialog__strength {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.lock-dialog__strength-bar {
+  height: 0.5rem;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.lock-dialog__strength-fill {
+  height: 100%;
+  transition: width 0.3s ease, background-color 0.3s ease;
+  border-radius: 999px;
+}
+
+.lock-dialog__strength-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.lock-dialog__feedback {
+  margin: 0;
+  padding-left: 1.25rem;
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.lock-dialog__feedback li {
+  margin-bottom: 0.25rem;
+}
+
+.lock-dialog__checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.lock-dialog__checkbox input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+}
+
+.lock-dialog__checkbox label {
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+}
+
+.lock-dialog__error {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: rgba(220, 38, 38, 0.1);
+  color: #b91c1c;
+  font-size: 0.875rem;
+}
+
+/* Error Boundary Styles */
+.error-boundary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+  background: #f5f3ef;
+}
+
+.error-boundary__content {
+  max-width: 540px;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 2.5rem;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+}
+
+.error-boundary__icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.error-boundary__title {
+  margin: 0 0 0.75rem;
+  font-size: 1.75rem;
+  color: #1c1c1c;
+}
+
+.error-boundary__message {
+  margin: 0 0 1.5rem;
+  color: rgba(0, 0, 0, 0.7);
+  line-height: 1.6;
+}
+
+.error-boundary__actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.error-boundary__button {
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.error-boundary__button:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.error-boundary__button--secondary {
+  background: rgba(0, 0, 0, 0.08);
+  color: #1c1c1c;
+}
+
+.error-boundary__button--secondary:hover {
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.error-boundary__details {
+  text-align: left;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.error-boundary__details summary {
+  cursor: pointer;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.error-boundary__stack {
+  background: rgba(0, 0, 0, 0.03);
+  padding: 1rem;
+  border-radius: 0.75rem;
+  overflow-x: auto;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.7);
+}
