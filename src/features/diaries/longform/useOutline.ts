@@ -113,8 +113,10 @@ export function useOutline(editor: Editor | null): {
   flatHeadings: OutlineHeading[];
   count: number;
 } {
+  const docNode = editor?.state.doc ?? null;
+
   const result = useMemo(() => {
-    if (!editor) {
+    if (!editor || !docNode) {
       return {
         outline: [],
         flatHeadings: [],
@@ -122,7 +124,7 @@ export function useOutline(editor: Editor | null): {
       };
     }
 
-    const doc = editor.getJSON();
+    const doc = docNode.toJSON() as JSONContent;
     const flatHeadings = extractHeadings(doc);
     const outline = buildHeadingTree(flatHeadings);
 
@@ -131,7 +133,7 @@ export function useOutline(editor: Editor | null): {
       flatHeadings,
       count: flatHeadings.length,
     };
-  }, [editor?.state.doc.content]);
+  }, [editor, docNode]);
 
   return result;
 }

@@ -15,6 +15,14 @@ interface WordCountStats {
   readingTime: number;
 }
 
+const EMPTY_STATS: WordCountStats = {
+  words: 0,
+  characters: 0,
+  charactersNoSpaces: 0,
+  paragraphs: 0,
+  readingTime: 0,
+};
+
 /**
  * Extract text content from Tiptap JSON structure
  */
@@ -59,18 +67,11 @@ function countParagraphs(doc: JSONContent): number {
 /**
  * Calculate word count statistics from editor content
  */
-function calculateStats(editor: Editor | null): WordCountStats {
-  if (!editor) {
-    return {
-      words: 0,
-      characters: 0,
-      charactersNoSpaces: 0,
-      paragraphs: 0,
-      readingTime: 0,
-    };
+function calculateStats(doc: JSONContent | null): WordCountStats {
+  if (!doc) {
+    return EMPTY_STATS;
   }
 
-  const doc = editor.getJSON();
   const text = extractText(doc);
 
   // Count words (split by whitespace, filter empty strings)
@@ -109,7 +110,15 @@ function formatNumber(num: number): string {
  * WordCount component displays real-time writing statistics
  */
 export function WordCount({ editor, className = '' }: WordCountProps) {
-  const stats = useMemo(() => calculateStats(editor), [editor?.state.doc.content]);
+  const docNode = editor?.state.doc ?? null;
+
+  const stats = useMemo(() => {
+    if (!docNode) {
+      return EMPTY_STATS;
+    }
+    const doc = docNode.toJSON() as JSONContent;
+    return calculateStats(doc);
+  }, [docNode]);
 
   const rootClassName = ['word-count', className].filter(Boolean).join(' ');
 

@@ -56,7 +56,7 @@ export const MathInline = Node.create<MathOptions>({
         throwOnError: false,
         displayMode: false,
       });
-    } catch (error) {
+    } catch {
       html = `<span class="math-error">${latex}</span>`;
     }
 
@@ -132,7 +132,7 @@ export const MathBlock = Node.create<MathOptions>({
         throwOnError: false,
         displayMode: true,
       });
-    } catch (error) {
+    } catch {
       html = `<div class="math-error">${latex}</div>`;
     }
 

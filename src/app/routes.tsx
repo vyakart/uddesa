@@ -1,8 +1,18 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { ShelfHome } from '../features/diaries/ShelfHome';
-import { DiaryRouter } from '../features/diaries/DiaryRouter';
-import { Settings } from '../ui/Settings';
+import { lazy } from 'react';
 import AppShell from './AppShell';
+
+const ShelfHome = lazy(() =>
+  import('../features/diaries/ShelfHome').then((module) => ({ default: module.ShelfHome })),
+);
+
+const DiaryRouter = lazy(() =>
+  import('../features/diaries/DiaryRouter').then((module) => ({ default: module.DiaryRouter })),
+);
+
+const Settings = lazy(() =>
+  import('../ui/Settings').then((module) => ({ default: module.Settings })),
+);
 
 export const router = createBrowserRouter([
   {

@@ -1,4 +1,4 @@
-import { useState, useCallback, type FormEvent } from 'react';
+import { useState, useCallback, type FormEvent, type ChangeEvent } from 'react';
 import type { DiaryScreenProps } from '../types';
 import { useAcademic } from './useAcademic';
 import { Bibliography } from './Bibliography';
@@ -34,6 +34,16 @@ export function AcademicView({ diary }: DiaryScreenProps) {
     setCitationYear(String(new Date().getFullYear()));
     setCitationUrl('');
   }, []);
+
+  const handleCitationStyleChange = useCallback(
+    (event: ChangeEvent<HTMLSelectElement>) => {
+      const { value } = event.target;
+      if (value === 'apa' || value === 'mla' || value === 'chicago') {
+        setCitationStyle(value);
+      }
+    },
+    [setCitationStyle],
+  );
 
   const handleCitationSubmit = useCallback(
     (event: FormEvent<HTMLFormElement>) => {
@@ -171,7 +181,7 @@ export function AcademicView({ diary }: DiaryScreenProps) {
           <select
             className="academic__style-select"
             value={citationStyle}
-            onChange={(e) => setCitationStyle(e.target.value as any)}
+            onChange={handleCitationStyleChange}
           >
             <option value="apa">APA 7th</option>
             <option value="mla">MLA 9th</option>

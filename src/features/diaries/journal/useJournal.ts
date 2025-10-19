@@ -140,14 +140,15 @@ export function useJournal(diary: Diary): UseJournalResult {
 
   useEffect(() => {
     isMounted.current = true;
+    const timers = saveTimers.current;
     return () => {
       isMounted.current = false;
       if (typeof window !== 'undefined') {
-        for (const handle of saveTimers.current.values()) {
+        for (const handle of timers.values()) {
           window.clearTimeout(handle);
         }
       }
-      saveTimers.current.clear();
+      timers.clear();
     };
   }, []);
 

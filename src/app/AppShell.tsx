@@ -1,14 +1,22 @@
-import { useCallback, useEffect, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { shortcuts, DEFAULT_SHORTCUTS } from '../services/shortcuts';
-import { ShortcutsModal } from '../ui/ShortcutsModal';
+
+const ShortcutsModal = lazy(() =>
+  import('../ui/ShortcutsModal').then((module) => ({ default: module.ShortcutsModal })),
+);
 
 export function AppShell() {
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
 
-  const openShortcuts = useCallback(() => {
-    setIsShortcutsOpen(true);
+  const prefetchShortcutsModal = useCallback(() => {
+    void import('../ui/ShortcutsModal');
   }, []);
+
+  const openShortcuts = useCallback(() => {
+    prefetchShortcutsModal();
+    setIsShortcutsOpen(true);
+  }, [prefetchShortcutsModal]);
 
   const closeShortcuts = useCallback(() => {
     setIsShortcutsOpen(false);
@@ -48,6 +56,8 @@ export function AppShell() {
             aria-haspopup="dialog"
             aria-controls="shortcuts-modal"
             aria-expanded={isShortcutsOpen}
+            onMouseEnter={prefetchShortcutsModal}
+            onFocus={prefetchShortcutsModal}
           >
             Shortcuts
           </button>
@@ -62,10 +72,22 @@ export function AppShell() {
         </nav>
       </header>
       <main className="app-shell__main">
-        <Outlet />
+        <Suspense
+          fallback={
+            <div className="app-shell__loading" role="status" aria-live="polite">
+              Loading…
+            </div>
+          }
+        >
+          <Outlet />
+        </Suspense>
       </main>
       <div id="toasts" aria-live="polite" className="app-shell__toasts" />
-      <ShortcutsModal isOpen={isShortcutsOpen} onClose={closeShortcuts} />
+      <Suspense fallback={null}>
+        {isShortcutsOpen ? (
+          <ShortcutsModal isOpen onClose={closeShortcuts} />
+        ) : null}
+      </Suspense>
     </div>
   );
 }

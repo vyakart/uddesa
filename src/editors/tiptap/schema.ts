@@ -12,8 +12,8 @@ export interface SchemaOptions {
 
 export function createSchema(options: SchemaOptions = {}): Extension[] {
   const { placeholder = 'Start writing…', headingLevels = [1, 2, 3], includeTitle = false } = options;
-  
-  const baseExtensions = [
+
+  const baseExtensions: Extension[] = [
     StarterKit.configure({
       heading: {
         levels: headingLevels as HeadingLevel[],
@@ -42,11 +42,11 @@ export function createSchema(options: SchemaOptions = {}): Extension[] {
       includeChildren: true,
     }),
   ];
-  
+
   // Add TitleNode if requested (Tiptap allows mixing Node and Extension types)
   if (includeTitle) {
-    return [TitleNode as any, ...baseExtensions];
+    return [TitleNode as Extension, ...baseExtensions];
   }
-  
+
   return baseExtensions;
 }

@@ -1,5 +1,4 @@
-import { Node, mergeAttributes } from '@tiptap/core';
-import type { JSONContent } from '@tiptap/core';
+import { Node, mergeAttributes, type JSONContent } from '@tiptap/core';
 
 export interface FootnoteOptions {
   HTMLAttributes: Record<string, unknown>;

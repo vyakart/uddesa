@@ -66,8 +66,8 @@ export function LockDialog({
         try {
           await onLock?.(password);
           onClose();
-        } catch (err) {
-          setError(err instanceof Error ? err.message : 'Failed to lock diary');
+        } catch (error: unknown) {
+          setError(error instanceof Error ? error.message : 'Failed to lock diary');
         } finally {
           setIsProcessing(false);
         }
@@ -77,14 +77,23 @@ export function LockDialog({
         try {
           await onUnlock?.(password, rememberSession);
           onClose();
-        } catch (err) {
+        } catch {
           setError('Incorrect password');
         } finally {
           setIsProcessing(false);
         }
       }
     },
-    [password, confirmPassword, isLocked, passwordStrength, onLock, onUnlock, onClose],
+    [
+      password,
+      confirmPassword,
+      isLocked,
+      passwordStrength,
+      onLock,
+      onUnlock,
+      onClose,
+      rememberSession,
+    ],
   );
 
   useEffect(() => {

@@ -101,6 +101,13 @@ button {
   justify-content: center;
 }
 
+.app-shell__loading {
+  align-self: center;
+  color: inherit;
+  opacity: 0.72;
+  font-size: 0.95rem;
+}
+
 .app-shell__toasts {
   position: fixed;
   right: 1.5rem;

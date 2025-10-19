@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { JSONContent } from '@tiptap/core';
+import type { Extension, JSONContent } from '@tiptap/core';
 import { loadPages, savePage, type Diary, type Page } from '../../../services/db';
 import { createId } from '../../../utils/id';
 import type { Citation, CitationStyle } from './citations';
@@ -13,6 +13,45 @@ const EMPTY_DOC: JSONContent = {
 
 function cloneDoc(doc: JSONContent): JSONContent {
   return JSON.parse(JSON.stringify(doc)) as JSONContent;
+}
+
+const SUPPORTED_CITATION_TYPES = new Set<Citation['type']>(['book', 'article', 'website', 'other']);
+
+function isCitationStyle(value: unknown): value is CitationStyle {
+  return value === 'apa' || value === 'mla' || value === 'chicago';
+}
+
+function isStoredCitation(value: unknown): value is Citation {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  const candidate = value as Partial<Citation>;
+
+  return (
+    typeof candidate.id === 'string' &&
+    typeof candidate.title === 'string' &&
+    typeof candidate.year === 'number' &&
+    typeof candidate.type === 'string' &&
+    SUPPORTED_CITATION_TYPES.has(candidate.type as Citation['type']) &&
+    Array.isArray(candidate.authors) &&
+    candidate.authors.every((author) => typeof author === 'string' && author.length > 0)
+  );
+}
+
+function extractAcademicSettings(settings: Diary['settings']): {
+  citations: Citation[];
+  citationStyle: CitationStyle;
+} {
+  const record = settings as Record<string, unknown>;
+  const citationCandidates = Array.isArray(record['citations']) ? record['citations'] : [];
+  const citations = citationCandidates.filter(isStoredCitation);
+  const style = record['citationStyle'];
+
+  return {
+    citations,
+    citationStyle: isCitationStyle(style) ? style : 'apa',
+  };
 }
 
 interface AcademicState {
@@ -116,7 +155,8 @@ export function useAcademic(diary: Diary): UseAcademicResult {
       }
 
       // Load citations from diary settings if available
-      const savedCitations = (diary.settings as any).citations || [];
+      const { citations: savedCitations, citationStyle: savedCitationStyle } =
+        extractAcademicSettings(diary.settings);
 
       if (!isMounted.current) {
         return;
@@ -139,7 +179,7 @@ export function useAcademic(diary: Diary): UseAcademicResult {
       setState({
         page,
         citations: savedCitations,
-        citationStyle: 'apa',
+        citationStyle: savedCitationStyle,
         isLoading: false,
         error: null,
       });
@@ -270,10 +310,15 @@ export function useAcademic(diary: Diary): UseAcademicResult {
     const { generateHTML } = await import('@tiptap/html');
     const { createSchema } = await import('../../../editors/tiptap/schema');
     const { MathInline, MathBlock } = await import('../../../editors/tiptap/extensions/MathNode');
-    
-    const extensions = [MathInline as any, MathBlock as any, ...createSchema({})];
+
+    const baseExtensions = createSchema({});
+    const extensions: Extension[] = [
+      MathInline as Extension,
+      MathBlock as Extension,
+      ...baseExtensions,
+    ];
     const doc = state.page?.doc ?? EMPTY_DOC;
-    
+
     return generateHTML(doc, extensions);
   }, [state.page?.doc]);
 

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { JSONContent } from '@tiptap/core';
+import type { Extension, JSONContent } from '@tiptap/core';
 import { loadPages, savePage, type Diary, type Page } from '../../../services/db';
 import { createId } from '../../../utils/id';
 
@@ -209,7 +209,8 @@ export function useLongform(diary: Diary): UseLongformResult {
     const { createSchema } = await import('../../../editors/tiptap/schema');
     const { Footnote } = await import('../../../editors/tiptap/extensions/Footnote');
     
-    const extensions = [Footnote as any, ...createSchema({})];
+    const baseExtensions = createSchema({});
+    const extensions: Extension[] = [Footnote as Extension, ...baseExtensions];
     const doc = state.page?.doc ?? EMPTY_DOC;
     
     return generateHTML(doc, extensions);
