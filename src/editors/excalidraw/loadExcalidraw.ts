@@ -2,9 +2,8 @@ import type { ExcalidrawImperativeAPI, ExcalidrawProps } from '@excalidraw/excal
 
 const EXCALIDRAW_VERSION = '0.18.0';
 const EXCALIDRAW_CDN_BASE = `https://esm.run/@excalidraw/excalidraw@${EXCALIDRAW_VERSION}/dist/prod/`;
-const EXCALIDRAW_CDN_MODULE = `https://esm.run/@excalidraw/excalidraw@${EXCALIDRAW_VERSION}?module`;
 
-let remoteImport:
+let moduleImport:
   | Promise<typeof import('@excalidraw/excalidraw')>
   | undefined;
 
@@ -25,19 +24,11 @@ const ensureAssetPath = () => {
 export const loadExcalidraw = async () => {
   ensureAssetPath();
 
-  if (import.meta.env.DEV) {
-    const module = await import('@excalidraw/excalidraw');
-    return module;
+  if (!moduleImport) {
+    moduleImport = import('@excalidraw/excalidraw');
   }
 
-  if (!remoteImport) {
-    remoteImport = import(
-      /* @vite-ignore */
-      EXCALIDRAW_CDN_MODULE
-    ) as Promise<typeof import('@excalidraw/excalidraw')>;
-  }
-
-  return remoteImport;
+  return moduleImport;
 };
 
 export type { ExcalidrawImperativeAPI, ExcalidrawProps };
