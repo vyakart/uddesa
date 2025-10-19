@@ -9,6 +9,23 @@ export interface DiaryPreset {
 
 export const DIARY_PRESETS: DiaryPreset[] = [
   {
+    kind: 'scratchpad',
+    title: 'Scratchpad',
+    description: 'Freeform Excalidraw canvas for sketches and ideas.',
+    defaults: {
+      pageSize: 'infinite',
+    },
+  },
+  {
+    kind: 'blackboard',
+    title: 'Blackboard',
+    description: 'Dark Excalidraw board with an auto-generated outline.',
+    defaults: {
+      background: '#111827',
+      pageSize: 'infinite',
+    },
+  },
+  {
     kind: 'journal',
     title: 'Personal Diary',
     description: 'Daily entries with date headers and calm typography.',
