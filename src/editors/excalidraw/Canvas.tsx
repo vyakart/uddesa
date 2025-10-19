@@ -1,6 +1,6 @@
 import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
-import type { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types';
 import '@excalidraw/excalidraw/index.css';
+import { loadExcalidraw, type ExcalidrawImperativeAPI } from './loadExcalidraw';
 import { load, read, registerApi, unregisterApi, type Scene } from './excalApi';
 
 export interface CanvasProps {
@@ -11,7 +11,7 @@ export interface CanvasProps {
 }
 
 const ExcalidrawLazy = lazy(async () => {
-  const module = await import('@excalidraw/excalidraw');
+  const module = await loadExcalidraw();
   return { default: module.Excalidraw };
 });
 

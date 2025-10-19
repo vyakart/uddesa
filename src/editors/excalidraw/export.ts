@@ -3,17 +3,7 @@ import type {
   NonDeleted,
 } from '@excalidraw/excalidraw/element/types';
 import type { Scene } from './excalApi';
-
-type ExcalidrawExports = typeof import('@excalidraw/excalidraw');
-
-let excalidrawModulePromise: Promise<ExcalidrawExports> | null = null;
-
-async function loadExcalidrawModule(): Promise<ExcalidrawExports> {
-  if (!excalidrawModulePromise) {
-    excalidrawModulePromise = import('@excalidraw/excalidraw');
-  }
-  return excalidrawModulePromise;
-}
+import { loadExcalidraw } from './loadExcalidraw';
 
 function toRenderableElements(elements: readonly ExcalidrawElement[]): readonly NonDeleted<ExcalidrawElement>[] {
   return elements.filter((element) => !element.isDeleted) as readonly NonDeleted<ExcalidrawElement>[];
@@ -23,7 +13,7 @@ export async function exportToCanvas(
   scene: Scene,
   maxWidthOrHeight = 220,
 ): Promise<HTMLCanvasElement> {
-  const { exportToCanvas: excalExportToCanvas } = await loadExcalidrawModule();
+  const { exportToCanvas: excalExportToCanvas } = await loadExcalidraw();
 
   return excalExportToCanvas({
     elements: toRenderableElements(scene.elements),
@@ -36,7 +26,7 @@ export async function exportToCanvas(
 }
 
 export async function exportToBlob(scene: Scene): Promise<Blob> {
-  const { exportToBlob: excalExportToBlob } = await loadExcalidrawModule();
+  const { exportToBlob: excalExportToBlob } = await loadExcalidraw();
 
   return excalExportToBlob({
     elements: toRenderableElements(scene.elements),
@@ -49,7 +39,7 @@ export async function exportToBlob(scene: Scene): Promise<Blob> {
 }
 
 export async function exportToSvg(scene: Scene): Promise<string> {
-  const { exportToSvg: excalExportToSvg } = await loadExcalidrawModule();
+  const { exportToSvg: excalExportToSvg } = await loadExcalidraw();
   const svg = await excalExportToSvg({
     elements: toRenderableElements(scene.elements),
     appState: {
