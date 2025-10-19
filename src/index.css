@@ -108,6 +108,16 @@ button {
   font-size: 0.95rem;
 }
 
+.excalidraw-canvas__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 0.95rem;
+  color: rgba(0, 0, 0, 0.65);
+}
+
 .app-shell__toasts {
   position: fixed;
   right: 1.5rem;

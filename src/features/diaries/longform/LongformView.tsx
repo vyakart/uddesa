@@ -4,7 +4,7 @@ import { useLongform } from './useLongform';
 import { useOutline } from './useOutline';
 import { RichText } from '../../../editors/tiptap/RichText';
 import { LongformOutline } from '../../../ui/LongformOutline';
-import { extractFootnotes } from '../../../editors/tiptap/extensions/Footnote';
+import { extractFootnotes } from '../../../editors/tiptap/extensions/FootnoteHelpers';
 import type { Editor } from '@tiptap/core';
 
 export function LongformView({ diary }: DiaryScreenProps) {

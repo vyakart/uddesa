@@ -1,13 +1,8 @@
-import { Node, mergeAttributes, type JSONContent } from '@tiptap/core';
+import { Node, mergeAttributes } from '@tiptap/core';
+import type { FootnoteAttrs } from './FootnoteHelpers';
 
 export interface FootnoteOptions {
   HTMLAttributes: Record<string, unknown>;
-}
-
-export interface FootnoteAttrs {
-  id: string;
-  number: number;
-  content: string;
 }
 
 declare module '@tiptap/core' {
@@ -175,29 +170,3 @@ export const Footnote = Node.create<FootnoteOptions>({
     };
   },
 });
-
-/**
- * Extract all footnotes from a document
- */
-export function extractFootnotes(doc: JSONContent): FootnoteAttrs[] {
-  const footnotes: FootnoteAttrs[] = [];
-  
-  function traverse(node: JSONContent | undefined) {
-    if (!node) return;
-    
-    if (node.type === 'footnote' && node.attrs) {
-      footnotes.push(node.attrs as FootnoteAttrs);
-    }
-    
-    if (node.content && Array.isArray(node.content)) {
-      for (const child of node.content) {
-        traverse(child);
-      }
-    }
-  }
-  
-  traverse(doc);
-  
-  // Sort by number
-  return footnotes.sort((a, b) => a.number - b.number);
-}

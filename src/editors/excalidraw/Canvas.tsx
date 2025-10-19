@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Excalidraw } from '@excalidraw/excalidraw';
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
 import type { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types';
 import '@excalidraw/excalidraw/index.css';
 import { load, read, registerApi, unregisterApi, type Scene } from './excalApi';
@@ -10,6 +9,11 @@ export interface CanvasProps {
   onSceneChange: (scene: Scene) => void;
   className?: string;
 }
+
+const ExcalidrawLazy = lazy(async () => {
+  const module = await import('@excalidraw/excalidraw');
+  return { default: module.Excalidraw };
+});
 
 export function Canvas({ pageKey, scene, onSceneChange, className }: CanvasProps) {
   const apiRef = useRef<ExcalidrawImperativeAPI | null>(null);
@@ -55,34 +59,36 @@ export function Canvas({ pageKey, scene, onSceneChange, className }: CanvasProps
 
   return (
     <div className={className ?? 'excalidraw-canvas'}>
-      <Excalidraw
-        initialData={initialData}
-        excalidrawAPI={(api) => {
-          if (!api) {
-            return;
-          }
+      <Suspense fallback={<div className="excalidraw-canvas__loading">Loading canvas…</div>}>
+        <ExcalidrawLazy
+          initialData={initialData}
+          excalidrawAPI={(api) => {
+            if (!api) {
+              return;
+            }
 
-          const hasChanged = apiRef.current !== api;
-          apiRef.current = api;
-          registerApi(api);
+            const hasChanged = apiRef.current !== api;
+            apiRef.current = api;
+            registerApi(api);
 
-          if (hasChanged) {
-            bumpApiVersion((version) => version + 1);
-          }
-        }}
-        viewModeEnabled={false}
-        onChange={() => {
-          skipNextLoad.current = true;
-          onSceneChange(read());
-        }}
-        UIOptions={{
-          canvasActions: {
-            loadScene: false,
-            saveAsImage: false,
-            toggleTheme: false,
-          },
-        }}
-      />
+            if (hasChanged) {
+              bumpApiVersion((version) => version + 1);
+            }
+          }}
+          viewModeEnabled={false}
+          onChange={() => {
+            skipNextLoad.current = true;
+            onSceneChange(read());
+          }}
+          UIOptions={{
+            canvasActions: {
+              loadScene: false,
+              saveAsImage: false,
+              toggleTheme: false,
+            },
+          }}
+        />
+      </Suspense>
     </div>
   );
 }

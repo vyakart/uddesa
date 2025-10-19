@@ -8,8 +8,17 @@ export default defineConfig({
     cssCodeSplit: true,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'excalidraw': ['@excalidraw/excalidraw']
+        manualChunks(id) {
+          if (id.includes('@excalidraw/excalidraw/dist/excalidraw-assets/mermaid')) {
+            return 'excalidraw-mermaid';
+          }
+          if (id.includes('@excalidraw/excalidraw/dist/excalidraw-assets')) {
+            return 'excalidraw-assets';
+          }
+          if (id.includes('@tiptap/')) {
+            return 'tiptap-core';
+          }
+          return undefined;
         }
       }
     }

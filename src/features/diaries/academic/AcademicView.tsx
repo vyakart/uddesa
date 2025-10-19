@@ -3,7 +3,7 @@ import type { DiaryScreenProps } from '../types';
 import { useAcademic } from './useAcademic';
 import { Bibliography } from './Bibliography';
 import { RichText } from '../../../editors/tiptap/RichText';
-import { MATH_TEMPLATES } from '../../../editors/tiptap/extensions/MathNode';
+import { MATH_TEMPLATES } from '../../../editors/tiptap/extensions/MathTemplates';
 import type { Editor } from '@tiptap/core';
 
 export function AcademicView({ diary }: DiaryScreenProps) {
