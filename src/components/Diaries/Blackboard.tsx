@@ -114,7 +114,7 @@ export const Blackboard: React.FC = () => {
                 <Excalidraw
                     excalidrawAPI={(api) => setExcalidrawAPI(api)}
                     initialData={initialData}
-                    theme="dark"
+                    theme="light"
                     UIOptions={{
                         canvasActions: {
                             saveToActiveFile: false,

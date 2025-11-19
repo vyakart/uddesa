@@ -3,7 +3,7 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
-    background-color: var(--color-bg-void);
+    background-color: var(--color-bg-paper);
     color: var(--color-text-primary);
     position: relative;
     overflow: hidden;
@@ -14,7 +14,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
-    background: rgba(5, 5, 5, 0.8);
+    background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--color-border-subtle);
     z-index: 20;
@@ -23,14 +23,12 @@
 .blackboard-nav span {
     font-family: var(--font-display);
     font-size: 1.5rem;
-    background: linear-gradient(to right, #fff, var(--color-text-secondary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--color-text-primary);
 }
 
 .blackboard-nav button {
     background: transparent;
-    border: 1px solid var(--color-border-subtle);
+    border: 1px solid var(--color-border-strong);
     color: var(--color-text-secondary);
     padding: 0.5rem 1rem;
     border-radius: 20px;
@@ -41,9 +39,9 @@
 }
 
 .blackboard-nav button:hover {
-    border-color: var(--color-accent-blue);
-    color: var(--color-accent-blue);
-    box-shadow: 0 0 10px rgba(76, 201, 240, 0.2);
+    border-color: var(--color-text-primary);
+    color: var(--color-text-primary);
+    background: rgba(0, 0, 0, 0.05);
 }
 
 .excalidraw-wrapper {
@@ -58,15 +56,14 @@
     top: 80px;
     left: 20px;
     width: 240px;
-    background: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: 12px;
+    background: var(--color-bg-paper);
+    border: 1px solid var(--color-border-strong);
+    border-radius: 2px;
     padding: 1rem;
     z-index: 15;
     max-height: calc(100vh - 120px);
     overflow-y: auto;
-    backdrop-filter: blur(16px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-md);
     transition: transform var(--transition-smooth), opacity var(--transition-smooth);
 }
 
@@ -87,7 +84,7 @@
 .index-item {
     padding: 0.8rem;
     cursor: pointer;
-    border-radius: 6px;
+    border-radius: 4px;
     font-family: var(--font-body);
     font-size: 0.9rem;
     color: var(--color-text-secondary);
@@ -96,8 +93,8 @@
 }
 
 .index-item:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--color-accent-amber);
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--color-text-primary);
     padding-left: 1.2rem;
 }
 
@@ -105,25 +102,23 @@
     width: 100%;
     margin-top: 1rem;
     padding: 0.8rem;
-    background: rgba(255, 183, 3, 0.1);
-    border: 1px solid var(--color-border-glow);
-    color: var(--color-accent-amber);
-    border-radius: 6px;
+    background: transparent;
+    border: 1px dashed var(--color-border-strong);
+    color: var(--color-text-secondary);
+    border-radius: 4px;
     font-family: var(--font-mono);
     cursor: pointer;
     transition: all var(--transition-fast);
 }
 
 .add-index-btn:hover {
-    background: rgba(255, 183, 3, 0.2);
-    box-shadow: var(--glow-amber);
+    background: rgba(0, 0, 0, 0.03);
+    border-color: var(--color-text-primary);
+    color: var(--color-text-primary);
 }
 
-/* Customizing Excalidraw to look more like a blackboard */
-.excalidraw.theme--dark {
-    --color-primary: var(--color-accent-blue);
-    --color-surface-low: var(--color-bg-void);
-    --color-surface-mid: var(--color-bg-depth);
-    --color-surface-high: #1a1a20;
-    --color-text-primary: var(--color-text-primary);
+/* Customizing Excalidraw to look more like paper */
+.excalidraw.theme--light {
+    --color-surface-primary: var(--color-bg-paper);
+    --color-surface-secondary: var(--color-bg-paper-dark);
 }
