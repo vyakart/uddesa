@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
-import { Excalidraw, exportToBlob } from '@excalidraw/excalidraw';
+import React, { useState, Suspense } from 'react';
+import { exportToBlob } from '@excalidraw/excalidraw';
 import './SketchModal.css';
+
+// Lazy load Excalidraw to avoid heavy initialization when not needed
+const Excalidraw = React.lazy(() => import('@excalidraw/excalidraw').then(module => ({ default: module.Excalidraw })));
 
 interface SketchModalProps {
     isOpen: boolean;
@@ -49,17 +52,19 @@ export const SketchModal: React.FC<SketchModalProps> = ({ isOpen, onClose, onIns
                     </div>
                 </div>
                 <div className="sketch-modal-body">
-                    <Excalidraw
-                        excalidrawAPI={(api) => setExcalidrawAPI(api)}
-                        UIOptions={{
-                            canvasActions: {
-                                saveToActiveFile: false,
-                                loadScene: false,
-                                export: false,
-                                toggleTheme: false,
-                            }
-                        }}
-                    />
+                    <Suspense fallback={<div className="loading-sketch">Loading Canvas...</div>}>
+                        <Excalidraw
+                            excalidrawAPI={(api) => setExcalidrawAPI(api)}
+                            UIOptions={{
+                                canvasActions: {
+                                    saveToActiveFile: false,
+                                    loadScene: false,
+                                    export: false,
+                                    toggleTheme: false,
+                                }
+                            }}
+                        />
+                    </Suspense>
                 </div>
             </div>
         </div>

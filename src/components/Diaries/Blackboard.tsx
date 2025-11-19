@@ -23,22 +23,34 @@ export const Blackboard: React.FC = () => {
         });
     }, []);
 
+    // Use refs for state accessed in event listeners to avoid re-binding
+    const excalidrawAPIRef = React.useRef<any>(null);
+    const indexPointsRef = React.useRef(indexPoints);
+
+    useEffect(() => {
+        excalidrawAPIRef.current = excalidrawAPI;
+    }, [excalidrawAPI]);
+
+    useEffect(() => {
+        indexPointsRef.current = indexPoints;
+    }, [indexPoints]);
+
     const save = async () => {
-        if (!excalidrawAPI) return;
-        const elements = excalidrawAPI.getSceneElements();
-        const appState = excalidrawAPI.getAppState();
+        if (!excalidrawAPIRef.current) return;
+        const elements = excalidrawAPIRef.current.getSceneElements();
+        const appState = excalidrawAPIRef.current.getAppState();
 
         await db.entries.put({
             diaryId: '1',
-            content: { elements, appState, indexPoints },
+            content: { elements, appState, indexPoints: indexPointsRef.current },
             createdAt: Date.now(),
             updatedAt: Date.now()
         });
     };
 
     const addIndexPoint = () => {
-        if (!excalidrawAPI) return;
-        const appState = excalidrawAPI.getAppState();
+        if (!excalidrawAPIRef.current) return;
+        const appState = excalidrawAPIRef.current.getAppState();
         const name = prompt("Name this index point:");
         if (name) {
             const newPoint = {
@@ -55,8 +67,8 @@ export const Blackboard: React.FC = () => {
     };
 
     const goToIndexPoint = (point: { x: number, y: number, zoom: number }) => {
-        if (!excalidrawAPI) return;
-        excalidrawAPI.updateScene({
+        if (!excalidrawAPIRef.current) return;
+        excalidrawAPIRef.current.updateScene({
             appState: {
                 scrollX: point.x,
                 scrollY: point.y,
@@ -77,7 +89,7 @@ export const Blackboard: React.FC = () => {
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [excalidrawAPI, navigate, indexPoints]); // Add dependencies as needed
+    }, [navigate]); // Only navigate is a dependency now
 
     return (
         <div className="blackboard-container">
