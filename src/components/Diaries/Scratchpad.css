@@ -1,0 +1,85 @@
+.scratchpad-container {
+  animation: fadeIn 0.4s ease-out forwards;
+    height: 100vh;
+    background-color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+}
+
+.scratchpad-nav {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    justify-content: space-between;
+    color: white;
+    margin-bottom: 1rem;
+    font-family: var(--font-ui);
+}
+
+.scratchpad-page {
+    width: 100%;
+    max-width: 800px;
+    height: 80vh;
+    background-color: var(--color-bg-paper);
+    box-shadow:
+        1px 1px 0 rgba(0, 0, 0, 0.1),
+        2px 2px 0 rgba(0, 0, 0, 0.1),
+        3px 3px 0 rgba(0, 0, 0, 0.1),
+        4px 4px 0 rgba(0, 0, 0, 0.1),
+        5px 5px 0 rgba(0, 0, 0, 0.1),
+        0 10px 20px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+    cursor: text;
+    border-radius: 2px;
+    /* Paper texture hint */
+    background-image: linear-gradient(#fdfbf7 2px, transparent 2px), linear-gradient(90deg, #fdfbf7 2px, transparent 2px), linear-gradient(rgba(0, 0, 0, .05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 0, 0, .05) 1px, transparent 1px);
+    background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+    background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
+
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    transform-origin: left center;
+}
+
+.scratchpad-page.turning-next {
+    transform: rotateY(-10deg) translateX(-50px);
+    opacity: 0.8;
+}
+
+.scratchpad-page.turning-prev {
+    transform: rotateY(10deg) translateX(50px);
+    opacity: 0.8;
+}
+
+.scratchpad-stack-indicator {
+    position: absolute;
+    right: -10px;
+    top: 20px;
+    bottom: 20px;
+    width: 10px;
+    background: repeating-linear-gradient(to right,
+            #fdfbf7,
+            #fdfbf7 1px,
+            #e5e5e5 2px,
+            #e5e5e5 3px);
+    border-radius: 0 4px 4px 0;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.scratchpad-item {
+    position: absolute;
+    min-width: 100px;
+}
+
+.scratchpad-item textarea {
+    background: transparent;
+    border: none;
+    outline: none;
+    resize: none;
+    overflow: hidden;
+    min-width: 50px;
+    min-height: 1.5em;
+    white-space: pre-wrap;
+}

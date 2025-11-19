@@ -1,0 +1,41 @@
+:root {
+  /* Colors */
+  --color-bg-shelf: #2c241b; /* Dark wood-like */
+  --color-bg-paper: #fdfbf7; /* Warm paper */
+  --color-bg-blackboard: #2b2b2b; /* Dark grey/black */
+  
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #4a4a4a;
+  --color-text-chalk: #e0e0e0;
+  
+  --color-accent: #8b5cf6; /* Violet */
+  --color-accent-hover: #7c3aed;
+  
+  /* Diary Colors (Spines) */
+  --color-diary-0: #ef4444; /* Red - Scratchpad */
+  --color-diary-1: #10b981; /* Green - Blackboard */
+  --color-diary-2: #3b82f6; /* Blue - Personal */
+  --color-diary-3: #f59e0b; /* Amber - Drafts */
+  --color-diary-4: #8b5cf6; /* Purple - Long Drafts */
+  --color-diary-5: #64748b; /* Slate - Academic */
+
+  /* Fonts */
+  --font-ui: 'Inter', sans-serif;
+  --font-handwriting: 'Caveat', cursive;
+  --font-handwriting-alt: 'Patrick Hand', cursive;
+  --font-serif: 'Merriweather', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 4rem;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --shadow-shelf: 0 20px 25px -5px rgb(0 0 0 / 0.5);
+}

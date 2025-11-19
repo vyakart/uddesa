@@ -1,0 +1,97 @@
+.blackboard-container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #121212;
+    color: #e0e0e0;
+    position: relative;
+}
+
+.blackboard-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #1e1e1e;
+    border-bottom: 1px solid #333;
+    z-index: 10;
+}
+
+.blackboard-nav button {
+    background: none;
+    border: 1px solid #555;
+    color: #e0e0e0;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.blackboard-nav button:hover {
+    background-color: #333;
+    border-color: #777;
+}
+
+.excalidraw-wrapper {
+    flex: 1;
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 50px);
+}
+
+.blackboard-sidebar {
+    position: absolute;
+    top: 60px;
+    left: 20px;
+    width: 200px;
+    background-color: rgba(30, 30, 30, 0.9);
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 10px;
+    z-index: 5;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+    backdrop-filter: blur(5px);
+    transition: transform 0.3s ease;
+}
+
+.blackboard-sidebar.closed {
+    transform: translateX(-220px);
+}
+
+.index-item {
+    padding: 8px;
+    cursor: pointer;
+    border-bottom: 1px solid #333;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.index-item:hover {
+    background-color: #333;
+}
+
+.add-index-btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 5px;
+    background-color: #333;
+    border: none;
+    color: #fff;
+    border-radius: 4px;
+}
+
+.add-index-btn:hover {
+    background-color: #444;
+}
+
+/* Customizing Excalidraw to look more like a blackboard */
+.excalidraw.theme--dark {
+    --color-primary: #10b981;
+    /* Chalk green */
+    --color-surface-low: #2b2b2b;
+    --color-surface-mid: #333;
+    --color-surface-high: #444;
+}

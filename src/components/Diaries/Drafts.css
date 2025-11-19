@@ -1,0 +1,58 @@
+.drafts-container {
+  animation: fadeIn 0.4s ease-out forwards;
+    height: 100vh;
+    background-color: #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+}
+
+.drafts-nav {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    font-family: var(--font-ui);
+}
+
+.font-selector button {
+    margin-left: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.font-selector button.active {
+    background-color: var(--color-accent);
+    color: white;
+    border-color: var(--color-accent);
+}
+
+.drafts-paper {
+    width: 100%;
+    max-width: 800px;
+    height: 80vh;
+    background-color: #fff;
+    box-shadow: var(--shadow-md);
+    padding: 3rem;
+    overflow-y: auto;
+}
+
+.drafts-title {
+    width: 100%;
+    font-size: 2rem;
+    font-weight: bold;
+    border: none;
+    outline: none;
+    margin-bottom: 1rem;
+    font-family: inherit;
+}
+
+.ProseMirror {
+    outline: none;
+    min-height: 300px;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}

@@ -1,0 +1,51 @@
+.sketch-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.sketch-modal-content {
+    width: 90vw;
+    height: 90vh;
+    background-color: white;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.sketch-modal-header {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sketch-modal-header h3 {
+    margin: 0;
+}
+
+.sketch-modal-header button {
+    margin-left: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+}
+
+.sketch-modal-header button:hover {
+    background-color: #e9ecef;
+}
+
+.sketch-modal-body {
+    flex: 1;
+    position: relative;
+}
