@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
-import TextStyle from '@tiptap/extension-text-style';
+import { TextStyle } from '@tiptap/extension-text-style';
 import FontFamily from '@tiptap/extension-font-family';
 import { db } from '../../db/db';
 import { useLock } from '../../hooks/useLock';
@@ -15,20 +15,22 @@ export const Drafts: React.FC = () => {
     const [font, setFont] = useState('Inter');
     const { isLocked, showUnlock, hasPasskey, setShowUnlock, setPasskey, unlock } = useLock('3');
 
+    const extensions = React.useMemo(() => [
+        StarterKit,
+        Placeholder.configure({
+            placeholder: 'Start drafting...',
+        }),
+        TextStyle,
+        FontFamily,
+    ], []);
+
     const editor = useEditor({
-        extensions: [
-            StarterKit,
-            Placeholder.configure({
-                placeholder: 'Start drafting...',
-            }),
-            TextStyle,
-            FontFamily,
-        ],
+        extensions,
         content: '',
         onUpdate: ({ editor }) => {
             save(editor.getHTML());
         },
-    });
+    }, []);
 
     useEffect(() => {
         if (!editor) return;

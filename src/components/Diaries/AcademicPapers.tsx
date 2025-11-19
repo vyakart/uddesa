@@ -12,18 +12,20 @@ export const AcademicPapers: React.FC = () => {
     const [activeModal, setActiveModal] = useState<'citation' | 'math' | null>(null);
     const [modalInput, setModalInput] = useState('');
 
+    const extensions = React.useMemo(() => [
+        StarterKit,
+        Placeholder.configure({
+            placeholder: 'Start your academic paper...',
+        }),
+    ], []);
+
     const editor = useEditor({
-        extensions: [
-            StarterKit,
-            Placeholder.configure({
-                placeholder: 'Start your academic paper...',
-            }),
-        ],
+        extensions,
         content: '',
         onUpdate: ({ editor }) => {
             save(editor.getHTML());
         },
-    });
+    }, []);
 
     useEffect(() => {
         if (!editor) return;

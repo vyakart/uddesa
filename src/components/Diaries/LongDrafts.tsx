@@ -13,19 +13,21 @@ export const LongDrafts: React.FC = () => {
     const [title, setTitle] = useState('');
     const [isSketchOpen, setIsSketchOpen] = useState(false);
 
+    const extensions = React.useMemo(() => [
+        StarterKit,
+        Placeholder.configure({
+            placeholder: 'Start writing...',
+        }),
+        Image,
+    ], []);
+
     const editor = useEditor({
-        extensions: [
-            StarterKit,
-            Image,
-            Placeholder.configure({
-                placeholder: 'Start your longform piece...',
-            }),
-        ],
+        extensions,
         content: '',
         onUpdate: ({ editor }) => {
             save(editor.getHTML());
         },
-    });
+    }, []);
 
     useEffect(() => {
         if (!editor) return;

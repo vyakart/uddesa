@@ -13,31 +13,27 @@ export const PersonalDiary: React.FC = () => {
   const [passkey, setPasskey] = useState('');
   const [showUnlock, setShowUnlock] = useState(false);
 
+  const extensions = React.useMemo(() => [
+    StarterKit,
+    Placeholder.configure({
+      placeholder: 'Dear Diary...',
+    }),
+  ], []);
+
   const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Placeholder.configure({
-        placeholder: 'Dear Diary...',
-      }),
-    ],
+    extensions,
     content: '',
     onUpdate: ({ editor }) => {
       save(editor.getHTML());
     },
-  });
+  }, []);
 
   // Load content for date
   useEffect(() => {
     if (!editor) return;
 
     // Simple key: diaryId-date
-    const entryId = `2-${date}`;
-    db.entries.where('diaryId').equals('2').and(e => {
-      // This is a bit hacky for query, better to use a compound index or just filter
-      // But for now, let's just load the last entry for this diary and see if we can improve structure
-      // Actually, let's just use the '2' diaryId and filter by date in memory or key
-      return true;
-    }).toArray().then(entries => {
+    db.entries.where('diaryId').equals('2').toArray().then(entries => {
       // Find entry for this date
       // We need a better schema for date-based retrieval, but let's stick to simple for MVP
       // We'll store date in the title for now or a separate field if we changed schema
