@@ -3,95 +3,127 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
-    background-color: #121212;
-    color: #e0e0e0;
+    background-color: var(--color-bg-void);
+    color: var(--color-text-primary);
     position: relative;
+    overflow: hidden;
 }
 
 .blackboard-nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
-    background-color: #1e1e1e;
-    border-bottom: 1px solid #333;
-    z-index: 10;
+    padding: 1rem 2rem;
+    background: rgba(5, 5, 5, 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--color-border-subtle);
+    z-index: 20;
+}
+
+.blackboard-nav span {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    background: linear-gradient(to right, #fff, var(--color-text-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .blackboard-nav button {
-    background: none;
-    border: 1px solid #555;
-    color: #e0e0e0;
-    padding: 5px 10px;
-    border-radius: 4px;
-    transition: all 0.2s;
+    background: transparent;
+    border: 1px solid var(--color-border-subtle);
+    color: var(--color-text-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    transition: all var(--transition-fast);
+    cursor: pointer;
 }
 
 .blackboard-nav button:hover {
-    background-color: #333;
-    border-color: #777;
+    border-color: var(--color-accent-blue);
+    color: var(--color-accent-blue);
+    box-shadow: 0 0 10px rgba(76, 201, 240, 0.2);
 }
 
 .excalidraw-wrapper {
     flex: 1;
     position: relative;
     width: 100%;
-    height: calc(100vh - 50px);
+    height: calc(100vh - 60px);
 }
 
 .blackboard-sidebar {
     position: absolute;
-    top: 60px;
+    top: 80px;
     left: 20px;
-    width: 200px;
-    background-color: rgba(30, 30, 30, 0.9);
-    border: 1px solid #333;
-    border-radius: 8px;
-    padding: 10px;
-    z-index: 5;
-    max-height: calc(100vh - 100px);
+    width: 240px;
+    background: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 12px;
+    padding: 1rem;
+    z-index: 15;
+    max-height: calc(100vh - 120px);
     overflow-y: auto;
-    backdrop-filter: blur(5px);
-    transition: transform 0.3s ease;
+    backdrop-filter: blur(16px);
+    box-shadow: var(--shadow-lg);
+    transition: transform var(--transition-smooth), opacity var(--transition-smooth);
 }
 
 .blackboard-sidebar.closed {
-    transform: translateX(-220px);
+    transform: translateX(-280px);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.blackboard-sidebar h3 {
+    margin-top: 0;
+    font-family: var(--font-display);
+    color: var(--color-text-primary);
+    border-bottom: 1px solid var(--color-border-subtle);
+    padding-bottom: 0.5rem;
 }
 
 .index-item {
-    padding: 8px;
+    padding: 0.8rem;
     cursor: pointer;
-    border-bottom: 1px solid #333;
+    border-radius: 6px;
+    font-family: var(--font-body);
     font-size: 0.9rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    color: var(--color-text-secondary);
+    transition: all var(--transition-fast);
+    margin-bottom: 4px;
 }
 
 .index-item:hover {
-    background-color: #333;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-accent-amber);
+    padding-left: 1.2rem;
 }
 
 .add-index-btn {
     width: 100%;
-    margin-top: 10px;
-    padding: 5px;
-    background-color: #333;
-    border: none;
-    color: #fff;
-    border-radius: 4px;
+    margin-top: 1rem;
+    padding: 0.8rem;
+    background: rgba(255, 183, 3, 0.1);
+    border: 1px solid var(--color-border-glow);
+    color: var(--color-accent-amber);
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    transition: all var(--transition-fast);
 }
 
 .add-index-btn:hover {
-    background-color: #444;
+    background: rgba(255, 183, 3, 0.2);
+    box-shadow: var(--glow-amber);
 }
 
 /* Customizing Excalidraw to look more like a blackboard */
 .excalidraw.theme--dark {
-    --color-primary: #10b981;
-    /* Chalk green */
-    --color-surface-low: #2b2b2b;
-    --color-surface-mid: #333;
-    --color-surface-high: #444;
+    --color-primary: var(--color-accent-blue);
+    --color-surface-low: var(--color-bg-void);
+    --color-surface-mid: var(--color-bg-depth);
+    --color-surface-high: #1a1a20;
+    --color-text-primary: var(--color-text-primary);
 }

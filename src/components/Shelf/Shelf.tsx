@@ -15,15 +15,19 @@ export const Shelf: React.FC = () => {
         <button className="settings-btn" onClick={() => setIsSettingsOpen(true)}>Settings</button>
       </div>
 
-      <div className="shelf-wood">
-        {DIARIES.map((diary) => (
+      <div className="shelf-grid">
+        {DIARIES.map((diary, index) => (
           <div
             key={diary.id}
             className="diary-spine"
-            style={{ backgroundColor: diary.color }}
+            style={{
+              '--diary-color': `var(--color-diary-${index})`,
+              animationDelay: `${index * 0.1}s`
+            } as React.CSSProperties}
             onClick={() => navigate(`/diary/${diary.id}`)}
             title={diary.description}
           >
+            <div className="diary-glow" />
             <div className="diary-title">{diary.name}</div>
           </div>
         ))}

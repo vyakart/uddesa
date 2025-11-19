@@ -1,35 +1,107 @@
 .personal-diary-container {
-  animation: fadeIn 0.4s ease-out forwards;
     height: 100vh;
-    background-color: #e2e8f0;
+    background-color: var(--color-bg-void);
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 2rem;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Background Atmosphere */
+.personal-diary-container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 50% 50%, rgba(76, 201, 240, 0.03), transparent 60%);
+    animation: pulseAtmosphere 10s ease-in-out infinite;
+    pointer-events: none;
 }
 
 .personal-diary-nav {
     width: 100%;
-    max-width: 800px;
+    max-width: 900px;
     display: flex;
     justify-content: space-between;
-    margin-bottom: 1rem;
-    font-family: var(--font-ui);
+    align-items: center;
+    margin-bottom: 2rem;
+    z-index: 10;
+}
+
+.personal-diary-nav button {
+    background: transparent;
+    border: 1px solid var(--color-border-subtle);
+    color: var(--color-text-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+}
+
+.personal-diary-nav button:hover {
+    border-color: var(--color-accent-blue);
+    color: var(--color-accent-blue);
+    box-shadow: 0 0 10px rgba(76, 201, 240, 0.2);
+}
+
+.date-picker {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--color-bg-surface);
+    padding: 0.5rem 1rem;
+    border-radius: 30px;
+    border: 1px solid var(--color-border-subtle);
+    backdrop-filter: blur(10px);
+}
+
+.date-picker input {
+    background: transparent;
+    border: none;
+    color: var(--color-text-primary);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    outline: none;
 }
 
 .personal-diary-paper {
     width: 100%;
-    max-width: 800px;
+    max-width: 900px;
     height: 80vh;
-    background-color: #fff;
+    background: rgba(20, 20, 25, 0.8);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 8px;
     box-shadow: var(--shadow-lg);
-    padding: 3rem;
+    padding: 4rem;
     overflow-y: auto;
-    font-family: var(--font-serif);
-    /* Fixed font */
+    font-family: var(--font-body);
     font-size: 1.1rem;
     line-height: 1.8;
-    color: #2d3748;
+    color: var(--color-text-primary);
+    backdrop-filter: blur(20px);
+    position: relative;
+    transition: all var(--transition-smooth);
+}
+
+.personal-diary-paper:focus-within {
+    border-color: var(--color-border-glow);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+.diary-header h1 {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: 2.5rem;
+    color: var(--color-accent-blue);
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--color-border-subtle);
+    padding-bottom: 1rem;
 }
 
 /* Tiptap Styles */
@@ -39,26 +111,102 @@
 }
 
 .ProseMirror p.is-editor-empty:first-child::before {
-    color: #adb5bd;
+    color: var(--color-text-muted);
     content: attr(data-placeholder);
     float: left;
     height: 0;
     pointer-events: none;
+    font-style: italic;
 }
 
-.personal-diary-locked,
-.personal-diary-unlock {
+.ProseMirror h1,
+.ProseMirror h2,
+.ProseMirror h3 {
+    font-family: var(--font-display);
+    color: var(--color-text-primary);
+    margin-top: 2rem;
+}
+
+.ProseMirror blockquote {
+    border-left: 3px solid var(--color-accent-amber);
+    padding-left: 1rem;
+    color: var(--color-text-secondary);
+    font-style: italic;
+}
+
+/* Locked State */
+.personal-diary-locked {
     height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: #2d3748;
-    color: white;
-    gap: 1rem;
+    background-color: var(--color-bg-void);
+    color: var(--color-text-primary);
+    font-family: var(--font-mono);
 }
 
-.lock-icon {
-    font-size: 4rem;
+.lock-screen {
+    background: var(--color-bg-surface);
+    padding: 3rem;
+    border-radius: 12px;
+    border: 1px solid var(--color-border-subtle);
+    text-align: center;
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-lg);
+}
+
+.lock-screen h2 {
+    font-family: var(--font-display);
+    font-weight: 300;
+    color: var(--color-accent-rose);
+    margin-bottom: 1rem;
+}
+
+.unlock-form input {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--color-border-subtle);
+    padding: 0.8rem;
+    border-radius: 4px;
+    color: #fff;
+    margin-right: 0.5rem;
+    font-family: var(--font-mono);
+}
+
+.unlock-form button,
+.lock-screen button {
+    background: var(--color-accent-rose);
+    border: none;
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
     cursor: pointer;
+    font-family: var(--font-mono);
+    transition: all var(--transition-fast);
+}
+
+.unlock-form button:hover,
+.lock-screen button:hover {
+    opacity: 0.9;
+    box-shadow: 0 0 15px rgba(247, 37, 133, 0.4);
+}
+
+.back-btn {
+    background: transparent !important;
+    border: 1px solid var(--color-border-subtle) !important;
+    margin-top: 1rem;
+}
+
+@keyframes pulseAtmosphere {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: scale(1.05);
+        opacity: 0.7;
+    }
 }

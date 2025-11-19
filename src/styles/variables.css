@@ -1,30 +1,57 @@
 :root {
-  /* Colors */
-  --color-bg-shelf: #2c241b; /* Dark wood-like */
-  --color-bg-paper: #fdfbf7; /* Warm paper */
-  --color-bg-blackboard: #2b2b2b; /* Dark grey/black */
-  
-  --color-text-primary: #1a1a1a;
-  --color-text-secondary: #4a4a4a;
-  --color-text-chalk: #e0e0e0;
-  
-  --color-accent: #8b5cf6; /* Violet */
-  --color-accent-hover: #7c3aed;
-  
-  /* Diary Colors (Spines) */
-  --color-diary-0: #ef4444; /* Red - Scratchpad */
-  --color-diary-1: #10b981; /* Green - Blackboard */
-  --color-diary-2: #3b82f6; /* Blue - Personal */
-  --color-diary-3: #f59e0b; /* Amber - Drafts */
-  --color-diary-4: #8b5cf6; /* Purple - Long Drafts */
-  --color-diary-5: #64748b; /* Slate - Academic */
+  /* -- Luminous Archive Palette -- */
 
-  /* Fonts */
-  --font-ui: 'Inter', sans-serif;
-  --font-handwriting: 'Caveat', cursive;
-  --font-handwriting-alt: 'Patrick Hand', cursive;
-  --font-serif: 'Merriweather', serif;
+  /* Backgrounds */
+  --color-bg-void: #050505;
+  /* Deepest black */
+  --color-bg-depth: #0a0a12;
+  /* Subtle indigo tint */
+  --color-bg-surface: rgba(20, 20, 25, 0.6);
+  /* Glassmorphism base */
+  --color-bg-surface-hover: rgba(30, 30, 40, 0.7);
+
+  /* Text */
+  --color-text-primary: #e0e0e0;
+  /* Soft white */
+  --color-text-secondary: #a0a0a0;
+  /* Muted grey */
+  --color-text-muted: #505050;
+  /* Dark grey */
+  --color-text-accent: #ffb703;
+  /* Amber Glow */
+
+  /* Accents */
+  --color-accent-amber: #ffb703;
+  --color-accent-blue: #4cc9f0;
+  --color-accent-rose: #f72585;
+  --color-accent-violet: #7209b7;
+
+  /* Borders & Separators */
+  --color-border-subtle: rgba(255, 255, 255, 0.08);
+  --color-border-glow: rgba(255, 183, 3, 0.3);
+
+  /* Diary Spines (Neon/Luminous versions) */
+  --color-diary-0: #ff595e;
+  /* Neon Red */
+  --color-diary-1: #8ac926;
+  /* Neon Green */
+  --color-diary-2: #1982c4;
+  /* Neon Blue */
+  --color-diary-3: #ffca3a;
+  /* Neon Yellow */
+  --color-diary-4: #6a4c93;
+  /* Deep Purple */
+  --color-diary-5: #ced4da;
+  /* Silver */
+
+  /* Typography */
+  --font-display: 'Fraunces', serif;
+  /* Headings */
+  --font-body: 'Instrument Sans', sans-serif;
+  /* UI/Body */
   --font-mono: 'JetBrains Mono', monospace;
+  /* Code */
+  --font-handwriting: 'Caveat', cursive;
 
   /* Spacing */
   --spacing-xs: 0.25rem;
@@ -33,9 +60,43 @@
   --spacing-lg: 2rem;
   --spacing-xl: 4rem;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-  --shadow-shelf: 0 20px 25px -5px rgb(0 0 0 / 0.5);
+  /* Shadows & Glows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.8);
+  --glow-amber: 0 0 20px rgba(255, 183, 3, 0.15);
+  --glow-blue: 0 0 20px rgba(76, 201, 240, 0.15);
+  --glass-blur: blur(12px);
+
+  /* Transitions */
+  --transition-fast: 0.2s cubic-bezier(0.2, 0, 0, 1);
+  --transition-smooth: 0.4s cubic-bezier(0.2, 0, 0, 1);
+  --transition-slow: 0.8s cubic-bezier(0.2, 0, 0, 1);
+}
+
+body {
+  background-color: var(--color-bg-void);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  margin: 0;
+  overflow-x: hidden;
+  /* Prevent scroll on transitions */
+}
+
+/* Global Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-void);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-subtle);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
 }
