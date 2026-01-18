@@ -1,0 +1,10 @@
+# Root level dependencies (if accidentally installed here)
+/node_modules/
+/package-lock.json
+/package.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# The muwi app has its own .gitignore for detailed rules
