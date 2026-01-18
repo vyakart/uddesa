@@ -60,66 +60,61 @@ interface DiaryCardProps {
   itemCount?: number;
 }
 
-export function DiaryCard({ type, onClick, lastModified, itemCount }: DiaryCardProps) {
+export function DiaryCard({ type, onClick }: DiaryCardProps) {
   const info = DIARY_INFO[type];
   const isBlackboard = type === 'blackboard';
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
-      month: 'short',
-      day: 'numeric',
-    }).format(date);
-  };
 
   return (
     <button
       onClick={() => onClick(type)}
-      className="group relative flex flex-col items-center justify-center rounded-lg p-6 transition-all duration-200 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2"
       style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '2rem',
+        borderRadius: '12px',
+        border: `2px solid ${isBlackboard ? '#636e72' : '#E0E0E0'}`,
         backgroundColor: info.color,
-        borderColor: isBlackboard ? '#636e72' : 'var(--color-border)',
+        cursor: 'pointer',
+        transition: 'transform 0.2s, box-shadow 0.2s',
+        minHeight: '180px',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'scale(1.02)';
+        e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.15)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'scale(1)';
+        e.currentTarget.style.boxShadow = 'none';
       }}
       aria-label={`Open ${info.name}`}
     >
-      {/* Icon */}
-      <span className="text-4xl mb-3" role="img" aria-hidden="true">
+      <span style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }} role="img" aria-hidden="true">
         {info.icon}
       </span>
 
-      {/* Name */}
       <h3
-        className="text-lg font-medium mb-1"
-        style={{ color: isBlackboard ? '#F5F5F5' : 'var(--color-text-primary)' }}
+        style={{
+          fontSize: '1.125rem',
+          fontWeight: 600,
+          marginBottom: '0.25rem',
+          color: isBlackboard ? '#F5F5F5' : '#1A1A1A',
+        }}
       >
         {info.name}
       </h3>
 
-      {/* Description */}
       <p
-        className="text-sm text-center opacity-75"
-        style={{ color: isBlackboard ? '#dfe6e9' : 'var(--color-text-secondary)' }}
+        style={{
+          fontSize: '0.875rem',
+          textAlign: 'center',
+          color: isBlackboard ? '#b2bec3' : '#666666',
+          margin: 0,
+        }}
       >
         {info.description}
       </p>
-
-      {/* Stats (shown on hover) */}
-      <div
-        className="absolute bottom-2 left-2 right-2 flex justify-between text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-        style={{ color: isBlackboard ? '#b2bec3' : 'var(--color-text-secondary)' }}
-      >
-        {lastModified && <span>Last: {formatDate(lastModified)}</span>}
-        {itemCount !== undefined && (
-          <span>
-            {itemCount} {itemCount === 1 ? 'item' : 'items'}
-          </span>
-        )}
-      </div>
-
-      {/* Subtle border */}
-      <div
-        className="absolute inset-0 rounded-lg border-2 opacity-10"
-        style={{ borderColor: isBlackboard ? '#F5F5F5' : '#000000' }}
-      />
     </button>
   );
 }

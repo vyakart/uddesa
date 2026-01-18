@@ -4,30 +4,37 @@ import electron from 'vite-plugin-electron'
 import renderer from 'vite-plugin-electron-renderer'
 import path from 'path'
 
+const isElectron = process.env.ELECTRON === 'true'
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
-    electron([
-      {
-        entry: 'electron/main.ts',
-        vite: {
-          build: {
-            outDir: 'dist-electron',
-            rollupOptions: {
-              external: ['electron'],
+    // Only include Electron plugins when building for Electron
+    ...(isElectron
+      ? [
+          electron([
+            {
+              entry: 'electron/main.ts',
+              vite: {
+                build: {
+                  outDir: 'dist-electron',
+                  rollupOptions: {
+                    external: ['electron'],
+                  },
+                },
+              },
             },
-          },
-        },
-      },
-      {
-        entry: 'electron/preload.ts',
-        onstart(options) {
-          options.reload()
-        },
-      },
-    ]),
-    renderer(),
+            {
+              entry: 'electron/preload.ts',
+              onstart(options) {
+                options.reload()
+              },
+            },
+          ]),
+          renderer(),
+        ]
+      : []),
   ],
   resolve: {
     alias: {

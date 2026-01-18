@@ -4,6 +4,7 @@ import { useSettingsStore } from '@/stores/settingsStore';
 import { useGlobalShortcuts } from '@/hooks';
 import { Shelf } from '@/components/shelf';
 import { DiaryLayout } from '@/components/common';
+import { PersonalDiary } from '@/components/diaries/PersonalDiary';
 
 // Placeholder components for each diary type
 function ScratchpadPlaceholder() {
@@ -21,16 +22,6 @@ function BlackboardPlaceholder() {
     <DiaryLayout diaryType="blackboard">
       <div className="flex items-center justify-center h-full">
         <p className="text-gray-500">Blackboard - Coming soon</p>
-      </div>
-    </DiaryLayout>
-  );
-}
-
-function PersonalDiaryPlaceholder() {
-  return (
-    <DiaryLayout diaryType="personal-diary">
-      <div className="flex items-center justify-center h-full">
-        <p className="text-gray-500">Personal Diary - Coming soon</p>
       </div>
     </DiaryLayout>
   );
@@ -103,7 +94,7 @@ function App() {
     case 'blackboard':
       return <BlackboardPlaceholder />;
     case 'personal-diary':
-      return <PersonalDiaryPlaceholder />;
+      return <PersonalDiary />;
     case 'drafts':
       return <DraftsPlaceholder />;
     case 'long-drafts':

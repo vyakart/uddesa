@@ -15,18 +15,36 @@ export function DiaryLayout({ children, diaryType, showToolbar = true, toolbar }
 
   return (
     <div
-      className="min-h-screen flex flex-col"
-      style={{ backgroundColor: 'var(--color-bg-primary)' }}
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: '#FAFAFA',
+      }}
     >
       {/* Header */}
       <header
-        className="flex items-center justify-between px-4 py-3 border-b"
-        style={{ borderColor: 'var(--color-border)' }}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0.75rem 1rem',
+          borderBottom: '1px solid #E0E0E0',
+        }}
       >
         {/* Back Button */}
         <button
           onClick={closeDiary}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.375rem 0.75rem',
+            borderRadius: '8px',
+            border: 'none',
+            backgroundColor: 'transparent',
+            cursor: 'pointer',
+          }}
           aria-label="Back to shelf"
         >
           <svg
@@ -39,13 +57,16 @@ export function DiaryLayout({ children, diaryType, showToolbar = true, toolbar }
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            style={{ color: 'var(--color-text-secondary)' }}
+            style={{ color: '#666666' }}
           >
             <path d="m15 18-6-6 6-6" />
           </svg>
           <span
-            className="text-sm font-medium"
-            style={{ color: 'var(--color-text-secondary)' }}
+            style={{
+              fontSize: '0.875rem',
+              fontWeight: 500,
+              color: '#666666',
+            }}
           >
             Shelf
           </span>
@@ -53,8 +74,14 @@ export function DiaryLayout({ children, diaryType, showToolbar = true, toolbar }
 
         {/* Title */}
         <h1
-          className="text-lg font-semibold flex items-center gap-2"
-          style={{ color: 'var(--color-text-primary)' }}
+          style={{
+            fontSize: '1.125rem',
+            fontWeight: 600,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            color: '#1A1A1A',
+          }}
         >
           <span role="img" aria-hidden="true">
             {info.icon}
@@ -63,11 +90,11 @@ export function DiaryLayout({ children, diaryType, showToolbar = true, toolbar }
         </h1>
 
         {/* Toolbar placeholder */}
-        <div className="min-w-[80px]">{showToolbar && toolbar}</div>
+        <div style={{ minWidth: '80px' }}>{showToolbar && toolbar}</div>
       </header>
 
       {/* Content */}
-      <main className="flex-1 overflow-auto">{children}</main>
+      <main style={{ flex: 1, overflow: 'auto' }}>{children}</main>
     </div>
   );
 }
