@@ -5,6 +5,7 @@ import { useGlobalShortcuts } from '@/hooks';
 import { Shelf } from '@/components/shelf';
 import { DiaryLayout } from '@/components/common';
 import { PersonalDiary } from '@/components/diaries/PersonalDiary';
+import { Blackboard } from '@/components/diaries/blackboard';
 
 // Placeholder components for each diary type
 function ScratchpadPlaceholder() {
@@ -17,15 +18,6 @@ function ScratchpadPlaceholder() {
   );
 }
 
-function BlackboardPlaceholder() {
-  return (
-    <DiaryLayout diaryType="blackboard">
-      <div className="flex items-center justify-center h-full">
-        <p className="text-gray-500">Blackboard - Coming soon</p>
-      </div>
-    </DiaryLayout>
-  );
-}
 
 function DraftsPlaceholder() {
   return (
@@ -92,7 +84,7 @@ function App() {
     case 'scratchpad':
       return <ScratchpadPlaceholder />;
     case 'blackboard':
-      return <BlackboardPlaceholder />;
+      return <Blackboard />;
     case 'personal-diary':
       return <PersonalDiary />;
     case 'drafts':

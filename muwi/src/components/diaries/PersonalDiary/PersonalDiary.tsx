@@ -19,7 +19,6 @@ export function PersonalDiary() {
 
   const entries = usePersonalDiaryStore((state) => state.entries);
   const currentEntry = usePersonalDiaryStore((state) => state.currentEntry);
-  const isLoading = usePersonalDiaryStore((state) => state.isLoading);
   const error = usePersonalDiaryStore((state) => state.error);
   const loadEntries = usePersonalDiaryStore((state) => state.loadEntries);
   const loadEntry = usePersonalDiaryStore((state) => state.loadEntry);
