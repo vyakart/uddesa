@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
+import { format } from 'date-fns';
 import type { DiaryEntry } from '@/types/diary';
 import { db } from '@/db/database';
 
@@ -16,6 +17,11 @@ interface PersonalDiaryState {
   updateEntry: (id: string, content: string) => Promise<void>;
   deleteEntry: (id: string) => Promise<void>;
   setCurrentEntry: (entry: DiaryEntry | null) => void;
+}
+
+// Helper to format date as ISO string (YYYY-MM-DD)
+function formatDateString(date: Date): string {
+  return format(date, 'yyyy-MM-dd');
 }
 
 export const usePersonalDiaryStore = create<PersonalDiaryState>()(
@@ -45,23 +51,18 @@ export const usePersonalDiaryStore = create<PersonalDiaryState>()(
       loadEntry: async (date: Date) => {
         set({ isLoading: true, error: null });
         try {
-          // Normalize the date to start of day
-          const startOfDay = new Date(date);
-          startOfDay.setHours(0, 0, 0, 0);
-
-          const endOfDay = new Date(date);
-          endOfDay.setHours(23, 59, 59, 999);
+          const dateString = formatDateString(date);
 
           const entry = await db.diaryEntries
             .where('date')
-            .between(startOfDay, endOfDay, true, true)
+            .equals(dateString)
             .first();
 
           if (entry) {
             set({ currentEntry: entry, isLoading: false });
           } else {
             // Create a new entry for this date
-            const newEntry = await get().createEntry(startOfDay);
+            const newEntry = await get().createEntry(date);
             set({ currentEntry: newEntry, isLoading: false });
           }
         } catch (error) {
@@ -76,12 +77,12 @@ export const usePersonalDiaryStore = create<PersonalDiaryState>()(
         const now = new Date();
         const newEntry: DiaryEntry = {
           id: crypto.randomUUID(),
-          date: date,
+          date: formatDateString(date),
           content: content,
           wordCount: content.split(/\s+/).filter(Boolean).length,
           isLocked: false,
           createdAt: now,
-          updatedAt: now,
+          modifiedAt: now,
         };
 
         await db.diaryEntries.add(newEntry);
@@ -89,7 +90,7 @@ export const usePersonalDiaryStore = create<PersonalDiaryState>()(
         // Update local state
         set((state) => ({
           entries: [newEntry, ...state.entries].sort(
-            (a, b) => b.date.getTime() - a.date.getTime()
+            (a, b) => b.date.localeCompare(a.date)
           ),
         }));
 
@@ -98,24 +99,24 @@ export const usePersonalDiaryStore = create<PersonalDiaryState>()(
 
       updateEntry: async (id: string, content: string) => {
         const wordCount = content.split(/\s+/).filter(Boolean).length;
-        const updatedAt = new Date();
+        const modifiedAt = new Date();
 
         await db.diaryEntries.update(id, {
           content,
           wordCount,
-          updatedAt,
+          modifiedAt,
         });
 
         // Update local state
         set((state) => ({
           entries: state.entries.map((entry) =>
             entry.id === id
-              ? { ...entry, content, wordCount, updatedAt }
+              ? { ...entry, content, wordCount, modifiedAt }
               : entry
           ),
           currentEntry:
             state.currentEntry?.id === id
-              ? { ...state.currentEntry, content, wordCount, updatedAt }
+              ? { ...state.currentEntry, content, wordCount, modifiedAt }
               : state.currentEntry,
         }));
       },

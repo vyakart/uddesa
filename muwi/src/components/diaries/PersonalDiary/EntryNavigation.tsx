@@ -1,5 +1,13 @@
-import { format, isToday, isSameDay, addDays, subDays } from 'date-fns';
+import { format, isToday, isSameDay, addDays, subDays, parseISO } from 'date-fns';
 import type { DiaryEntry } from '@/types/diary';
+
+// Helper to safely convert entry.date to Date object (handles both string and Date)
+function toDate(date: string | Date): Date {
+  if (date instanceof Date) {
+    return date;
+  }
+  return parseISO(date);
+}
 
 interface EntryNavigationProps {
   entries: DiaryEntry[];
@@ -195,13 +203,14 @@ export function EntryNavigation({
           </p>
         ) : (
           entries.map((entry) => {
-            const isSelected = isSameDay(entry.date, currentDate);
-            const isTodayEntry = isToday(entry.date);
+            const entryDate = toDate(entry.date);
+            const isSelected = isSameDay(entryDate, currentDate);
+            const isTodayEntry = isToday(entryDate);
 
             return (
               <button
                 key={entry.id}
-                onClick={() => onDateChange(entry.date)}
+                onClick={() => onDateChange(entryDate)}
                 style={{
                   width: '100%',
                   padding: '10px 12px',
@@ -229,7 +238,7 @@ export function EntryNavigation({
                       fontSize: '0.875rem',
                     }}
                   >
-                    {format(entry.date, 'MMM d, yyyy')}
+                    {format(entryDate, 'MMM d, yyyy')}
                   </span>
                   {isTodayEntry && (
                     <span

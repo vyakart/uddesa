@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   format,
   startOfMonth,
@@ -85,8 +85,8 @@ export function DatePicker({
     const startDate = startOfWeek(monthStart);
     const endDate = endOfWeek(monthEnd);
 
-    const rows: JSX.Element[] = [];
-    let days: JSX.Element[] = [];
+    const rows: React.ReactElement[] = [];
+    let days: React.ReactElement[] = [];
     let day = startDate;
 
     // Header with day names

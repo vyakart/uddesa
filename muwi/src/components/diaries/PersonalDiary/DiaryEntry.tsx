@@ -1,10 +1,18 @@
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { DatePicker } from './DatePicker';
 import type { DiaryEntry as DiaryEntryType } from '@/types/diary';
+
+// Helper to safely convert entry.date to Date object (handles both string and Date)
+function toDate(date: string | Date): Date {
+  if (date instanceof Date) {
+    return date;
+  }
+  return parseISO(date);
+}
 
 interface DiaryEntryProps {
   entry: DiaryEntryType | null;
@@ -12,12 +20,18 @@ interface DiaryEntryProps {
   onDateChange: (date: Date) => void;
 }
 
+// Helper function to count words from text
+function countWords(text: string): number {
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
 export function DiaryEntry({
   entry,
   onContentChange,
   onDateChange,
 }: DiaryEntryProps) {
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [wordCount, setWordCount] = useState(0);
 
   const editor = useEditor({
     extensions: [
@@ -45,6 +59,10 @@ export function DiaryEntry({
     },
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
+      const text = editor.getText();
+
+      // Update word count immediately
+      setWordCount(countWords(text));
 
       // Debounce save
       if (saveTimeoutRef.current) {
@@ -56,7 +74,7 @@ export function DiaryEntry({
     },
   });
 
-  // Update editor content when entry changes
+  // Update editor content and word count when entry changes
   useEffect(() => {
     if (editor && entry) {
       // Only update if content is different to avoid cursor jumping
@@ -64,8 +82,17 @@ export function DiaryEntry({
       if (currentContent !== entry.content) {
         editor.commands.setContent(entry.content || '');
       }
+      // Update word count from editor text
+      setWordCount(countWords(editor.getText()));
     }
   }, [editor, entry?.id]); // Only trigger on entry ID change
+
+  // Initialize word count when editor is ready
+  useEffect(() => {
+    if (editor) {
+      setWordCount(countWords(editor.getText()));
+    }
+  }, [editor]);
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -75,12 +102,6 @@ export function DiaryEntry({
       }
     };
   }, []);
-
-  const getWordCount = useCallback(() => {
-    if (!editor) return 0;
-    const text = editor.getText();
-    return text.split(/\s+/).filter(Boolean).length;
-  }, [editor]);
 
   if (!entry) {
     return (
@@ -119,7 +140,7 @@ export function DiaryEntry({
         }}
       >
         <DatePicker
-          selectedDate={entry.date}
+          selectedDate={toDate(entry.date)}
           onDateChange={onDateChange}
         />
         <div
@@ -135,7 +156,7 @@ export function DiaryEntry({
               color: '#888888',
             }}
           >
-            {getWordCount()} words
+            {wordCount} words
           </span>
           <span
             style={{
@@ -143,7 +164,7 @@ export function DiaryEntry({
               color: '#AAAAAA',
             }}
           >
-            Last edited: {format(entry.updatedAt, 'h:mm a')}
+            Last edited: {format(entry.modifiedAt, 'h:mm a')}
           </span>
         </div>
       </div>
@@ -154,16 +175,6 @@ export function DiaryEntry({
           flex: 1,
           overflow: 'auto',
           backgroundColor: '#FFFEF9',
-          backgroundImage: `
-            repeating-linear-gradient(
-              transparent,
-              transparent 31px,
-              #E8E8E8 31px,
-              #E8E8E8 32px
-            )
-          `,
-          backgroundSize: '100% 32px',
-          backgroundPosition: '0 24px',
         }}
       >
         <div
