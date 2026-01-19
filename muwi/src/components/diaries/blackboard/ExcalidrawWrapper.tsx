@@ -1,8 +1,10 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Excalidraw } from '@excalidraw/excalidraw';
 import type { ExcalidrawElement } from '@excalidraw/excalidraw/element/types';
-import type { AppState } from '@excalidraw/excalidraw/types';
+import type { AppState, ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types';
 import { useBlackboardStore } from '@/stores/blackboardStore';
+
+// Import Excalidraw styles
 import '@excalidraw/excalidraw/index.css';
 
 interface ExcalidrawWrapperProps {
@@ -10,7 +12,9 @@ interface ExcalidrawWrapperProps {
 }
 
 export function ExcalidrawWrapper({ onElementsChange }: ExcalidrawWrapperProps) {
+  const [excalidrawAPI, setExcalidrawAPI] = useState<ExcalidrawImperativeAPI | null>(null);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isFirstRender = useRef(true);
 
   const canvas = useBlackboardStore((state) => state.canvas);
   const elements = useBlackboardStore((state) => state.elements);
@@ -33,6 +37,12 @@ export function ExcalidrawWrapper({ onElementsChange }: ExcalidrawWrapperProps) 
   // Handle changes from Excalidraw
   const handleChange = useCallback(
     (newElements: readonly ExcalidrawElement[], appState: AppState) => {
+      // Skip the first render to avoid saving initial empty state
+      if (isFirstRender.current) {
+        isFirstRender.current = false;
+        return;
+      }
+
       // Update app state in store
       setAppState({
         scrollX: appState.scrollX,
@@ -48,6 +58,18 @@ export function ExcalidrawWrapper({ onElementsChange }: ExcalidrawWrapperProps) 
     },
     [debouncedSave, onElementsChange, setAppState]
   );
+
+  // Update Excalidraw when canvas settings change
+  useEffect(() => {
+    if (excalidrawAPI && canvas?.settings) {
+      excalidrawAPI.updateScene({
+        appState: {
+          viewBackgroundColor: canvas.settings.backgroundColor,
+          gridSize: canvas.settings.showGrid ? (canvas.settings.gridSize || 20) : null,
+        },
+      });
+    }
+  }, [excalidrawAPI, canvas?.settings?.backgroundColor, canvas?.settings?.showGrid, canvas?.settings?.gridSize]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -65,41 +87,37 @@ export function ExcalidrawWrapper({ onElementsChange }: ExcalidrawWrapperProps) 
       ? 'dark'
       : 'light';
 
-  // Initial data for Excalidraw
-  const initialData = {
-    elements: elements,
-    appState: {
-      viewBackgroundColor: canvas?.settings?.backgroundColor || '#fdfbf7',
-      gridSize: canvas?.settings?.showGrid ? (canvas?.settings?.gridSize || 20) : undefined,
-      theme: theme,
-    },
-    scrollToContent: elements.length > 0,
-  };
-
   return (
     <div
       style={{
         width: '100%',
         height: '100%',
-        position: 'relative',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
       }}
     >
       <Excalidraw
-        initialData={initialData}
+        excalidrawAPI={(api) => setExcalidrawAPI(api)}
+        initialData={{
+          elements: elements,
+          appState: {
+            viewBackgroundColor: canvas?.settings?.backgroundColor || '#fdfbf7',
+            gridSize: canvas?.settings?.showGrid ? (canvas?.settings?.gridSize || 20) : null,
+          },
+        }}
         onChange={handleChange}
         theme={theme}
+        gridModeEnabled={canvas?.settings?.showGrid || false}
         UIOptions={{
           canvasActions: {
             loadScene: false,
             saveToActiveFile: false,
-            export: false,
-            saveAsImage: true,
-          },
-          tools: {
-            image: false,
+            export: { saveFileToDisk: true },
           },
         }}
-        gridModeEnabled={canvas?.settings?.showGrid || false}
       />
     </div>
   );

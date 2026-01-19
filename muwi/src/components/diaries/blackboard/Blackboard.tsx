@@ -143,6 +143,7 @@ export function Blackboard() {
           style={{
             flex: 1,
             height: '100%',
+            position: 'relative',
             overflow: 'hidden',
           }}
         >
