@@ -16,10 +16,11 @@ export function DiaryLayout({ children, diaryType, showToolbar = true, toolbar }
   return (
     <div
       style={{
-        minHeight: '100vh',
+        height: '100vh',
         display: 'flex',
         flexDirection: 'column',
         backgroundColor: '#FAFAFA',
+        overflow: 'hidden',
       }}
     >
       {/* Header */}
@@ -94,7 +95,7 @@ export function DiaryLayout({ children, diaryType, showToolbar = true, toolbar }
       </header>
 
       {/* Content */}
-      <main style={{ flex: 1, overflow: 'auto' }}>{children}</main>
+      <main style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>{children}</main>
     </div>
   );
 }
