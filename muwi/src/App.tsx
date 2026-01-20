@@ -6,17 +6,7 @@ import { Shelf } from '@/components/shelf';
 import { DiaryLayout } from '@/components/common';
 import { PersonalDiary } from '@/components/diaries/PersonalDiary';
 import { Blackboard } from '@/components/diaries/blackboard';
-
-// Placeholder components for each diary type
-function ScratchpadPlaceholder() {
-  return (
-    <DiaryLayout diaryType="scratchpad">
-      <div className="flex items-center justify-center h-full">
-        <p className="text-gray-500">Scratchpad - Coming soon</p>
-      </div>
-    </DiaryLayout>
-  );
-}
+import { Scratchpad } from '@/components/diaries/scratchpad';
 
 
 function DraftsPlaceholder() {
@@ -82,7 +72,7 @@ function App() {
   // Render the appropriate diary component
   switch (activeDiary) {
     case 'scratchpad':
-      return <ScratchpadPlaceholder />;
+      return <Scratchpad />;
     case 'blackboard':
       return <Blackboard />;
     case 'personal-diary':
