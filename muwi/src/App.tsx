@@ -7,17 +7,7 @@ import { DiaryLayout } from '@/components/common';
 import { PersonalDiary } from '@/components/diaries/PersonalDiary';
 import { Blackboard } from '@/components/diaries/blackboard';
 import { Scratchpad } from '@/components/diaries/scratchpad';
-
-
-function DraftsPlaceholder() {
-  return (
-    <DiaryLayout diaryType="drafts">
-      <div className="flex items-center justify-center h-full">
-        <p className="text-gray-500">Drafts - Coming soon</p>
-      </div>
-    </DiaryLayout>
-  );
-}
+import { Drafts } from '@/components/diaries/drafts';
 
 function LongDraftsPlaceholder() {
   return (
@@ -78,7 +68,7 @@ function App() {
     case 'personal-diary':
       return <PersonalDiary />;
     case 'drafts':
-      return <DraftsPlaceholder />;
+      return <Drafts />;
     case 'long-drafts':
       return <LongDraftsPlaceholder />;
     case 'academic':
