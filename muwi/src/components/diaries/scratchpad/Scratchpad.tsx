@@ -23,11 +23,25 @@ export function Scratchpad() {
   const currentPage = pages[currentPageIndex];
   const currentBlocks = currentPage ? (textBlocks.get(currentPage.id) || []) : [];
 
+  // Debug logging
+  useEffect(() => {
+    console.log('[Scratchpad Debug]', {
+      isInitialized,
+      isLoading,
+      pagesCount: pages.length,
+      currentPageIndex,
+      currentPage,
+      currentBlocks,
+    });
+  }, [isInitialized, isLoading, pages.length, currentPageIndex, currentPage, currentBlocks]);
+
   // Initialize: load pages on mount
   useEffect(() => {
     const initialize = async () => {
       try {
+        console.log('[Scratchpad] Initializing...');
         await loadPages();
+        console.log('[Scratchpad] Loaded pages');
         setIsInitialized(true);
       } catch (err) {
         console.error('Failed to initialize Scratchpad:', err);
@@ -146,23 +160,56 @@ export function Scratchpad() {
 
   return (
     <DiaryLayout diaryType="scratchpad" toolbar={toolbar}>
-      <div className="flex h-full overflow-hidden">
+      <div style={{ display: 'flex', height: '100%', overflow: 'hidden', position: 'relative' }}>
         {/* Main content area */}
-        <div className="flex-1 overflow-auto bg-gray-100">
-          {currentPage && (
+        <div
+          style={{
+            flex: 1,
+            overflow: 'auto',
+            backgroundColor: '#f5f5f5',
+            display: 'flex',
+            alignItems: 'flex-start',
+            justifyContent: 'center',
+          }}
+        >
+          {currentPage ? (
             <ScratchpadPage page={currentPage} blocks={currentBlocks} />
+          ) : (
+            <div style={{ padding: '2rem', color: '#888' }}>No page found</div>
           )}
         </div>
 
         {/* Page stack on the right */}
-        <div className="border-l border-gray-200 bg-white overflow-y-auto">
+        <div
+          style={{
+            width: '48px',
+            borderLeft: '1px solid #e0e0e0',
+            backgroundColor: 'white',
+            overflowY: 'auto',
+            flexShrink: 0,
+          }}
+        >
           <PageStack />
         </div>
-      </div>
 
-      {/* Page counter at bottom */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 bg-white rounded-full shadow text-sm text-gray-600">
-        Page {currentPageIndex + 1} of {pages.length}
+        {/* Page counter at bottom */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '1rem',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            padding: '0.5rem 1rem',
+            backgroundColor: 'white',
+            borderRadius: '9999px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            fontSize: '0.875rem',
+            color: '#666',
+            zIndex: 10,
+          }}
+        >
+          Page {currentPageIndex + 1} of {pages.length}
+        </div>
       </div>
     </DiaryLayout>
   );
