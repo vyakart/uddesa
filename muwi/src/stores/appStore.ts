@@ -94,5 +94,5 @@ export const useAppStore = create<AppState>()(
 export const selectCurrentView = (state: AppState) => state.currentView;
 export const selectActiveDiary = (state: AppState) => state.activeDiary;
 export const selectActiveItemId = (state: AppState) => state.activeItemId;
-export const selectIsLoading = (state: AppState) => state.isLoading;
-export const selectError = (state: AppState) => state.error;
+export const selectAppIsLoading = (state: AppState) => state.isLoading;
+export const selectAppError = (state: AppState) => state.error;

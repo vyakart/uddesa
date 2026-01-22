@@ -140,6 +140,6 @@ export const usePersonalDiaryStore = create<PersonalDiaryState>()(
 );
 
 // Selectors
-export const selectEntries = (state: PersonalDiaryState) => state.entries;
-export const selectCurrentEntry = (state: PersonalDiaryState) => state.currentEntry;
-export const selectIsLoading = (state: PersonalDiaryState) => state.isLoading;
+export const selectDiaryEntries = (state: PersonalDiaryState) => state.entries;
+export const selectDiaryCurrentEntry = (state: PersonalDiaryState) => state.currentEntry;
+export const selectDiaryIsLoading = (state: PersonalDiaryState) => state.isLoading;

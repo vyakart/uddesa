@@ -1,5 +1,12 @@
-import { useState, useRef, useEffect } from 'react';
-import { useDraftsStore, type DraftSortBy } from '@/stores/draftsStore';
+import { useState, useRef, useEffect, useCallback, memo } from 'react';
+import {
+  useDraftsStore,
+  selectCurrentDraftId,
+  selectDraftsSortBy,
+  selectDraftsSortOrder,
+  selectDraftsFilterStatus,
+  type DraftSortBy,
+} from '@/stores/draftsStore';
 import type { Draft, DraftStatus } from '@/types/drafts';
 import { StatusBadge } from './StatusBadge';
 
@@ -46,19 +53,20 @@ function truncateText(text: string, maxLength: number): string {
 }
 
 export function DraftList({ onCreateNew }: DraftListProps) {
-  const {
-    currentDraftId,
-    sortBy,
-    sortOrder,
-    filterStatus,
-    setCurrentDraft,
-    cycleDraftStatus,
-    deleteDraft,
-    setSortBy,
-    setSortOrder,
-    setFilterStatus,
-    getSortedFilteredDrafts,
-  } = useDraftsStore();
+  // Use selective subscriptions for better performance
+  const currentDraftId = useDraftsStore(selectCurrentDraftId);
+  const sortBy = useDraftsStore(selectDraftsSortBy);
+  const sortOrder = useDraftsStore(selectDraftsSortOrder);
+  const filterStatus = useDraftsStore(selectDraftsFilterStatus);
+  const drafts = useDraftsStore((state) => state.getSortedFilteredDrafts());
+
+  // Get stable action references
+  const setCurrentDraft = useDraftsStore((state) => state.setCurrentDraft);
+  const cycleDraftStatus = useDraftsStore((state) => state.cycleDraftStatus);
+  const deleteDraft = useDraftsStore((state) => state.deleteDraft);
+  const setSortBy = useDraftsStore((state) => state.setSortBy);
+  const setSortOrder = useDraftsStore((state) => state.setSortOrder);
+  const setFilterStatus = useDraftsStore((state) => state.setFilterStatus);
 
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [showFilterMenu, setShowFilterMenu] = useState(false);
@@ -66,8 +74,6 @@ export function DraftList({ onCreateNew }: DraftListProps) {
 
   const sortMenuRef = useRef<HTMLDivElement>(null);
   const filterMenuRef = useRef<HTMLDivElement>(null);
-
-  const drafts = getSortedFilteredDrafts();
 
   // Close menus when clicking outside
   useEffect(() => {
@@ -87,7 +93,7 @@ export function DraftList({ onCreateNew }: DraftListProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [contextMenu]);
 
-  const handleSortChange = (newSortBy: DraftSortBy) => {
+  const handleSortChange = useCallback((newSortBy: DraftSortBy) => {
     if (newSortBy === sortBy) {
       setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc');
     } else {
@@ -95,24 +101,24 @@ export function DraftList({ onCreateNew }: DraftListProps) {
       setSortOrder('desc');
     }
     setShowSortMenu(false);
-  };
+  }, [sortBy, sortOrder, setSortBy, setSortOrder]);
 
-  const handleFilterChange = (status: DraftStatus | 'all') => {
+  const handleFilterChange = useCallback((status: DraftStatus | 'all') => {
     setFilterStatus(status);
     setShowFilterMenu(false);
-  };
+  }, [setFilterStatus]);
 
-  const handleContextMenu = (e: React.MouseEvent, draftId: string) => {
+  const handleContextMenu = useCallback((e: React.MouseEvent, draftId: string) => {
     e.preventDefault();
     setContextMenu({ x: e.clientX, y: e.clientY, draftId });
-  };
+  }, []);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = useCallback(async (id: string) => {
     if (confirm('Are you sure you want to delete this draft?')) {
       await deleteDraft(id);
     }
     setContextMenu(null);
-  };
+  }, [deleteDraft]);
 
   return (
     <div
@@ -400,7 +406,13 @@ interface DraftListItemProps {
   onContextMenu: (e: React.MouseEvent) => void;
 }
 
-function DraftListItem({ draft, isSelected, onSelect, onStatusClick, onContextMenu }: DraftListItemProps) {
+const DraftListItem = memo(function DraftListItem({
+  draft,
+  isSelected,
+  onSelect,
+  onStatusClick,
+  onContextMenu,
+}: DraftListItemProps) {
   return (
     <div
       onClick={onSelect}
@@ -507,4 +519,4 @@ function DraftListItem({ draft, isSelected, onSelect, onStatusClick, onContextMe
       </div>
     </div>
   );
-}
+});

@@ -48,12 +48,14 @@ export function ExcalidrawWrapper({ onElementsChange }: ExcalidrawWrapperProps) 
   // Update Excalidraw when canvas settings change
   useEffect(() => {
     if (excalidrawAPI && canvas?.settings) {
-      excalidrawAPI.updateScene({
-        appState: {
-          viewBackgroundColor: canvas.settings.backgroundColor,
-          gridSize: canvas.settings.showGrid ? (canvas.settings.gridSize || 20) : null,
-        },
-      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const appStateUpdate: any = {
+        viewBackgroundColor: canvas.settings.backgroundColor,
+      };
+      if (canvas.settings.showGrid) {
+        appStateUpdate.gridSize = canvas.settings.gridSize ?? 20;
+      }
+      excalidrawAPI.updateScene({ appState: appStateUpdate });
     }
   }, [excalidrawAPI, canvas?.settings?.backgroundColor, canvas?.settings?.showGrid, canvas?.settings?.gridSize]);
 
@@ -80,7 +82,7 @@ export function ExcalidrawWrapper({ onElementsChange }: ExcalidrawWrapperProps) 
           elements: elements,
           appState: {
             viewBackgroundColor: canvas?.settings?.backgroundColor || '#fdfbf7',
-            gridSize: canvas?.settings?.showGrid ? (canvas?.settings?.gridSize || 20) : null,
+            gridSize: canvas?.settings?.showGrid ? (canvas?.settings?.gridSize ?? 20) : undefined,
           },
         }}
         onChange={handleChange}

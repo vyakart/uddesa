@@ -1,26 +1,39 @@
 import { useEffect, useCallback } from 'react';
 import { DiaryLayout } from '@/components/common/DiaryLayout';
-import { useDraftsStore } from '@/stores/draftsStore';
+import {
+  useDraftsStore,
+  selectDraftsIsLoading,
+  selectDraftsError,
+  selectCurrentDraft,
+  selectDraftsCount,
+} from '@/stores/draftsStore';
 import { DraftList } from './DraftList';
 import { DraftEditor } from './DraftEditor';
 
 export function Drafts() {
-  const {
-    isLoading,
-    error,
-    loadDrafts,
-    createDraft,
-    updateDraft,
-    cycleDraftStatus,
-    getCurrentDraft,
-  } = useDraftsStore();
+  // Use selectors for reactive state
+  const isLoading = useDraftsStore(selectDraftsIsLoading);
+  const error = useDraftsStore(selectDraftsError);
+  const currentDraft = useDraftsStore(selectCurrentDraft);
+  const draftCount = useDraftsStore(selectDraftsCount);
 
-  const currentDraft = getCurrentDraft();
+  // Get actions (these are stable references)
+  const loadDrafts = useDraftsStore((state) => state.loadDrafts);
+  const createDraft = useDraftsStore((state) => state.createDraft);
+  const updateDraft = useDraftsStore((state) => state.updateDraft);
+  const cycleDraftStatus = useDraftsStore((state) => state.cycleDraftStatus);
 
   // Load drafts on mount
   useEffect(() => {
     loadDrafts();
   }, [loadDrafts]);
+
+  // Memoize current draft ID for stable callback dependencies
+  const currentDraftId = currentDraft?.id;
+
+  const handleCreateNew = useCallback(async () => {
+    await createDraft();
+  }, [createDraft]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -30,41 +43,37 @@ export function Drafts() {
       // Ctrl/Cmd + N: Create new draft
       if (isMod && e.key === 'n') {
         e.preventDefault();
-        handleCreateNew();
+        createDraft();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  const handleCreateNew = useCallback(async () => {
-    await createDraft();
   }, [createDraft]);
 
   const handleTitleChange = useCallback(
     (title: string) => {
-      if (currentDraft) {
-        updateDraft(currentDraft.id, { title });
+      if (currentDraftId) {
+        updateDraft(currentDraftId, { title });
       }
     },
-    [currentDraft, updateDraft]
+    [currentDraftId, updateDraft]
   );
 
   const handleContentChange = useCallback(
     (content: string) => {
-      if (currentDraft) {
-        updateDraft(currentDraft.id, { content });
+      if (currentDraftId) {
+        updateDraft(currentDraftId, { content });
       }
     },
-    [currentDraft, updateDraft]
+    [currentDraftId, updateDraft]
   );
 
   const handleStatusCycle = useCallback(() => {
-    if (currentDraft) {
-      cycleDraftStatus(currentDraft.id);
+    if (currentDraftId) {
+      cycleDraftStatus(currentDraftId);
     }
-  }, [currentDraft, cycleDraftStatus]);
+  }, [currentDraftId, cycleDraftStatus]);
 
   if (isLoading) {
     return (
@@ -174,7 +183,7 @@ export function Drafts() {
       toolbar={
         <DraftsToolbar
           onCreateNew={handleCreateNew}
-          draftCount={useDraftsStore.getState().drafts.length}
+          draftCount={draftCount}
         />
       }
     >

@@ -232,7 +232,7 @@ export const useDraftsStore = create<DraftsState>()(
   )
 );
 
-// Selectors
+// Selectors - use these in components for proper reactivity
 export const selectDrafts = (state: DraftsState) => state.drafts;
 export const selectCurrentDraftId = (state: DraftsState) => state.currentDraftId;
 export const selectDraftsIsLoading = (state: DraftsState) => state.isLoading;
@@ -240,3 +240,10 @@ export const selectDraftsError = (state: DraftsState) => state.error;
 export const selectDraftsSortBy = (state: DraftsState) => state.sortBy;
 export const selectDraftsSortOrder = (state: DraftsState) => state.sortOrder;
 export const selectDraftsFilterStatus = (state: DraftsState) => state.filterStatus;
+export const selectDraftsCount = (state: DraftsState) => state.drafts.length;
+
+// Derived selector for current draft (computed from drafts + currentDraftId)
+export const selectCurrentDraft = (state: DraftsState) => {
+  if (!state.currentDraftId) return null;
+  return state.drafts.find(d => d.id === state.currentDraftId) ?? null;
+};
