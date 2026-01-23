@@ -3,21 +3,12 @@ import { useAppStore, selectCurrentView, selectActiveDiary } from '@/stores/appS
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useGlobalShortcuts } from '@/hooks';
 import { Shelf } from '@/components/shelf';
-import { DiaryLayout } from '@/components/common';
+import { DiaryLayout, ErrorBoundary } from '@/components/common';
 import { PersonalDiary } from '@/components/diaries/PersonalDiary';
 import { Blackboard } from '@/components/diaries/blackboard';
 import { Scratchpad } from '@/components/diaries/scratchpad';
 import { Drafts } from '@/components/diaries/drafts';
-
-function LongDraftsPlaceholder() {
-  return (
-    <DiaryLayout diaryType="long-drafts">
-      <div className="flex items-center justify-center h-full">
-        <p className="text-gray-500">Long Drafts - Coming soon</p>
-      </div>
-    </DiaryLayout>
-  );
-}
+import { LongDrafts } from '@/components/diaries/long-drafts';
 
 function AcademicPlaceholder() {
   return (
@@ -59,23 +50,27 @@ function App() {
     return <Shelf />;
   }
 
-  // Render the appropriate diary component
-  switch (activeDiary) {
-    case 'scratchpad':
-      return <Scratchpad />;
-    case 'blackboard':
-      return <Blackboard />;
-    case 'personal-diary':
-      return <PersonalDiary />;
-    case 'drafts':
-      return <Drafts />;
-    case 'long-drafts':
-      return <LongDraftsPlaceholder />;
-    case 'academic':
-      return <AcademicPlaceholder />;
-    default:
-      return <Shelf />;
-  }
+  // Render the appropriate diary component wrapped in ErrorBoundary
+  const renderDiary = () => {
+    switch (activeDiary) {
+      case 'scratchpad':
+        return <Scratchpad />;
+      case 'blackboard':
+        return <Blackboard />;
+      case 'personal-diary':
+        return <PersonalDiary />;
+      case 'drafts':
+        return <Drafts />;
+      case 'long-drafts':
+        return <LongDrafts />;
+      case 'academic':
+        return <AcademicPlaceholder />;
+      default:
+        return <Shelf />;
+    }
+  };
+
+  return <ErrorBoundary key={activeDiary}>{renderDiary()}</ErrorBoundary>;
 }
 
 export default App;
