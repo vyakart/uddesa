@@ -7,7 +7,6 @@ import { format } from 'date-fns';
 import type { Section } from '@/types/longDrafts';
 import {
   useLongDraftsStore,
-  selectCurrentSection,
   selectViewMode,
 } from '@/stores/longDraftsStore';
 

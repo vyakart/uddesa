@@ -1,11 +1,13 @@
-import { useState, useCallback, memo } from 'react';
+import { useState, useCallback, memo, useMemo } from 'react';
 import {
   useLongDraftsStore,
   selectCurrentLongDraftId,
   selectCurrentSectionId,
+  selectSectionsMap,
   selectIsTOCVisible,
   type SectionNode,
 } from '@/stores/longDraftsStore';
+import type { Section } from '@/types/longDrafts';
 
 interface TableOfContentsProps {
   onCreateSection: (parentId?: string | null) => void;
@@ -18,17 +20,36 @@ const statusColors: Record<string, string> = {
   complete: '#10B981',
 };
 
+// Helper to build section hierarchy
+function buildSectionHierarchy(sections: Section[], parentId: string | null = null, depth: number = 0): SectionNode[] {
+  return sections
+    .filter(s => s.parentId === parentId)
+    .sort((a, b) => a.order - b.order)
+    .map(section => ({
+      section,
+      depth,
+      children: buildSectionHierarchy(sections, section.id, depth + 1),
+    }));
+}
+
 export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
   const currentLongDraftId = useLongDraftsStore(selectCurrentLongDraftId);
   const currentSectionId = useLongDraftsStore(selectCurrentSectionId);
   const isTOCVisible = useLongDraftsStore(selectIsTOCVisible);
+  const sectionsMap = useLongDraftsStore(selectSectionsMap);
 
-  const sectionHierarchy = useLongDraftsStore((state) =>
-    currentLongDraftId ? state.getSectionHierarchy(currentLongDraftId) : []
-  );
-  const totalWordCount = useLongDraftsStore((state) =>
-    currentLongDraftId ? state.getTotalWordCount(currentLongDraftId) : 0
-  );
+  // Memoize computed values to prevent infinite re-renders
+  const sectionHierarchy = useMemo(() => {
+    if (!currentLongDraftId) return [];
+    const sections = sectionsMap.get(currentLongDraftId) ?? [];
+    return buildSectionHierarchy(sections);
+  }, [sectionsMap, currentLongDraftId]);
+
+  const totalWordCount = useMemo(() => {
+    if (!currentLongDraftId) return 0;
+    const sections = sectionsMap.get(currentLongDraftId) ?? [];
+    return sections.reduce((total, s) => total + s.wordCount, 0);
+  }, [sectionsMap, currentLongDraftId]);
 
   const setCurrentSection = useLongDraftsStore((state) => state.setCurrentSection);
   const toggleTOC = useLongDraftsStore((state) => state.toggleTOC);

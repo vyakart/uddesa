@@ -96,11 +96,9 @@ export const Footnote = Mark.create<FootnoteOptions>({
     return {
       insertFootnote:
         (id: string, marker: number) =>
-        ({ commands, state }) => {
+        ({ commands }) => {
           // Insert a zero-width space with the footnote mark
-          const { from, to } = state.selection;
-
-          // First insert a placeholder character that will hold the mark
+          // Insert a placeholder character that will hold the mark
           commands.insertContent({
             type: 'text',
             text: '\u200B', // Zero-width space as the marked content

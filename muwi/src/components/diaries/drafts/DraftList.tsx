@@ -1,7 +1,8 @@
-import { useState, useRef, useEffect, useCallback, memo } from 'react';
+import { useState, useRef, useEffect, useCallback, memo, useMemo } from 'react';
 import {
   useDraftsStore,
   selectCurrentDraftId,
+  selectDrafts,
   selectDraftsSortBy,
   selectDraftsSortOrder,
   selectDraftsFilterStatus,
@@ -52,13 +53,47 @@ function truncateText(text: string, maxLength: number): string {
   return plainText.slice(0, maxLength).trim() + '...';
 }
 
+// Helper to sort drafts
+function sortDrafts(drafts: Draft[], sortBy: DraftSortBy, sortOrder: 'asc' | 'desc'): Draft[] {
+  const sorted = [...drafts].sort((a, b) => {
+    let comparison = 0;
+    switch (sortBy) {
+      case 'title':
+        comparison = a.title.localeCompare(b.title);
+        break;
+      case 'status':
+        const statusOrder: Record<DraftStatus, number> = { 'in-progress': 0, 'review': 1, 'complete': 2 };
+        comparison = statusOrder[a.status] - statusOrder[b.status];
+        break;
+      case 'createdAt':
+        comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        break;
+      case 'modifiedAt':
+      default:
+        comparison = new Date(a.modifiedAt).getTime() - new Date(b.modifiedAt).getTime();
+        break;
+    }
+    return sortOrder === 'desc' ? -comparison : comparison;
+  });
+  return sorted;
+}
+
 export function DraftList({ onCreateNew }: DraftListProps) {
   // Use selective subscriptions for better performance
   const currentDraftId = useDraftsStore(selectCurrentDraftId);
+  const rawDrafts = useDraftsStore(selectDrafts);
   const sortBy = useDraftsStore(selectDraftsSortBy);
   const sortOrder = useDraftsStore(selectDraftsSortOrder);
   const filterStatus = useDraftsStore(selectDraftsFilterStatus);
-  const drafts = useDraftsStore((state) => state.getSortedFilteredDrafts());
+
+  // Memoize sorted/filtered drafts to prevent infinite re-renders
+  const drafts = useMemo(() => {
+    let filtered = rawDrafts;
+    if (filterStatus !== 'all') {
+      filtered = rawDrafts.filter(d => d.status === filterStatus);
+    }
+    return sortDrafts(filtered, sortBy, sortOrder);
+  }, [rawDrafts, sortBy, sortOrder, filterStatus]);
 
   // Get stable action references
   const setCurrentDraft = useDraftsStore((state) => state.setCurrentDraft);
