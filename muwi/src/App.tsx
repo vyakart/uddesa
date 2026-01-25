@@ -3,22 +3,13 @@ import { useAppStore, selectCurrentView, selectActiveDiary } from '@/stores/appS
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useGlobalShortcuts } from '@/hooks';
 import { Shelf } from '@/components/shelf';
-import { DiaryLayout, ErrorBoundary } from '@/components/common';
+import { ErrorBoundary } from '@/components/common';
 import { PersonalDiary } from '@/components/diaries/PersonalDiary';
 import { Blackboard } from '@/components/diaries/blackboard';
 import { Scratchpad } from '@/components/diaries/scratchpad';
 import { Drafts } from '@/components/diaries/drafts';
 import { LongDrafts } from '@/components/diaries/long-drafts';
-
-function AcademicPlaceholder() {
-  return (
-    <DiaryLayout diaryType="academic">
-      <div className="flex items-center justify-center h-full">
-        <p className="text-gray-500">Academic Papers - Coming soon</p>
-      </div>
-    </DiaryLayout>
-  );
-}
+import { Academic } from '@/components/diaries/academic';
 
 function App() {
   const currentView = useAppStore(selectCurrentView);
@@ -64,7 +55,7 @@ function App() {
       case 'long-drafts':
         return <LongDrafts />;
       case 'academic':
-        return <AcademicPlaceholder />;
+        return <Academic />;
       default:
         return <Shelf />;
     }

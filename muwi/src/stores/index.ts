@@ -6,3 +6,4 @@ export * from './personalDiaryStore';
 export * from './scratchpadStore';
 export * from './draftsStore';
 export * from './longDraftsStore';
+export * from './academicStore';
