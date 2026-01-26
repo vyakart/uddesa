@@ -7,15 +7,11 @@ import {
   HeadingLevel,
   AlignmentType,
   Packer,
-  PageBreak,
   Footer,
   Header,
   PageNumber,
-  NumberFormat,
 } from 'docx';
 import type { Section, LongDraft } from '@/types/longDrafts';
-import type { Draft } from '@/types/drafts';
-import type { DiaryEntry } from '@/types/diary';
 import type { AcademicPaper, AcademicSection, BibliographyEntry, CitationStyle } from '@/types/academic';
 import { formatBibliography, sortBibliographyByAuthor } from './citation';
 
@@ -637,7 +633,7 @@ export function exportAcademicPaperToLaTeX(
 \\${opts.lineSpacing === 2 ? 'doublespacing' : opts.lineSpacing === 1.5 ? 'onehalfspacing' : 'singlespacing'}
 
 \\title{${escapeLatex(paper.title)}}
-\\author{${paper.authors?.map(a => escapeLatex(a.name)).join(' \\and ') || ''}}
+\\author{${paper.authors?.map(a => escapeLatex(`${a.firstName} ${a.lastName}`)).join(' \\and ') || ''}}
 \\date{}
 
 \\begin{document}
@@ -707,7 +703,6 @@ export async function exportDocument(
     document?: LongDraft | AcademicPaper;
     bibliography?: BibliographyEntry[];
     citationStyle?: CitationStyle;
-    entries?: DiaryEntry[];
   },
   options: Partial<ExportOptions> = {}
 ): Promise<Uint8Array | string> {
@@ -783,7 +778,7 @@ export async function saveExport(
   }
 
   // Fallback for web: trigger download
-  const blob = new Blob([content]);
+  const blob = new Blob([content as BlobPart], { type: 'application/octet-stream' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;

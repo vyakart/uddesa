@@ -5,3 +5,5 @@ export * from './Toolbar';
 export * from './PageStack';
 export * from './DiaryLayout';
 export * from './ErrorBoundary';
+export * from './ExportPanel';
+export * from './BackupPanel';

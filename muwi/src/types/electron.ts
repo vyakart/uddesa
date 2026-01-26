@@ -3,7 +3,7 @@ export type Platform = 'aix' | 'darwin' | 'freebsd' | 'linux' | 'openbsd' | 'sun
 
 export interface ElectronAPI {
   selectBackupLocation: () => Promise<string | undefined>;
-  saveBackup: (backup: string, location: string) => Promise<string>;
+  saveBackup: (backup: string, location?: string) => Promise<string | null>;
   loadBackup: () => Promise<string | null>;
   exportFile: (content: Uint8Array, defaultName: string) => Promise<string | null>;
   platform: Platform;

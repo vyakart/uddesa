@@ -55,9 +55,25 @@ ipcMain.handle('select-backup-location', async () => {
   return result.filePaths[0];
 });
 
-ipcMain.handle('save-backup', async (_event, backup: string, location: string) => {
-  const filename = `muwi-backup-${Date.now()}.json`;
-  const filepath = path.join(location, filename);
+ipcMain.handle('save-backup', async (_event, backup: string, location?: string) => {
+  if (!mainWindow) return null;
+
+  let filepath: string;
+
+  if (location) {
+    // Auto-backup: save directly to location
+    const filename = `muwi-backup-${Date.now()}.json`;
+    filepath = path.join(location, filename);
+  } else {
+    // Manual backup: show save dialog
+    const result = await dialog.showSaveDialog(mainWindow, {
+      defaultPath: `muwi-backup-${new Date().toISOString().split('T')[0]}.json`,
+      filters: [{ name: 'MUWI Backup', extensions: ['json'] }],
+    });
+    if (!result.filePath) return null;
+    filepath = result.filePath;
+  }
+
   await fs.writeFile(filepath, backup);
   return filepath;
 });
