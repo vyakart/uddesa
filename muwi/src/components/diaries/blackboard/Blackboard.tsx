@@ -27,13 +27,15 @@ export function Blackboard() {
       }
     };
     initialize();
-  }, []);
+  }, [loadCanvas]);
 
   // Handle navigation to an element from the index panel
   const handleNavigateToElement = useCallback(
-    (_elementId: string, _position: { x: number; y: number }) => {
+    (elementId: string, position: { x: number; y: number }) => {
       // Navigation to element would require Excalidraw API access
       // For now, this is a placeholder for future implementation
+      void elementId;
+      void position;
     },
     []
   );

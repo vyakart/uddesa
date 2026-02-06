@@ -283,6 +283,7 @@ export function LongDrafts() {
 
       {/* Main editor area */}
       <SectionEditor
+        key={currentSectionId ?? 'empty-section'}
         section={currentSection}
         onTitleChange={handleTitleChange}
         onContentChange={handleContentChange}

@@ -254,11 +254,7 @@ const FootnoteItem = memo(function FootnoteItem({
   const [content, setContent] = useState(footnote.content);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Sync content when footnote changes
-  useEffect(() => {
-    setContent(footnote.content);
-  }, [footnote.content]);
+  const visibleContent = isEditing ? content : footnote.content;
 
   // Focus textarea when editing starts
   useEffect(() => {
@@ -311,6 +307,11 @@ const FootnoteItem = memo(function FootnoteItem({
     },
     [footnote.content, onEndEdit]
   );
+
+  const handleStartEdit = useCallback(() => {
+    setContent(footnote.content);
+    onStartEdit();
+  }, [footnote.content, onStartEdit]);
 
   return (
     <div
@@ -377,7 +378,7 @@ const FootnoteItem = memo(function FootnoteItem({
         {/* Edit button (when not editing and not locked) */}
         {!isEditing && !isLocked && (
           <button
-            onClick={onStartEdit}
+            onClick={handleStartEdit}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -426,16 +427,16 @@ const FootnoteItem = memo(function FootnoteItem({
         />
       ) : (
         <div
-          onClick={!isLocked ? onStartEdit : undefined}
+          onClick={!isLocked ? handleStartEdit : undefined}
           style={{
             fontSize: '13px',
             lineHeight: 1.5,
-            color: content ? '#374151' : '#9CA3AF',
+            color: visibleContent ? '#374151' : '#9CA3AF',
             cursor: isLocked ? 'default' : 'pointer',
             padding: '4px 0',
           }}
         >
-          {content || 'Click to add content...'}
+          {visibleContent || 'Click to add content...'}
         </div>
       )}
     </div>

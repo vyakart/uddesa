@@ -1,5 +1,10 @@
 import { useEffect } from 'react';
-import { useAppStore, selectCurrentView, selectActiveDiary } from '@/stores/appStore';
+import {
+  useAppStore,
+  selectCurrentView,
+  selectActiveDiary,
+  selectActiveItemId,
+} from '@/stores/appStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useGlobalShortcuts } from '@/hooks';
 import { Shelf } from '@/components/shelf';
@@ -10,10 +15,12 @@ import { Scratchpad } from '@/components/diaries/scratchpad';
 import { Drafts } from '@/components/diaries/drafts';
 import { LongDrafts } from '@/components/diaries/long-drafts';
 import { Academic } from '@/components/diaries/academic';
+import { buildPathFromState, parseAppRoute, routeMatchesState } from '@/utils/appRouter';
 
 function App() {
   const currentView = useAppStore(selectCurrentView);
   const activeDiary = useAppStore(selectActiveDiary);
+  const activeItemId = useAppStore(selectActiveItemId);
   const loadSettings = useSettingsStore((state) => state.loadSettings);
   const isSettingsLoaded = useSettingsStore((state) => state.isLoaded);
 
@@ -26,6 +33,42 @@ function App() {
       loadSettings();
     }
   }, [isSettingsLoaded, loadSettings]);
+
+  // Sync store state from URL on first load and browser history navigation.
+  useEffect(() => {
+    const syncFromPath = () => {
+      const route = parseAppRoute(window.location.pathname);
+      const state = useAppStore.getState();
+
+      if (routeMatchesState(route, state)) {
+        return;
+      }
+
+      if (route.view === 'shelf') {
+        state.closeDiary();
+        return;
+      }
+
+      state.openDiary(route.diaryType, route.itemId);
+    };
+
+    syncFromPath();
+    window.addEventListener('popstate', syncFromPath);
+
+    return () => {
+      window.removeEventListener('popstate', syncFromPath);
+    };
+  }, []);
+
+  // Sync URL when store-based navigation changes.
+  useEffect(() => {
+    const targetPath = buildPathFromState(currentView, activeDiary, activeItemId);
+    if (window.location.pathname === targetPath) {
+      return;
+    }
+
+    window.history.pushState({}, '', targetPath);
+  }, [currentView, activeDiary, activeItemId]);
 
   // Show loading state while settings load
   if (!isSettingsLoaded) {

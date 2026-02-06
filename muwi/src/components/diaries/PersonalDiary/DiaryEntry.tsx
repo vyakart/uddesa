@@ -4,7 +4,10 @@ import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import { format, parseISO } from 'date-fns';
 import { DatePicker } from './DatePicker';
-import type { DiaryEntry as DiaryEntryType } from '@/types/diary';
+import type {
+  DiaryEntry as DiaryEntryType,
+  PersonalDiarySettings,
+} from '@/types/diary';
 
 // Helper to safely convert entry.date to Date object (handles both string and Date)
 function toDate(date: string | Date): Date {
@@ -18,6 +21,7 @@ interface DiaryEntryProps {
   entry: DiaryEntryType | null;
   onContentChange: (content: string) => void;
   onDateChange: (date: Date) => void;
+  settings: PersonalDiarySettings;
 }
 
 // Helper function to count words from text
@@ -25,13 +29,47 @@ function countWords(text: string): number {
   return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
+function stripHtml(content: string): string {
+  return content.replace(/<[^>]*>/g, ' ');
+}
+
+function getTextureOverlay(texture: string): string | undefined {
+  switch (texture) {
+    case 'paper-cream':
+      return 'radial-gradient(circle at 10% 12%, rgba(0, 0, 0, 0.04) 0 1px, transparent 1px)';
+    case 'paper-white':
+      return 'radial-gradient(circle at 82% 80%, rgba(0, 0, 0, 0.03) 0 1px, transparent 1px)';
+    default:
+      return undefined;
+  }
+}
+
+function getEditorBackground(settings: PersonalDiarySettings): string {
+  const layers: string[] = [];
+
+  if (settings.showLines) {
+    layers.push(
+      'repeating-linear-gradient(to bottom, transparent 0 31px, rgba(74, 144, 164, 0.18) 31px 32px)'
+    );
+  }
+
+  const textureOverlay = getTextureOverlay(settings.paperTexture);
+  if (textureOverlay) {
+    layers.push(textureOverlay);
+  }
+
+  layers.push(settings.paperColor);
+  return layers.join(', ');
+}
+
 export function DiaryEntry({
   entry,
   onContentChange,
   onDateChange,
+  settings,
 }: DiaryEntryProps) {
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [wordCount, setWordCount] = useState(0);
+  const [wordCount, setWordCount] = useState(() => countWords(stripHtml(entry?.content ?? '')));
 
   const editor = useEditor({
     extensions: [
@@ -47,10 +85,10 @@ export function DiaryEntry({
     content: entry?.content || '',
     editorProps: {
       attributes: {
+        class: 'tiptap',
         style: `
           min-height: 300px;
           outline: none;
-          font-family: 'Georgia', 'Times New Roman', serif;
           font-size: 1.125rem;
           line-height: 1.8;
           color: #1A1A1A;
@@ -73,26 +111,6 @@ export function DiaryEntry({
       }, 500);
     },
   });
-
-  // Update editor content and word count when entry changes
-  useEffect(() => {
-    if (editor && entry) {
-      // Only update if content is different to avoid cursor jumping
-      const currentContent = editor.getHTML();
-      if (currentContent !== entry.content) {
-        editor.commands.setContent(entry.content || '');
-      }
-      // Update word count from editor text
-      setWordCount(countWords(editor.getText()));
-    }
-  }, [editor, entry?.id]); // Only trigger on entry ID change
-
-  // Initialize word count when editor is ready
-  useEffect(() => {
-    if (editor) {
-      setWordCount(countWords(editor.getText()));
-    }
-  }, [editor]);
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -142,6 +160,7 @@ export function DiaryEntry({
         <DatePicker
           selectedDate={toDate(entry.date)}
           onDateChange={onDateChange}
+          dateFormat={settings.dateFormat}
         />
         <div
           style={{
@@ -174,15 +193,19 @@ export function DiaryEntry({
         style={{
           flex: 1,
           overflow: 'auto',
-          backgroundColor: '#FFFEF9',
+          background: getEditorBackground(settings),
+          backgroundSize: settings.paperTexture ? '140px 140px' : undefined,
         }}
+        data-testid="diary-entry-paper"
       >
         <div
           style={{
             maxWidth: '800px',
             margin: '0 auto',
             padding: '24px 40px',
+            fontFamily: settings.font,
           }}
+          data-testid="diary-entry-content"
         >
           <EditorContent
             editor={editor}

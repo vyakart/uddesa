@@ -10,7 +10,6 @@ export function FocusMode({ children }: FocusModeProps) {
   const currentSection = useLongDraftsStore(selectCurrentSection);
   const toggleFocusMode = useLongDraftsStore((state) => state.toggleFocusMode);
 
-  const [isAnimating, setIsAnimating] = useState(false);
   const [showControls, setShowControls] = useState(false);
   const controlsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -34,15 +33,6 @@ export function FocusMode({ children }: FocusModeProps) {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isFocusMode, toggleFocusMode]);
-
-  // Animation handling
-  useEffect(() => {
-    if (isFocusMode) {
-      setIsAnimating(true);
-      const timer = setTimeout(() => setIsAnimating(false), 300);
-      return () => clearTimeout(timer);
-    }
-  }, [isFocusMode]);
 
   // Show/hide controls on mouse move in focus mode
   const handleMouseMove = useCallback(() => {
@@ -82,7 +72,7 @@ export function FocusMode({ children }: FocusModeProps) {
         backgroundColor: '#FFFEF9',
         display: 'flex',
         flexDirection: 'column',
-        opacity: isAnimating ? 0.9 : 1,
+        opacity: 1,
         transition: 'opacity 300ms ease',
       }}
     >

@@ -23,25 +23,11 @@ export function Scratchpad() {
   const currentPage = pages[currentPageIndex];
   const currentBlocks = currentPage ? (textBlocks.get(currentPage.id) || []) : [];
 
-  // Debug logging
-  useEffect(() => {
-    console.log('[Scratchpad Debug]', {
-      isInitialized,
-      isLoading,
-      pagesCount: pages.length,
-      currentPageIndex,
-      currentPage,
-      currentBlocks,
-    });
-  }, [isInitialized, isLoading, pages.length, currentPageIndex, currentPage, currentBlocks]);
-
   // Initialize: load pages on mount
   useEffect(() => {
     const initialize = async () => {
       try {
-        console.log('[Scratchpad] Initializing...');
         await loadPages();
-        console.log('[Scratchpad] Loaded pages');
         setIsInitialized(true);
       } catch (err) {
         console.error('Failed to initialize Scratchpad:', err);
@@ -49,7 +35,7 @@ export function Scratchpad() {
       }
     };
     initialize();
-  }, []);
+  }, [loadPages]);
 
   // Keyboard shortcuts
   useEffect(() => {

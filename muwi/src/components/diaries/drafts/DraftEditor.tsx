@@ -18,14 +18,18 @@ function countWords(text: string): number {
   return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
+function stripHtml(content: string): string {
+  return content.replace(/<[^>]*>/g, ' ');
+}
+
 export function DraftEditor({
   draft,
   onTitleChange,
   onContentChange,
   onStatusCycle,
 }: DraftEditorProps) {
-  const [title, setTitle] = useState(draft?.title || '');
-  const [wordCount, setWordCount] = useState(0);
+  const [title, setTitle] = useState(() => draft?.title || '');
+  const [wordCount, setWordCount] = useState(() => countWords(stripHtml(draft?.content || '')));
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const titleSaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -69,31 +73,6 @@ export function DraftEditor({
       }, 500);
     },
   });
-
-  // Update editor content when draft changes
-  useEffect(() => {
-    if (editor && draft) {
-      const currentContent = editor.getHTML();
-      if (currentContent !== draft.content) {
-        editor.commands.setContent(draft.content || '');
-      }
-      setWordCount(countWords(editor.getText()));
-    }
-  }, [editor, draft?.id]);
-
-  // Update title when draft changes
-  useEffect(() => {
-    if (draft) {
-      setTitle(draft.title);
-    }
-  }, [draft?.id]);
-
-  // Initialize word count
-  useEffect(() => {
-    if (editor) {
-      setWordCount(countWords(editor.getText()));
-    }
-  }, [editor]);
 
   // Cleanup timeouts
   useEffect(() => {

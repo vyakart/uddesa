@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, type ReactElement } from 'react';
 import {
   format,
   startOfMonth,
@@ -27,6 +27,10 @@ export function DatePicker({
   const [isOpen, setIsOpen] = useState(false);
   const [viewMonth, setViewMonth] = useState(selectedDate);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setViewMonth(selectedDate);
+  }, [selectedDate]);
 
   // Close on outside click
   useEffect(() => {
@@ -85,8 +89,8 @@ export function DatePicker({
     const startDate = startOfWeek(monthStart);
     const endDate = endOfWeek(monthEnd);
 
-    const rows: React.ReactElement[] = [];
-    let days: React.ReactElement[] = [];
+    const rows: ReactElement[] = [];
+    let days: ReactElement[] = [];
     let day = startDate;
 
     // Header with day names

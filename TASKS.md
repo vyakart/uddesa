@@ -357,10 +357,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.1.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] TipTap installed with starter-kit
-  - [ ] Placeholder extension added
-  - [ ] Basic extensions configured (bold, italic, lists)
-  - [ ] Editor renders and accepts input
+  - [x] TipTap installed with starter-kit
+  - [x] Placeholder extension added
+  - [x] Basic extensions configured (bold, italic, lists)
+  - [x] Editor renders and accepts input
 - **Packages**:
   ```bash
   npm install @tiptap/react @tiptap/starter-kit @tiptap/extension-placeholder
@@ -372,13 +372,13 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.5.1, 0.4.3
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] entries state array
-  - [ ] currentEntry state
-  - [ ] loadEntries action
-  - [ ] loadEntry action (by date)
-  - [ ] createEntry action
-  - [ ] updateEntry action
-  - [ ] Word count tracking
+  - [x] entries state array
+  - [x] currentEntry state
+  - [x] loadEntries action
+  - [x] loadEntry action (by date)
+  - [x] createEntry action
+  - [x] updateEntry action
+  - [x] Word count tracking
 - **Testing**: Unit tests for all actions
 
 #### Task 1.3.3: Create DatePicker Component
@@ -386,12 +386,12 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.1.3
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Displays current date formatted
-  - [ ] Click opens calendar
-  - [ ] Calendar navigation (prev/next month)
-  - [ ] Date selection updates parent
-  - [ ] Keyboard accessible
-  - [ ] Date format configurable
+  - [x] Displays current date formatted
+  - [x] Click opens calendar
+  - [x] Calendar navigation (prev/next month)
+  - [x] Date selection updates parent
+  - [x] Keyboard accessible
+  - [x] Date format configurable
 - **Packages**: `npm install date-fns`
 - **Testing**: Component tests
 
@@ -400,12 +400,12 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 1.3.2
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Lists entries by date
-  - [ ] Shows entry preview/word count
-  - [ ] Click navigates to entry
-  - [ ] Previous/Next buttons
-  - [ ] "Today" button
-  - [ ] Collapsible sidebar
+  - [x] Lists entries by date
+  - [x] Shows entry preview/word count
+  - [x] Click navigates to entry
+  - [x] Previous/Next buttons
+  - [x] "Today" button
+  - [x] Collapsible sidebar
 - **Testing**: Component tests
 
 #### Task 1.3.5: Create DiaryEntry Component
@@ -413,12 +413,12 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 1.3.1, 1.3.3, 1.3.4
 - **Effort**: L
 - **Acceptance Criteria**:
-  - [ ] Date header with picker
-  - [ ] TipTap editor for content
-  - [ ] Lined paper background option
-  - [ ] Fixed font from settings
-  - [ ] Word count display
-  - [ ] Auto-save on change
+  - [x] Date header with picker
+  - [x] TipTap editor for content
+  - [x] Lined paper background option
+  - [x] Fixed font from settings
+  - [x] Word count display
+  - [x] Auto-save on change
 - **Testing**: Component tests, integration tests
 
 #### Task 1.3.6: Create PersonalDiary Container
@@ -426,11 +426,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 1.3.2, 1.3.4, 1.3.5
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Loads entries on mount
-  - [ ] Displays entry navigation
-  - [ ] Shows current entry editor
-  - [ ] Handles date changes
-  - [ ] Applies paper texture from settings
+  - [x] Loads entries on mount
+  - [x] Displays entry navigation
+  - [x] Shows current entry editor
+  - [x] Handles date changes
+  - [x] Applies paper texture from settings
 - **Testing**: Integration tests
 - **E2E**: Create and edit diary entry
 
@@ -441,11 +441,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 1.2.2, 1.3.6
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Shelf route (/)
-  - [ ] Personal Diary route (/personal-diary)
-  - [ ] Route params for document ID
-  - [ ] Back navigation works
-  - [ ] Deep linking supported
+  - [x] Shelf route (/)
+  - [x] Personal Diary route (/personal-diary)
+  - [x] Route params for document ID
+  - [x] Back navigation works
+  - [x] Deep linking supported
 - **Note**: Use simple state-based routing (no react-router needed for Electron)
 
 #### Task 1.4.2: Create Navigation Header
@@ -453,9 +453,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.5.2
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] Shows "← Shelf" back link
-  - [ ] Shows current diary name
-  - [ ] Keyboard shortcut (Ctrl+H) for home
+  - [x] Shows "← Shelf" back link
+  - [x] Shows current diary name
+  - [x] Keyboard shortcut (Ctrl+H) for home
 - **Testing**: Component tests
 
 ---

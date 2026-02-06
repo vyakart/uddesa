@@ -61,10 +61,11 @@ function sortDrafts(drafts: Draft[], sortBy: DraftSortBy, sortOrder: 'asc' | 'de
       case 'title':
         comparison = a.title.localeCompare(b.title);
         break;
-      case 'status':
+      case 'status': {
         const statusOrder: Record<DraftStatus, number> = { 'in-progress': 0, 'review': 1, 'complete': 2 };
         comparison = statusOrder[a.status] - statusOrder[b.status];
         break;
+      }
       case 'createdAt':
         comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
         break;

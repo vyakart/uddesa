@@ -51,10 +51,18 @@ export function CitationPicker({ onInsert, onClose, position }: CitationPickerPr
     );
   }, [entries, searchQuery]);
 
-  // Reset highlighted index when search changes
-  useEffect(() => {
-    setHighlightedIndex(0);
-  }, [searchQuery]);
+  const handleInsert = useCallback(async () => {
+    if (!selectedEntry || !currentPaperId) return;
+
+    const formattedCitation = formatInTextCitation(selectedEntry, citationStyle, pageNumbers || undefined);
+
+    // Add citation to the paper
+    await addCitation(currentPaperId, selectedEntry.id, pageNumbers || undefined);
+
+    // Insert the formatted citation
+    onInsert(formattedCitation, selectedEntry);
+    onClose();
+  }, [selectedEntry, currentPaperId, citationStyle, pageNumbers, addCitation, onInsert, onClose]);
 
   // Handle keyboard navigation
   const handleKeyDown = useCallback(
@@ -85,21 +93,8 @@ export function CitationPicker({ onInsert, onClose, position }: CitationPickerPr
           break;
       }
     },
-    [filteredEntries, highlightedIndex, selectedEntry, onClose]
+    [filteredEntries, highlightedIndex, selectedEntry, handleInsert, onClose]
   );
-
-  const handleInsert = useCallback(async () => {
-    if (!selectedEntry || !currentPaperId) return;
-
-    const formattedCitation = formatInTextCitation(selectedEntry, citationStyle, pageNumbers || undefined);
-
-    // Add citation to the paper
-    await addCitation(currentPaperId, selectedEntry.id, pageNumbers || undefined);
-
-    // Insert the formatted citation
-    onInsert(formattedCitation, selectedEntry);
-    onClose();
-  }, [selectedEntry, currentPaperId, citationStyle, pageNumbers, addCitation, onInsert, onClose]);
 
   // Scroll highlighted item into view
   useEffect(() => {
@@ -139,7 +134,10 @@ export function CitationPicker({ onInsert, onClose, position }: CitationPickerPr
               type="text"
               placeholder="Search references..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setHighlightedIndex(0);
+              }}
               style={{
                 width: '100%',
                 padding: '8px 12px',
@@ -354,20 +352,4 @@ export function CitationPicker({ onInsert, onClose, position }: CitationPickerPr
       )}
     </div>
   );
-}
-
-// Keyboard shortcut hook for opening citation picker
-export function useCitationShortcut(onOpen: () => void) {
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Ctrl/Cmd + Shift + C to open citation picker
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') {
-        e.preventDefault();
-        onOpen();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onOpen]);
 }

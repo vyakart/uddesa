@@ -24,6 +24,11 @@ function formatDateString(date: Date): string {
   return format(date, 'yyyy-MM-dd');
 }
 
+function countWordsFromContent(content: string): number {
+  const plainText = content.replace(/<[^>]*>/g, ' ');
+  return plainText.split(/\s+/).filter(Boolean).length;
+}
+
 export const usePersonalDiaryStore = create<PersonalDiaryState>()(
   devtools(
     (set, get) => ({
@@ -79,7 +84,7 @@ export const usePersonalDiaryStore = create<PersonalDiaryState>()(
           id: crypto.randomUUID(),
           date: formatDateString(date),
           content: content,
-          wordCount: content.split(/\s+/).filter(Boolean).length,
+          wordCount: countWordsFromContent(content),
           isLocked: false,
           createdAt: now,
           modifiedAt: now,
@@ -98,7 +103,7 @@ export const usePersonalDiaryStore = create<PersonalDiaryState>()(
       },
 
       updateEntry: async (id: string, content: string) => {
-        const wordCount = content.split(/\s+/).filter(Boolean).length;
+        const wordCount = countWordsFromContent(content);
         const modifiedAt = new Date();
 
         await db.diaryEntries.update(id, {

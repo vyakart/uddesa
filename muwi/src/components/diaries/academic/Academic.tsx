@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { DiaryLayout } from '@/components/common/DiaryLayout';
 import {
   useAcademicStore,
@@ -12,7 +12,6 @@ import {
   selectIsBibliographyPanelVisible,
   selectCitationStyle,
   selectCurrentPaperWordCount,
-  selectAcademicSectionsMap,
   type AcademicSectionNode,
 } from '@/stores/academicStore';
 import type { CitationStyle } from '@/types/academic';
@@ -39,7 +38,6 @@ export function Academic() {
   const isBibliographyPanelVisible = useAcademicStore(selectIsBibliographyPanelVisible);
   const citationStyle = useAcademicStore(selectCitationStyle);
   const totalWordCount = useAcademicStore(selectCurrentPaperWordCount);
-  const sectionsMap = useAcademicStore(selectAcademicSectionsMap);
 
   const loadPapers = useAcademicStore((state) => state.loadPapers);
   const loadBibliographyEntries = useAcademicStore((state) => state.loadBibliographyEntries);
@@ -122,12 +120,7 @@ export function Academic() {
     [deleteSection]
   );
 
-  // Get section hierarchy for TOC
-  // Using sectionsMap in dependency to trigger recalc when sections change
-  const sectionHierarchy = useMemo(() => {
-    if (!currentPaperId) return [];
-    return getSectionHierarchy(currentPaperId);
-  }, [currentPaperId, getSectionHierarchy, sectionsMap]);
+  const sectionHierarchy = currentPaperId ? getSectionHierarchy(currentPaperId) : [];
 
   // Toolbar component
   const toolbar = (
@@ -527,6 +520,7 @@ export function Academic() {
 
         {/* Main editor */}
         <AcademicSectionEditor
+          key={currentSection?.id ?? 'empty-academic-section'}
           section={currentSection}
           onTitleChange={handleTitleChange}
           onContentChange={handleContentChange}

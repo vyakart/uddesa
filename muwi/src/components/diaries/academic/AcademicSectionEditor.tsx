@@ -20,6 +20,10 @@ function countWords(text: string): number {
   return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
+function stripHtml(content: string): string {
+  return content.replace(/<[^>]*>/g, ' ');
+}
+
 export function AcademicSectionEditor({
   section,
   onTitleChange,
@@ -28,8 +32,8 @@ export function AcademicSectionEditor({
   const viewMode = useAcademicStore(selectAcademicViewMode);
   const isFocusMode = viewMode === 'focus';
 
-  const [title, setTitle] = useState(section?.title || '');
-  const [wordCount, setWordCount] = useState(0);
+  const [title, setTitle] = useState(() => section?.title || '');
+  const [wordCount, setWordCount] = useState(() => countWords(stripHtml(section?.content || '')));
   const [showCitationPicker, setShowCitationPicker] = useState(false);
   const [citationPickerPosition, setCitationPickerPosition] = useState<{ x: number; y: number } | undefined>();
 
@@ -76,31 +80,6 @@ export function AcademicSectionEditor({
     },
   });
 
-  // Update editor content when section changes
-  useEffect(() => {
-    if (editor && section) {
-      const currentContent = editor.getHTML();
-      if (currentContent !== section.content) {
-        editor.commands.setContent(section.content || '');
-      }
-      setWordCount(countWords(editor.getText()));
-    }
-  }, [editor, section?.id]);
-
-  // Update title when section changes
-  useEffect(() => {
-    if (section) {
-      setTitle(section.title);
-    }
-  }, [section?.id]);
-
-  // Initialize word count
-  useEffect(() => {
-    if (editor) {
-      setWordCount(countWords(editor.getText()));
-    }
-  }, [editor]);
-
   // Cleanup timeouts
   useEffect(() => {
     return () => {
@@ -110,6 +89,17 @@ export function AcademicSectionEditor({
   }, []);
 
   // Keyboard shortcut for citation picker
+  const openCitationPicker = useCallback(() => {
+    // Get cursor position for positioning the picker
+    if (editor) {
+      const { view } = editor;
+      const { from } = view.state.selection;
+      const coords = view.coordsAtPos(from);
+      setCitationPickerPosition({ x: coords.left, y: coords.bottom + 10 });
+    }
+    setShowCitationPicker(true);
+  }, [editor]);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') {
@@ -119,7 +109,7 @@ export function AcademicSectionEditor({
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [openCitationPicker]);
 
   const handleTitleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -135,17 +125,6 @@ export function AcademicSectionEditor({
     },
     [onTitleChange]
   );
-
-  const openCitationPicker = useCallback(() => {
-    // Get cursor position for positioning the picker
-    if (editor) {
-      const { view } = editor;
-      const { from } = view.state.selection;
-      const coords = view.coordsAtPos(from);
-      setCitationPickerPosition({ x: coords.left, y: coords.bottom + 10 });
-    }
-    setShowCitationPicker(true);
-  }, [editor]);
 
   const handleInsertCitation = useCallback(
     (citation: string) => {

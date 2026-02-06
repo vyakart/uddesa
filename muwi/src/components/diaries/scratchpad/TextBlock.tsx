@@ -18,17 +18,12 @@ export function TextBlock({ block, isPageLocked = false }: TextBlockProps) {
   const updateTextBlock = useScratchpadStore((state) => state.updateTextBlock);
   const deleteTextBlock = useScratchpadStore((state) => state.deleteTextBlock);
 
-  // Sync local content with block content when block changes externally
-  useEffect(() => {
-    setLocalContent(block.content);
-  }, [block.content]);
-
   // Focus on new blocks
   useEffect(() => {
     if (block.content === '' && contentRef.current) {
       contentRef.current.focus();
     }
-  }, []);
+  }, [block.content]);
 
   const handleInput = useCallback(() => {
     if (contentRef.current && !isPageLocked) {
@@ -54,8 +49,9 @@ export function TextBlock({ block, isPageLocked = false }: TextBlockProps) {
   }, [localContent, block.id, block.content, deleteTextBlock, updateTextBlock, isPageLocked]);
 
   const handleFocus = useCallback(() => {
+    setLocalContent(block.content);
     setIsFocused(true);
-  }, []);
+  }, [block.content]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -195,7 +191,7 @@ export function TextBlock({ block, isPageLocked = false }: TextBlockProps) {
           minHeight: '1.5em',
         }}
       >
-        {localContent}
+        {isFocused ? localContent : block.content}
       </div>
     </div>
   );

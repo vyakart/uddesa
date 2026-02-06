@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { parseISO } from 'date-fns';
 import { DiaryLayout } from '@/components/common';
 import { usePersonalDiaryStore } from '@/stores/personalDiaryStore';
+import { useSettingsStore } from '@/stores/settingsStore';
 import { EntryNavigation } from './EntryNavigation';
 import { DiaryEntry } from './DiaryEntry';
 
@@ -23,6 +24,12 @@ export function PersonalDiary() {
   const loadEntries = usePersonalDiaryStore((state) => state.loadEntries);
   const loadEntry = usePersonalDiaryStore((state) => state.loadEntry);
   const updateEntry = usePersonalDiaryStore((state) => state.updateEntry);
+  const diarySettings = useSettingsStore((state) => state.personalDiary);
+
+  const paperBackground =
+    diarySettings.paperTexture === 'paper-white'
+      ? 'radial-gradient(circle at 84% 80%, rgba(0, 0, 0, 0.02) 0 1px, transparent 1px)'
+      : 'radial-gradient(circle at 16% 14%, rgba(0, 0, 0, 0.03) 0 1px, transparent 1px)';
 
   // Initialize: load entries first, then load today's entry
   useEffect(() => {
@@ -37,7 +44,7 @@ export function PersonalDiary() {
       }
     };
     initialize();
-  }, []); // Only run once on mount
+  }, [loadEntries, loadEntry]);
 
   const handleDateChange = useCallback(
     (date: Date) => {
@@ -119,7 +126,10 @@ export function PersonalDiary() {
           display: 'flex',
           height: '100%',
           overflow: 'hidden',
+          background: `${paperBackground}, ${diarySettings.paperColor}`,
+          backgroundSize: '160px 160px',
         }}
+        data-testid="personal-diary-container"
       >
         {/* Entry Navigation Sidebar */}
         <EntryNavigation
@@ -132,9 +142,11 @@ export function PersonalDiary() {
 
         {/* Main Editor Area */}
         <DiaryEntry
+          key={currentEntry?.id ?? 'empty-entry'}
           entry={currentEntry}
           onContentChange={handleContentChange}
           onDateChange={handleDateChange}
+          settings={diarySettings}
         />
       </div>
     </DiaryLayout>

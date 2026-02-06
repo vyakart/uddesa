@@ -7,3 +7,4 @@ export * from './DiaryLayout';
 export * from './ErrorBoundary';
 export * from './ExportPanel';
 export * from './BackupPanel';
+export * from './NavigationHeader';

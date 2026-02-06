@@ -29,6 +29,10 @@ function countWords(text: string): number {
   return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
+function stripHtml(content: string): string {
+  return content.replace(/<[^>]*>/g, ' ');
+}
+
 export function SectionEditor({
   section,
   onTitleChange,
@@ -39,9 +43,9 @@ export function SectionEditor({
   const viewMode = useLongDraftsStore(selectViewMode);
   const isFocusMode = viewMode === 'focus';
 
-  const [title, setTitle] = useState(section?.title || '');
-  const [notes, setNotes] = useState(section?.notes || '');
-  const [wordCount, setWordCount] = useState(0);
+  const [title, setTitle] = useState(() => section?.title || '');
+  const [notes, setNotes] = useState(() => section?.notes || '');
+  const [wordCount, setWordCount] = useState(() => countWords(stripHtml(section?.content || '')));
   const [showNotes, setShowNotes] = useState(false);
   const [showStatusMenu, setShowStatusMenu] = useState(false);
 
@@ -90,32 +94,6 @@ export function SectionEditor({
       }, 500);
     },
   });
-
-  // Update editor content when section changes
-  useEffect(() => {
-    if (editor && section) {
-      const currentContent = editor.getHTML();
-      if (currentContent !== section.content) {
-        editor.commands.setContent(section.content || '');
-      }
-      setWordCount(countWords(editor.getText()));
-    }
-  }, [editor, section?.id]);
-
-  // Update title and notes when section changes
-  useEffect(() => {
-    if (section) {
-      setTitle(section.title);
-      setNotes(section.notes || '');
-    }
-  }, [section?.id]);
-
-  // Initialize word count
-  useEffect(() => {
-    if (editor) {
-      setWordCount(countWords(editor.getText()));
-    }
-  }, [editor]);
 
   // Cleanup timeouts
   useEffect(() => {

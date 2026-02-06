@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Excalidraw } from '@excalidraw/excalidraw';
 import type { ExcalidrawElement } from '@excalidraw/excalidraw/element/types';
-import type { AppState, ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types';
+import type { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types';
 import { useBlackboardStore } from '@/stores/blackboardStore';
 
 import '@excalidraw/excalidraw/index.css';
@@ -34,7 +34,7 @@ export function ExcalidrawWrapper({ onElementsChange }: ExcalidrawWrapperProps) 
 
   // Handle changes from Excalidraw
   const handleChange = useCallback(
-    (newElements: readonly ExcalidrawElement[], _appState: AppState) => {
+    (newElements: readonly ExcalidrawElement[]) => {
       if (isFirstRender.current) {
         isFirstRender.current = false;
         return;
@@ -57,7 +57,7 @@ export function ExcalidrawWrapper({ onElementsChange }: ExcalidrawWrapperProps) 
       }
       excalidrawAPI.updateScene({ appState: appStateUpdate });
     }
-  }, [excalidrawAPI, canvas?.settings?.backgroundColor, canvas?.settings?.showGrid, canvas?.settings?.gridSize]);
+  }, [excalidrawAPI, canvas?.settings]);
 
   // Cleanup
   useEffect(() => {

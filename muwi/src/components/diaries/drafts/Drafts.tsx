@@ -199,6 +199,7 @@ export function Drafts() {
 
         {/* Main editor area */}
         <DraftEditor
+          key={currentDraftId ?? 'empty-draft'}
           draft={currentDraft}
           onTitleChange={handleTitleChange}
           onContentChange={handleContentChange}
