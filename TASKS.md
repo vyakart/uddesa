@@ -189,10 +189,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.1.4
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Dexie installed with React hooks
-  - [ ] Database class created with all tables
-  - [ ] Schema version 1 defined
-  - [ ] Database instance exported
+  - [x] Dexie installed with React hooks
+  - [x] Database class created with all tables
+  - [x] Schema version 1 defined
+  - [x] Database instance exported
 - **Packages**:
   ```bash
   npm install dexie dexie-react-hooks
@@ -203,26 +203,26 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.1.4
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] `src/types/scratchpad.ts` - ScratchpadPage, TextBlock
-  - [ ] `src/types/blackboard.ts` - BlackboardCanvas, CanvasElement
-  - [ ] `src/types/diary.ts` - DiaryEntry
-  - [ ] `src/types/drafts.ts` - Draft
-  - [ ] `src/types/longDrafts.ts` - LongDraft, Section, Footnote
-  - [ ] `src/types/academic.ts` - AcademicPaper, Citation, BibliographyEntry
-  - [ ] `src/types/settings.ts` - GlobalSettings, DiarySettings
-  - [ ] All types match design doc specifications
+  - [x] `src/types/scratchpad.ts` - ScratchpadPage, TextBlock
+  - [x] `src/types/blackboard.ts` - BlackboardCanvas, CanvasElement
+  - [x] `src/types/diary.ts` - DiaryEntry
+  - [x] `src/types/drafts.ts` - Draft
+  - [x] `src/types/longDrafts.ts` - LongDraft, Section, Footnote
+  - [x] `src/types/academic.ts` - AcademicPaper, Citation, BibliographyEntry
+  - [x] `src/types/settings.ts` - GlobalSettings, DiarySettings
+  - [x] All types match design doc specifications
 
 #### Task 0.4.3: Create Database Query Functions
 - **Description**: Create query functions for each entity type
 - **Dependencies**: 0.4.1, 0.4.2
 - **Effort**: L
 - **Acceptance Criteria**:
-  - [ ] `src/db/queries/scratchpad.ts` with CRUD operations
-  - [ ] `src/db/queries/blackboard.ts` with CRUD operations
-  - [ ] `src/db/queries/diary.ts` with CRUD operations
-  - [ ] `src/db/queries/drafts.ts` with CRUD operations
-  - [ ] `src/db/queries/settings.ts` with get/update operations
-  - [ ] All queries have TypeScript return types
+  - [x] `src/db/queries/scratchpad.ts` with CRUD operations
+  - [x] `src/db/queries/blackboard.ts` with CRUD operations
+  - [x] `src/db/queries/diary.ts` with CRUD operations
+  - [x] `src/db/queries/drafts.ts` with CRUD operations
+  - [x] `src/db/queries/settings.ts` with get/update operations
+  - [x] All queries have TypeScript return types
 - **Testing**: Unit tests for each query function
 
 ### 0.5 Set Up State Management
@@ -232,9 +232,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.1.4
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] Zustand installed
-  - [ ] Store folder structure created
-  - [ ] Persist middleware configured for settings
+  - [x] Zustand installed
+  - [x] Store folder structure created
+  - [x] Persist middleware configured for settings
 - **Packages**:
   ```bash
   npm install zustand
@@ -245,10 +245,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.5.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Navigation state (currentView, currentDiary)
-  - [ ] UI state (sidebar, settings modal, context menu)
-  - [ ] Lock state (isAppLocked, lastActivity)
-  - [ ] Actions for all state changes
+  - [x] Navigation state (currentView, currentDiary)
+  - [x] UI state (sidebar, settings modal, context menu)
+  - [x] Lock state (isAppLocked, lastActivity)
+  - [x] Actions for all state changes
 - **Testing**: Unit tests for all actions
 
 #### Task 0.5.3: Create Settings Store
@@ -256,12 +256,12 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.5.1, 0.4.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Global settings state
-  - [ ] Per-diary settings state
-  - [ ] loadSettings action (from database)
-  - [ ] updateGlobalSettings action
-  - [ ] updateDiarySettings action
-  - [ ] Passkey management (set, verify, clear)
+  - [x] Global settings state
+  - [x] Per-diary settings state
+  - [x] loadSettings action (from database)
+  - [x] updateGlobalSettings action
+  - [x] updateDiarySettings action
+  - [x] Passkey management (set, verify, clear)
 - **Testing**: Unit tests with mocked database
 
 ---

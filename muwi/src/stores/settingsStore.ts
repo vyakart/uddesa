@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
+import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 import type {
   GlobalSettings,
   ThemeMode,
@@ -23,23 +23,42 @@ import {
 } from '@/types';
 import * as settingsQueries from '@/db/queries/settings';
 
-export interface SettingsState {
-  // Global settings
-  global: GlobalSettings;
+type DiarySettingsKey =
+  | 'scratchpad'
+  | 'blackboard'
+  | 'personalDiary'
+  | 'drafts'
+  | 'longDrafts'
+  | 'academic';
 
-  // Per-diary settings
+type DiarySettingsUpdate =
+  | Partial<ScratchpadSettings>
+  | Partial<BlackboardSettings>
+  | Partial<PersonalDiarySettings>
+  | Partial<DraftsSettings>
+  | Partial<LongDraftsSettings>
+  | Partial<AcademicSettings>;
+
+interface DiarySettingsState {
   scratchpad: ScratchpadSettings;
   blackboard: BlackboardSettings;
   personalDiary: PersonalDiarySettings;
   drafts: DraftsSettings;
   longDrafts: LongDraftsSettings;
   academic: AcademicSettings;
+}
 
+interface SettingsDataState extends DiarySettingsState {
+  // Global settings
+  global: GlobalSettings;
   // Loading state
   isLoaded: boolean;
+}
 
+export interface SettingsState extends SettingsDataState {
   // Actions
   loadSettings: () => Promise<void>;
+  updateGlobalSettings: (updates: Partial<GlobalSettings>) => Promise<void>;
   updateTheme: (theme: ThemeMode) => Promise<void>;
   updateAccentColor: (color: string) => Promise<void>;
   updateShelfLayout: (layout: ShelfLayout) => Promise<void>;
@@ -47,6 +66,7 @@ export interface SettingsState {
   updateAutoLockTimeout: (minutes: number) => Promise<void>;
 
   // Per-diary settings actions
+  updateDiarySettings: (diary: DiarySettingsKey, updates: DiarySettingsUpdate) => void;
   updateScratchpadSettings: (updates: Partial<ScratchpadSettings>) => void;
   updateBlackboardSettings: (updates: Partial<BlackboardSettings>) => void;
   updatePersonalDiarySettings: (updates: Partial<PersonalDiarySettings>) => void;
@@ -57,171 +77,190 @@ export interface SettingsState {
   // Passkey
   hasPasskey: () => Promise<boolean>;
   setPasskey: (hash: string, salt: string, hint?: string) => Promise<void>;
+  verifyPasskey: (hash: string) => Promise<boolean>;
   clearPasskey: () => Promise<void>;
 
   reset: () => void;
 }
 
-const initialState = {
-  global: defaultGlobalSettings,
-  scratchpad: defaultScratchpadSettings,
-  blackboard: defaultBlackboardSettings,
-  personalDiary: defaultPersonalDiarySettings,
-  drafts: defaultDraftsSettings,
-  longDrafts: defaultLongDraftsSettings,
-  academic: defaultAcademicSettings,
+const initialState: SettingsDataState = {
+  global: { ...defaultGlobalSettings },
+  scratchpad: { ...defaultScratchpadSettings },
+  blackboard: { ...defaultBlackboardSettings },
+  personalDiary: { ...defaultPersonalDiarySettings },
+  drafts: { ...defaultDraftsSettings },
+  longDrafts: { ...defaultLongDraftsSettings },
+  academic: { ...defaultAcademicSettings },
   isLoaded: false,
 };
 
 export const useSettingsStore = create<SettingsState>()(
-  devtools(
-    (set, get) => ({
-      ...initialState,
+  persist(
+    devtools(
+      (set, get) => ({
+        ...initialState,
 
-      loadSettings: async () => {
-        const global = await settingsQueries.getGlobalSettings();
-        set({ global, isLoaded: true }, false, 'loadSettings');
-      },
+        loadSettings: async () => {
+          const global = await settingsQueries.getGlobalSettings();
+          set({ global, isLoaded: true }, false, 'loadSettings');
+        },
 
-      updateTheme: async (theme) => {
-        await settingsQueries.updateGlobalSettings({ theme });
-        set(
-          (state) => ({ global: { ...state.global, theme } }),
-          false,
-          'updateTheme'
-        );
-      },
+        updateGlobalSettings: async (updates) => {
+          await settingsQueries.updateGlobalSettings(updates);
+          set(
+            (state) => ({ global: { ...state.global, ...updates } }),
+            false,
+            'updateGlobalSettings'
+          );
+        },
 
-      updateAccentColor: async (accentColor) => {
-        await settingsQueries.updateGlobalSettings({ accentColor });
-        set(
-          (state) => ({ global: { ...state.global, accentColor } }),
-          false,
-          'updateAccentColor'
-        );
-      },
+        updateTheme: async (theme) => {
+          await get().updateGlobalSettings({ theme });
+        },
 
-      updateShelfLayout: async (shelfLayout) => {
-        await settingsQueries.updateGlobalSettings({ shelfLayout });
-        set(
-          (state) => ({ global: { ...state.global, shelfLayout } }),
-          false,
-          'updateShelfLayout'
-        );
-      },
+        updateAccentColor: async (accentColor) => {
+          await get().updateGlobalSettings({ accentColor });
+        },
 
-      updateBackupSettings: async (autoBackupEnabled, autoBackupFrequency, backupLocation) => {
-        await settingsQueries.updateGlobalSettings({
-          autoBackupEnabled,
-          autoBackupFrequency,
-          backupLocation,
-        });
-        set(
-          (state) => ({
-            global: {
-              ...state.global,
-              autoBackupEnabled,
-              autoBackupFrequency,
-              backupLocation,
+        updateShelfLayout: async (shelfLayout) => {
+          await get().updateGlobalSettings({ shelfLayout });
+        },
+
+        updateBackupSettings: async (autoBackupEnabled, autoBackupFrequency, backupLocation) => {
+          await get().updateGlobalSettings({
+            autoBackupEnabled,
+            autoBackupFrequency,
+            backupLocation,
+          });
+        },
+
+        updateAutoLockTimeout: async (autoLockTimeout) => {
+          await get().updateGlobalSettings({ autoLockTimeout });
+        },
+
+        updateDiarySettings: (diary, updates) => {
+          switch (diary) {
+            case 'scratchpad':
+              set(
+                (state) => ({
+                  scratchpad: { ...state.scratchpad, ...(updates as Partial<ScratchpadSettings>) },
+                }),
+                false,
+                'updateDiarySettings:scratchpad'
+              );
+              break;
+            case 'blackboard':
+              set(
+                (state) => ({
+                  blackboard: { ...state.blackboard, ...(updates as Partial<BlackboardSettings>) },
+                }),
+                false,
+                'updateDiarySettings:blackboard'
+              );
+              break;
+            case 'personalDiary':
+              set(
+                (state) => ({
+                  personalDiary: { ...state.personalDiary, ...(updates as Partial<PersonalDiarySettings>) },
+                }),
+                false,
+                'updateDiarySettings:personalDiary'
+              );
+              break;
+            case 'drafts':
+              set(
+                (state) => ({ drafts: { ...state.drafts, ...(updates as Partial<DraftsSettings>) } }),
+                false,
+                'updateDiarySettings:drafts'
+              );
+              break;
+            case 'longDrafts':
+              set(
+                (state) => ({
+                  longDrafts: { ...state.longDrafts, ...(updates as Partial<LongDraftsSettings>) },
+                }),
+                false,
+                'updateDiarySettings:longDrafts'
+              );
+              break;
+            case 'academic':
+              set(
+                (state) => ({ academic: { ...state.academic, ...(updates as Partial<AcademicSettings>) } }),
+                false,
+                'updateDiarySettings:academic'
+              );
+              break;
+            default:
+              break;
+          }
+        },
+
+        updateScratchpadSettings: (updates) => get().updateDiarySettings('scratchpad', updates),
+        updateBlackboardSettings: (updates) => get().updateDiarySettings('blackboard', updates),
+        updatePersonalDiarySettings: (updates) => get().updateDiarySettings('personalDiary', updates),
+        updateDraftsSettings: (updates) => get().updateDiarySettings('drafts', updates),
+        updateLongDraftsSettings: (updates) => get().updateDiarySettings('longDrafts', updates),
+        updateAcademicSettings: (updates) => get().updateDiarySettings('academic', updates),
+
+        hasPasskey: async () => {
+          return settingsQueries.hasPasskey();
+        },
+
+        setPasskey: async (hash, salt, hint) => {
+          await settingsQueries.setPasskey(hash, salt, hint);
+          const settings = get().global;
+          set(
+            {
+              global: {
+                ...settings,
+                passkeyHash: hash,
+                passkeySalt: salt,
+                passkeyHint: hint,
+              },
             },
-          }),
-          false,
-          'updateBackupSettings'
-        );
-      },
+            false,
+            'setPasskey'
+          );
+        },
 
-      updateAutoLockTimeout: async (autoLockTimeout) => {
-        await settingsQueries.updateGlobalSettings({ autoLockTimeout });
-        set(
-          (state) => ({ global: { ...state.global, autoLockTimeout } }),
-          false,
-          'updateAutoLockTimeout'
-        );
-      },
+        verifyPasskey: async (hash) => {
+          return settingsQueries.verifyPasskey(hash);
+        },
 
-      updateScratchpadSettings: (updates) =>
-        set(
-          (state) => ({ scratchpad: { ...state.scratchpad, ...updates } }),
-          false,
-          'updateScratchpadSettings'
-        ),
-
-      updateBlackboardSettings: (updates) =>
-        set(
-          (state) => ({ blackboard: { ...state.blackboard, ...updates } }),
-          false,
-          'updateBlackboardSettings'
-        ),
-
-      updatePersonalDiarySettings: (updates) =>
-        set(
-          (state) => ({ personalDiary: { ...state.personalDiary, ...updates } }),
-          false,
-          'updatePersonalDiarySettings'
-        ),
-
-      updateDraftsSettings: (updates) =>
-        set(
-          (state) => ({ drafts: { ...state.drafts, ...updates } }),
-          false,
-          'updateDraftsSettings'
-        ),
-
-      updateLongDraftsSettings: (updates) =>
-        set(
-          (state) => ({ longDrafts: { ...state.longDrafts, ...updates } }),
-          false,
-          'updateLongDraftsSettings'
-        ),
-
-      updateAcademicSettings: (updates) =>
-        set(
-          (state) => ({ academic: { ...state.academic, ...updates } }),
-          false,
-          'updateAcademicSettings'
-        ),
-
-      hasPasskey: async () => {
-        return settingsQueries.hasPasskey();
-      },
-
-      setPasskey: async (hash, salt, hint) => {
-        await settingsQueries.setPasskey(hash, salt, hint);
-        const settings = get().global;
-        set(
-          {
-            global: {
-              ...settings,
-              passkeyHash: hash,
-              passkeySalt: salt,
-              passkeyHint: hint,
+        clearPasskey: async () => {
+          await settingsQueries.clearPasskey();
+          const settings = get().global;
+          set(
+            {
+              global: {
+                ...settings,
+                passkeyHash: undefined,
+                passkeySalt: undefined,
+                passkeyHint: undefined,
+              },
             },
-          },
-          false,
-          'setPasskey'
-        );
-      },
+            false,
+            'clearPasskey'
+          );
+        },
 
-      clearPasskey: async () => {
-        await settingsQueries.clearPasskey();
-        const settings = get().global;
-        set(
-          {
-            global: {
-              ...settings,
-              passkeyHash: undefined,
-              passkeySalt: undefined,
-              passkeyHint: undefined,
-            },
-          },
-          false,
-          'clearPasskey'
-        );
-      },
-
-      reset: () => set(initialState, false, 'reset'),
-    }),
-    { name: 'settings-store' }
+        reset: () => set(initialState, false, 'reset'),
+      }),
+      { name: 'settings-store' }
+    ),
+    {
+      name: 'settings-store-persist',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        global: state.global,
+        scratchpad: state.scratchpad,
+        blackboard: state.blackboard,
+        personalDiary: state.personalDiary,
+        drafts: state.drafts,
+        longDrafts: state.longDrafts,
+        academic: state.academic,
+      }),
+    }
   )
 );
 

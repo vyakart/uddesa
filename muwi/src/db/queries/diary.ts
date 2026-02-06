@@ -30,7 +30,7 @@ export async function getEntriesByDateRange(startDate: string, endDate: string):
 export async function getEntriesByMonth(year: number, month: number): Promise<DiaryEntry[]> {
   const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
   const lastDay = new Date(year, month, 0).getDate();
-  const endDate = `${year}-${String(month).padStart(2, '0')}-${lastDay}`;
+  const endDate = `${year}-${String(month).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
   return getEntriesByDateRange(startDate, endDate);
 }
 
@@ -63,6 +63,6 @@ export async function getOrCreateTodayEntry(): Promise<DiaryEntry> {
 }
 
 export async function getEntryDates(): Promise<string[]> {
-  const entries = await db.diaryEntries.orderBy('date').keys();
-  return entries as string[];
+  const entries = await db.diaryEntries.orderBy('date').toArray();
+  return entries.map((entry) => entry.date);
 }

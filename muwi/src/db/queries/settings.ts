@@ -47,6 +47,14 @@ export async function hasPasskey(): Promise<boolean> {
   return !!settings.passkeyHash;
 }
 
+export async function verifyPasskey(hash: string): Promise<boolean> {
+  if (!hash) {
+    return false;
+  }
+  const settings = await getGlobalSettings();
+  return settings.passkeyHash === hash;
+}
+
 // Locked Content
 
 export async function lockContent(
