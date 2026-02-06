@@ -171,11 +171,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.1.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Playwright installed with browsers
+  - [x] Playwright installed with browsers
   - [x] playwright.config.ts configured
   - [x] E2E folder structure created
   - [x] Web server configuration for tests
-  - [ ] Sample E2E test passes
+  - [x] Sample E2E test passes
 - **Commands**:
   ```bash
   npm install -D @playwright/test
