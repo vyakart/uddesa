@@ -22,6 +22,14 @@ function stripHtml(content: string): string {
   return content.replace(/<[^>]*>/g, ' ');
 }
 
+function getEditorBackground(): string {
+  return [
+    // Soft page breaks every ~1 page to preserve writing flow without hard pagination.
+    'repeating-linear-gradient(to bottom, transparent 0 1054px, rgba(148, 163, 184, 0.22) 1054px 1056px)',
+    '#FFFEF9',
+  ].join(', ');
+}
+
 export function DraftEditor({
   draft,
   onTitleChange,
@@ -226,8 +234,9 @@ export function DraftEditor({
         style={{
           flex: 1,
           overflow: 'auto',
-          backgroundColor: '#FFFEF9',
+          background: getEditorBackground(),
         }}
+        data-testid="draft-editor-paper"
       >
         <div
           style={{

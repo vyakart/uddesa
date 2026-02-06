@@ -1,8 +1,8 @@
 import { useCallback, useRef } from 'react';
 import type { ScratchpadPage as ScratchpadPageType, TextBlock as TextBlockType } from '@/types/scratchpad';
-import { defaultScratchpadSettings } from '@/types/scratchpad';
 import { TextBlock } from './TextBlock';
 import { useScratchpadStore } from '@/stores/scratchpadStore';
+import { useSettingsStore } from '@/stores/settingsStore';
 
 interface ScratchpadPageProps {
   page: ScratchpadPageType;
@@ -12,8 +12,13 @@ interface ScratchpadPageProps {
 export function ScratchpadPage({ page, blocks }: ScratchpadPageProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const createTextBlock = useScratchpadStore((state) => state.createTextBlock);
+  const scratchpadSettings = useSettingsStore((state) => state.scratchpad);
 
-  const { pageSize } = defaultScratchpadSettings;
+  const { pageSize, orientation } = scratchpadSettings;
+  const dimensions =
+    orientation === 'landscape'
+      ? { width: pageSize.height, height: pageSize.width }
+      : { width: pageSize.width, height: pageSize.height };
 
   const handleClick = useCallback(
     (e: React.MouseEvent) => {
@@ -32,13 +37,6 @@ export function ScratchpadPage({ page, blocks }: ScratchpadPageProps) {
     [page.id, page.isLocked, createTextBlock]
   );
 
-  console.log('[ScratchpadPage] Rendering', {
-    pageId: page.id,
-    pageSize,
-    blocksCount: blocks.length,
-    categoryColor: page.categoryColor,
-  });
-
   return (
     <div
       style={{
@@ -47,23 +45,24 @@ export function ScratchpadPage({ page, blocks }: ScratchpadPageProps) {
         justifyContent: 'center',
         padding: '2rem',
         width: '100%',
-        minHeight: pageSize.height + 64,
+        minHeight: dimensions.height + 64,
       }}
     >
       {/* Page with shadow wrapper */}
       <div
         style={{
           position: 'relative',
-          width: pageSize.width + 8,
-          height: pageSize.height + 8,
+          width: dimensions.width + 8,
+          height: dimensions.height + 8,
         }}
       >
         {/* Page shadow/depth effect */}
         <div
+          data-testid="scratchpad-page-shadow-1"
           style={{
             position: 'absolute',
-            width: pageSize.width,
-            height: pageSize.height,
+            width: dimensions.width,
+            height: dimensions.height,
             backgroundColor: '#d4d4d4',
             top: 4,
             left: 4,
@@ -71,10 +70,11 @@ export function ScratchpadPage({ page, blocks }: ScratchpadPageProps) {
           }}
         />
         <div
+          data-testid="scratchpad-page-shadow-2"
           style={{
             position: 'absolute',
-            width: pageSize.width,
-            height: pageSize.height,
+            width: dimensions.width,
+            height: dimensions.height,
             backgroundColor: '#e0e0e0',
             top: 2,
             left: 2,
@@ -84,12 +84,13 @@ export function ScratchpadPage({ page, blocks }: ScratchpadPageProps) {
 
         {/* Main page */}
         <div
+          data-testid="scratchpad-page-canvas"
           ref={containerRef}
           onClick={handleClick}
           style={{
             position: 'relative',
-            width: pageSize.width,
-            height: pageSize.height,
+            width: dimensions.width,
+            height: dimensions.height,
             backgroundColor: page.categoryColor,
             border: '2px solid #999',
             borderRadius: '4px',

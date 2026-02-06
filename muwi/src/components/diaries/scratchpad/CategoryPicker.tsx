@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import type { CategoryName } from '@/types/scratchpad';
-import { defaultScratchpadSettings } from '@/types/scratchpad';
+import { useSettingsStore } from '@/stores/settingsStore';
 
 interface CategoryPickerProps {
   currentCategory: CategoryName;
@@ -25,6 +25,7 @@ export function CategoryPicker({
 }: CategoryPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const categoriesMap = useSettingsStore((state) => state.scratchpad.categories);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -60,7 +61,7 @@ export function CategoryPicker({
     setIsOpen(false);
   };
 
-  const categories = Object.entries(defaultScratchpadSettings.categories) as [CategoryName, string][];
+  const categories = Object.entries(categoriesMap) as [CategoryName, string][];
 
   return (
     <div ref={dropdownRef} className="relative inline-block">

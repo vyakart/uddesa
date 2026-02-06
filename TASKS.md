@@ -471,15 +471,15 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.5.1, 0.4.3
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] pages state array
-  - [ ] currentPageIndex state
-  - [ ] textBlocks Map (pageId → blocks)
-  - [ ] loadPages action
-  - [ ] createPage action
-  - [ ] deletePage action
-  - [ ] navigateToPage action
-  - [ ] findFreshPage action
-  - [ ] CRUD actions for text blocks
+  - [x] pages state array
+  - [x] currentPageIndex state
+  - [x] textBlocks Map (pageId → blocks)
+  - [x] loadPages action
+  - [x] createPage action
+  - [x] deletePage action
+  - [x] navigateToPage action
+  - [x] findFreshPage action
+  - [x] CRUD actions for text blocks
 - **Testing**: Unit tests for all actions
 
 #### Task 2.1.2: Create TextBlock Component
@@ -487,14 +487,14 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.1.3
 - **Effort**: L
 - **Acceptance Criteria**:
-  - [ ] Positioned absolutely by x,y coordinates
-  - [ ] contentEditable for editing
-  - [ ] Auto-expands as user types
-  - [ ] Draggable by edge
-  - [ ] Focus ring on focus
-  - [ ] Updates store on input
-  - [ ] Deletes if empty on blur
-  - [ ] Shows lock indicator when locked
+  - [x] Positioned absolutely by x,y coordinates
+  - [x] contentEditable for editing
+  - [x] Auto-expands as user types
+  - [x] Draggable by edge
+  - [x] Focus ring on focus
+  - [x] Updates store on input
+  - [x] Deletes if empty on blur
+  - [x] Shows lock indicator when locked
 - **Testing**: Component tests, drag tests
 
 #### Task 2.1.3: Create PageStack Component
@@ -502,11 +502,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 2.1.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Shows indicator for each page
-  - [ ] Darker shade for pages with content
-  - [ ] Highlights current page
-  - [ ] Click navigates to page
-  - [ ] Tooltip shows page number
+  - [x] Shows indicator for each page
+  - [x] Darker shade for pages with content
+  - [x] Highlights current page
+  - [x] Click navigates to page
+  - [x] Tooltip shows page number
 - **Testing**: Component tests
 
 #### Task 2.1.4: Create CategoryPicker Component
@@ -514,10 +514,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.5.3
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] Shows current category with color
-  - [ ] Dropdown lists all categories
-  - [ ] Selection updates page color
-  - [ ] Uses colors from settings
+  - [x] Shows current category with color
+  - [x] Dropdown lists all categories
+  - [x] Selection updates page color
+  - [x] Uses colors from settings
 - **Testing**: Component tests
 
 #### Task 2.1.5: Create ScratchpadPage Component
@@ -525,11 +525,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 2.1.2
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Fixed size from settings
-  - [ ] Background color from category
-  - [ ] Click on empty space creates text block
-  - [ ] Renders all text blocks
-  - [ ] Page shadow/depth effect
+  - [x] Fixed size from settings
+  - [x] Background color from category
+  - [x] Click on empty space creates text block
+  - [x] Renders all text blocks
+  - [x] Page shadow/depth effect
 - **Testing**: Component tests, integration tests
 
 #### Task 2.1.6: Create Scratchpad Container
@@ -537,13 +537,13 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 2.1.1, 2.1.3, 2.1.4, 2.1.5
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Loads pages on mount
-  - [ ] Shows current page
-  - [ ] Page stack indicator
-  - [ ] Category picker
-  - [ ] Page count display
-  - [ ] Keyboard navigation (PageUp/Down)
-  - [ ] Ctrl+N creates new page
+  - [x] Loads pages on mount
+  - [x] Shows current page
+  - [x] Page stack indicator
+  - [x] Category picker
+  - [x] Page count display
+  - [x] Keyboard navigation (PageUp/Down)
+  - [x] Ctrl+N creates new page
 - **Testing**: Integration tests
 - **E2E**: Create pages, add text, navigate
 
@@ -554,13 +554,13 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.5.1, 0.4.3
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] drafts state array
-  - [ ] currentDraft state
-  - [ ] loadDrafts action
-  - [ ] createDraft action
-  - [ ] updateDraft action
-  - [ ] deleteDraft action
-  - [ ] Sort by date/title/status
+  - [x] drafts state array
+  - [x] currentDraft state
+  - [x] loadDrafts action
+  - [x] createDraft action
+  - [x] updateDraft action
+  - [x] deleteDraft action
+  - [x] Sort by date/title/status
 - **Testing**: Unit tests for all actions
 
 #### Task 2.2.2: Create DraftList Component
@@ -568,12 +568,12 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 2.2.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Lists drafts with title preview
-  - [ ] Shows status badge
-  - [ ] Shows word count
-  - [ ] Sort dropdown
-  - [ ] Click selects draft
-  - [ ] Right-click context menu
+  - [x] Lists drafts with title preview
+  - [x] Shows status badge
+  - [x] Shows word count
+  - [x] Sort dropdown
+  - [x] Click selects draft
+  - [x] Right-click context menu
 - **Testing**: Component tests
 
 #### Task 2.2.3: Create StatusBadge Component
@@ -581,9 +581,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.1.3
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] Shows status text
-  - [ ] Color-coded (in-progress, review, complete)
-  - [ ] Click to cycle status
+  - [x] Shows status text
+  - [x] Color-coded (in-progress, review, complete)
+  - [x] Click to cycle status
 - **Testing**: Component tests
 
 #### Task 2.2.4: Create DraftEditor Component
@@ -591,12 +591,12 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 1.3.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Title input field (large font)
-  - [ ] TipTap body editor
-  - [ ] Basic formatting toolbar
-  - [ ] Word count display
-  - [ ] Auto-save on change
-  - [ ] Soft page breaks
+  - [x] Title input field (large font)
+  - [x] TipTap body editor
+  - [x] Basic formatting toolbar
+  - [x] Word count display
+  - [x] Auto-save on change
+  - [x] Soft page breaks
 - **Testing**: Component tests
 
 #### Task 2.2.5: Create Drafts Container
@@ -604,11 +604,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 2.2.1, 2.2.2, 2.2.4
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Loads drafts on mount
-  - [ ] Shows draft list in sidebar
-  - [ ] Shows selected draft in editor
-  - [ ] Handles create new draft
-  - [ ] Handles delete draft
+  - [x] Loads drafts on mount
+  - [x] Shows draft list in sidebar
+  - [x] Shows selected draft in editor
+  - [x] Handles create new draft
+  - [x] Handles delete draft
 - **Testing**: Integration tests
 - **E2E**: Create, edit, delete drafts
 

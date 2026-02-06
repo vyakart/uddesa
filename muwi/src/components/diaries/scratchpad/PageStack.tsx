@@ -3,15 +3,12 @@ import { useScratchpadStore } from '@/stores/scratchpadStore';
 export function PageStack() {
   const pages = useScratchpadStore((state) => state.pages);
   const currentPageIndex = useScratchpadStore((state) => state.currentPageIndex);
-  const textBlocks = useScratchpadStore((state) => state.textBlocks);
   const navigateToPage = useScratchpadStore((state) => state.navigateToPage);
-
-  console.log('[PageStack] Rendering', { pagesCount: pages.length, currentPageIndex });
 
   return (
     <div className="flex flex-col gap-1 p-2 w-12">
       {pages.map((page, index) => {
-        const hasContent = (textBlocks.get(page.id)?.length ?? 0) > 0;
+        const hasContent = page.textBlockIds.length > 0;
         const isCurrent = index === currentPageIndex;
 
         return (

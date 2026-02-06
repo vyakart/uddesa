@@ -3,6 +3,7 @@ import { devtools } from 'zustand/middleware';
 import type { ScratchpadPage, TextBlock, CategoryName } from '@/types/scratchpad';
 import { defaultScratchpadSettings } from '@/types/scratchpad';
 import { db } from '@/db/database';
+import { useSettingsStore } from '@/stores/settingsStore';
 
 interface ScratchpadState {
   pages: ScratchpadPage[];
@@ -47,13 +48,16 @@ export const useScratchpadStore = create<ScratchpadState>()(
             .toArray();
 
           if (pages.length === 0) {
+            const scratchpadSettings = useSettingsStore.getState().scratchpad;
+            const defaultCategory = scratchpadSettings.defaultCategory;
+
             // Create initial page if none exist
             const now = new Date();
             const initialPage: ScratchpadPage = {
               id: crypto.randomUUID(),
               pageNumber: 1,
-              categoryColor: defaultScratchpadSettings.categories[defaultScratchpadSettings.defaultCategory],
-              categoryName: defaultScratchpadSettings.defaultCategory,
+              categoryColor: scratchpadSettings.categories[defaultCategory],
+              categoryName: defaultCategory,
               textBlockIds: [],
               createdAt: now,
               modifiedAt: now,
@@ -80,6 +84,8 @@ export const useScratchpadStore = create<ScratchpadState>()(
 
       createPage: async (categoryName = defaultScratchpadSettings.defaultCategory) => {
         const { pages } = get();
+        const scratchpadSettings = useSettingsStore.getState().scratchpad;
+        const resolvedCategory = categoryName ?? scratchpadSettings.defaultCategory;
         const now = new Date();
         const newPageNumber = pages.length > 0
           ? Math.max(...pages.map(p => p.pageNumber)) + 1
@@ -88,8 +94,8 @@ export const useScratchpadStore = create<ScratchpadState>()(
         const newPage: ScratchpadPage = {
           id: crypto.randomUUID(),
           pageNumber: newPageNumber,
-          categoryColor: defaultScratchpadSettings.categories[categoryName],
-          categoryName,
+          categoryColor: scratchpadSettings.categories[resolvedCategory],
+          categoryName: resolvedCategory,
           textBlockIds: [],
           createdAt: now,
           modifiedAt: now,
@@ -177,7 +183,7 @@ export const useScratchpadStore = create<ScratchpadState>()(
       },
 
       updatePageCategory: async (id: string, categoryName: CategoryName) => {
-        const categoryColor = defaultScratchpadSettings.categories[categoryName];
+        const categoryColor = useSettingsStore.getState().scratchpad.categories[categoryName];
         await db.scratchpadPages.update(id, {
           categoryName,
           categoryColor,
