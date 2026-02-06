@@ -7,19 +7,21 @@ import { defaultGlobalSettings } from '@/types';
 export async function getGlobalSettings(): Promise<GlobalSettings> {
   const settings = await db.settings.get('global');
   if (!settings) {
-    await db.settings.add(defaultGlobalSettings);
-    return defaultGlobalSettings;
+    const fallback = { ...defaultGlobalSettings };
+    await db.settings.put(fallback);
+    return fallback;
   }
   return settings;
 }
 
 export async function updateGlobalSettings(updates: Partial<GlobalSettings>): Promise<void> {
   const existing = await db.settings.get('global');
-  if (existing) {
-    await db.settings.update('global', updates);
-  } else {
-    await db.settings.add({ ...defaultGlobalSettings, ...updates });
-  }
+  const next: GlobalSettings = {
+    ...(existing ?? defaultGlobalSettings),
+    ...updates,
+    id: 'global',
+  };
+  await db.settings.put(next);
 }
 
 // Passkey management

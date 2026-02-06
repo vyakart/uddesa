@@ -2,6 +2,9 @@ import type React from 'react';
 import { DiaryCard } from './DiaryCard';
 import { useAppStore, type DiaryType } from '@/stores/appStore';
 import { useSettingsStore, selectShelfLayout } from '@/stores/settingsStore';
+import { ContextMenu, Modal, type ContextMenuItem } from '@/components/common';
+import { useMemo, useState } from 'react';
+import { SettingsPanel } from './SettingsPanel';
 
 const DIARY_ORDER: DiaryType[] = [
   'scratchpad',
@@ -15,28 +18,76 @@ const DIARY_ORDER: DiaryType[] = [
 export function Shelf() {
   const openDiary = useAppStore((state) => state.openDiary);
   const openSettings = useAppStore((state) => state.openSettings);
+  const closeSettings = useAppStore((state) => state.closeSettings);
+  const isSettingsOpen = useAppStore((state) => state.isSettingsOpen);
   const shelfLayout = useSettingsStore(selectShelfLayout);
+  const [contextMenuState, setContextMenuState] = useState<{
+    x: number;
+    y: number;
+    diaryType: DiaryType;
+  } | null>(null);
 
   const handleDiaryClick = (type: DiaryType) => {
     openDiary(type);
   };
 
-  const gridStyles: React.CSSProperties =
-    shelfLayout === 'list'
-      ? {
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '1rem',
-          maxWidth: '672px',
-          margin: '0 auto',
-        }
-      : {
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '1.5rem',
-          maxWidth: '1200px',
-          margin: '0 auto',
-        };
+  const gridStyles: React.CSSProperties = useMemo(() => {
+    if (shelfLayout === 'list') {
+      return {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.85rem',
+        maxWidth: '760px',
+        margin: '0 auto',
+      };
+    }
+
+    if (shelfLayout === 'shelf') {
+      return {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
+        gap: '0.9rem',
+        maxWidth: '1200px',
+        margin: '0 auto',
+        padding: '1rem',
+        borderRadius: 14,
+        border: '1px solid #d7d2c3',
+        background:
+          'linear-gradient(180deg, rgba(169, 137, 92, 0.18) 0%, rgba(143, 111, 68, 0.28) 100%)',
+      };
+    }
+
+    return {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+      gap: '1.5rem',
+      maxWidth: '1200px',
+      margin: '0 auto',
+    };
+  }, [shelfLayout]);
+
+  const contextItems: ContextMenuItem[] = useMemo(() => {
+    if (!contextMenuState) {
+      return [];
+    }
+
+    return [
+      {
+        id: 'open',
+        label: 'Open Diary',
+        onSelect: () => openDiary(contextMenuState.diaryType),
+      },
+      {
+        id: 'layout',
+        label: 'Layout',
+        submenu: [
+          { id: 'layout-grid', label: 'Grid View' },
+          { id: 'layout-list', label: 'List View' },
+          { id: 'layout-shelf', label: 'Shelf View' },
+        ],
+      },
+    ];
+  }, [contextMenuState, openDiary]);
 
   return (
     <div
@@ -110,11 +161,35 @@ export function Shelf() {
       </p>
 
       {/* Diary Grid */}
-      <main style={gridStyles}>
+      <main style={gridStyles} data-layout={shelfLayout} data-testid="shelf-layout">
         {DIARY_ORDER.map((type) => (
-          <DiaryCard key={type} type={type} onClick={handleDiaryClick} />
+          <DiaryCard
+            key={type}
+            type={type}
+            layout={shelfLayout}
+            onClick={handleDiaryClick}
+            onContextMenu={(event, diaryType) => {
+              setContextMenuState({
+                x: event.clientX,
+                y: event.clientY,
+                diaryType,
+              });
+            }}
+          />
         ))}
       </main>
+
+      <ContextMenu
+        isOpen={Boolean(contextMenuState)}
+        x={contextMenuState?.x ?? 0}
+        y={contextMenuState?.y ?? 0}
+        items={contextItems}
+        onClose={() => setContextMenuState(null)}
+      />
+
+      <Modal isOpen={isSettingsOpen} onClose={closeSettings} title="Settings">
+        <SettingsPanel />
+      </Modal>
     </div>
   );
 }

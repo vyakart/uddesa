@@ -277,12 +277,12 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.1.3
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Modal renders in portal
-  - [ ] Backdrop closes modal on click
-  - [ ] Escape key closes modal
-  - [ ] Focus trapped inside modal
-  - [ ] Accessible (role="dialog", aria-modal)
-  - [ ] Smooth enter/exit animations
+  - [x] Modal renders in portal
+  - [x] Backdrop closes modal on click
+  - [x] Escape key closes modal
+  - [x] Focus trapped inside modal
+  - [x] Accessible (role="dialog", aria-modal)
+  - [x] Smooth enter/exit animations
 - **Testing**: Component tests for all behaviors
 
 #### Task 1.1.2: Create Context Menu Component
@@ -290,12 +290,12 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.1.3
 - **Effort**: L
 - **Acceptance Criteria**:
-  - [ ] Appears at click position
-  - [ ] Stays within viewport bounds
-  - [ ] Keyboard navigation (arrows, enter, escape)
-  - [ ] Nested submenus supported
-  - [ ] Click outside closes
-  - [ ] Accessible (role="menu")
+  - [x] Appears at click position
+  - [x] Stays within viewport bounds
+  - [x] Keyboard navigation (arrows, enter, escape)
+  - [x] Nested submenus supported
+  - [x] Click outside closes
+  - [x] Accessible (role="menu")
 - **Testing**: Component tests, keyboard navigation tests
 
 #### Task 1.1.3: Create Toolbar Component
@@ -303,11 +303,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.1.3
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Horizontal button layout
-  - [ ] Separator support
-  - [ ] Active state for toggle buttons
-  - [ ] Tooltip support
-  - [ ] Keyboard accessible
+  - [x] Horizontal button layout
+  - [x] Separator support
+  - [x] Active state for toggle buttons
+  - [x] Tooltip support
+  - [x] Keyboard accessible
 - **Testing**: Component tests
 
 ### 1.2 Shelf (Homepage)
@@ -317,11 +317,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 1.1.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Displays diary name, icon, color
-  - [ ] Hover state shows preview info
-  - [ ] Click triggers navigation
-  - [ ] Right-click shows context menu
-  - [ ] Supports grid, list, and shelf layouts
+  - [x] Displays diary name, icon, color
+  - [x] Hover state shows preview info
+  - [x] Click triggers navigation
+  - [x] Right-click shows context menu
+  - [x] Supports grid, list, and shelf layouts
 - **Testing**: Component tests, interaction tests
 
 #### Task 1.2.2: Create Shelf Component
@@ -329,10 +329,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 1.2.1, 0.5.2
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Displays all 6 diary cards
-  - [ ] Layout switches (grid/list/shelf)
-  - [ ] Settings button in header
-  - [ ] Navigates to diary on card click
+  - [x] Displays all 6 diary cards
+  - [x] Layout switches (grid/list/shelf)
+  - [x] Settings button in header
+  - [x] Navigates to diary on card click
 - **Testing**: Component tests, layout tests
 - **E2E**: Homepage navigation test
 
@@ -341,13 +341,13 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 1.1.1, 0.5.3
 - **Effort**: L
 - **Acceptance Criteria**:
-  - [ ] Tabbed navigation (Appearance, Shortcuts, Backup, Privacy)
-  - [ ] Theme selector
-  - [ ] Accent color picker
-  - [ ] Layout preference selector
-  - [ ] Passkey management
-  - [ ] Backup location selector
-  - [ ] Settings persist on close
+  - [x] Tabbed navigation (Appearance, Shortcuts, Backup, Privacy)
+  - [x] Theme selector
+  - [x] Accent color picker
+  - [x] Layout preference selector
+  - [x] Passkey management
+  - [x] Backup location selector
+  - [x] Settings persist on close
 - **Testing**: Component tests, integration tests with settings store
 
 ### 1.3 Personal Diary (First Diary)
