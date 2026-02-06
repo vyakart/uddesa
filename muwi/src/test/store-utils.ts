@@ -1,33 +1,62 @@
-// Store utilities for testing
-// These utilities will help reset and mock stores during tests
+import { useAcademicStore } from '@/stores/academicStore';
+import { useAppStore } from '@/stores/appStore';
+import { useBlackboardStore } from '@/stores/blackboardStore';
+import { useDraftsStore } from '@/stores/draftsStore';
+import { useLongDraftsStore } from '@/stores/longDraftsStore';
+import { usePersonalDiaryStore } from '@/stores/personalDiaryStore';
+import { useScratchpadStore } from '@/stores/scratchpadStore';
+import { useSettingsStore } from '@/stores/settingsStore';
 
-// Generic store reset utility
-export function createStoreResetter<T>(useStore: { getState: () => T; setState: (state: Partial<T>) => void }) {
-  const initialState = useStore.getState();
+type StoreState<T extends object> = {
+  getState: () => T;
+  setState: (state: T | Partial<T> | ((currentState: T) => T | Partial<T>), replace?: boolean) => void;
+  getInitialState?: () => T;
+};
+
+// Generic store reset utility that works with Zustand stores and mock stores.
+export function createStoreResetter<T extends object>(store: StoreState<T>) {
+  const fallbackInitialState = store.getState();
+  const getInitialState = store.getInitialState ?? (() => fallbackInitialState);
 
   return () => {
-    useStore.setState(initialState);
+    store.setState(getInitialState(), true);
   };
 }
 
-// Will be populated with actual store resetters when stores are created
-export const storeResetters: (() => void)[] = [];
+const registeredStores: StoreState<object>[] = [
+  useAppStore as unknown as StoreState<object>,
+  useSettingsStore as unknown as StoreState<object>,
+  useScratchpadStore as unknown as StoreState<object>,
+  usePersonalDiaryStore as unknown as StoreState<object>,
+  useDraftsStore as unknown as StoreState<object>,
+  useBlackboardStore as unknown as StoreState<object>,
+  useLongDraftsStore as unknown as StoreState<object>,
+  useAcademicStore as unknown as StoreState<object>,
+];
 
-// Reset all stores to their initial state
+export const storeResetters: (() => void)[] = registeredStores.map((store) => createStoreResetter(store));
+
+// Reset all registered stores to their initial state.
 export function resetAllStores() {
   storeResetters.forEach((reset) => reset());
 }
 
-// Mock store creator for testing
-export function createMockStore<T extends object>(initialState: T) {
+// Mock store creator for testing utility functions.
+export function createMockStore<T extends object>(initialState: T): StoreState<T> & { subscribe: () => () => void; reset: () => void } {
   let state = { ...initialState };
 
   return {
     getState: () => state,
-    setState: (newState: Partial<T>) => {
-      state = { ...state, ...newState };
+    setState: (nextState) => {
+      if (typeof nextState === 'function') {
+        const resolved = nextState(state);
+        state = { ...state, ...resolved };
+        return;
+      }
+      state = { ...state, ...nextState };
     },
     subscribe: () => () => {},
+    getInitialState: () => ({ ...initialState }),
     reset: () => {
       state = { ...initialState };
     },

@@ -139,11 +139,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.1.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Vitest installed with UI and coverage
-  - [ ] vitest.config.ts created with jsdom environment
-  - [ ] Path aliases work in tests
-  - [ ] Coverage thresholds set (80%)
-  - [ ] `npm test` runs successfully
+  - [x] Vitest installed with UI and coverage
+  - [x] vitest.config.ts created with jsdom environment
+  - [x] Path aliases work in tests
+  - [x] Coverage thresholds set (80%)
+  - [x] `npm test` runs successfully
 - **Packages**:
   ```bash
   npm install -D vitest @vitest/ui @vitest/coverage-v8
@@ -156,11 +156,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.3.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] `src/test/setup.ts` with global mocks
-  - [ ] `src/test/utils.tsx` with custom render
-  - [ ] `src/test/db-utils.ts` with database seeders
-  - [ ] `src/test/store-utils.ts` with store resetters
-  - [ ] fake-indexeddb configured
+  - [x] `src/test/setup.ts` with global mocks
+  - [x] `src/test/utils.tsx` with custom render
+  - [x] `src/test/db-utils.ts` with database seeders
+  - [x] `src/test/store-utils.ts` with store resetters
+  - [x] fake-indexeddb configured
 - **Packages**:
   ```bash
   npm install -D fake-indexeddb @faker-js/faker
@@ -172,9 +172,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Effort**: M
 - **Acceptance Criteria**:
   - [ ] Playwright installed with browsers
-  - [ ] playwright.config.ts configured
-  - [ ] E2E folder structure created
-  - [ ] Web server configuration for tests
+  - [x] playwright.config.ts configured
+  - [x] E2E folder structure created
+  - [x] Web server configuration for tests
   - [ ] Sample E2E test passes
 - **Commands**:
   ```bash

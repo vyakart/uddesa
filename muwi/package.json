@@ -12,6 +12,8 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
     "electron:dev": "vite",
     "electron:build": "npm run build && electron-builder",
     "electron:preview": "vite build && electron ."
