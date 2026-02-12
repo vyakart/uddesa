@@ -1,0 +1,81 @@
+import { act, fireEvent, render, screen } from '@/test';
+import type { Footnote } from '@/types/longDrafts';
+import { FootnoteManager } from './FootnoteManager';
+
+function makeFootnote(overrides: Partial<Footnote> = {}): Footnote {
+  return {
+    id: crypto.randomUUID(),
+    marker: 1,
+    content: 'Sample footnote content',
+    position: 0,
+    ...overrides,
+  };
+}
+
+describe('FootnoteManager', () => {
+  it('shows empty state and allows adding footnotes when unlocked', () => {
+    const onAddFootnote = vi.fn();
+
+    render(
+      <FootnoteManager
+        footnotes={[]}
+        isLocked={false}
+        onAddFootnote={onAddFootnote}
+        onUpdateFootnote={vi.fn()}
+        onDeleteFootnote={vi.fn()}
+        onNavigateToFootnote={vi.fn()}
+      />
+    );
+
+    expect(screen.getByText('No footnotes yet')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Add Footnote' }));
+    expect(onAddFootnote).toHaveBeenCalledTimes(1);
+  });
+
+  it('supports navigate, inline edit/save, and context menu delete', () => {
+    vi.useFakeTimers();
+    const onUpdateFootnote = vi.fn();
+    const onDeleteFootnote = vi.fn();
+    const onNavigateToFootnote = vi.fn();
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+
+    const first = makeFootnote({ id: 'fn-1', marker: 1, content: 'First footnote' });
+    const second = makeFootnote({ id: 'fn-2', marker: 2, content: 'Second footnote' });
+
+    render(
+      <FootnoteManager
+        footnotes={[first, second]}
+        isLocked={false}
+        onAddFootnote={vi.fn()}
+        onUpdateFootnote={onUpdateFootnote}
+        onDeleteFootnote={onDeleteFootnote}
+        onNavigateToFootnote={onNavigateToFootnote}
+        highlightedFootnoteId="fn-2"
+      />
+    );
+
+    expect(screen.getByText('Footnotes (2)')).toBeInTheDocument();
+
+    fireEvent.click(screen.getAllByRole('button', { name: 'Go to text' })[0]);
+    expect(onNavigateToFootnote).toHaveBeenCalledWith('fn-1');
+
+    fireEvent.click(screen.getAllByRole('button', { name: 'Edit' })[0]);
+    const textarea = screen.getByDisplayValue('First footnote');
+    fireEvent.change(textarea, { target: { value: 'First footnote updated' } });
+
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
+    expect(onUpdateFootnote).toHaveBeenCalledWith('fn-1', 'First footnote updated');
+
+    fireEvent.blur(textarea);
+    expect(onUpdateFootnote).toHaveBeenCalledWith('fn-1', 'First footnote updated');
+
+    fireEvent.contextMenu(screen.getByText('Second footnote'));
+    fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
+    expect(onDeleteFootnote).toHaveBeenCalledWith('fn-2');
+
+    confirmSpy.mockRestore();
+    vi.useRealTimers();
+  });
+});

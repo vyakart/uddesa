@@ -1,0 +1,154 @@
+import { fireEvent, render, screen, waitFor } from '@/test';
+import { useAcademicStore } from '@/stores/academicStore';
+import type { BibliographyEntry } from '@/types/academic';
+import { BibliographyManager } from './BibliographyManager';
+import { fetchFromDOI, parseBibTeX } from '@/utils/citation';
+
+vi.mock('@/utils/citation', () => ({
+  formatBibliographyEntry: (entry: { title: string; year: number }) =>
+    `${entry.title} (${entry.year})`,
+  parseBibTeX: vi.fn(),
+  fetchFromDOI: vi.fn(),
+}));
+
+function makeEntry(overrides: Partial<BibliographyEntry> = {}): BibliographyEntry {
+  const now = new Date('2026-02-12T12:00:00.000Z');
+  return {
+    id: crypto.randomUUID(),
+    type: 'article',
+    authors: ['Ada Lovelace', 'Alan Turing'],
+    title: 'Foundations of Computing',
+    year: 2024,
+    journal: 'Journal of CS',
+    volume: '1',
+    issue: '2',
+    pages: '1-10',
+    doi: '10.1000/foundations',
+    tags: ['cs'],
+    createdAt: now,
+    modifiedAt: now,
+    ...overrides,
+  };
+}
+
+describe('BibliographyManager', () => {
+  beforeEach(() => {
+    useAcademicStore.setState(useAcademicStore.getInitialState(), true);
+    vi.clearAllMocks();
+  });
+
+  it('filters/selects entries and supports edit/delete actions', async () => {
+    const updateBibliographyEntry = vi.fn().mockResolvedValue(undefined);
+    const deleteBibliographyEntry = vi.fn().mockResolvedValue(undefined);
+    const onSelectEntry = vi.fn();
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+
+    const first = makeEntry({ id: 'entry-1', title: 'First Entry' });
+    const second = makeEntry({ id: 'entry-2', title: 'Second Entry' });
+
+    useAcademicStore.setState({
+      bibliographyEntries: [first, second],
+      citationStyle: 'apa7',
+      addBibliographyEntry: vi.fn().mockResolvedValue(second),
+      updateBibliographyEntry,
+      deleteBibliographyEntry,
+    });
+
+    render(<BibliographyManager onSelectEntry={onSelectEntry} onClose={vi.fn()} />);
+
+    fireEvent.change(screen.getByPlaceholderText('Search references...'), {
+      target: { value: 'Second' },
+    });
+
+    expect(screen.queryByText('First Entry (2024)')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByText('Second Entry (2024)'));
+    expect(onSelectEntry).toHaveBeenCalledWith(second);
+
+    fireEvent.click(screen.getByTitle('Edit'));
+    fireEvent.change(screen.getByDisplayValue('Second Entry'), {
+      target: { value: 'Second Entry Updated' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Save Changes' }));
+
+    await waitFor(() => {
+      expect(updateBibliographyEntry).toHaveBeenCalledWith(
+        'entry-2',
+        expect.objectContaining({ title: 'Second Entry Updated' })
+      );
+    });
+
+    fireEvent.click(screen.getByTitle('Delete'));
+    await waitFor(() => {
+      expect(deleteBibliographyEntry).toHaveBeenCalledWith('entry-2');
+    });
+
+    confirmSpy.mockRestore();
+  });
+
+  it('imports a reference from DOI', async () => {
+    const addBibliographyEntry = vi.fn().mockResolvedValue(undefined);
+    const mockedFetchFromDOI = vi.mocked(fetchFromDOI);
+    mockedFetchFromDOI.mockResolvedValue(
+      makeEntry({
+        id: 'doi-entry',
+        title: 'DOI Imported',
+      }) as unknown as Omit<BibliographyEntry, 'id' | 'createdAt' | 'modifiedAt'>
+    );
+
+    useAcademicStore.setState({
+      bibliographyEntries: [],
+      citationStyle: 'apa7',
+      addBibliographyEntry,
+      updateBibliographyEntry: vi.fn().mockResolvedValue(undefined),
+      deleteBibliographyEntry: vi.fn().mockResolvedValue(undefined),
+    });
+
+    render(<BibliographyManager />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Add' }));
+    fireEvent.click(screen.getByRole('button', { name: 'From DOI' }));
+    fireEvent.change(
+      screen.getByPlaceholderText('10.1000/xyz123 or https://doi.org/10.1000/xyz123'),
+      {
+        target: { value: '10.1000/example' },
+      }
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Add Reference' }));
+
+    await waitFor(() => {
+      expect(mockedFetchFromDOI).toHaveBeenCalledWith('10.1000/example');
+      expect(addBibliographyEntry).toHaveBeenCalled();
+    });
+  });
+
+  it('imports references from BibTeX', async () => {
+    const addBibliographyEntry = vi.fn().mockResolvedValue(undefined);
+    const mockedParseBibTeX = vi.mocked(parseBibTeX);
+    mockedParseBibTeX.mockReturnValue([
+      makeEntry({ id: 'bib-1', title: 'Bib One' }),
+      makeEntry({ id: 'bib-2', title: 'Bib Two' }),
+    ]);
+
+    useAcademicStore.setState({
+      bibliographyEntries: [],
+      citationStyle: 'apa7',
+      addBibliographyEntry,
+      updateBibliographyEntry: vi.fn().mockResolvedValue(undefined),
+      deleteBibliographyEntry: vi.fn().mockResolvedValue(undefined),
+    });
+
+    render(<BibliographyManager />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Add' }));
+    fireEvent.click(screen.getByRole('button', { name: 'BibTeX' }));
+    fireEvent.change(screen.getByPlaceholderText(/@article\{key,/), {
+      target: { value: '@article{test, title={Paper}}' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Add Reference' }));
+
+    await waitFor(() => {
+      expect(mockedParseBibTeX).toHaveBeenCalledWith('@article{test, title={Paper}}');
+      expect(addBibliographyEntry).toHaveBeenCalledTimes(2);
+    });
+  });
+});
