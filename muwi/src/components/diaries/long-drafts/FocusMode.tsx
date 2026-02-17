@@ -11,9 +11,13 @@ export function FocusMode({ children }: FocusModeProps) {
   const toggleFocusMode = useLongDraftsStore((state) => state.toggleFocusMode);
 
   const [showControls, setShowControls] = useState(false);
+  const [isOverlayVisible, setIsOverlayVisible] = useState(viewMode === 'focus');
+  const [isOverlayActive, setIsOverlayActive] = useState(viewMode === 'focus');
   const controlsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const exitAnimationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const isFocusMode = viewMode === 'focus';
+  const controlsVisible = isFocusMode && showControls;
 
   // Handle keyboard shortcut (Escape to exit focus mode, F11 to toggle)
   useEffect(() => {
@@ -24,7 +28,7 @@ export function FocusMode({ children }: FocusModeProps) {
         toggleFocusMode();
       }
       // F11 or Cmd/Ctrl+Shift+F toggles focus mode
-      if ((e.key === 'F11' || (e.key === 'f' && (e.metaKey || e.ctrlKey) && e.shiftKey))) {
+      if ((e.key === 'F11' || (e.key.toLowerCase() === 'f' && (e.metaKey || e.ctrlKey) && e.shiftKey))) {
         e.preventDefault();
         toggleFocusMode();
       }
@@ -55,10 +59,65 @@ export function FocusMode({ children }: FocusModeProps) {
       if (controlsTimeoutRef.current) {
         clearTimeout(controlsTimeoutRef.current);
       }
+      if (exitAnimationTimeoutRef.current) {
+        clearTimeout(exitAnimationTimeoutRef.current);
+      }
     };
   }, []);
 
-  if (!isFocusMode) {
+  // Animate overlay enter/exit
+  useEffect(() => {
+    let rafId: number | null = null;
+    let nestedRafId: number | null = null;
+
+    if (isFocusMode) {
+      if (exitAnimationTimeoutRef.current) {
+        clearTimeout(exitAnimationTimeoutRef.current);
+      }
+
+      rafId = requestAnimationFrame(() => {
+        setIsOverlayVisible(true);
+        nestedRafId = requestAnimationFrame(() => {
+          setIsOverlayActive(true);
+        });
+      });
+
+      return () => {
+        if (rafId !== null) {
+          cancelAnimationFrame(rafId);
+        }
+        if (nestedRafId !== null) {
+          cancelAnimationFrame(nestedRafId);
+        }
+      };
+    }
+
+    if (controlsTimeoutRef.current) {
+      clearTimeout(controlsTimeoutRef.current);
+    }
+
+    rafId = requestAnimationFrame(() => {
+      setShowControls(false);
+      setIsOverlayActive(false);
+    });
+
+    if (isOverlayVisible) {
+      exitAnimationTimeoutRef.current = setTimeout(() => {
+        setIsOverlayVisible(false);
+      }, 220);
+    }
+
+    return () => {
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
+      if (exitAnimationTimeoutRef.current) {
+        clearTimeout(exitAnimationTimeoutRef.current);
+      }
+    };
+  }, [isFocusMode, isOverlayVisible]);
+
+  if (!isOverlayVisible) {
     return <>{children}</>;
   }
 
@@ -72,8 +131,11 @@ export function FocusMode({ children }: FocusModeProps) {
         backgroundColor: '#FFFEF9',
         display: 'flex',
         flexDirection: 'column',
-        opacity: 1,
-        transition: 'opacity 300ms ease',
+        opacity: isOverlayActive ? 1 : 0,
+        transform: isOverlayActive ? 'scale(1)' : 'scale(0.995)',
+        transition: 'opacity 220ms ease, transform 220ms ease',
+        pointerEvents: isOverlayActive ? 'auto' : 'none',
+        willChange: 'opacity, transform',
       }}
     >
       {/* Top controls bar - fades in on mouse move */}
@@ -89,10 +151,10 @@ export function FocusMode({ children }: FocusModeProps) {
           alignItems: 'center',
           backgroundColor: 'rgba(255, 254, 249, 0.95)',
           borderBottom: '1px solid #E5E7EB',
-          opacity: showControls ? 1 : 0,
-          transform: showControls ? 'translateY(0)' : 'translateY(-100%)',
+          opacity: controlsVisible ? 1 : 0,
+          transform: controlsVisible ? 'translateY(0)' : 'translateY(-100%)',
           transition: 'opacity 300ms ease, transform 300ms ease',
-          pointerEvents: showControls ? 'auto' : 'none',
+          pointerEvents: controlsVisible ? 'auto' : 'none',
           zIndex: 10,
         }}
       >
@@ -173,7 +235,7 @@ export function FocusMode({ children }: FocusModeProps) {
           color: '#9CA3AF',
           backgroundColor: 'rgba(255, 254, 249, 0.9)',
           borderRadius: '20px',
-          opacity: showControls ? 0 : 0.6,
+          opacity: controlsVisible ? 0 : 0.6,
           transition: 'opacity 300ms ease',
           pointerEvents: 'none',
         }}

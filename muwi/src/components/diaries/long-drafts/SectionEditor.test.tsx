@@ -26,9 +26,23 @@ const commands = {
   updateFootnoteContent: vi.fn(),
 };
 
+const editorEventHandlers = new Map<string, Set<() => void>>();
+
 const mockEditor = {
   chain: vi.fn(() => chain),
   commands,
+  on: vi.fn((event: string, handler: () => void) => {
+    if (!editorEventHandlers.has(event)) {
+      editorEventHandlers.set(event, new Set());
+    }
+    editorEventHandlers.get(event)?.add(handler);
+  }),
+  off: vi.fn((event: string, handler: () => void) => {
+    editorEventHandlers.get(event)?.delete(handler);
+  }),
+  view: {
+    coordsAtPos: vi.fn(() => ({ top: 500, bottom: 520 })),
+  },
   state: {
     selection: { from: 7 },
     doc: {
@@ -78,10 +92,15 @@ function makeSection(overrides: Partial<Section> = {}): Section {
   };
 }
 
+function emitEditorEvent(event: string) {
+  editorEventHandlers.get(event)?.forEach((handler) => handler());
+}
+
 describe('SectionEditor', () => {
   beforeEach(() => {
     capturedOnUpdate = undefined;
     vi.clearAllMocks();
+    editorEventHandlers.clear();
     useLongDraftsStore.setState(useLongDraftsStore.getInitialState(), true);
   });
 
@@ -215,6 +234,60 @@ describe('SectionEditor', () => {
 
     const focusedToolbar = screen.queryByTitle('Bold (Ctrl+B)');
     expect(focusedToolbar).not.toBeInTheDocument();
+  });
+
+  it('applies typewriter centering in focus mode', () => {
+    act(() => {
+      useLongDraftsStore.setState({ viewMode: 'focus' });
+    });
+
+    const requestAnimationFrameSpy = vi
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((callback: FrameRequestCallback) => {
+        callback(0);
+        return 1;
+      });
+    const cancelAnimationFrameSpy = vi
+      .spyOn(window, 'cancelAnimationFrame')
+      .mockImplementation(() => undefined);
+
+    render(
+      <SectionEditor
+        section={makeSection({ title: 'Typewriter Focus' })}
+        onTitleChange={vi.fn()}
+        onContentChange={vi.fn()}
+        onNotesChange={vi.fn()}
+        onStatusChange={vi.fn()}
+      />
+    );
+
+    const focusContainer = screen.getByTestId('focus-scroll-container');
+    focusContainer.scrollTop = 0;
+
+    vi.spyOn(focusContainer, 'getBoundingClientRect').mockReturnValue({
+      x: 0,
+      y: 0,
+      width: 900,
+      height: 800,
+      top: 0,
+      left: 0,
+      right: 900,
+      bottom: 800,
+      toJSON: () => ({}),
+    });
+
+    mockEditor.view.coordsAtPos.mockReturnValue({ top: 700, bottom: 720 });
+    emitEditorEvent('update');
+
+    expect(mockEditor.view.coordsAtPos).toHaveBeenCalledWith(7);
+    expect(focusContainer.scrollTop).toBe(310);
+    expect(mockEditor.on).toHaveBeenCalledWith('selectionUpdate', expect.any(Function));
+    expect(mockEditor.on).toHaveBeenCalledWith('update', expect.any(Function));
+    expect(mockEditor.on).toHaveBeenCalledWith('focus', expect.any(Function));
+    expect(cancelAnimationFrameSpy).toHaveBeenCalled();
+
+    requestAnimationFrameSpy.mockRestore();
+    cancelAnimationFrameSpy.mockRestore();
   });
 
   it('hides formatting toolbar when section is locked in normal mode', () => {

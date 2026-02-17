@@ -57,6 +57,8 @@ export function SectionEditor({
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const titleSaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const notesSaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const typewriterFrameRef = useRef<number | null>(null);
+  const focusScrollContainerRef = useRef<HTMLDivElement>(null);
   const statusMenuRef = useRef<HTMLDivElement>(null);
   const updateSection = useLongDraftsStore((state) => state.updateSection);
 
@@ -109,14 +111,77 @@ export function SectionEditor({
 
   useEditorShortcuts(editor, { includeUnderline: true, includeHeadings: true });
 
+  const scheduleTypewriterCenter = useCallback(() => {
+    if (!isFocusMode || !editor) {
+      return;
+    }
+
+    if (typewriterFrameRef.current !== null) {
+      cancelAnimationFrame(typewriterFrameRef.current);
+    }
+
+    typewriterFrameRef.current = requestAnimationFrame(() => {
+      const scrollContainer = focusScrollContainerRef.current;
+      if (!scrollContainer) {
+        return;
+      }
+
+      let caretCoordinates: { top: number; bottom: number };
+      try {
+        caretCoordinates = editor.view.coordsAtPos(editor.state.selection.from);
+      } catch {
+        return;
+      }
+
+      const containerRect = scrollContainer.getBoundingClientRect();
+      const caretMidpoint = (caretCoordinates.top + caretCoordinates.bottom) / 2;
+      const containerMidpoint = containerRect.top + (containerRect.height / 2);
+      const scrollDelta = caretMidpoint - containerMidpoint;
+
+      if (Math.abs(scrollDelta) < 1) {
+        return;
+      }
+
+      scrollContainer.scrollTop += scrollDelta;
+    });
+  }, [editor, isFocusMode]);
+
   // Cleanup timeouts
   useEffect(() => {
     return () => {
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
       if (titleSaveTimeoutRef.current) clearTimeout(titleSaveTimeoutRef.current);
       if (notesSaveTimeoutRef.current) clearTimeout(notesSaveTimeoutRef.current);
+      if (typewriterFrameRef.current !== null) cancelAnimationFrame(typewriterFrameRef.current);
     };
   }, []);
+
+  // Typewriter mode: keep current line centered while writing in focus mode
+  useEffect(() => {
+    if (!editor || !isFocusMode) {
+      return;
+    }
+
+    const centerLine = () => scheduleTypewriterCenter();
+
+    editor.on('selectionUpdate', centerLine);
+    editor.on('update', centerLine);
+    editor.on('focus', centerLine);
+    window.addEventListener('resize', centerLine);
+
+    centerLine();
+
+    return () => {
+      editor.off('selectionUpdate', centerLine);
+      editor.off('update', centerLine);
+      editor.off('focus', centerLine);
+      window.removeEventListener('resize', centerLine);
+      if (typewriterFrameRef.current !== null) {
+        cancelAnimationFrame(typewriterFrameRef.current);
+        typewriterFrameRef.current = null;
+      }
+    };
+  }, [editor, isFocusMode, scheduleTypewriterCenter]);
 
   // Close status menu on outside click
   useEffect(() => {
@@ -296,6 +361,8 @@ export function SectionEditor({
         }}
       >
         <div
+          ref={focusScrollContainerRef}
+          data-testid="focus-scroll-container"
           style={{
             flex: 1,
             overflow: 'auto',
@@ -335,6 +402,8 @@ export function SectionEditor({
               editor={editor}
               style={{
                 minHeight: '100%',
+                paddingTop: '24vh',
+                paddingBottom: '40vh',
               }}
             />
           </div>

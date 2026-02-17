@@ -935,10 +935,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 4.1.3
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Hides all UI except editor
-  - [ ] Typewriter mode (current line centered)
-  - [ ] Keyboard shortcut to toggle
-  - [ ] Smooth enter/exit animation
+  - [x] Hides all UI except editor
+  - [x] Typewriter mode (current line centered)
+  - [x] Keyboard shortcut to toggle
+  - [x] Smooth enter/exit animation
 - **Testing**: Component tests
 
 ### 4.4 Long Drafts Assembly

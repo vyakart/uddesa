@@ -40,6 +40,7 @@ describe('FocusMode', () => {
   });
 
   it('shows focus mode UI and exits with Escape', () => {
+    vi.useFakeTimers();
     useLongDraftsStore.setState({
       viewMode: 'focus',
       currentLongDraftId: 'doc-1',
@@ -59,6 +60,14 @@ describe('FocusMode', () => {
 
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(useLongDraftsStore.getState().viewMode).toBe('normal');
+
+    // Exit animation keeps overlay for a short transition window.
+    expect(screen.getByRole('button', { name: /Exit Focus Mode/i })).toBeInTheDocument();
+    act(() => {
+      vi.advanceTimersByTime(250);
+    });
+    expect(screen.queryByRole('button', { name: /Exit Focus Mode/i })).not.toBeInTheDocument();
+    vi.useRealTimers();
   });
 
   it('toggles focus mode with F11 and Ctrl+Shift+F shortcuts', () => {

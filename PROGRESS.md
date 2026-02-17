@@ -5,11 +5,11 @@ Last updated: February 17, 2026
 ## 1) Where we are now
 
 - App development is active and stable.
-- Unit tests are passing (`67` files, `275` tests).
+- Unit tests are passing (`67` files, `276` tests).
 - Latest full coverage snapshot: lines `90.82%`, statements `90.22%`, functions `86.44%`, branches `80.07%`.
 - Recent focus has been adding reliable tests module by module.
 - Blackboard coverage moved from almost none to strong coverage.
-- Current execution stage: Phase `4.3.1` (Long Drafts focus mode).
+- Current execution stage: Phase `4.4.1` (Long Drafts container assembly).
 
 ## 2) Completed tasks so far (brief)
 
@@ -58,6 +58,7 @@ Last updated: February 17, 2026
 | Task wave 36 | Completed `4.1.3` SectionEditor acceptance by validating title + TipTap body editing, status updates, notes panel editing, and enabling integrated footnote insertion/management UI in-editor | Full run green: `vitest` (`67` files, `275` tests) |
 | Task wave 37 | Completed `4.2.1` Footnote extension acceptance by adding marker/content attributes, auto-marker insertion, bottom footnote rendering in-editor, and click routing between markers and footnote list entries | Extension + Long Drafts sweep: `vitest src/extensions/footnote.test.ts src/components/diaries/long-drafts src/stores/longDraftsStore.test.ts` (36 tests passing) |
 | Task wave 38 | Completed `4.2.2` FootnoteManager acceptance by validating list rendering, inline editing, deletion, and navigation-to-text flows, and wiring manager interactions through `SectionEditor` footnote panel actions | Component + integration tests (`FootnoteManager.test.tsx`, `SectionEditor.test.tsx`) + full run green |
+| Task wave 39 | Completed `4.3.1` FocusMode acceptance by adding full-screen distraction-free overlay behavior, keyboard toggles (`Esc`, `F11`, `Cmd/Ctrl+Shift+F`), typewriter centering in focus editor scroll, and smooth overlay transitions | Long Drafts targeted tests + full run green: `vitest --run` (`67` files, `276` tests) |
 
 ## 3) Blackboard testing progress
 
@@ -96,6 +97,5 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Implement Phase `4.3.1`: create FocusMode component.
-2. Implement Phase `4.4.1`: create LongDrafts container.
-3. Keep periodic full coverage reruns while feature stages advance to prevent regressions.
+1. Implement Phase `4.4.1`: create LongDrafts container.
+2. Keep periodic full coverage reruns while feature stages advance to prevent regressions.
