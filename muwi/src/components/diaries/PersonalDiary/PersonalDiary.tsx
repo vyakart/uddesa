@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { parseISO } from 'date-fns';
+import { addDays, format, parseISO, subDays } from 'date-fns';
 import { DiaryLayout } from '@/components/common';
 import { usePersonalDiaryStore } from '@/stores/personalDiaryStore';
 import { useSettingsStore } from '@/stores/settingsStore';
@@ -24,6 +24,7 @@ export function PersonalDiary() {
   const loadEntries = usePersonalDiaryStore((state) => state.loadEntries);
   const loadEntry = usePersonalDiaryStore((state) => state.loadEntry);
   const updateEntry = usePersonalDiaryStore((state) => state.updateEntry);
+  const updateEntryLock = usePersonalDiaryStore((state) => state.updateEntryLock);
   const diarySettings = useSettingsStore((state) => state.personalDiary);
 
   const paperBackground =
@@ -65,6 +66,54 @@ export function PersonalDiary() {
   const handleToggleCollapse = () => {
     setIsNavCollapsed(!isNavCollapsed);
   };
+
+  const handleCreateNewEntry = useCallback(() => {
+    const existingDates = new Set(entries.map((entry) => format(toDate(entry.date), 'yyyy-MM-dd')));
+    let candidate = addDays(currentEntry ? toDate(currentEntry.date) : new Date(), 1);
+
+    while (existingDates.has(format(candidate, 'yyyy-MM-dd'))) {
+      candidate = addDays(candidate, 1);
+    }
+
+    loadEntry(candidate);
+  }, [entries, currentEntry, loadEntry]);
+
+  const handleLockChange = useCallback(
+    (isLocked: boolean) => {
+      if (!currentEntry) {
+        return;
+      }
+      updateEntryLock(currentEntry.id, isLocked);
+    },
+    [currentEntry, updateEntryLock]
+  );
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const isMod = event.ctrlKey || event.metaKey;
+      const baseDate = currentEntry ? toDate(currentEntry.date) : new Date();
+
+      if (isMod && event.key.toLowerCase() === 'n') {
+        event.preventDefault();
+        handleCreateNewEntry();
+        return;
+      }
+
+      if (event.key === 'PageUp') {
+        event.preventDefault();
+        loadEntry(subDays(baseDate, 1));
+        return;
+      }
+
+      if (event.key === 'PageDown') {
+        event.preventDefault();
+        loadEntry(addDays(baseDate, 1));
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentEntry, loadEntry, handleCreateNewEntry]);
 
   // Show loading state during initialization
   if (!isInitialized) {
@@ -146,6 +195,7 @@ export function PersonalDiary() {
           entry={currentEntry}
           onContentChange={handleContentChange}
           onDateChange={handleDateChange}
+          onLockChange={handleLockChange}
           settings={diarySettings}
         />
       </div>

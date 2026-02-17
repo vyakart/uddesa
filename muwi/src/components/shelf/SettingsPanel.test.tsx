@@ -65,14 +65,19 @@ describe('SettingsPanel', () => {
 
     await waitFor(() => {
       const global = useSettingsStore.getState().global;
-      expect(global.passkeyHash).toBe('my-secret');
+      expect(global.passkeyHash).toBeDefined();
+      expect(global.passkeyHash).not.toBe('my-secret');
+      expect(global.passkeySalt).toBeDefined();
       expect(global.passkeyHint).toBe('testing-hint');
     });
+
+    await expect(useSettingsStore.getState().verifyPasskey('my-secret')).resolves.toBe(true);
 
     fireEvent.click(screen.getByRole('button', { name: 'Clear Passkey' }));
     await waitFor(() => {
       const global = useSettingsStore.getState().global;
       expect(global.passkeyHash).toBeUndefined();
+      expect(global.passkeySalt).toBeUndefined();
       expect(global.passkeyHint).toBeUndefined();
     });
   });

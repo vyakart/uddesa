@@ -7,6 +7,10 @@ import {
   selectIsTOCVisible,
   type SectionNode,
 } from '@/stores/longDraftsStore';
+import { useAppStore } from '@/stores/appStore';
+import { useSettingsStore } from '@/stores/settingsStore';
+import { useContentLocking } from '@/hooks';
+import { PasskeyPrompt } from '@/components/common';
 import type { Section } from '@/types/longDrafts';
 
 interface TableOfContentsProps {
@@ -54,9 +58,29 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
   const setCurrentSection = useLongDraftsStore((state) => state.setCurrentSection);
   const toggleTOC = useLongDraftsStore((state) => state.toggleTOC);
   const deleteSection = useLongDraftsStore((state) => state.deleteSection);
+  const updateSection = useLongDraftsStore((state) => state.updateSection);
+  const closeDiary = useAppStore((state) => state.closeDiary);
+  const openSettings = useAppStore((state) => state.openSettings);
+  const hasPasskey = useSettingsStore((state) => state.hasPasskey);
+  const passkeyHint = useSettingsStore((state) => state.global.passkeyHint);
 
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; sectionId: string } | null>(null);
+  const [unlockPromptSectionId, setUnlockPromptSectionId] = useState<string | null>(null);
+  const lockingTargetId = contextMenu?.sectionId ?? unlockPromptSectionId ?? '';
+  const allSections = currentLongDraftId ? (sectionsMap.get(currentLongDraftId) ?? []) : [];
+  const contextSection = contextMenu
+    ? allSections.find((section) => section.id === contextMenu.sectionId) ?? null
+    : null;
+  const {
+    lock,
+    unlock,
+    error: lockingError,
+  } = useContentLocking({
+    contentType: 'section',
+    contentId: lockingTargetId,
+    enabled: Boolean(lockingTargetId),
+  });
 
   const toggleExpanded = useCallback((sectionId: string) => {
     setExpandedSections((prev) => {
@@ -88,6 +112,41 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
     setExpandedSections((prev) => new Set(prev).add(parentId));
     setContextMenu(null);
   }, [onCreateSection]);
+
+  const promptPasskeySetup = useCallback(() => {
+    const shouldOpenSettings = confirm('A passkey is required to lock content. Open Settings to set one now?');
+    if (shouldOpenSettings) {
+      closeDiary();
+      openSettings();
+    }
+  }, [closeDiary, openSettings]);
+
+  const handleLockSection = useCallback(async (sectionId: string) => {
+    const hasPass = await hasPasskey();
+    if (!hasPass) {
+      promptPasskeySetup();
+      setContextMenu(null);
+      return;
+    }
+
+    const isLocked = await lock();
+    if (isLocked) {
+      await updateSection(sectionId, { isLocked: true });
+    }
+    setContextMenu(null);
+  }, [hasPasskey, lock, promptPasskeySetup, updateSection]);
+
+  const handleUnlockSubmit = useCallback(async (passkey: string) => {
+    if (!unlockPromptSectionId) {
+      return;
+    }
+
+    const isUnlocked = await unlock(passkey);
+    if (isUnlocked) {
+      await updateSection(unlockPromptSectionId, { isLocked: false });
+      setUnlockPromptSectionId(null);
+    }
+  }, [unlock, unlockPromptSectionId, updateSection]);
 
   // Close context menu on outside click
   const handleBackgroundClick = useCallback(() => {
@@ -291,6 +350,46 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
           }}
         >
           <button
+            onClick={() => {
+              if (!contextSection) {
+                setContextMenu(null);
+                return;
+              }
+              if (contextSection.isLocked) {
+                setUnlockPromptSectionId(contextSection.id);
+                setContextMenu(null);
+                return;
+              }
+              void handleLockSection(contextSection.id);
+            }}
+            style={{
+              width: '100%',
+              padding: '10px 16px',
+              fontSize: '13px',
+              color: '#374151',
+              border: 'none',
+              backgroundColor: 'transparent',
+              cursor: 'pointer',
+              textAlign: 'left',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#F3F4F6';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0110 0v4" />
+            </svg>
+            {contextSection?.isLocked ? 'Unlock' : 'Lock'}
+          </button>
+          <div style={{ height: 1, backgroundColor: '#E5E7EB' }} />
+          <button
             onClick={() => handleAddSubsection(contextMenu.sectionId)}
             style={{
               width: '100%',
@@ -346,6 +445,17 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
           </button>
         </div>
       )}
+
+      <PasskeyPrompt
+        isOpen={unlockPromptSectionId !== null}
+        onClose={() => setUnlockPromptSectionId(null)}
+        onSubmit={handleUnlockSubmit}
+        title="Unlock section"
+        description="Enter your passkey to unlock this section."
+        hint={passkeyHint}
+        error={lockingError}
+        submitLabel="Unlock"
+      />
     </div>
   );
 }

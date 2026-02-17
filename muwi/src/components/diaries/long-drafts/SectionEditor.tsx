@@ -5,6 +5,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
 import { format } from 'date-fns';
 import type { Section } from '@/types/longDrafts';
+import { useEditorShortcuts } from '@/hooks';
 import {
   useLongDraftsStore,
   selectViewMode,
@@ -94,6 +95,8 @@ export function SectionEditor({
       }, 500);
     },
   });
+
+  useEditorShortcuts(editor, { includeUnderline: true, includeHeadings: true });
 
   // Cleanup timeouts
   useEffect(() => {
@@ -600,21 +603,21 @@ export function SectionEditor({
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
             isActive={editor.isActive('heading', { level: 1 })}
-            title="Heading 1"
+            title="Heading 1 (Ctrl+1)"
           >
             H1
           </ToolbarButton>
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
             isActive={editor.isActive('heading', { level: 2 })}
-            title="Heading 2"
+            title="Heading 2 (Ctrl+2)"
           >
             H2
           </ToolbarButton>
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
             isActive={editor.isActive('heading', { level: 3 })}
-            title="Heading 3"
+            title="Heading 3 (Ctrl+3)"
           >
             H3
           </ToolbarButton>

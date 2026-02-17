@@ -15,6 +15,7 @@ interface PersonalDiaryState {
   loadEntry: (date: Date) => Promise<void>;
   createEntry: (date: Date, content?: string) => Promise<DiaryEntry>;
   updateEntry: (id: string, content: string) => Promise<void>;
+  updateEntryLock: (id: string, isLocked: boolean) => Promise<void>;
   deleteEntry: (id: string) => Promise<void>;
   setCurrentEntry: (entry: DiaryEntry | null) => void;
 }
@@ -122,6 +123,27 @@ export const usePersonalDiaryStore = create<PersonalDiaryState>()(
           currentEntry:
             state.currentEntry?.id === id
               ? { ...state.currentEntry, content, wordCount, modifiedAt }
+              : state.currentEntry,
+        }));
+      },
+
+      updateEntryLock: async (id: string, isLocked: boolean) => {
+        const modifiedAt = new Date();
+
+        await db.diaryEntries.update(id, {
+          isLocked,
+          modifiedAt,
+        });
+
+        set((state) => ({
+          entries: state.entries.map((entry) =>
+            entry.id === id
+              ? { ...entry, isLocked, modifiedAt }
+              : entry
+          ),
+          currentEntry:
+            state.currentEntry?.id === id
+              ? { ...state.currentEntry, isLocked, modifiedAt }
               : state.currentEntry,
         }));
       },

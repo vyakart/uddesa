@@ -19,6 +19,7 @@ interface ScratchpadState {
   navigateToPage: (index: number) => void;
   findFreshPage: () => Promise<number>;
   updatePageCategory: (id: string, categoryName: CategoryName) => Promise<void>;
+  updatePageLock: (id: string, isLocked: boolean) => Promise<void>;
 
   // Text block actions
   loadTextBlocksForPage: (pageId: string) => Promise<void>;
@@ -194,6 +195,22 @@ export const useScratchpadStore = create<ScratchpadState>()(
           pages: state.pages.map(page =>
             page.id === id
               ? { ...page, categoryName, categoryColor, modifiedAt: new Date() }
+              : page
+          ),
+        }));
+      },
+
+      updatePageLock: async (id: string, isLocked: boolean) => {
+        const modifiedAt = new Date();
+        await db.scratchpadPages.update(id, {
+          isLocked,
+          modifiedAt,
+        });
+
+        set(state => ({
+          pages: state.pages.map(page =>
+            page.id === id
+              ? { ...page, isLocked, modifiedAt }
               : page
           ),
         }));

@@ -5,11 +5,11 @@ Last updated: February 17, 2026
 ## 1) Where we are now
 
 - App development is active and stable.
-- Unit tests are passing (`62` files, `240` tests).
-- Latest full coverage snapshot: lines `91.03%`, statements `90.37%`, functions `86.24%`, branches `80.26%`.
+- Unit tests are passing (`67` files, `274` tests).
+- Latest full coverage snapshot: lines `90.82%`, statements `90.22%`, functions `86.44%`, branches `80.07%`.
 - Recent focus has been adding reliable tests module by module.
 - Blackboard coverage moved from almost none to strong coverage.
-- Current execution stage: Phase `2.3` (Global Features).
+- Current execution stage: Phase `4.1` (Long Drafts section management).
 
 ## 2) Completed tasks so far (brief)
 
@@ -37,6 +37,22 @@ Last updated: February 17, 2026
 | Test wave 15 | Expanded `backup.ts` branch/function coverage (web fallback, restore branches, scheduler intervals, error paths, size formatting) | Backup-targeted tests + eslint + full run + coverage rerun |
 | Test wave 16 | Expanded branch-heavy Drafts UI tests (`Drafts`, `DraftList`, `DraftEditor`, `StatusBadge`) | Drafts-targeted tests + eslint + full run + coverage rerun |
 | Task wave 17 | Added global `usePasteHandler`, integrated it in app root, and expanded shortcut tests (special keys + cleanup) | Hook-targeted tests + app tests + full run + coverage rerun |
+| Task wave 18 | Added shared editor formatting/heading shortcuts, added Personal Diary keyboard navigation/new-entry shortcuts, and resolved Academic shortcut conflict with editor focus | Editor/hook-targeted tests + diary shortcut tests + full run + coverage rerun |
+| Task wave 19 | Added PBKDF2-based passkey utilities (`hashPasskey`, `verifyPasskey`, `generateSalt`, hex helpers) and wired settings passkey flows to use hashed+salted values | Crypto utility tests + settings/panel passkey tests + full run + coverage rerun |
+| Task wave 20 | Added `useContentLocking` with `isLocked`, `lock`, `unlock`, `toggleLock`, and DB-backed lock refresh flow | Hook tests for lock/unlock/toggle + full run + coverage rerun |
+| Task wave 21 | Added shared `PasskeyPrompt` modal component with passkey input, show/hide toggle, hint reveal button, submit/cancel actions, and inline/external error rendering | Component tests + targeted eslint + full run green |
+| Task wave 22 | Added lock/unlock actions to Draft and Long Draft section context menus, passkey-setup prompting, unlock modal flow, and fixed a race in `useContentLocking.unlock` by checking DB lock state before passkey validation | Context-menu integration tests + hook regression test + targeted eslint + full run green |
+| Task wave 23 | Integrated locking across Scratchpad pages/text blocks and Personal Diary entries, added store lock-update actions, enforced read-only behavior for locked content, and added per-diary unlock passkey flows | Scratchpad/PersonalDiary component+store tests + targeted eslint + full run green |
+| Task wave 24 | Verified existing Excalidraw integration coverage against `3.1.1` acceptance criteria and marked task complete without redundant reimplementation | Codebase audit (`package.json`, `ExcalidrawWrapper`, blackboard tests) |
+| Task wave 25 | Verified `blackboardStore` already satisfied `3.1.2` criteria (canvas/elements+viewport state, load/save/update actions, and derived index entries) and marked task complete | Store code + unit test audit (`blackboardStore.ts`, `blackboardStore.test.ts`) |
+| Task wave 26 | Completed `3.1.3` viewport persistence by wiring Excalidraw `onChange` app state to `updateViewport`, loading persisted viewport into `initialData`, and extending wrapper tests | Blackboard wrapper tests + targeted eslint + full run green |
+| Task wave 27 | Completed `3.2.1` click navigation from index to canvas by wiring IndexPanel navigation targets through Blackboard to Excalidraw viewport updates, with navigation lifecycle tests | Blackboard component+wrapper tests + targeted eslint + full run green |
+| Task wave 28 | Verified heading detection/index derivation logic already covered `3.2.2` criteria (`#`/`##`/`###` parsing, level-based hierarchy representation, y-position sorting, and rebuild on element changes) | Store + component/test audit (`blackboardStore.ts`, `Blackboard.tsx`, `blackboardStore.test.ts`) |
+| Task wave 29 | Completed `3.3.1` by adding Blackboard tool selection buttons, stroke color picker, stroke width selector, and retaining grid toggle behavior with test coverage | Blackboard toolbar tests + targeted eslint + full run green |
+| Task wave 30 | Verified `3.3.2` Blackboard container criteria remained satisfied after navigation/toolbar changes (load on mount, full-height layout, toolbar/index behavior, save-on-change path) | Container + integration test audit (`Blackboard.tsx`, `Blackboard.test.tsx`) |
+| Task wave 31 | Completed `3.4.1` font bundling by installing `@fontsource` packages (`Inter`, `Crimson Pro`, `Caveat`, `JetBrains Mono`) and importing them in global styles | Dependency + CSS import audit, targeted tests, full run green |
+| Task wave 32 | Completed `3.4.2` by adding shared `FontSelector` (select + context-menu variants), wiring Blackboard toolbar font selection, and extending settings/defaults with `defaultFont` | New component tests + Blackboard toolbar tests + targeted eslint + full run green |
+| Task wave 33 | Completed `3.4.3` by adding Blackboard right-click font context menu and integrating selected-font application/persistence in `ExcalidrawWrapper` for selected text/new text defaults | Blackboard integration tests + wrapper tests + targeted eslint + full run green |
 
 ## 3) Blackboard testing progress
 
@@ -56,11 +72,11 @@ Last updated: February 17, 2026
 - Test suite is healthy and passing.
 - Global coverage threshold (`80%`) is now passing.
 - Current status:
-  - Lines `91.03%`
-  - Statements `90.37%`
-  - Functions `86.24%`
-  - Branches `80.26%`
-- Active work is now focused on feature-stage completion (Phase `2.3` onward), not threshold rescue.
+  - Lines `90.82%`
+  - Statements `90.22%`
+  - Functions `86.44%`
+  - Branches `80.07%`
+- Active work is now focused on feature-stage completion (Phase `3.x` onward), not threshold rescue.
 
 ## 5) How tasks are being completed (process)
 
@@ -75,6 +91,6 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Complete Phase `2.3.4`: apply keyboard shortcuts consistently across diary flows (`Ctrl+N`, `PageUp/PageDown`, heading and formatting combos).
-2. Move to Phase `2.4`: passkey + content locking implementation (`useContentLocking`, prompt UI, diary integration).
+1. Implement Phase `4.1.1`: create Long Drafts store.
+2. Implement Phase `4.1.2`: create TableOfContents component.
 3. Keep periodic full coverage reruns while feature stages advance to prevent regressions.

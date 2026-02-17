@@ -8,6 +8,7 @@ const mockEditor = {
   commands: {
     setContent: vi.fn(),
   },
+  setEditable: vi.fn(),
   chain: vi.fn(() => ({
     focus: vi.fn().mockReturnThis(),
     toggleBold: vi.fn().mockReturnThis(),
@@ -76,6 +77,7 @@ describe('DiaryEntry', () => {
         entry={null}
         onContentChange={vi.fn()}
         onDateChange={vi.fn()}
+        onLockChange={vi.fn()}
         settings={settings}
       />
     );
@@ -89,6 +91,7 @@ describe('DiaryEntry', () => {
         entry={makeEntry()}
         onContentChange={vi.fn()}
         onDateChange={vi.fn()}
+        onLockChange={vi.fn()}
         settings={settings}
       />
     );
@@ -109,6 +112,7 @@ describe('DiaryEntry', () => {
         entry={makeEntry()}
         onContentChange={onContentChange}
         onDateChange={vi.fn()}
+        onLockChange={vi.fn()}
         settings={settings}
       />
     );

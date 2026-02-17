@@ -20,6 +20,10 @@
   },
   "dependencies": {
     "@excalidraw/excalidraw": "^0.18.0",
+    "@fontsource/caveat": "^5.2.8",
+    "@fontsource/crimson-pro": "^5.2.8",
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/jetbrains-mono": "^5.2.8",
     "@tiptap/extension-placeholder": "^3.15.3",
     "@tiptap/extension-underline": "^3.16.0",
     "@tiptap/pm": "^3.15.3",

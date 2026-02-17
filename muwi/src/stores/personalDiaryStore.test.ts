@@ -76,6 +76,21 @@ describe('personalDiaryStore', () => {
     expect(updatedFromDb?.content).toBe('one two three');
   });
 
+  it('updates entry lock state in store and database', async () => {
+    const state = usePersonalDiaryStore.getState();
+    const created = await state.createEntry(new Date('2026-02-12T12:00:00.000Z'), 'lock me');
+    state.setCurrentEntry(created);
+
+    await state.updateEntryLock(created.id, true);
+    expect(usePersonalDiaryStore.getState().currentEntry?.isLocked).toBe(true);
+    expect(usePersonalDiaryStore.getState().entries.find((entry) => entry.id === created.id)?.isLocked).toBe(true);
+    expect((await db.diaryEntries.get(created.id))?.isLocked).toBe(true);
+
+    await state.updateEntryLock(created.id, false);
+    expect(usePersonalDiaryStore.getState().currentEntry?.isLocked).toBe(false);
+    expect((await db.diaryEntries.get(created.id))?.isLocked).toBe(false);
+  });
+
   it('handles load errors and covers update/delete non-current branches', async () => {
     vi.spyOn(db.diaryEntries, 'orderBy').mockReturnValue({
       reverse: () => ({

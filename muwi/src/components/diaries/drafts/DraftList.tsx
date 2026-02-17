@@ -8,6 +8,10 @@ import {
   selectDraftsFilterStatus,
   type DraftSortBy,
 } from '@/stores/draftsStore';
+import { useAppStore } from '@/stores/appStore';
+import { useSettingsStore } from '@/stores/settingsStore';
+import { useContentLocking } from '@/hooks';
+import { PasskeyPrompt } from '@/components/common';
 import type { Draft, DraftStatus } from '@/types/drafts';
 import { StatusBadge } from './StatusBadge';
 
@@ -100,16 +104,33 @@ export function DraftList({ onCreateNew }: DraftListProps) {
   const setCurrentDraft = useDraftsStore((state) => state.setCurrentDraft);
   const cycleDraftStatus = useDraftsStore((state) => state.cycleDraftStatus);
   const deleteDraft = useDraftsStore((state) => state.deleteDraft);
+  const updateDraft = useDraftsStore((state) => state.updateDraft);
   const setSortBy = useDraftsStore((state) => state.setSortBy);
   const setSortOrder = useDraftsStore((state) => state.setSortOrder);
   const setFilterStatus = useDraftsStore((state) => state.setFilterStatus);
+  const closeDiary = useAppStore((state) => state.closeDiary);
+  const openSettings = useAppStore((state) => state.openSettings);
+  const hasPasskey = useSettingsStore((state) => state.hasPasskey);
+  const passkeyHint = useSettingsStore((state) => state.global.passkeyHint);
 
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [showFilterMenu, setShowFilterMenu] = useState(false);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; draftId: string } | null>(null);
+  const [unlockPromptDraftId, setUnlockPromptDraftId] = useState<string | null>(null);
 
   const sortMenuRef = useRef<HTMLDivElement>(null);
   const filterMenuRef = useRef<HTMLDivElement>(null);
+  const lockingTargetId = contextMenu?.draftId ?? unlockPromptDraftId ?? '';
+  const contextDraft = contextMenu ? drafts.find((draft) => draft.id === contextMenu.draftId) : null;
+  const {
+    lock,
+    unlock,
+    error: lockingError,
+  } = useContentLocking({
+    contentType: 'draft',
+    contentId: lockingTargetId,
+    enabled: Boolean(lockingTargetId),
+  });
 
   // Close menus when clicking outside
   useEffect(() => {
@@ -155,6 +176,41 @@ export function DraftList({ onCreateNew }: DraftListProps) {
     }
     setContextMenu(null);
   }, [deleteDraft]);
+
+  const promptPasskeySetup = useCallback(() => {
+    const shouldOpenSettings = confirm('A passkey is required to lock content. Open Settings to set one now?');
+    if (shouldOpenSettings) {
+      closeDiary();
+      openSettings();
+    }
+  }, [closeDiary, openSettings]);
+
+  const handleLockDraft = useCallback(async (draftId: string) => {
+    const hasPass = await hasPasskey();
+    if (!hasPass) {
+      promptPasskeySetup();
+      setContextMenu(null);
+      return;
+    }
+
+    const isLocked = await lock();
+    if (isLocked) {
+      await updateDraft(draftId, { isLocked: true });
+    }
+    setContextMenu(null);
+  }, [hasPasskey, lock, promptPasskeySetup, updateDraft]);
+
+  const handleUnlockSubmit = useCallback(async (passkey: string) => {
+    if (!unlockPromptDraftId) {
+      return;
+    }
+
+    const isUnlocked = await unlock(passkey);
+    if (isUnlocked) {
+      await updateDraft(unlockPromptDraftId, { isLocked: false });
+      setUnlockPromptDraftId(null);
+    }
+  }, [unlock, unlockPromptDraftId, updateDraft]);
 
   return (
     <div
@@ -405,8 +461,42 @@ export function DraftList({ onCreateNew }: DraftListProps) {
             boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
             zIndex: 100,
             minWidth: '120px',
+            overflow: 'hidden',
           }}
         >
+          <button
+            onClick={() => {
+              if (!contextDraft) {
+                setContextMenu(null);
+                return;
+              }
+              if (contextDraft.isLocked) {
+                setUnlockPromptDraftId(contextDraft.id);
+                setContextMenu(null);
+                return;
+              }
+              void handleLockDraft(contextDraft.id);
+            }}
+            style={{
+              width: '100%',
+              padding: '10px 16px',
+              fontSize: '13px',
+              color: '#374151',
+              border: 'none',
+              backgroundColor: 'transparent',
+              cursor: 'pointer',
+              textAlign: 'left',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#F3F4F6';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }}
+          >
+            {contextDraft?.isLocked ? 'Unlock' : 'Lock'}
+          </button>
+          <div style={{ height: 1, backgroundColor: '#E5E7EB' }} />
           <button
             onClick={() => handleDelete(contextMenu.draftId)}
             style={{
@@ -430,6 +520,17 @@ export function DraftList({ onCreateNew }: DraftListProps) {
           </button>
         </div>
       )}
+
+      <PasskeyPrompt
+        isOpen={unlockPromptDraftId !== null}
+        onClose={() => setUnlockPromptDraftId(null)}
+        onSubmit={handleUnlockSubmit}
+        title="Unlock draft"
+        description="Enter your passkey to unlock this draft."
+        hint={passkeyHint}
+        error={lockingError}
+        submitLabel="Unlock"
+      />
     </div>
   );
 }

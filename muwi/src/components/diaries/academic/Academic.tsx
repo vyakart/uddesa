@@ -66,11 +66,19 @@ export function Academic() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const isMod = e.metaKey || e.ctrlKey;
+      const target = e.target;
+      const isEditable =
+        target instanceof HTMLElement &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.isContentEditable ||
+          target.closest('.ProseMirror') instanceof HTMLElement);
+
       if (isMod && e.key === 'n') {
         e.preventDefault();
         setShowTemplateSelector(true);
       }
-      if (isMod && e.key === 'b') {
+      if (isMod && e.key === 'b' && !isEditable) {
         e.preventDefault();
         toggleBibliographyPanel();
       }

@@ -192,7 +192,7 @@ export function SettingsPanel() {
                   if (!passkey.trim()) {
                     return;
                   }
-                  await setPasskey(passkey.trim(), 'local-salt', passkeyHint.trim() || undefined);
+                  await setPasskey(passkey.trim(), passkeyHint.trim() || undefined);
                   setPasskeyInput('');
                   setPasskeyHint('');
                 }}

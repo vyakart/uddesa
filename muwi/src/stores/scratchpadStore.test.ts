@@ -58,6 +58,10 @@ describe('scratchpadStore', () => {
     await useScratchpadStore.getState().deletePage(secondPage.id);
     expect(useScratchpadStore.getState().pages).toHaveLength(2);
     expect(useScratchpadStore.getState().pages.some((page) => page.id === secondPage.id)).toBe(false);
+
+    await useScratchpadStore.getState().updatePageLock(firstPage.id, true);
+    expect(useScratchpadStore.getState().pages.find((page) => page.id === firstPage.id)?.isLocked).toBe(true);
+    expect((await db.scratchpadPages.get(firstPage.id))?.isLocked).toBe(true);
   });
 
   it('supports text block CRUD and keeps page textBlockIds in sync', async () => {

@@ -1,6 +1,8 @@
 import { fireEvent, render, screen, waitFor } from '@/test';
+import { useAppStore } from '@/stores/appStore';
 import type { ScratchpadPage as ScratchpadPageType } from '@/types';
 import { useScratchpadStore } from '@/stores/scratchpadStore';
+import { useSettingsStore } from '@/stores/settingsStore';
 import { Scratchpad } from './Scratchpad';
 
 vi.mock('./ScratchpadPage', () => ({
@@ -32,6 +34,8 @@ function makePage(overrides: Partial<ScratchpadPageType> = {}): ScratchpadPageTy
 
 describe('Scratchpad', () => {
   beforeEach(() => {
+    useAppStore.setState(useAppStore.getInitialState(), true);
+    useSettingsStore.setState(useSettingsStore.getInitialState(), true);
     useScratchpadStore.setState(useScratchpadStore.getInitialState(), true);
   });
 
@@ -104,5 +108,57 @@ describe('Scratchpad', () => {
 
     fireEvent.keyDown(window, { key: 'f', ctrlKey: true, shiftKey: true });
     expect(findFreshPage).toHaveBeenCalledTimes(1);
+  });
+
+  it('locks and unlocks the current page with passkey prompt flow', async () => {
+    const pageOne = makePage({ id: 'page-lock-1', pageNumber: 1 });
+    const loadPages = vi.fn().mockResolvedValue(undefined);
+
+    useSettingsStore.setState({
+      hasPasskey: vi.fn().mockResolvedValue(true),
+      verifyPasskey: vi.fn().mockImplementation(async (passkey: string) => passkey === 'correct-pass'),
+      global: {
+        ...useSettingsStore.getState().global,
+        passkeyHint: 'favorite color',
+      },
+    });
+    useScratchpadStore.setState({
+      pages: [pageOne],
+      currentPageIndex: 0,
+      textBlocks: new Map([[pageOne.id, []]]),
+      isLoading: false,
+      error: null,
+      loadPages,
+      createPage: vi.fn().mockResolvedValue(pageOne),
+      navigateToPage: vi.fn(),
+      updatePageCategory: vi.fn().mockResolvedValue(undefined),
+      findFreshPage: vi.fn().mockResolvedValue(0),
+    });
+
+    render(<Scratchpad />);
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Lock Page' })).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Lock Page' }));
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Unlock Page' })).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Unlock Page' }));
+    expect(screen.getByRole('dialog', { name: 'Unlock page' })).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText('Passkey'), { target: { value: 'wrong-pass' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Unlock' }));
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toHaveTextContent('Invalid passkey');
+    });
+
+    fireEvent.change(screen.getByLabelText('Passkey'), { target: { value: 'correct-pass' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Unlock' }));
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Lock Page' })).toBeInTheDocument();
+    });
   });
 });

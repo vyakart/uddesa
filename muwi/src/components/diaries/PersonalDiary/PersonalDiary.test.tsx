@@ -1,4 +1,5 @@
-import { render, screen, waitFor } from '@/test';
+import { fireEvent, render, screen, waitFor } from '@/test';
+import { format } from 'date-fns';
 import { usePersonalDiaryStore } from '@/stores/personalDiaryStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import type { DiaryEntry } from '@/types';
@@ -86,5 +87,43 @@ describe('PersonalDiary', () => {
     const containerStyle = screen.getByTestId('personal-diary-container').getAttribute('style');
     expect(containerStyle).toContain('radial-gradient');
     expect(containerStyle).toContain('rgb(254, 254, 254)');
+  });
+
+  it('handles Ctrl+N new entry creation and PageUp/PageDown navigation shortcuts', async () => {
+    const current = makeEntry();
+    const nextExisting: DiaryEntry = {
+      ...makeEntry(),
+      id: 'entry-next',
+      date: '2026-02-07',
+    };
+
+    const loadEntries = vi.fn().mockResolvedValue(undefined);
+    const loadEntry = vi.fn().mockResolvedValue(undefined);
+
+    usePersonalDiaryStore.setState({
+      entries: [current, nextExisting],
+      currentEntry: current,
+      loadEntries,
+      loadEntry,
+      updateEntry: vi.fn().mockResolvedValue(undefined),
+    });
+
+    render(<PersonalDiary />);
+
+    await waitFor(() => {
+      expect(loadEntries).toHaveBeenCalledTimes(1);
+      expect(loadEntry).toHaveBeenCalled();
+    });
+
+    loadEntry.mockClear();
+
+    fireEvent.keyDown(window, { key: 'n', ctrlKey: true });
+    fireEvent.keyDown(window, { key: 'PageUp' });
+    fireEvent.keyDown(window, { key: 'PageDown' });
+
+    expect(loadEntry).toHaveBeenCalledTimes(3);
+    expect(format(loadEntry.mock.calls[0][0] as Date, 'yyyy-MM-dd')).toBe('2026-02-08');
+    expect(format(loadEntry.mock.calls[1][0] as Date, 'yyyy-MM-dd')).toBe('2026-02-05');
+    expect(format(loadEntry.mock.calls[2][0] as Date, 'yyyy-MM-dd')).toBe('2026-02-07');
   });
 });

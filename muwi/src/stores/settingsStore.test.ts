@@ -51,8 +51,9 @@ describe('settingsStore', () => {
 
     expect(await state.hasPasskey()).toBe(false);
 
-    await state.setPasskey('hash-a', 'salt-a', 'hint-a');
+    await state.setPasskey('hash-a', 'hint-a');
     expect(await state.hasPasskey()).toBe(true);
+    expect(useSettingsStore.getState().global.passkeySalt).toBeDefined();
     expect(await state.verifyPasskey('hash-a')).toBe(true);
     expect(await state.verifyPasskey('wrong-hash')).toBe(false);
 

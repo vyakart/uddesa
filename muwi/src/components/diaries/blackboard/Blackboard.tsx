@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback } from 'react';
-import { DiaryLayout } from '@/components/common';
+import { useEffect, useState, useCallback, type MouseEvent } from 'react';
+import { DiaryLayout, FontSelector } from '@/components/common';
 import { useBlackboardStore } from '@/stores/blackboardStore';
 import { ExcalidrawWrapper } from './ExcalidrawWrapper';
 import { IndexPanel } from './IndexPanel';
@@ -9,11 +9,19 @@ export function Blackboard() {
   const [isIndexVisible, setIsIndexVisible] = useState(true);
   const [isIndexCollapsed, setIsIndexCollapsed] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [navigationTarget, setNavigationTarget] = useState<{
+    elementId: string;
+    position: { x: number; y: number };
+    requestedAt: number;
+  } | null>(null);
+  const [fontMenuPosition, setFontMenuPosition] = useState<{ x: number; y: number } | null>(null);
 
   const isLoading = useBlackboardStore((state) => state.isLoading);
   const error = useBlackboardStore((state) => state.error);
+  const canvas = useBlackboardStore((state) => state.canvas);
   const loadCanvas = useBlackboardStore((state) => state.loadCanvas);
   const rebuildIndex = useBlackboardStore((state) => state.rebuildIndex);
+  const updateSettings = useBlackboardStore((state) => state.updateSettings);
 
   // Initialize: load canvas on mount
   useEffect(() => {
@@ -32,10 +40,11 @@ export function Blackboard() {
   // Handle navigation to an element from the index panel
   const handleNavigateToElement = useCallback(
     (elementId: string, position: { x: number; y: number }) => {
-      // Navigation to element would require Excalidraw API access
-      // For now, this is a placeholder for future implementation
-      void elementId;
-      void position;
+      setNavigationTarget({
+        elementId,
+        position,
+        requestedAt: Date.now(),
+      });
     },
     []
   );
@@ -60,6 +69,41 @@ export function Blackboard() {
   const handleToggleCollapse = () => {
     setIsIndexCollapsed(!isIndexCollapsed);
   };
+
+  const handleCanvasContextMenu = useCallback((event: MouseEvent) => {
+    event.preventDefault();
+    setFontMenuPosition({ x: event.clientX, y: event.clientY });
+  }, []);
+
+  const handleFontSelected = useCallback(
+    async (font: string) => {
+      await updateSettings({ defaultFont: font });
+      setFontMenuPosition(null);
+    },
+    [updateSettings]
+  );
+
+  useEffect(() => {
+    if (!fontMenuPosition) {
+      return;
+    }
+
+    const handleOutsideClick = () => {
+      setFontMenuPosition(null);
+    };
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setFontMenuPosition(null);
+      }
+    };
+
+    window.addEventListener('pointerdown', handleOutsideClick);
+    window.addEventListener('keydown', handleEscape);
+    return () => {
+      window.removeEventListener('pointerdown', handleOutsideClick);
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, [fontMenuPosition]);
 
   // Show loading state during initialization
   if (!isInitialized || isLoading) {
@@ -142,6 +186,8 @@ export function Blackboard() {
 
         {/* Excalidraw Canvas */}
         <div
+          data-testid="blackboard-canvas-container"
+          onContextMenuCapture={handleCanvasContextMenu}
           style={{
             flex: 1,
             height: '100%',
@@ -149,7 +195,37 @@ export function Blackboard() {
             overflow: 'hidden',
           }}
         >
-          <ExcalidrawWrapper onElementsChange={handleElementsChange} />
+          <ExcalidrawWrapper
+            onElementsChange={handleElementsChange}
+            navigationTarget={navigationTarget}
+            onNavigationHandled={() => setNavigationTarget(null)}
+          />
+          {fontMenuPosition ? (
+            <div
+              role="presentation"
+              style={{
+                position: 'fixed',
+                left: fontMenuPosition.x,
+                top: fontMenuPosition.y,
+                zIndex: 1200,
+                backgroundColor: '#ffffff',
+                border: '1px solid #d7d7d7',
+                borderRadius: 8,
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.16)',
+                padding: 6,
+              }}
+              onPointerDown={(event) => event.stopPropagation()}
+            >
+              <FontSelector
+                variant="context-menu"
+                fonts={canvas?.settings?.fonts ?? ['Inter', 'Caveat', 'JetBrains Mono', 'Crimson Pro']}
+                value={canvas?.settings?.defaultFont ?? 'Inter'}
+                onChange={(font) => {
+                  void handleFontSelected(font);
+                }}
+              />
+            </div>
+          ) : null}
         </div>
       </div>
     </DiaryLayout>

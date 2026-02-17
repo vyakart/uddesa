@@ -22,6 +22,7 @@ import {
   defaultAcademicSettings,
 } from '@/types';
 import * as settingsQueries from '@/db/queries/settings';
+import { generateSalt, hashPasskey } from '@/utils/crypto';
 
 type DiarySettingsKey =
   | 'scratchpad'
@@ -76,8 +77,8 @@ export interface SettingsState extends SettingsDataState {
 
   // Passkey
   hasPasskey: () => Promise<boolean>;
-  setPasskey: (hash: string, salt: string, hint?: string) => Promise<void>;
-  verifyPasskey: (hash: string) => Promise<boolean>;
+  setPasskey: (passkey: string, hint?: string) => Promise<void>;
+  verifyPasskey: (passkey: string) => Promise<boolean>;
   clearPasskey: () => Promise<void>;
 
   reset: () => void;
@@ -206,7 +207,9 @@ export const useSettingsStore = create<SettingsState>()(
           return settingsQueries.hasPasskey();
         },
 
-        setPasskey: async (hash, salt, hint) => {
+        setPasskey: async (passkey, hint) => {
+          const salt = generateSalt();
+          const hash = await hashPasskey(passkey, salt);
           await settingsQueries.setPasskey(hash, salt, hint);
           const settings = get().global;
           set(
@@ -223,7 +226,20 @@ export const useSettingsStore = create<SettingsState>()(
           );
         },
 
-        verifyPasskey: async (hash) => {
+        verifyPasskey: async (passkey) => {
+          const settings = get().global;
+          let storedSalt = settings.passkeySalt;
+
+          if (!storedSalt) {
+            const persisted = await settingsQueries.getGlobalSettings();
+            storedSalt = persisted.passkeySalt;
+          }
+
+          if (!storedSalt) {
+            return false;
+          }
+
+          const hash = await hashPasskey(passkey, storedSalt);
           return settingsQueries.verifyPasskey(hash);
         },
 

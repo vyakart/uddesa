@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { PasskeyPrompt } from '@/components/common';
+import { useContentLocking } from '@/hooks';
+import { useAppStore } from '@/stores/appStore';
 import type { TextBlock as TextBlockType } from '@/types/scratchpad';
 import { useScratchpadStore } from '@/stores/scratchpadStore';
+import { useSettingsStore } from '@/stores/settingsStore';
 
 interface TextBlockProps {
   block: TextBlockType;
@@ -10,6 +14,7 @@ interface TextBlockProps {
 export function TextBlock({ block, isPageLocked = false }: TextBlockProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [showUnlockPrompt, setShowUnlockPrompt] = useState(false);
   const [localContent, setLocalContent] = useState(block.content);
   const contentRef = useRef<HTMLDivElement>(null);
   const dragStartPos = useRef({ x: 0, y: 0 });
@@ -17,25 +22,40 @@ export function TextBlock({ block, isPageLocked = false }: TextBlockProps) {
 
   const updateTextBlock = useScratchpadStore((state) => state.updateTextBlock);
   const deleteTextBlock = useScratchpadStore((state) => state.deleteTextBlock);
+  const closeDiary = useAppStore((state) => state.closeDiary);
+  const openSettings = useAppStore((state) => state.openSettings);
+  const hasPasskey = useSettingsStore((state) => state.hasPasskey);
+  const passkeyHint = useSettingsStore((state) => state.global.passkeyHint);
+  const {
+    isLocked: isBlockLocked,
+    lock,
+    unlock,
+    error: lockingError,
+  } = useContentLocking({
+    contentType: 'textBlock',
+    contentId: block.id,
+    enabled: true,
+  });
+  const isLocked = isPageLocked || isBlockLocked;
 
   // Focus on new blocks
   useEffect(() => {
-    if (block.content === '' && contentRef.current) {
+    if (!isLocked && block.content === '' && contentRef.current) {
       contentRef.current.focus();
     }
-  }, [block.content]);
+  }, [block.content, isLocked]);
 
   const handleInput = useCallback(() => {
-    if (contentRef.current && !isPageLocked) {
+    if (contentRef.current && !isLocked) {
       const newContent = contentRef.current.innerText;
       setLocalContent(newContent);
     }
-  }, [isPageLocked]);
+  }, [isLocked]);
 
   const handleBlur = useCallback(() => {
     setIsFocused(false);
 
-    if (isPageLocked) return;
+    if (isLocked) return;
 
     const trimmedContent = localContent.trim();
 
@@ -46,7 +66,7 @@ export function TextBlock({ block, isPageLocked = false }: TextBlockProps) {
       // Save changes
       updateTextBlock(block.id, { content: trimmedContent });
     }
-  }, [localContent, block.id, block.content, deleteTextBlock, updateTextBlock, isPageLocked]);
+  }, [localContent, block.id, block.content, deleteTextBlock, updateTextBlock, isLocked]);
 
   const handleFocus = useCallback(() => {
     setLocalContent(block.content);
@@ -55,7 +75,7 @@ export function TextBlock({ block, isPageLocked = false }: TextBlockProps) {
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      if (isPageLocked) {
+      if (isLocked) {
         e.preventDefault();
         return;
       }
@@ -75,13 +95,13 @@ export function TextBlock({ block, isPageLocked = false }: TextBlockProps) {
         contentRef.current?.blur();
       }
     },
-    [block.content, isPageLocked]
+    [block.content, isLocked]
   );
 
   // Drag handlers
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
-      if (isPageLocked) return;
+      if (isLocked) return;
 
       // Only start drag from the edges (first/last 8px)
       const rect = (e.target as HTMLElement).getBoundingClientRect();
@@ -98,7 +118,7 @@ export function TextBlock({ block, isPageLocked = false }: TextBlockProps) {
         blockStartPos.current = { x: block.position.x, y: block.position.y };
       }
     },
-    [block.position.x, block.position.y, isFocused, isPageLocked]
+    [block.position.x, block.position.y, isFocused, isLocked]
   );
 
   useEffect(() => {
@@ -129,7 +149,39 @@ export function TextBlock({ block, isPageLocked = false }: TextBlockProps) {
     };
   }, [isDragging, block.id, updateTextBlock]);
 
-  const isLocked = isPageLocked || false;
+  const promptPasskeySetup = useCallback(() => {
+    const shouldOpenSettings = confirm('A passkey is required to lock content. Open Settings to set one now?');
+    if (shouldOpenSettings) {
+      closeDiary();
+      openSettings();
+    }
+  }, [closeDiary, openSettings]);
+
+  const handleBlockLockToggle = useCallback(async () => {
+    if (isPageLocked) {
+      return;
+    }
+
+    if (isBlockLocked) {
+      setShowUnlockPrompt(true);
+      return;
+    }
+
+    const hasPass = await hasPasskey();
+    if (!hasPass) {
+      promptPasskeySetup();
+      return;
+    }
+
+    await lock();
+  }, [hasPasskey, isBlockLocked, isPageLocked, lock, promptPasskeySetup]);
+
+  const handleUnlockSubmit = useCallback(async (passkey: string) => {
+    const didUnlock = await unlock(passkey);
+    if (didUnlock) {
+      setShowUnlockPrompt(false);
+    }
+  }, [unlock]);
 
   return (
     <div
@@ -171,6 +223,18 @@ export function TextBlock({ block, isPageLocked = false }: TextBlockProps) {
         </div>
       )}
 
+      {!isPageLocked && (
+        <button
+          type="button"
+          aria-label={isBlockLocked ? 'Unlock block' : 'Lock block'}
+          onMouseDown={(event) => event.stopPropagation()}
+          onClick={() => void handleBlockLockToggle()}
+          className="absolute -top-6 right-0 text-xs text-gray-500 hover:text-gray-700"
+        >
+          {isBlockLocked ? 'Unlock' : 'Lock'}
+        </button>
+      )}
+
       {/* Content editable area */}
       <div
         ref={contentRef}
@@ -193,6 +257,17 @@ export function TextBlock({ block, isPageLocked = false }: TextBlockProps) {
       >
         {isFocused ? localContent : block.content}
       </div>
+
+      <PasskeyPrompt
+        isOpen={showUnlockPrompt}
+        onClose={() => setShowUnlockPrompt(false)}
+        onSubmit={handleUnlockSubmit}
+        title="Unlock text block"
+        description="Enter your passkey to unlock this text block."
+        hint={passkeyHint}
+        error={lockingError}
+        submitLabel="Unlock"
+      />
     </div>
   );
 }

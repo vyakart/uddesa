@@ -1,6 +1,9 @@
 import { fireEvent, render, screen, waitFor } from '@/test';
+import { db } from '@/db';
+import { useAppStore } from '@/stores/appStore';
 import type { TextBlock as TextBlockType } from '@/types';
 import { useScratchpadStore } from '@/stores/scratchpadStore';
+import { useSettingsStore } from '@/stores/settingsStore';
 import { TextBlock } from './TextBlock';
 
 function makeBlock(overrides: Partial<TextBlockType> = {}): TextBlockType {
@@ -34,7 +37,10 @@ function mockRect() {
 }
 
 describe('TextBlock', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    await db.lockedContent.clear();
+    useAppStore.setState(useAppStore.getInitialState(), true);
+    useSettingsStore.setState(useSettingsStore.getInitialState(), true);
     useScratchpadStore.setState(useScratchpadStore.getInitialState(), true);
   });
 
@@ -121,5 +127,42 @@ describe('TextBlock', () => {
     const editable = screen.getByText('Hello block');
     expect(editable).toHaveAttribute('contenteditable', 'false');
     expect(container.querySelector('.text-gray-400')).toBeInTheDocument();
+  });
+
+  it('locks and unlocks an individual text block with passkey prompt', async () => {
+    useScratchpadStore.setState({
+      updateTextBlock: vi.fn().mockResolvedValue(undefined),
+      deleteTextBlock: vi.fn().mockResolvedValue(undefined),
+    });
+    useSettingsStore.setState({
+      hasPasskey: vi.fn().mockResolvedValue(true),
+      verifyPasskey: vi.fn().mockImplementation(async (passkey: string) => passkey === 'correct-pass'),
+      global: {
+        ...useSettingsStore.getState().global,
+        passkeyHint: 'pet name',
+      },
+    });
+
+    render(<TextBlock block={makeBlock()} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Lock block' }));
+    await waitFor(() => {
+      expect(screen.getByText('Hello block')).toHaveAttribute('contenteditable', 'false');
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Unlock block' }));
+    expect(screen.getByRole('dialog', { name: 'Unlock text block' })).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText('Passkey'), { target: { value: 'wrong-pass' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Unlock' }));
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toHaveTextContent('Invalid passkey');
+    });
+
+    fireEvent.change(screen.getByLabelText('Passkey'), { target: { value: 'correct-pass' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Unlock' }));
+    await waitFor(() => {
+      expect(screen.getByText('Hello block')).toHaveAttribute('contenteditable', 'true');
+    });
   });
 });

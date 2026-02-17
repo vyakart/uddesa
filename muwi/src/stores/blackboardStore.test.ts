@@ -19,6 +19,7 @@ function makeCanvas(overrides: Partial<BlackboardCanvas> = {}): BlackboardCanvas
       defaultStrokeColor: '#F5F5F5',
       defaultStrokeWidth: 2,
       fonts: ['Inter'],
+      defaultFont: 'Inter',
     },
     createdAt: now,
     modifiedAt: now,

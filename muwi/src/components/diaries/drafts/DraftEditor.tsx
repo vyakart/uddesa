@@ -5,6 +5,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
 import { format } from 'date-fns';
 import type { Draft } from '@/types/drafts';
+import { useEditorShortcuts } from '@/hooks';
 import { StatusBadge } from './StatusBadge';
 
 interface DraftEditorProps {
@@ -81,6 +82,8 @@ export function DraftEditor({
       }, 500);
     },
   });
+
+  useEditorShortcuts(editor, { includeUnderline: true, includeHeadings: true });
 
   // Cleanup timeouts
   useEffect(() => {

@@ -58,6 +58,7 @@ export interface BlackboardSettings {
   defaultStrokeColor: string;
   defaultStrokeWidth: number;
   fonts: string[];
+  defaultFont: string;
 }
 
 export const defaultBlackboardSettings: BlackboardSettings = {
@@ -66,5 +67,6 @@ export const defaultBlackboardSettings: BlackboardSettings = {
   gridSize: 20,
   defaultStrokeColor: '#F5F5F5',
   defaultStrokeWidth: 2,
-  fonts: ['Inter', 'Caveat', 'JetBrains Mono'],
+  fonts: ['Inter', 'Caveat', 'JetBrains Mono', 'Crimson Pro'],
+  defaultFont: 'Inter',
 };

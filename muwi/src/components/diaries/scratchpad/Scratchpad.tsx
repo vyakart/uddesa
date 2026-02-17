@@ -1,6 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
-import { DiaryLayout } from '@/components/common';
+import { DiaryLayout, PasskeyPrompt } from '@/components/common';
+import { useContentLocking } from '@/hooks';
 import { useScratchpadStore } from '@/stores/scratchpadStore';
+import { useAppStore } from '@/stores/appStore';
+import { useSettingsStore } from '@/stores/settingsStore';
 import { ScratchpadPage } from './ScratchpadPage';
 import { PageStack } from './PageStack';
 import { CategoryPicker } from './CategoryPicker';
@@ -18,10 +21,25 @@ export function Scratchpad() {
   const createPage = useScratchpadStore((state) => state.createPage);
   const navigateToPage = useScratchpadStore((state) => state.navigateToPage);
   const updatePageCategory = useScratchpadStore((state) => state.updatePageCategory);
+  const updatePageLock = useScratchpadStore((state) => state.updatePageLock);
   const findFreshPage = useScratchpadStore((state) => state.findFreshPage);
+  const closeDiary = useAppStore((state) => state.closeDiary);
+  const openSettings = useAppStore((state) => state.openSettings);
+  const hasPasskey = useSettingsStore((state) => state.hasPasskey);
+  const passkeyHint = useSettingsStore((state) => state.global.passkeyHint);
+  const [showUnlockPrompt, setShowUnlockPrompt] = useState(false);
 
   const currentPage = pages[currentPageIndex];
   const currentBlocks = currentPage ? (textBlocks.get(currentPage.id) || []) : [];
+  const {
+    lock,
+    unlock,
+    error: lockingError,
+  } = useContentLocking({
+    contentType: 'page',
+    contentId: currentPage?.id ?? '',
+    enabled: Boolean(currentPage?.id),
+  });
 
   // Initialize: load pages on mount
   useEffect(() => {
@@ -86,6 +104,48 @@ export function Scratchpad() {
     createPage();
   }, [createPage]);
 
+  const promptPasskeySetup = useCallback(() => {
+    const shouldOpenSettings = confirm('A passkey is required to lock content. Open Settings to set one now?');
+    if (shouldOpenSettings) {
+      closeDiary();
+      openSettings();
+    }
+  }, [closeDiary, openSettings]);
+
+  const handlePageLockToggle = useCallback(async () => {
+    if (!currentPage) {
+      return;
+    }
+
+    if (currentPage.isLocked) {
+      setShowUnlockPrompt(true);
+      return;
+    }
+
+    const hasPass = await hasPasskey();
+    if (!hasPass) {
+      promptPasskeySetup();
+      return;
+    }
+
+    const didLock = await lock();
+    if (didLock) {
+      await updatePageLock(currentPage.id, true);
+    }
+  }, [currentPage, hasPasskey, lock, promptPasskeySetup, updatePageLock]);
+
+  const handleUnlockSubmit = useCallback(async (passkey: string) => {
+    if (!currentPage) {
+      return;
+    }
+
+    const didUnlock = await unlock(passkey);
+    if (didUnlock) {
+      await updatePageLock(currentPage.id, false);
+      setShowUnlockPrompt(false);
+    }
+  }, [currentPage, unlock, updatePageLock]);
+
   // Toolbar content
   const toolbar = (
     <div className="flex items-center gap-3">
@@ -113,6 +173,15 @@ export function Scratchpad() {
         </svg>
         New
       </button>
+      {currentPage && (
+        <button
+          onClick={() => void handlePageLockToggle()}
+          className="flex items-center gap-1 px-2 py-1 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded"
+          title={currentPage.isLocked ? 'Unlock page' : 'Lock page'}
+        >
+          {currentPage.isLocked ? 'Unlock Page' : 'Lock Page'}
+        </button>
+      )}
     </div>
   );
 
@@ -197,6 +266,17 @@ export function Scratchpad() {
           Page {currentPageIndex + 1} of {pages.length}
         </div>
       </div>
+
+      <PasskeyPrompt
+        isOpen={showUnlockPrompt}
+        onClose={() => setShowUnlockPrompt(false)}
+        onSubmit={handleUnlockSubmit}
+        title="Unlock page"
+        description="Enter your passkey to unlock this page."
+        hint={passkeyHint}
+        error={lockingError}
+        submitLabel="Unlock"
+      />
     </DiaryLayout>
   );
 }

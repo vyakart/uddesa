@@ -1,6 +1,8 @@
 import { act, fireEvent, render, screen, waitFor } from '@/test';
 import type { Draft } from '@/types/drafts';
 import { useDraftsStore } from '@/stores/draftsStore';
+import { useAppStore } from '@/stores/appStore';
+import { useSettingsStore } from '@/stores/settingsStore';
 import { DraftList } from './DraftList';
 
 function makeDraft(overrides: Partial<Draft> = {}): Draft {
@@ -21,6 +23,8 @@ function makeDraft(overrides: Partial<Draft> = {}): Draft {
 
 describe('DraftList', () => {
   beforeEach(() => {
+    useAppStore.setState(useAppStore.getInitialState(), true);
+    useSettingsStore.setState(useSettingsStore.getInitialState(), true);
     useDraftsStore.setState(useDraftsStore.getInitialState(), true);
   });
 
@@ -97,6 +101,89 @@ describe('DraftList', () => {
     await waitFor(() => {
       expect(deleteDraft).toHaveBeenCalledWith(draft.id);
     });
+
+    confirmSpy.mockRestore();
+  });
+
+  it('locks and unlocks drafts from context menu with passkey prompt flow', async () => {
+    const draft = makeDraft({ id: 'lock-target', title: 'Lockable Draft', isLocked: false });
+    const updateDraft = vi.fn().mockResolvedValue(undefined);
+
+    useSettingsStore.setState({
+      hasPasskey: vi.fn().mockResolvedValue(true),
+      verifyPasskey: vi.fn().mockImplementation(async (passkey: string) => passkey === 'correct-pass'),
+      global: {
+        ...useSettingsStore.getState().global,
+        passkeyHint: 'pet name',
+      },
+    });
+    useDraftsStore.setState({
+      drafts: [draft],
+      currentDraftId: draft.id,
+      updateDraft,
+    });
+
+    const { rerender } = render(<DraftList onCreateNew={vi.fn()} />);
+
+    fireEvent.contextMenu(screen.getByRole('heading', { name: 'Lockable Draft' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Lock' }));
+    await waitFor(() => {
+      expect(updateDraft).toHaveBeenCalledWith('lock-target', { isLocked: true });
+    });
+
+    act(() => {
+      useDraftsStore.setState({
+        drafts: [{ ...draft, isLocked: true }],
+      });
+    });
+    rerender(<DraftList onCreateNew={vi.fn()} />);
+
+    fireEvent.contextMenu(screen.getByRole('heading', { name: 'Lockable Draft' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Unlock' }));
+    expect(screen.getByRole('dialog', { name: 'Unlock draft' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Show hint' })).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText('Passkey'), { target: { value: 'wrong-pass' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Unlock' }));
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toHaveTextContent('Invalid passkey');
+    });
+
+    fireEvent.change(screen.getByLabelText('Passkey'), { target: { value: 'correct-pass' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Unlock' }));
+    await waitFor(() => {
+      expect(updateDraft).toHaveBeenCalledWith('lock-target', { isLocked: false });
+    });
+  });
+
+  it('prompts passkey setup when trying to lock without passkey', async () => {
+    const draft = makeDraft({ id: 'no-passkey', title: 'Needs Passkey' });
+    const closeDiary = vi.fn();
+    const openSettings = vi.fn();
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+
+    useSettingsStore.setState({
+      hasPasskey: vi.fn().mockResolvedValue(false),
+    });
+    useAppStore.setState({
+      closeDiary,
+      openSettings,
+    });
+    useDraftsStore.setState({
+      drafts: [draft],
+      currentDraftId: draft.id,
+    });
+
+    render(<DraftList onCreateNew={vi.fn()} />);
+
+    fireEvent.contextMenu(screen.getByRole('heading', { name: 'Needs Passkey' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Lock' }));
+
+    await waitFor(() => {
+      expect(confirmSpy).toHaveBeenCalled();
+    });
+    expect(closeDiary).toHaveBeenCalledTimes(1);
+    expect(openSettings).toHaveBeenCalledTimes(1);
 
     confirmSpy.mockRestore();
   });

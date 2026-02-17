@@ -62,7 +62,7 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Acceptance Criteria**:
   - [ ] Tailwind installed and configured
   - [ ] Custom color palette from design doc added
-  - [ ] Custom font stack configured
+  - [x] Custom font stack configured
   - [ ] Base styles applied
 - **Design Tokens to Include**:
   ```css
@@ -653,12 +653,12 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 2.3.2
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Ctrl+H goes to shelf
-  - [ ] Ctrl+, opens settings
-  - [ ] Ctrl+N creates new (page/entry/draft)
-  - [ ] PageUp/PageDown for navigation
-  - [ ] Ctrl+1/2/3 for headings
-  - [ ] Ctrl+B/I/U for formatting
+  - [x] Ctrl+H goes to shelf
+  - [x] Ctrl+, opens settings
+  - [x] Ctrl+N creates new (page/entry/draft)
+  - [x] PageUp/PageDown for navigation
+  - [x] Ctrl+1/2/3 for headings
+  - [x] Ctrl+B/I/U for formatting
 - **Testing**: E2E tests for shortcuts
 
 ### 2.4 Content Locking
@@ -668,10 +668,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.1.4
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] hashPasskey function (PBKDF2)
-  - [ ] verifyPasskey function
-  - [ ] Salt generation
-  - [ ] Hex encoding/decoding
+  - [x] hashPasskey function (PBKDF2)
+  - [x] verifyPasskey function
+  - [x] Salt generation
+  - [x] Hex encoding/decoding
 - **Testing**: Unit tests for crypto functions
 
 #### Task 2.4.2: Create useContentLocking Hook
@@ -679,11 +679,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 2.4.1, 0.5.3
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] isLocked state
-  - [ ] lock action (requires passkey set)
-  - [ ] unlock action (requires correct passkey)
-  - [ ] toggleLock action
-  - [ ] Stores lock state in database
+  - [x] isLocked state
+  - [x] lock action (requires passkey set)
+  - [x] unlock action (requires correct passkey)
+  - [x] toggleLock action
+  - [x] Stores lock state in database
 - **Testing**: Hook tests
 
 #### Task 2.4.3: Create PasskeyPrompt Component
@@ -691,11 +691,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 1.1.1
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] Password input field
-  - [ ] Show/hide toggle
-  - [ ] "Show hint" button
-  - [ ] Submit button
-  - [ ] Error message display
+  - [x] Password input field
+  - [x] Show/hide toggle
+  - [x] "Show hint" button
+  - [x] Submit button
+  - [x] Error message display
 - **Testing**: Component tests
 
 #### Task 2.4.4: Add Locking to Context Menu
@@ -703,11 +703,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 1.1.2, 2.4.2, 2.4.3
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] "Lock" option when unlocked
-  - [ ] "Unlock" option when locked
-  - [ ] Lock prompts passkey setup if not set
-  - [ ] Unlock shows passkey prompt
-  - [ ] Locked content shows visual indicator
+  - [x] "Lock" option when unlocked
+  - [x] "Unlock" option when locked
+  - [x] Lock prompts passkey setup if not set
+  - [x] Unlock shows passkey prompt
+  - [x] Locked content shows visual indicator
 - **Testing**: Integration tests
 
 #### Task 2.4.5: Integrate Locking in All Diaries
@@ -715,12 +715,12 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 2.4.4
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Scratchpad text blocks lockable
-  - [ ] Scratchpad pages lockable
-  - [ ] Diary entries lockable
-  - [ ] Drafts lockable
-  - [ ] Locked content not editable
-  - [ ] Locked content has visual indicator
+  - [x] Scratchpad text blocks lockable
+  - [x] Scratchpad pages lockable
+  - [x] Diary entries lockable
+  - [x] Drafts lockable
+  - [x] Locked content not editable
+  - [x] Locked content has visual indicator
 - **Testing**: Integration tests for each diary
 
 ---
@@ -736,10 +736,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.1.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] @excalidraw/excalidraw installed
-  - [ ] Basic Excalidraw renders
-  - [ ] Dark theme configured
-  - [ ] Custom background color works
+  - [x] @excalidraw/excalidraw installed
+  - [x] Basic Excalidraw renders
+  - [x] Dark theme configured
+  - [x] Custom background color works
 - **Packages**:
   ```bash
   npm install @excalidraw/excalidraw
@@ -750,11 +750,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.5.1, 0.4.3
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] canvas state (elements, viewport)
-  - [ ] loadCanvas action
-  - [ ] saveElements action (debounced)
-  - [ ] updateViewport action
-  - [ ] Index entries derived from elements
+  - [x] canvas state (elements, viewport)
+  - [x] loadCanvas action
+  - [x] saveElements action (debounced)
+  - [x] updateViewport action
+  - [x] Index entries derived from elements
 - **Testing**: Unit tests for all actions
 
 #### Task 3.1.3: Create ExcalidrawWrapper Component
@@ -762,11 +762,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 3.1.1, 3.1.2
 - **Effort**: L
 - **Acceptance Criteria**:
-  - [ ] Excalidraw renders with initial data
-  - [ ] Changes save to store
-  - [ ] Viewport state persists
-  - [ ] Custom UI options
-  - [ ] Grid toggle from settings
+  - [x] Excalidraw renders with initial data
+  - [x] Changes save to store
+  - [x] Viewport state persists
+  - [x] Custom UI options
+  - [x] Grid toggle from settings
 - **Testing**: Component tests
 
 ### 3.2 Index Panel
@@ -776,11 +776,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 3.1.2
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Collapsible panel
-  - [ ] Shows H1/H2/H3 hierarchy
-  - [ ] Updates in real-time
-  - [ ] Click navigates to element
-  - [ ] Indentation by level
+  - [x] Collapsible panel
+  - [x] Shows H1/H2/H3 hierarchy
+  - [x] Updates in real-time
+  - [x] Click navigates to element
+  - [x] Indentation by level
 - **Testing**: Component tests
 
 #### Task 3.2.2: Implement Heading Detection
@@ -788,10 +788,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 3.1.2
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Parse text elements for heading markers
-  - [ ] Build hierarchical index
-  - [ ] Update on element changes
-  - [ ] Sort by y-position
+  - [x] Parse text elements for heading markers
+  - [x] Build hierarchical index
+  - [x] Update on element changes
+  - [x] Sort by y-position
 - **Testing**: Unit tests for detection logic
 
 ### 3.3 Blackboard Assembly
@@ -801,10 +801,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 1.1.3
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] Tool selection buttons
-  - [ ] Color picker
-  - [ ] Stroke width selector
-  - [ ] Grid toggle
+  - [x] Tool selection buttons
+  - [x] Color picker
+  - [x] Stroke width selector
+  - [x] Grid toggle
 - **Testing**: Component tests
 
 #### Task 3.3.2: Create Blackboard Container
@@ -812,11 +812,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 3.1.3, 3.2.1, 3.3.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Loads canvas on mount
-  - [ ] Full-height layout
-  - [ ] Toolbar at top
-  - [ ] Index panel toggle
-  - [ ] Saves on change
+  - [x] Loads canvas on mount
+  - [x] Full-height layout
+  - [x] Toolbar at top
+  - [x] Index panel toggle
+  - [x] Saves on change
 - **Testing**: Integration tests
 - **E2E**: Draw elements, navigate with index
 
@@ -827,12 +827,12 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.1.3
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Crimson Pro font bundled
-  - [ ] Inter font bundled
-  - [ ] Caveat font bundled
-  - [ ] JetBrains Mono font bundled
-  - [ ] @font-face declarations
-  - [ ] Fonts load correctly
+  - [x] Crimson Pro font bundled
+  - [x] Inter font bundled
+  - [x] Caveat font bundled
+  - [x] JetBrains Mono font bundled
+  - [x] @font-face declarations
+  - [x] Fonts load correctly
 - **Files**: Download from Google Fonts, add to `assets/fonts/`
 
 #### Task 3.4.2: Create Font Selector Component
@@ -840,10 +840,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 3.4.1, 0.5.3
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] Shows available fonts
-  - [ ] Preview in actual font
-  - [ ] Selection updates setting
-  - [ ] Works in context menu
+  - [x] Shows available fonts
+  - [x] Preview in actual font
+  - [x] Selection updates setting
+  - [x] Works in context menu
 - **Testing**: Component tests
 
 #### Task 3.4.3: Integrate Font Selection in Blackboard
@@ -851,9 +851,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 3.4.2, 3.3.2
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] Font picker in context menu
-  - [ ] Text elements use selected font
-  - [ ] Font persists with element
+  - [x] Font picker in context menu
+  - [x] Text elements use selected font
+  - [x] Font persists with element
 - **Testing**: Integration tests
 
 ---

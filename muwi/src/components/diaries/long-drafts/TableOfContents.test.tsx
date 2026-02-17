@@ -1,5 +1,7 @@
 import { act, fireEvent, render, screen, waitFor } from '@/test';
 import { useLongDraftsStore } from '@/stores/longDraftsStore';
+import { useAppStore } from '@/stores/appStore';
+import { useSettingsStore } from '@/stores/settingsStore';
 import type { Section } from '@/types/longDrafts';
 import { TableOfContents } from './TableOfContents';
 
@@ -25,6 +27,8 @@ function makeSection(overrides: Partial<Section> = {}): Section {
 
 describe('TableOfContents', () => {
   beforeEach(() => {
+    useAppStore.setState(useAppStore.getInitialState(), true);
+    useSettingsStore.setState(useSettingsStore.getInitialState(), true);
     useLongDraftsStore.setState(useLongDraftsStore.getInitialState(), true);
   });
 
@@ -165,5 +169,60 @@ describe('TableOfContents', () => {
     expect(screen.queryByRole('button', { name: 'Delete Section' })).not.toBeInTheDocument();
 
     confirmSpy.mockRestore();
+  });
+
+  it('supports lock/unlock actions with passkey prompt in section context menu', async () => {
+    const root = makeSection({ id: 'lockable-section', title: 'Lockable Section', isLocked: false });
+    const updateSection = vi.fn().mockResolvedValue(undefined);
+
+    useSettingsStore.setState({
+      hasPasskey: vi.fn().mockResolvedValue(true),
+      verifyPasskey: vi.fn().mockImplementation(async (passkey: string) => passkey === 'good-pass'),
+      global: {
+        ...useSettingsStore.getState().global,
+        passkeyHint: 'favorite city',
+      },
+    });
+    useLongDraftsStore.setState({
+      currentLongDraftId: 'doc-1',
+      currentSectionId: root.id,
+      isTOCVisible: true,
+      sectionsMap: new Map([['doc-1', [root]]]),
+      setCurrentSection: vi.fn(),
+      toggleTOC: vi.fn(),
+      deleteSection: vi.fn().mockResolvedValue(undefined),
+      updateSection,
+    });
+
+    const { rerender } = render(<TableOfContents onCreateSection={vi.fn()} />);
+
+    fireEvent.contextMenu(screen.getByText('Lockable Section'));
+    fireEvent.click(screen.getByRole('button', { name: 'Lock' }));
+    await waitFor(() => {
+      expect(updateSection).toHaveBeenCalledWith('lockable-section', { isLocked: true });
+    });
+
+    act(() => {
+      useLongDraftsStore.setState({
+        sectionsMap: new Map([['doc-1', [{ ...root, isLocked: true }]]]),
+      });
+    });
+    rerender(<TableOfContents onCreateSection={vi.fn()} />);
+
+    fireEvent.contextMenu(screen.getByText('Lockable Section'));
+    fireEvent.click(screen.getByRole('button', { name: 'Unlock' }));
+    expect(screen.getByRole('dialog', { name: 'Unlock section' })).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText('Passkey'), { target: { value: 'bad-pass' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Unlock' }));
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toHaveTextContent('Invalid passkey');
+    });
+
+    fireEvent.change(screen.getByLabelText('Passkey'), { target: { value: 'good-pass' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Unlock' }));
+    await waitFor(() => {
+      expect(updateSection).toHaveBeenCalledWith('lockable-section', { isLocked: false });
+    });
   });
 });
