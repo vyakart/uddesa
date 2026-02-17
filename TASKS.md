@@ -869,14 +869,14 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.5.1, 0.4.3
 - **Effort**: L
 - **Acceptance Criteria**:
-  - [ ] documents state
-  - [ ] currentDocument state
-  - [ ] sections state (nested)
-  - [ ] loadDocument action
-  - [ ] createSection action
-  - [ ] updateSection action
-  - [ ] reorderSection action
-  - [ ] deleteSection action
+  - [x] documents state
+  - [x] currentDocument state
+  - [x] sections state (nested)
+  - [x] loadDocument action
+  - [x] createSection action
+  - [x] updateSection action
+  - [x] reorderSection action
+  - [x] deleteSection action
 - **Testing**: Unit tests for all actions
 
 #### Task 4.1.2: Create TableOfContents Component

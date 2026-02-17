@@ -9,7 +9,7 @@ Last updated: February 17, 2026
 - Latest full coverage snapshot: lines `90.82%`, statements `90.22%`, functions `86.44%`, branches `80.07%`.
 - Recent focus has been adding reliable tests module by module.
 - Blackboard coverage moved from almost none to strong coverage.
-- Current execution stage: Phase `4.1` (Long Drafts section management).
+- Current execution stage: Phase `4.1.2` (Long Drafts table of contents).
 
 ## 2) Completed tasks so far (brief)
 
@@ -53,6 +53,7 @@ Last updated: February 17, 2026
 | Task wave 31 | Completed `3.4.1` font bundling by installing `@fontsource` packages (`Inter`, `Crimson Pro`, `Caveat`, `JetBrains Mono`) and importing them in global styles | Dependency + CSS import audit, targeted tests, full run green |
 | Task wave 32 | Completed `3.4.2` by adding shared `FontSelector` (select + context-menu variants), wiring Blackboard toolbar font selection, and extending settings/defaults with `defaultFont` | New component tests + Blackboard toolbar tests + targeted eslint + full run green |
 | Task wave 33 | Completed `3.4.3` by adding Blackboard right-click font context menu and integrating selected-font application/persistence in `ExcalidrawWrapper` for selected text/new text defaults | Blackboard integration tests + wrapper tests + targeted eslint + full run green |
+| Task wave 34 | Completed `4.1.1` Long Drafts store acceptance by validating document/current-document state, nested section handling, and section CRUD/reorder actions against existing store implementation | `vitest src/stores/longDraftsStore.test.ts` (9 tests passing) |
 
 ## 3) Blackboard testing progress
 
@@ -91,6 +92,6 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Implement Phase `4.1.1`: create Long Drafts store.
-2. Implement Phase `4.1.2`: create TableOfContents component.
+1. Implement Phase `4.1.2`: create TableOfContents component.
+2. Implement Phase `4.1.3`: create SectionEditor component.
 3. Keep periodic full coverage reruns while feature stages advance to prevent regressions.
