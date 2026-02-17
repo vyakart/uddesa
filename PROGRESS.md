@@ -5,10 +5,11 @@ Last updated: February 17, 2026
 ## 1) Where we are now
 
 - App development is active and stable.
-- Unit tests are passing (`61` files, `208` tests).
-- Latest full coverage snapshot: lines `86.65%`, statements `85.77%`, functions `82.17%`, branches `70.86%`.
+- Unit tests are passing (`62` files, `240` tests).
+- Latest full coverage snapshot: lines `91.03%`, statements `90.37%`, functions `86.24%`, branches `80.26%`.
 - Recent focus has been adding reliable tests module by module.
 - Blackboard coverage moved from almost none to strong coverage.
+- Current execution stage: Phase `2.3` (Global Features).
 
 ## 2) Completed tasks so far (brief)
 
@@ -35,6 +36,7 @@ Last updated: February 17, 2026
 | Test wave 14 | Expanded `citation.ts` branch coverage (fallbacks, DOI edge mapping, BibTeX fallbacks, helper edge cases) | Citation-targeted tests + eslint + full run + coverage rerun |
 | Test wave 15 | Expanded `backup.ts` branch/function coverage (web fallback, restore branches, scheduler intervals, error paths, size formatting) | Backup-targeted tests + eslint + full run + coverage rerun |
 | Test wave 16 | Expanded branch-heavy Drafts UI tests (`Drafts`, `DraftList`, `DraftEditor`, `StatusBadge`) | Drafts-targeted tests + eslint + full run + coverage rerun |
+| Task wave 17 | Added global `usePasteHandler`, integrated it in app root, and expanded shortcut tests (special keys + cleanup) | Hook-targeted tests + app tests + full run + coverage rerun |
 
 ## 3) Blackboard testing progress
 
@@ -48,24 +50,17 @@ Last updated: February 17, 2026
   - `src/components/diaries/blackboard` lines: `0.00% -> 89.21%`
   - `src/stores/blackboardStore.ts` lines: `10.95% -> 93.15%`
 
-## 4) Important clarification
+## 4) Current quality state
 
 - Nothing is broken.
 - Test suite is healthy and passing.
-- Coverage command still exits with error because global threshold is `80%`.
+- Global coverage threshold (`80%`) is now passing.
 - Current status:
-  - Lines `86.65%` (meets threshold)
-  - Statements `85.77%` (meets threshold)
-  - Functions `82.17%` (now meets threshold)
-  - Branches `70.86%` (still below threshold)
-- Movement during this 3-block pass (coverage snapshots):
-  - After block 1 (`citation.ts`): lines `83.64%`, statements `82.90%`, functions `79.23%`, branches `67.00%`
-  - After block 2 (`backup.ts`): lines `84.77%`, statements `83.98%`, functions `79.63%`, branches `68.55%`
-  - After block 3 (`drafts/*` UI): lines `86.65%`, statements `85.77%`, functions `82.17%`, branches `70.86%`
-- Key file movement in this pass:
-  - `src/utils/citation.ts`: statements `73.15% -> 98.14%`, branches `49.47% -> 83.15%`, functions `94.74% -> 100%`
-  - `src/utils/backup.ts`: statements `67.97% -> 100%`, branches `58.25% -> 94.17%`, functions `78.26% -> 100%`
-  - `src/components/diaries/drafts/*`: statements/functions moved to `100%`, branches to `92.61%` at folder level
+  - Lines `91.03%`
+  - Statements `90.37%`
+  - Functions `86.24%`
+  - Branches `80.26%`
+- Active work is now focused on feature-stage completion (Phase `2.3` onward), not threshold rescue.
 
 ## 5) How tasks are being completed (process)
 
@@ -80,6 +75,6 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Focus next on remaining branch-heavy areas (`src/components/diaries/long-drafts/*`, `src/components/diaries/academic/*`, and selected store branches).
-2. Reduce React `act(...)` warnings in expanded Drafts tests to keep output clean.
-3. Re-run full coverage and track branch movement toward global `80%`.
+1. Complete Phase `2.3.4`: apply keyboard shortcuts consistently across diary flows (`Ctrl+N`, `PageUp/PageDown`, heading and formatting combos).
+2. Move to Phase `2.4`: passkey + content locking implementation (`useContentLocking`, prompt UI, diary integration).
+3. Keep periodic full coverage reruns while feature stages advance to prevent regressions.

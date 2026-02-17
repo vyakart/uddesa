@@ -619,11 +619,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.1.4
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Intercepts paste event
-  - [ ] Extracts plain text
-  - [ ] Preserves line breaks
-  - [ ] Inserts with current styles
-  - [ ] Works with contentEditable and TipTap
+  - [x] Intercepts paste event
+  - [x] Extracts plain text
+  - [x] Preserves line breaks
+  - [x] Inserts with current styles
+  - [x] Works with contentEditable and TipTap
 - **Testing**: Hook tests with clipboard mocking
 
 #### Task 2.3.2: Create useKeyboardShortcuts Hook
@@ -631,11 +631,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.1.4
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Matches Ctrl/Cmd + key combinations
-  - [ ] Supports Shift modifier
-  - [ ] Prevents default for matched shortcuts
-  - [ ] Handles special keys (PageUp, PageDown)
-  - [ ] Cleans up on unmount
+  - [x] Matches Ctrl/Cmd + key combinations
+  - [x] Supports Shift modifier
+  - [x] Prevents default for matched shortcuts
+  - [x] Handles special keys (PageUp, PageDown)
+  - [x] Cleans up on unmount
 - **Testing**: Hook tests with keyboard events
 
 #### Task 2.3.3: Apply Paste Handler Globally
@@ -643,9 +643,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 2.3.1, 1.3.5, 2.1.2, 2.2.4
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] Paste strips formatting in Personal Diary
-  - [ ] Paste strips formatting in Scratchpad text blocks
-  - [ ] Paste strips formatting in Drafts
+  - [x] Paste strips formatting in Personal Diary
+  - [x] Paste strips formatting in Scratchpad text blocks
+  - [x] Paste strips formatting in Drafts
 - **Testing**: Integration tests for each diary
 
 #### Task 2.3.4: Apply Keyboard Shortcuts Globally

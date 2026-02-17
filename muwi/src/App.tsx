@@ -6,7 +6,7 @@ import {
   selectActiveItemId,
 } from '@/stores/appStore';
 import { useSettingsStore } from '@/stores/settingsStore';
-import { useGlobalShortcuts } from '@/hooks';
+import { useGlobalShortcuts, usePasteHandler } from '@/hooks';
 import { Shelf } from '@/components/shelf';
 import { ErrorBoundary } from '@/components/common';
 import { PersonalDiary } from '@/components/diaries/PersonalDiary';
@@ -26,6 +26,7 @@ function App() {
 
   // Enable global keyboard shortcuts
   useGlobalShortcuts();
+  usePasteHandler();
 
   // Load settings on mount
   useEffect(() => {

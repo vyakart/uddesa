@@ -83,4 +83,19 @@ describe('useKeyboardShortcuts', () => {
 
     expect(action).toHaveBeenCalledTimes(1);
   });
+
+  it('handles special keys and cleans up listeners on unmount', () => {
+    const action = vi.fn();
+
+    const { unmount } = renderHook(() =>
+      useKeyboardShortcuts([{ key: 'PageDown', action }])
+    );
+
+    fireEvent.keyDown(window, { key: 'PageDown' });
+    expect(action).toHaveBeenCalledTimes(1);
+
+    unmount();
+    fireEvent.keyDown(window, { key: 'PageDown' });
+    expect(action).toHaveBeenCalledTimes(1);
+  });
 });
