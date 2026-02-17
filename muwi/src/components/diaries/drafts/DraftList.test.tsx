@@ -100,4 +100,182 @@ describe('DraftList', () => {
 
     confirmSpy.mockRestore();
   });
+
+  it('handles empty states for all/filter views and closes menus on outside click', () => {
+    useDraftsStore.setState({
+      drafts: [],
+      currentDraftId: null,
+      sortBy: 'modifiedAt',
+      sortOrder: 'desc',
+      filterStatus: 'all',
+    });
+
+    const { rerender } = render(<DraftList onCreateNew={vi.fn()} />);
+    expect(screen.getByText('No drafts yet')).toBeInTheDocument();
+
+    const draft = makeDraft({ status: 'in-progress' });
+    useDraftsStore.setState({
+      drafts: [draft],
+      filterStatus: 'review',
+    });
+    rerender(<DraftList onCreateNew={vi.fn()} />);
+    expect(screen.getByText('No drafts match filter')).toBeInTheDocument();
+
+    useDraftsStore.setState({
+      drafts: [draft],
+      filterStatus: 'all',
+    });
+    rerender(<DraftList onCreateNew={vi.fn()} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Modified' }));
+    expect(screen.getByRole('button', { name: 'Title' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'All' }));
+    expect(screen.getByRole('button', { name: 'Review' })).toBeInTheDocument();
+    fireEvent.contextMenu(screen.getByRole('heading', { name: draft.title }));
+    expect(screen.getByRole('button', { name: 'Delete' })).toBeInTheDocument();
+
+    fireEvent.mouseDown(document.body);
+    expect(screen.queryByRole('button', { name: 'Title' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Review' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Delete' })).not.toBeInTheDocument();
+  });
+
+  it('supports sort branches, date formatting branches, and hover styling handlers', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-02-10T12:00:00.000Z'));
+
+    const now = new Date('2026-02-10T12:00:00.000Z');
+    const d1 = makeDraft({
+      id: 'd1',
+      title: 'Beta',
+      status: 'complete',
+      modifiedAt: now,
+      createdAt: new Date('2026-02-09T12:00:00.000Z'),
+      content: '<p>' + 'x'.repeat(100) + '</p>',
+    });
+    const d2 = makeDraft({
+      id: 'd2',
+      title: 'Alpha',
+      status: 'in-progress',
+      modifiedAt: new Date('2026-02-09T12:00:00.000Z'),
+      createdAt: new Date('2026-02-08T12:00:00.000Z'),
+      content: '',
+      isLocked: true,
+    });
+    const d3 = makeDraft({
+      id: 'd3',
+      title: 'Gamma',
+      status: 'review',
+      modifiedAt: new Date('2026-02-07T12:00:00.000Z'),
+      createdAt: new Date('2026-02-07T12:00:00.000Z'),
+    });
+    const d4 = makeDraft({
+      id: 'd4',
+      title: '',
+      status: 'review',
+      modifiedAt: new Date('2026-01-31T12:00:00.000Z'),
+      createdAt: new Date('2026-01-31T12:00:00.000Z'),
+      content: '',
+    });
+
+    useDraftsStore.setState({
+      drafts: [d1, d2, d3, d4],
+      currentDraftId: 'd2',
+      sortBy: 'title',
+      sortOrder: 'asc',
+      filterStatus: 'all',
+      setCurrentDraft: vi.fn(),
+      cycleDraftStatus: vi.fn(),
+    });
+
+    const { rerender } = render(<DraftList onCreateNew={vi.fn()} />);
+    const byTitle = screen.getAllByRole('heading').map(h => h.textContent);
+    expect(byTitle[0]).toBe('Untitled Draft');
+    expect(byTitle[1]).toBe('Alpha');
+    expect(screen.getByText('Today')).toBeInTheDocument();
+    expect(screen.getByText('Yesterday')).toBeInTheDocument();
+    expect(screen.getByText('3 days ago')).toBeInTheDocument();
+    expect(screen.getAllByText('No content').length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/\.{3}$/).length).toBeGreaterThan(0);
+
+    useDraftsStore.setState({ sortBy: 'createdAt', sortOrder: 'desc' });
+    rerender(<DraftList onCreateNew={vi.fn()} />);
+    expect(screen.getAllByRole('heading')[0]).toHaveTextContent('Beta');
+
+    useDraftsStore.setState({ sortBy: 'status', sortOrder: 'asc' });
+    rerender(<DraftList onCreateNew={vi.fn()} />);
+    expect(screen.getAllByRole('heading')[0]).toHaveTextContent('Alpha');
+
+    useDraftsStore.setState({ sortBy: 'modifiedAt', sortOrder: 'desc' });
+    rerender(<DraftList onCreateNew={vi.fn()} />);
+    expect(screen.getAllByRole('heading')[0]).toHaveTextContent('Beta');
+
+    const newDraftButton = screen.getByRole('button', { name: 'New Draft' });
+    fireEvent.mouseEnter(newDraftButton);
+    expect(newDraftButton).toHaveStyle({ backgroundColor: '#3D7A8C' });
+    fireEvent.mouseLeave(newDraftButton);
+    expect(newDraftButton).toHaveStyle({ backgroundColor: '#4A90A4' });
+
+    const unselectedHeading = screen.getByRole('heading', { name: 'Gamma' });
+    const unselectedCard = unselectedHeading.parentElement?.parentElement;
+    if (!unselectedCard) throw new Error('Expected unselected draft card');
+    fireEvent.mouseEnter(unselectedCard);
+    expect(unselectedCard).toHaveStyle({ backgroundColor: '#F3F4F6' });
+    fireEvent.mouseLeave(unselectedCard);
+    expect(unselectedCard).not.toHaveStyle({ backgroundColor: '#F3F4F6' });
+
+    const selectedHeading = screen.getByRole('heading', { name: 'Alpha' });
+    const selectedCard = selectedHeading.parentElement?.parentElement;
+    if (!selectedCard) throw new Error('Expected selected draft card');
+    fireEvent.mouseEnter(selectedCard);
+    expect(selectedCard).toHaveStyle({ backgroundColor: '#EFF6FF' });
+    fireEvent.mouseLeave(selectedCard);
+    expect(selectedCard).toHaveStyle({ backgroundColor: '#EFF6FF' });
+
+    vi.useRealTimers();
+  });
+
+  it('toggles sort order when selecting the current sort and supports status click/delete cancel paths', async () => {
+    const setSortOrder = vi.fn();
+    const setCurrentDraft = vi.fn();
+    const cycleDraftStatus = vi.fn();
+    const deleteDraft = vi.fn().mockResolvedValue(undefined);
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
+
+    const draft = makeDraft({ id: 'toggle', title: 'Toggle Draft' });
+    useDraftsStore.setState({
+      drafts: [draft],
+      currentDraftId: null,
+      sortBy: 'title',
+      sortOrder: 'desc',
+      filterStatus: 'all',
+      setSortOrder,
+      setCurrentDraft,
+      cycleDraftStatus,
+      deleteDraft,
+    });
+
+    render(<DraftList onCreateNew={vi.fn()} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Title' }));
+    const titleButtons = screen.getAllByRole('button', { name: /Title/ });
+    fireEvent.click(titleButtons[titleButtons.length - 1]);
+    expect(setSortOrder).toHaveBeenCalledWith('asc');
+
+    fireEvent.click(screen.getByRole('button', { name: 'In Progress' }));
+    expect(cycleDraftStatus).toHaveBeenCalledWith('toggle');
+    expect(setCurrentDraft).not.toHaveBeenCalled();
+
+    fireEvent.contextMenu(screen.getByRole('heading', { name: 'Toggle Draft' }));
+    const deleteButton = screen.getByRole('button', { name: 'Delete' });
+    fireEvent.mouseEnter(deleteButton);
+    expect(deleteButton).toHaveStyle({ backgroundColor: '#FEE2E2' });
+    fireEvent.mouseLeave(deleteButton);
+    expect(deleteButton).not.toHaveStyle({ backgroundColor: '#FEE2E2' });
+    fireEvent.click(deleteButton);
+    await waitFor(() => {
+      expect(deleteDraft).not.toHaveBeenCalled();
+    });
+    confirmSpy.mockRestore();
+  });
 });

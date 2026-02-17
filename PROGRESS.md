@@ -1,12 +1,12 @@
 # MUWI Progress (Simple Status)
 
-Last updated: February 12, 2026
+Last updated: February 17, 2026
 
 ## 1) Where we are now
 
 - App development is active and stable.
-- Unit tests are passing (`61` files, `187` tests).
-- Latest full coverage snapshot: lines `82.89%`, statements `82.19%`, functions `79.16%`, branches `65.65%`.
+- Unit tests are passing (`61` files, `208` tests).
+- Latest full coverage snapshot: lines `86.65%`, statements `85.77%`, functions `82.17%`, branches `70.86%`.
 - Recent focus has been adding reliable tests module by module.
 - Blackboard coverage moved from almost none to strong coverage.
 
@@ -32,6 +32,9 @@ Last updated: February 12, 2026
 | Test wave 11 | Added panel tests for `BackupPanel` and `ExportPanel` (open/close, success/error, settings/scheduler, export options/timeout close) | Targeted panel tests + eslint + full run + coverage rerun |
 | Test wave 12 | Added extension tests for `footnote.ts` (attributes, commands, and click plugin behavior) | Targeted extension tests + eslint + full run + coverage rerun |
 | Test wave 13 | Expanded `export.ts` tests across PDF/DOCX routes and long-draft/academic wrappers | Targeted util tests + eslint + full run + coverage rerun |
+| Test wave 14 | Expanded `citation.ts` branch coverage (fallbacks, DOI edge mapping, BibTeX fallbacks, helper edge cases) | Citation-targeted tests + eslint + full run + coverage rerun |
+| Test wave 15 | Expanded `backup.ts` branch/function coverage (web fallback, restore branches, scheduler intervals, error paths, size formatting) | Backup-targeted tests + eslint + full run + coverage rerun |
+| Test wave 16 | Expanded branch-heavy Drafts UI tests (`Drafts`, `DraftList`, `DraftEditor`, `StatusBadge`) | Drafts-targeted tests + eslint + full run + coverage rerun |
 
 ## 3) Blackboard testing progress
 
@@ -51,17 +54,18 @@ Last updated: February 12, 2026
 - Test suite is healthy and passing.
 - Coverage command still exits with error because global threshold is `80%`.
 - Current status:
-  - Lines `82.89%` (meets threshold)
-  - Statements `82.19%` (meets threshold)
-  - Functions `79.16%` (still below threshold)
-  - Branches `65.65%` (still below threshold)
-- Movement after export block:
-  - Lines: `78.70% -> 82.89%` (`+4.19`)
-  - Statements: `78.24% -> 82.19%` (`+3.95`)
-  - Functions: `78.28% -> 79.16%` (`+0.88`)
-  - Branches: `61.92% -> 65.65%` (`+3.73`)
-- Utility movement:
-  - `src/utils/export.ts` lines: `37.50% -> 95.96%`
+  - Lines `86.65%` (meets threshold)
+  - Statements `85.77%` (meets threshold)
+  - Functions `82.17%` (now meets threshold)
+  - Branches `70.86%` (still below threshold)
+- Movement during this 3-block pass (coverage snapshots):
+  - After block 1 (`citation.ts`): lines `83.64%`, statements `82.90%`, functions `79.23%`, branches `67.00%`
+  - After block 2 (`backup.ts`): lines `84.77%`, statements `83.98%`, functions `79.63%`, branches `68.55%`
+  - After block 3 (`drafts/*` UI): lines `86.65%`, statements `85.77%`, functions `82.17%`, branches `70.86%`
+- Key file movement in this pass:
+  - `src/utils/citation.ts`: statements `73.15% -> 98.14%`, branches `49.47% -> 83.15%`, functions `94.74% -> 100%`
+  - `src/utils/backup.ts`: statements `67.97% -> 100%`, branches `58.25% -> 94.17%`, functions `78.26% -> 100%`
+  - `src/components/diaries/drafts/*`: statements/functions moved to `100%`, branches to `92.61%` at folder level
 
 ## 5) How tasks are being completed (process)
 
@@ -76,6 +80,6 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Focus on branch/function-heavy gaps (`src/components/diaries/drafts/*`, `src/utils/backup.ts`, `src/utils/citation.ts`).
-2. Re-run full coverage and track movement in functions/branches specifically.
-3. Update this document after each completed block.
+1. Focus next on remaining branch-heavy areas (`src/components/diaries/long-drafts/*`, `src/components/diaries/academic/*`, and selected store branches).
+2. Reduce React `act(...)` warnings in expanded Drafts tests to keep output clean.
+3. Re-run full coverage and track branch movement toward global `80%`.

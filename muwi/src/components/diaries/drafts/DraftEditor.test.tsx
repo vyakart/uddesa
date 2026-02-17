@@ -63,6 +63,11 @@ describe('DraftEditor', () => {
   beforeEach(() => {
     capturedOnUpdate = undefined;
     vi.clearAllMocks();
+    mockEditor.isActive.mockImplementation(() => false);
+    mockEditor.can.mockImplementation(() => ({
+      undo: () => true,
+      redo: () => true,
+    }));
   });
 
   it('renders empty state when no draft is selected', () => {
@@ -96,7 +101,7 @@ describe('DraftEditor', () => {
     );
   });
 
-  it('auto-saves title/content changes and updates word count', () => {
+  it('auto-saves title/content changes and updates word count with debounce replacement', () => {
     vi.useFakeTimers();
     const onTitleChange = vi.fn();
     const onContentChange = vi.fn();
@@ -113,13 +118,23 @@ describe('DraftEditor', () => {
     fireEvent.change(screen.getByPlaceholderText('Untitled Draft'), {
       target: { value: 'Updated Draft Title' },
     });
+    fireEvent.change(screen.getByPlaceholderText('Untitled Draft'), {
+      target: { value: 'Latest Draft Title' },
+    });
 
     act(() => {
       vi.advanceTimersByTime(500);
     });
-    expect(onTitleChange).toHaveBeenCalledWith('Updated Draft Title');
+    expect(onTitleChange).toHaveBeenCalledTimes(1);
+    expect(onTitleChange).toHaveBeenCalledWith('Latest Draft Title');
 
     act(() => {
+      capturedOnUpdate?.({
+        editor: {
+          getHTML: () => '<p>one two</p>',
+          getText: () => 'one two',
+        },
+      });
       capturedOnUpdate?.({
         editor: {
           getHTML: () => '<p>one two three</p>',
@@ -129,6 +144,7 @@ describe('DraftEditor', () => {
       vi.advanceTimersByTime(500);
     });
 
+    expect(onContentChange).toHaveBeenCalledTimes(1);
     expect(onContentChange).toHaveBeenCalledWith('<p>one two three</p>');
     expect(screen.getByText('3 words')).toBeInTheDocument();
 
@@ -148,5 +164,85 @@ describe('DraftEditor', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'In Progress' }));
     expect(onStatusCycle).toHaveBeenCalledTimes(1);
+  });
+
+  it('executes formatting toolbar actions and hover handlers', () => {
+    mockEditor.isActive.mockImplementation((name: string, attrs?: { level?: number }) => {
+      if (name === 'bold') return true;
+      if (name === 'heading' && attrs?.level === 1) return true;
+      return false;
+    });
+
+    render(
+      <DraftEditor
+        draft={makeDraft()}
+        onTitleChange={vi.fn()}
+        onContentChange={vi.fn()}
+        onStatusCycle={vi.fn()}
+      />
+    );
+
+    fireEvent.click(screen.getByTitle('Bold (Ctrl+B)'));
+    fireEvent.click(screen.getByTitle('Italic (Ctrl+I)'));
+    fireEvent.click(screen.getByTitle('Underline (Ctrl+U)'));
+    fireEvent.click(screen.getByTitle('Strikethrough'));
+    fireEvent.click(screen.getByTitle('Heading 1 (Ctrl+1)'));
+    fireEvent.click(screen.getByTitle('Heading 2 (Ctrl+2)'));
+    fireEvent.click(screen.getByTitle('Heading 3 (Ctrl+3)'));
+    fireEvent.click(screen.getByTitle('Bullet List'));
+    fireEvent.click(screen.getByTitle('Numbered List'));
+    fireEvent.click(screen.getByTitle('Block Quote'));
+    fireEvent.click(screen.getByTitle('Horizontal Rule'));
+    fireEvent.click(screen.getByTitle('Undo (Ctrl+Z)'));
+    fireEvent.click(screen.getByTitle('Redo (Ctrl+Shift+Z)'));
+
+    expect(chain.toggleBold).toHaveBeenCalled();
+    expect(chain.toggleItalic).toHaveBeenCalled();
+    expect(chain.toggleUnderline).toHaveBeenCalled();
+    expect(chain.toggleStrike).toHaveBeenCalled();
+    expect(chain.toggleHeading).toHaveBeenCalledWith({ level: 1 });
+    expect(chain.toggleHeading).toHaveBeenCalledWith({ level: 2 });
+    expect(chain.toggleHeading).toHaveBeenCalledWith({ level: 3 });
+    expect(chain.toggleBulletList).toHaveBeenCalled();
+    expect(chain.toggleOrderedList).toHaveBeenCalled();
+    expect(chain.toggleBlockquote).toHaveBeenCalled();
+    expect(chain.setHorizontalRule).toHaveBeenCalled();
+    expect(chain.undo).toHaveBeenCalled();
+    expect(chain.redo).toHaveBeenCalled();
+    expect(chain.run).toHaveBeenCalled();
+
+    const bold = screen.getByTitle('Bold (Ctrl+B)');
+    expect(bold).toHaveStyle({ backgroundColor: '#E0F2FE' });
+    const italic = screen.getByTitle('Italic (Ctrl+I)');
+    fireEvent.mouseEnter(italic);
+    expect(italic).toHaveStyle({ backgroundColor: '#F3F4F6' });
+    fireEvent.mouseLeave(italic);
+    expect(italic).not.toHaveStyle({ backgroundColor: '#F3F4F6' });
+  });
+
+  it('renders locked mode with disabled editing/status controls and hidden toolbar', () => {
+    const onStatusCycle = vi.fn();
+    mockEditor.can.mockImplementation(() => ({
+      undo: () => false,
+      redo: () => false,
+    }));
+
+    render(
+      <DraftEditor
+        draft={makeDraft({ isLocked: true })}
+        onTitleChange={vi.fn()}
+        onContentChange={vi.fn()}
+        onStatusCycle={onStatusCycle}
+      />
+    );
+
+    expect(screen.getByDisplayValue('Draft Title')).toBeDisabled();
+    expect(screen.getByText('Locked')).toBeInTheDocument();
+    expect(screen.queryByTitle('Bold (Ctrl+B)')).not.toBeInTheDocument();
+
+    const status = screen.getByRole('button', { name: 'In Progress' });
+    expect(status).toBeDisabled();
+    fireEvent.click(status);
+    expect(onStatusCycle).not.toHaveBeenCalled();
   });
 });

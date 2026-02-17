@@ -4,8 +4,23 @@ import { useDraftsStore } from '@/stores/draftsStore';
 import { Drafts } from './Drafts';
 
 vi.mock('./DraftEditor', () => ({
-  DraftEditor: ({ draft }: { draft: { title: string } | null }) => (
-    <div data-testid="draft-editor-view">{draft?.title ?? 'No draft selected'}</div>
+  DraftEditor: ({
+    draft,
+    onTitleChange,
+    onContentChange,
+    onStatusCycle,
+  }: {
+    draft: { title: string } | null;
+    onTitleChange: (title: string) => void;
+    onContentChange: (content: string) => void;
+    onStatusCycle: () => void;
+  }) => (
+    <div data-testid="draft-editor-view">
+      {draft?.title ?? 'No draft selected'}
+      <button onClick={() => onTitleChange('Changed Title')}>Mock Title Change</button>
+      <button onClick={() => onContentChange('<p>Changed Content</p>')}>Mock Content Change</button>
+      <button onClick={onStatusCycle}>Mock Cycle Status</button>
+    </div>
   ),
 }));
 
@@ -103,5 +118,87 @@ describe('Drafts', () => {
     });
 
     confirmSpy.mockRestore();
+  });
+
+  it('renders loading and error states and retries from error view', async () => {
+    const loadDrafts = vi.fn().mockResolvedValue(undefined);
+
+    useDraftsStore.setState({
+      ...useDraftsStore.getInitialState(),
+      isLoading: true,
+      loadDrafts,
+    });
+    const { rerender } = render(<Drafts />);
+    expect(screen.getByText('Loading drafts...')).toBeInTheDocument();
+
+    useDraftsStore.setState({
+      ...useDraftsStore.getInitialState(),
+      isLoading: false,
+      error: 'boom',
+      loadDrafts,
+    });
+    rerender(<Drafts />);
+    expect(screen.getByText('Error loading drafts')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Try Again' }));
+    expect(loadDrafts).toHaveBeenCalled();
+  });
+
+  it('wires title/content/status callbacks only when current draft id exists', async () => {
+    const draft = makeDraft({ id: 'draft-a', title: 'Draft A' });
+    const updateDraft = vi.fn().mockResolvedValue(undefined);
+    const cycleDraftStatus = vi.fn().mockResolvedValue(undefined);
+
+    useDraftsStore.setState({
+      ...useDraftsStore.getInitialState(),
+      drafts: [draft],
+      currentDraftId: draft.id,
+      updateDraft,
+      cycleDraftStatus,
+      loadDrafts: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const { rerender } = render(<Drafts />);
+    fireEvent.click(screen.getByRole('button', { name: 'Mock Title Change' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Mock Content Change' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Mock Cycle Status' }));
+
+    expect(updateDraft).toHaveBeenCalledWith('draft-a', { title: 'Changed Title' });
+    expect(updateDraft).toHaveBeenCalledWith('draft-a', { content: '<p>Changed Content</p>' });
+    expect(cycleDraftStatus).toHaveBeenCalledWith('draft-a');
+
+    useDraftsStore.setState({
+      ...useDraftsStore.getState(),
+      currentDraftId: null,
+    });
+    rerender(<Drafts />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Mock Title Change' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Mock Content Change' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Mock Cycle Status' }));
+
+    expect(updateDraft).toHaveBeenCalledTimes(2);
+    expect(cycleDraftStatus).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows singular/plural draft count in toolbar', () => {
+    const one = makeDraft({ id: 'one' });
+    const two = makeDraft({ id: 'two', title: 'Two' });
+    useDraftsStore.setState({
+      ...useDraftsStore.getInitialState(),
+      drafts: [one],
+      currentDraftId: one.id,
+      loadDrafts: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const { rerender } = render(<Drafts />);
+    expect(screen.getByText('1 draft')).toBeInTheDocument();
+
+    useDraftsStore.setState({
+      ...useDraftsStore.getState(),
+      drafts: [one, two],
+    });
+    rerender(<Drafts />);
+    expect(screen.getByText('2 drafts')).toBeInTheDocument();
   });
 });

@@ -1,4 +1,5 @@
 import type { BibliographyEntry } from '@/types/academic';
+import Cite from 'citation-js';
 import {
   fetchFromDOI,
   formatBibliography,
@@ -31,6 +32,11 @@ function makeEntry(overrides: Partial<BibliographyEntry> = {}): BibliographyEntr
 }
 
 describe('citation utils', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+  });
+
   it('formats in-text citations, bibliography output, and helper sorting/key functions', () => {
     const entryA = makeEntry({ id: 'a', authors: ['Smith, John'], year: 2024 });
     const entryB = makeEntry({ id: 'b', authors: ['Adams, Amy'], year: 2022 });
@@ -52,6 +58,50 @@ describe('citation utils', () => {
       'a',
       'b',
     ]);
+  });
+
+  it('handles in-text page-number formats for parenthesis, brackets, and plain citations', () => {
+    const formatSpy = vi.spyOn(Cite.prototype, 'format')
+      .mockReturnValueOnce('(Smith, 2024)')
+      .mockReturnValueOnce('[1]')
+      .mockReturnValueOnce('Smith 2024');
+
+    const entry = makeEntry({ authors: ['Ada Lovelace'] });
+    expect(formatInTextCitation(entry, 'apa7', '45')).toBe('(Smith, 2024, p. 45)');
+    expect(formatInTextCitation(entry, 'ieee', '45')).toBe('[1, p. 45]');
+    expect(formatInTextCitation(entry, 'mla9', '45')).toBe('Smith 2024 (p. 45)');
+
+    expect(formatSpy).toHaveBeenCalledTimes(3);
+  });
+
+  it('falls back when citation formatting fails', () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(Cite.prototype, 'format').mockImplementation(() => {
+      throw 'boom';
+    });
+
+    const fallbackWithUnknownAuthor = formatInTextCitation(
+      makeEntry({ authors: [], year: undefined }),
+      'apa7',
+      '9'
+    );
+    expect(fallbackWithUnknownAuthor).toBe('(Unknown, p. 9)');
+
+    const fallbackBibliography = formatBibliography([
+      makeEntry({ authors: ['Ada Lovelace'], year: undefined, journal: undefined, title: 'Fallback Title' }),
+    ]);
+    expect(fallbackBibliography).toContain('<p>Ada Lovelace. Fallback Title.</p>');
+
+    const fallbackEntry = formatBibliographyEntry(
+      makeEntry({ authors: ['Doe, Jane', 'Smith, John'], year: undefined, title: 'Entry Fallback' })
+    );
+    expect(fallbackEntry).toBe('Doe, Jane, Smith, John. Entry Fallback.');
+
+    expect(consoleSpy).toHaveBeenCalled();
+  });
+
+  it('returns empty bibliography for empty inputs', () => {
+    expect(formatBibliography([])).toBe('');
   });
 
   it('parses valid BibTeX and rejects invalid BibTeX', () => {
@@ -84,6 +134,23 @@ describe('citation utils', () => {
       'Failed to parse BibTeX. Please check the format.'
     );
     consoleSpy.mockRestore();
+  });
+
+  it('parses BibTeX author/type/year fallbacks', () => {
+    const currentYear = new Date().getFullYear();
+    const bibtex = `@misc{fallback2026,
+      author = {John and },
+      title = {Fallback Parsing}
+    }`;
+    const parsed = parseBibTeX(bibtex);
+
+    expect(parsed).toHaveLength(1);
+    expect(parsed[0]).toMatchObject({
+      type: 'other',
+      title: 'Fallback Parsing',
+      year: currentYear,
+      authors: ['John', 'Unknown'],
+    });
   });
 
   it('fetches and maps DOI metadata', async () => {
@@ -126,6 +193,29 @@ describe('citation utils', () => {
     });
   });
 
+  it('maps DOI metadata fallbacks for unknown type/title/authors/year', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: vi.fn().mockResolvedValue({
+          type: 'document',
+          author: [{}, { given: 'OnlyGiven' }],
+        }),
+      })
+    );
+
+    const currentYear = new Date().getFullYear();
+    const entry = await fetchFromDOI('doi:10.1000/fallback');
+    expect(entry).toMatchObject({
+      type: 'other',
+      title: 'Untitled',
+      authors: ['Unknown', 'OnlyGiven'],
+      year: currentYear,
+      doi: '10.1000/fallback',
+    });
+  });
+
   it('handles DOI validation and network error cases', async () => {
     await expect(fetchFromDOI('  ')).rejects.toThrow('Invalid DOI format');
 
@@ -153,5 +243,22 @@ describe('citation utils', () => {
 
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue('boom'));
     await expect(fetchFromDOI('10.1000/rejected')).rejects.toThrow('Failed to fetch DOI data');
+  });
+
+  it('covers citation key/sort helpers with missing authors/years', () => {
+    expect(generateCitationKey(makeEntry({ authors: [], year: undefined }))).toBe('Unknown');
+    expect(generateCitationKey(makeEntry({ authors: ['Ada Lovelace'], year: 2026 }))).toBe('Lovelace2026');
+
+    const byAuthor = sortBibliographyByAuthor([
+      makeEntry({ id: 'missing-author', authors: [] }),
+      makeEntry({ id: 'z-author', authors: ['Zimmer, Amy'] }),
+    ]).map(entry => entry.id);
+    expect(byAuthor).toEqual(['missing-author', 'z-author']);
+
+    const byYear = sortBibliographyByYear([
+      makeEntry({ id: 'no-year', year: undefined }),
+      makeEntry({ id: 'has-year', year: 2025 }),
+    ]).map(entry => entry.id);
+    expect(byYear).toEqual(['has-year', 'no-year']);
   });
 });
