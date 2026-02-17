@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@/test';
+import { act, fireEvent, render, screen, waitFor } from '@/test';
 import type { Draft } from '@/types/drafts';
 import { useDraftsStore } from '@/stores/draftsStore';
 import { DraftList } from './DraftList';
@@ -114,16 +114,20 @@ describe('DraftList', () => {
     expect(screen.getByText('No drafts yet')).toBeInTheDocument();
 
     const draft = makeDraft({ status: 'in-progress' });
-    useDraftsStore.setState({
-      drafts: [draft],
-      filterStatus: 'review',
+    act(() => {
+      useDraftsStore.setState({
+        drafts: [draft],
+        filterStatus: 'review',
+      });
     });
     rerender(<DraftList onCreateNew={vi.fn()} />);
     expect(screen.getByText('No drafts match filter')).toBeInTheDocument();
 
-    useDraftsStore.setState({
-      drafts: [draft],
-      filterStatus: 'all',
+    act(() => {
+      useDraftsStore.setState({
+        drafts: [draft],
+        filterStatus: 'all',
+      });
     });
     rerender(<DraftList onCreateNew={vi.fn()} />);
 
@@ -198,15 +202,21 @@ describe('DraftList', () => {
     expect(screen.getAllByText('No content').length).toBeGreaterThan(0);
     expect(screen.getAllByText(/\.{3}$/).length).toBeGreaterThan(0);
 
-    useDraftsStore.setState({ sortBy: 'createdAt', sortOrder: 'desc' });
+    act(() => {
+      useDraftsStore.setState({ sortBy: 'createdAt', sortOrder: 'desc' });
+    });
     rerender(<DraftList onCreateNew={vi.fn()} />);
     expect(screen.getAllByRole('heading')[0]).toHaveTextContent('Beta');
 
-    useDraftsStore.setState({ sortBy: 'status', sortOrder: 'asc' });
+    act(() => {
+      useDraftsStore.setState({ sortBy: 'status', sortOrder: 'asc' });
+    });
     rerender(<DraftList onCreateNew={vi.fn()} />);
     expect(screen.getAllByRole('heading')[0]).toHaveTextContent('Alpha');
 
-    useDraftsStore.setState({ sortBy: 'modifiedAt', sortOrder: 'desc' });
+    act(() => {
+      useDraftsStore.setState({ sortBy: 'modifiedAt', sortOrder: 'desc' });
+    });
     rerender(<DraftList onCreateNew={vi.fn()} />);
     expect(screen.getAllByRole('heading')[0]).toHaveTextContent('Beta');
 

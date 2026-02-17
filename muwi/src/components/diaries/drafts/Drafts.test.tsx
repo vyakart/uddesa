@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@/test';
+import { act, fireEvent, render, screen, waitFor } from '@/test';
 import type { Draft } from '@/types/drafts';
 import { useDraftsStore } from '@/stores/draftsStore';
 import { Drafts } from './Drafts';
@@ -131,11 +131,13 @@ describe('Drafts', () => {
     const { rerender } = render(<Drafts />);
     expect(screen.getByText('Loading drafts...')).toBeInTheDocument();
 
-    useDraftsStore.setState({
-      ...useDraftsStore.getInitialState(),
-      isLoading: false,
-      error: 'boom',
-      loadDrafts,
+    act(() => {
+      useDraftsStore.setState({
+        ...useDraftsStore.getInitialState(),
+        isLoading: false,
+        error: 'boom',
+        loadDrafts,
+      });
     });
     rerender(<Drafts />);
     expect(screen.getByText('Error loading drafts')).toBeInTheDocument();
@@ -167,9 +169,11 @@ describe('Drafts', () => {
     expect(updateDraft).toHaveBeenCalledWith('draft-a', { content: '<p>Changed Content</p>' });
     expect(cycleDraftStatus).toHaveBeenCalledWith('draft-a');
 
-    useDraftsStore.setState({
-      ...useDraftsStore.getState(),
-      currentDraftId: null,
+    act(() => {
+      useDraftsStore.setState({
+        ...useDraftsStore.getState(),
+        currentDraftId: null,
+      });
     });
     rerender(<Drafts />);
 
@@ -194,9 +198,11 @@ describe('Drafts', () => {
     const { rerender } = render(<Drafts />);
     expect(screen.getByText('1 draft')).toBeInTheDocument();
 
-    useDraftsStore.setState({
-      ...useDraftsStore.getState(),
-      drafts: [one, two],
+    act(() => {
+      useDraftsStore.setState({
+        ...useDraftsStore.getState(),
+        drafts: [one, two],
+      });
     });
     rerender(<Drafts />);
     expect(screen.getByText('2 drafts')).toBeInTheDocument();

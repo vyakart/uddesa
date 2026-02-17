@@ -78,4 +78,58 @@ describe('FootnoteManager', () => {
     confirmSpy.mockRestore();
     vi.useRealTimers();
   });
+
+  it('hides add/delete controls when locked and supports canceling edit with Escape', () => {
+    const onUpdateFootnote = vi.fn();
+    const onDeleteFootnote = vi.fn();
+    const lockedFootnote = makeFootnote({ id: 'fn-locked', marker: 1, content: '' });
+
+    const { rerender } = render(
+      <FootnoteManager
+        footnotes={[]}
+        isLocked={true}
+        onAddFootnote={vi.fn()}
+        onUpdateFootnote={onUpdateFootnote}
+        onDeleteFootnote={onDeleteFootnote}
+        onNavigateToFootnote={vi.fn()}
+      />
+    );
+
+    expect(screen.getByText('No footnotes yet')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Add Footnote' })).not.toBeInTheDocument();
+
+    rerender(
+      <FootnoteManager
+        footnotes={[lockedFootnote]}
+        isLocked={true}
+        onAddFootnote={vi.fn()}
+        onUpdateFootnote={onUpdateFootnote}
+        onDeleteFootnote={onDeleteFootnote}
+        onNavigateToFootnote={vi.fn()}
+      />
+    );
+
+    expect(screen.queryByRole('button', { name: 'Edit' })).not.toBeInTheDocument();
+    fireEvent.contextMenu(screen.getByText('Click to add content...'));
+    expect(screen.getByRole('button', { name: 'Go to Text' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Delete' })).not.toBeInTheDocument();
+
+    rerender(
+      <FootnoteManager
+        footnotes={[makeFootnote({ id: 'fn-edit', marker: 1, content: 'Editable content' })]}
+        isLocked={false}
+        onAddFootnote={vi.fn()}
+        onUpdateFootnote={onUpdateFootnote}
+        onDeleteFootnote={onDeleteFootnote}
+        onNavigateToFootnote={vi.fn()}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
+    const textarea = screen.getByDisplayValue('Editable content');
+    fireEvent.change(textarea, { target: { value: 'Changed then canceled' } });
+    fireEvent.keyDown(textarea, { key: 'Escape' });
+    expect(screen.getByText('Editable content')).toBeInTheDocument();
+    expect(onUpdateFootnote).not.toHaveBeenCalled();
+  });
 });

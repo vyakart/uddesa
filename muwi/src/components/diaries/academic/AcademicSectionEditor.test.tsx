@@ -158,4 +158,41 @@ describe('AcademicSectionEditor', () => {
     expect(screen.getByDisplayValue('Focus Academic Section')).toBeInTheDocument();
     expect(screen.getByText('2 words')).toBeInTheDocument();
   });
+
+  it('supports overlay close behavior and active/disabled toolbar branches', () => {
+    mockEditor.isActive.mockImplementation((name?: string) => name === 'bold');
+    mockEditor.can.mockReturnValue({
+      undo: () => false,
+      redo: () => false,
+    });
+
+    render(
+      <AcademicSectionEditor
+        section={makeSection()}
+        onTitleChange={vi.fn()}
+        onContentChange={vi.fn()}
+      />
+    );
+
+    expect(screen.getByTitle('Bold (Ctrl+B)')).toHaveStyle({ backgroundColor: 'rgb(224, 242, 254)' });
+    expect(screen.getByTitle('Undo (Ctrl+Z)')).toBeDisabled();
+    expect(screen.getByTitle('Redo (Ctrl+Shift+Z)')).toBeDisabled();
+
+    fireEvent.click(screen.getByTitle('Insert Citation (Ctrl+Shift+C)'));
+    expect(screen.getByTestId('citation-picker')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('citation-picker'));
+    expect(screen.getByTestId('citation-picker')).toBeInTheDocument();
+
+    const overlay = screen.getByTestId('citation-picker').parentElement;
+    expect(overlay).toBeTruthy();
+    fireEvent.click(overlay!);
+    expect(screen.queryByTestId('citation-picker')).not.toBeInTheDocument();
+
+    mockEditor.isActive.mockImplementation(() => false);
+    mockEditor.can.mockReturnValue({
+      undo: () => true,
+      redo: () => true,
+    });
+  });
 });

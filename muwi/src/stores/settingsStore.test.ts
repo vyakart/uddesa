@@ -30,8 +30,17 @@ describe('settingsStore', () => {
     state.updateDiarySettings('scratchpad', { orientation: 'landscape' });
     expect(useSettingsStore.getState().scratchpad.orientation).toBe('landscape');
 
+    state.updateDiarySettings('blackboard', { gridSize: 32 });
+    expect(useSettingsStore.getState().blackboard.gridSize).toBe(32);
+
+    state.updateDiarySettings('personalDiary', { dateFormat: 'DD/MM/YYYY' });
+    expect(useSettingsStore.getState().personalDiary.dateFormat).toBe('DD/MM/YYYY');
+
     state.updateDraftsSettings({ defaultFont: 'Georgia' });
     expect(useSettingsStore.getState().drafts.defaultFont).toBe('Georgia');
+
+    state.updateLongDraftsSettings({ defaultFont: 'Georgia' });
+    expect(useSettingsStore.getState().longDrafts.defaultFont).toBe('Georgia');
 
     state.updateAcademicSettings({ citationStyle: 'mla9' });
     expect(useSettingsStore.getState().academic.citationStyle).toBe('mla9');

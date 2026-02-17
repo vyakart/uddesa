@@ -22,6 +22,10 @@ describe('personalDiaryStore', () => {
     usePersonalDiaryStore.setState(usePersonalDiaryStore.getInitialState(), true);
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('loads entries sorted by date descending', async () => {
     await db.diaryEntries.bulkAdd([
       makeEntry('2026-02-03', 'third day'),
@@ -70,5 +74,42 @@ describe('personalDiaryStore', () => {
     const updatedFromDb = await db.diaryEntries.get(created.id);
     expect(updatedFromDb?.wordCount).toBe(3);
     expect(updatedFromDb?.content).toBe('one two three');
+  });
+
+  it('handles load errors and covers update/delete non-current branches', async () => {
+    vi.spyOn(db.diaryEntries, 'orderBy').mockReturnValue({
+      reverse: () => ({
+        toArray: () => Promise.reject('entries-fallback'),
+      }),
+    } as never);
+    await usePersonalDiaryStore.getState().loadEntries();
+    expect(usePersonalDiaryStore.getState().error).toBe('Failed to load entries');
+
+    vi.spyOn(db.diaryEntries, 'where').mockReturnValue({
+      equals: () => ({
+        first: () => Promise.reject(new Error('entry load error')),
+      }),
+    } as never);
+    await usePersonalDiaryStore.getState().loadEntry(new Date('2026-02-10T12:00:00.000Z'));
+    expect(usePersonalDiaryStore.getState().error).toBe('entry load error');
+
+    vi.restoreAllMocks();
+
+    const first = await usePersonalDiaryStore
+      .getState()
+      .createEntry(new Date('2026-02-10T12:00:00.000Z'), 'first entry');
+    const second = await usePersonalDiaryStore
+      .getState()
+      .createEntry(new Date('2026-02-11T12:00:00.000Z'), 'second entry');
+
+    usePersonalDiaryStore.getState().setCurrentEntry(first);
+    await usePersonalDiaryStore.getState().updateEntry(second.id, 'updated second entry');
+    expect(usePersonalDiaryStore.getState().currentEntry?.id).toBe(first.id);
+
+    await usePersonalDiaryStore.getState().deleteEntry(second.id);
+    expect(usePersonalDiaryStore.getState().currentEntry?.id).toBe(first.id);
+
+    await usePersonalDiaryStore.getState().deleteEntry(first.id);
+    expect(usePersonalDiaryStore.getState().currentEntry).toBeNull();
   });
 });

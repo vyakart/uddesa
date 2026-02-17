@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { fireEvent, render, screen, waitFor } from '@/test';
+import { act, fireEvent, render, screen, waitFor } from '@/test';
 import { useLongDraftsStore } from '@/stores/longDraftsStore';
 import type { LongDraft, Section } from '@/types/longDrafts';
 import { LongDrafts } from './LongDrafts';
@@ -26,8 +26,34 @@ vi.mock('./TableOfContents', () => ({
 }));
 
 vi.mock('./SectionEditor', () => ({
-  SectionEditor: ({ section }: { section: { title?: string } | null }) => (
-    <div data-testid="section-editor">Section: {section?.title ?? 'None'}</div>
+  SectionEditor: ({
+    section,
+    onTitleChange,
+    onContentChange,
+    onNotesChange,
+    onStatusChange,
+  }: {
+    section: { title?: string } | null;
+    onTitleChange: (title: string) => void;
+    onContentChange: (content: string) => void;
+    onNotesChange: (notes: string) => void;
+    onStatusChange: (status: string) => void;
+  }) => (
+    <div>
+      <div data-testid="section-editor">Section: {section?.title ?? 'None'}</div>
+      <button type="button" onClick={() => onTitleChange('Updated Section Title')}>
+        Mock Title Update
+      </button>
+      <button type="button" onClick={() => onContentChange('<p>Updated section content</p>')}>
+        Mock Content Update
+      </button>
+      <button type="button" onClick={() => onNotesChange('Updated notes')}>
+        Mock Notes Update
+      </button>
+      <button type="button" onClick={() => onStatusChange('review')}>
+        Mock Status Update
+      </button>
+    </div>
   ),
 }));
 
@@ -174,6 +200,18 @@ describe('LongDrafts', () => {
     expect(screen.getByTestId('toc-panel')).toBeInTheDocument();
     expect(screen.getByTestId('section-editor')).toHaveTextContent('Section: Intro');
 
+    fireEvent.click(screen.getByRole('button', { name: 'Mock Title Update' }));
+    expect(updateSection).toHaveBeenCalledWith(section.id, { title: 'Updated Section Title' });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Mock Content Update' }));
+    expect(updateSection).toHaveBeenCalledWith(section.id, { content: '<p>Updated section content</p>' });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Mock Notes Update' }));
+    expect(updateSection).toHaveBeenCalledWith(section.id, { notes: 'Updated notes' });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Mock Status Update' }));
+    expect(updateSection).toHaveBeenCalledWith(section.id, { status: 'review' });
+
     fireEvent.keyDown(window, { key: 'n', ctrlKey: true });
     expect(createSection).toHaveBeenCalledWith(docOne.id);
 
@@ -193,5 +231,75 @@ describe('LongDrafts', () => {
     });
 
     confirmSpy.mockRestore();
+  });
+
+  it('guards section creation and updates when current ids are missing', async () => {
+    const createSection = vi.fn().mockResolvedValue(makeSection({ id: 'new-section' }));
+    const updateSection = vi.fn().mockResolvedValue(undefined);
+
+    useLongDraftsStore.setState({
+      longDrafts: [],
+      currentLongDraftId: null,
+      currentSectionId: null,
+      isLoading: false,
+      error: null,
+      loadLongDrafts: vi.fn().mockResolvedValue(undefined),
+      createLongDraft: vi.fn().mockResolvedValue(makeLongDraft({ id: 'new-doc' })),
+      createSection,
+      updateSection,
+    });
+
+    const { rerender } = render(<LongDrafts />);
+    fireEvent.keyDown(window, { key: 'n', ctrlKey: true });
+    expect(createSection).not.toHaveBeenCalled();
+
+    const docNoMetadata = {
+      ...makeLongDraft({ id: 'doc-no-meta', title: 'No Metadata' }),
+      metadata: undefined,
+    } as unknown as LongDraft;
+
+    act(() => {
+      useLongDraftsStore.setState({
+        longDrafts: [docNoMetadata],
+        currentLongDraftId: docNoMetadata.id,
+        currentSectionId: null,
+        sectionsMap: new Map([[docNoMetadata.id, []]]),
+        isLoading: false,
+        error: null,
+        viewMode: 'normal',
+      });
+    });
+    rerender(<LongDrafts />);
+
+    expect(screen.getByText('0 words')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Mock Title Update' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Mock Content Update' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Mock Notes Update' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Mock Status Update' }));
+    expect(updateSection).not.toHaveBeenCalled();
+  });
+
+  it('hides table of contents while in focus mode', () => {
+    const doc = makeLongDraft({ id: 'doc-focus', title: 'Focus Doc' });
+    const section = makeSection({ id: 'section-focus', longDraftId: doc.id, title: 'Focus Intro' });
+
+    useLongDraftsStore.setState({
+      longDrafts: [doc],
+      currentLongDraftId: doc.id,
+      currentSectionId: section.id,
+      sectionsMap: new Map([[doc.id, [section]]]),
+      isLoading: false,
+      error: null,
+      viewMode: 'focus',
+      loadLongDrafts: vi.fn().mockResolvedValue(undefined),
+      createLongDraft: vi.fn().mockResolvedValue(doc),
+      createSection: vi.fn().mockResolvedValue(section),
+      updateSection: vi.fn().mockResolvedValue(undefined),
+    });
+
+    render(<LongDrafts />);
+    expect(screen.queryByTestId('toc-panel')).not.toBeInTheDocument();
+    expect(screen.getByTestId('focus-mode-wrapper')).toBeInTheDocument();
   });
 });

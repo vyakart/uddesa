@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@/test';
+import { act, fireEvent, render, screen, waitFor } from '@/test';
 import { useLongDraftsStore } from '@/stores/longDraftsStore';
 import type { Section } from '@/types/longDrafts';
 import { TableOfContents } from './TableOfContents';
@@ -106,6 +106,63 @@ describe('TableOfContents', () => {
     await waitFor(() => {
       expect(deleteSection).toHaveBeenCalledWith('root-1');
     });
+
+    confirmSpy.mockRestore();
+  });
+
+  it('handles empty document state and context-menu cancel/close paths', async () => {
+    const deleteSection = vi.fn().mockResolvedValue(undefined);
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
+
+    useLongDraftsStore.setState({
+      currentLongDraftId: null,
+      currentSectionId: null,
+      isTOCVisible: true,
+      sectionsMap: new Map(),
+      setCurrentSection: vi.fn(),
+      toggleTOC: vi.fn(),
+      deleteSection,
+    });
+
+    const { rerender } = render(<TableOfContents onCreateSection={vi.fn()} />);
+    expect(screen.getByText('0 sections')).toBeInTheDocument();
+    expect(screen.getByText('0 words')).toBeInTheDocument();
+
+    const root = makeSection({ id: 'root-cancel', title: 'Cancelable Root' });
+    const child = makeSection({
+      id: 'child-expand',
+      title: 'Hidden Child',
+      parentId: root.id,
+      order: 0,
+      status: 'custom-status' as never,
+    });
+
+    act(() => {
+      useLongDraftsStore.setState({
+        currentLongDraftId: 'doc-1',
+        currentSectionId: root.id,
+        isTOCVisible: true,
+        sectionsMap: new Map([['doc-1', [root, child]]]),
+      });
+    });
+    rerender(<TableOfContents onCreateSection={vi.fn()} />);
+
+    expect(screen.queryByText('Hidden Child')).not.toBeInTheDocument();
+    const toggleExpandButton = screen.getByText('Cancelable Root').parentElement?.querySelector('button');
+    expect(toggleExpandButton).toBeTruthy();
+    fireEvent.click(toggleExpandButton!);
+    expect(screen.getByText('Hidden Child')).toBeInTheDocument();
+
+    fireEvent.contextMenu(screen.getByText('Cancelable Root'));
+    expect(screen.getByRole('button', { name: 'Delete Section' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Delete Section' }));
+    await waitFor(() => {
+      expect(deleteSection).not.toHaveBeenCalled();
+    });
+
+    fireEvent.contextMenu(screen.getByText('Cancelable Root'));
+    fireEvent.click(screen.getByText('Contents'));
+    expect(screen.queryByRole('button', { name: 'Delete Section' })).not.toBeInTheDocument();
 
     confirmSpy.mockRestore();
   });

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { fireEvent, render, screen, waitFor } from '@/test';
+import { act, fireEvent, render, screen, waitFor } from '@/test';
 import { useAcademicStore } from '@/stores/academicStore';
 import type { AcademicPaper, AcademicSection } from '@/types/academic';
 import { Academic } from './Academic';
@@ -58,6 +58,9 @@ vi.mock('./TemplateSelector', () => ({
       Template Selector
       <button type="button" onClick={() => onSelect('Generated Paper', 'imrad')}>
         Confirm Template
+      </button>
+      <button type="button" onClick={() => onSelect('Generated Without Template', null)}>
+        Confirm Without Template
       </button>
       <button type="button" onClick={onClose}>
         Close Template
@@ -252,5 +255,74 @@ describe('Academic', () => {
 
     fireEvent.keyDown(window, { key: 'b', ctrlKey: true });
     expect(toggleBibliographyPanel).toHaveBeenCalled();
+  });
+
+  it('handles template close/null-template and empty-section/delete-cancel paths', async () => {
+    const loadPapers = vi.fn().mockResolvedValue(undefined);
+    const loadBibliographyEntries = vi.fn().mockResolvedValue(undefined);
+    const createPaper = vi.fn().mockResolvedValue(makePaper({ id: 'new-paper' }));
+    const deleteSection = vi.fn().mockResolvedValue(undefined);
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
+
+    const paperOne = makePaper({ id: 'paper-empty', title: 'Paper Empty Sections' });
+    const untitledSection = makeSection({ id: 'section-empty-title', paperId: paperOne.id, title: '', wordCount: 0 });
+
+    useAcademicStore.setState({
+      papers: [paperOne],
+      currentPaperId: paperOne.id,
+      currentSectionId: null,
+      sectionsMap: new Map([[paperOne.id, [untitledSection]]]),
+      isLoading: false,
+      error: null,
+      isTOCVisible: true,
+      isBibliographyPanelVisible: false,
+      citationStyle: 'apa7',
+      loadPapers,
+      loadBibliographyEntries,
+      createPaper,
+      setCurrentPaper: vi.fn(),
+      createSection: vi.fn().mockResolvedValue(untitledSection),
+      updateSection: vi.fn().mockResolvedValue(undefined),
+      deleteSection,
+      setCurrentSection: vi.fn(),
+      toggleTOC: vi.fn(),
+      toggleBibliographyPanel: vi.fn(),
+      setCitationStyle: vi.fn(),
+      getSectionHierarchy: vi.fn(() => []),
+    });
+
+    render(<Academic />);
+    expect(screen.getByText('No sections yet')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /Paper Empty Sections/i }));
+    fireEvent.click(screen.getByRole('button', { name: '+ New Paper' }));
+    expect(screen.getByTestId('template-selector')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Close Template' }));
+    expect(screen.queryByTestId('template-selector')).not.toBeInTheDocument();
+
+    fireEvent.keyDown(window, { key: 'n', ctrlKey: true });
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm Without Template' }));
+    await waitFor(() => {
+      expect(createPaper).toHaveBeenCalledWith('Generated Without Template', undefined);
+    });
+
+    act(() => {
+      useAcademicStore.setState({
+        ...useAcademicStore.getState(),
+        getSectionHierarchy: vi.fn(() => [{ section: untitledSection, children: [], depth: 0 }]),
+      });
+    });
+    fireEvent.click(screen.getByTitle('Toggle Table of Contents'));
+    fireEvent.click(screen.getByTitle('Toggle Table of Contents'));
+
+    const deleteButton = screen.getByText('Untitled').parentElement?.querySelector('button');
+    expect(deleteButton).toBeTruthy();
+    fireEvent.click(deleteButton!);
+
+    await waitFor(() => {
+      expect(deleteSection).not.toHaveBeenCalled();
+    });
+
+    confirmSpy.mockRestore();
   });
 });

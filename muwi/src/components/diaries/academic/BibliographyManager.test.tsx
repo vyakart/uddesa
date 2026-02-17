@@ -151,4 +151,83 @@ describe('BibliographyManager', () => {
       expect(addBibliographyEntry).toHaveBeenCalledTimes(2);
     });
   });
+
+  it('handles add-modal validation and error branches across manual/DOI/BibTeX modes', async () => {
+    const addBibliographyEntry = vi
+      .fn()
+      .mockRejectedValueOnce('manual-failure')
+      .mockResolvedValue(undefined)
+      .mockResolvedValue(undefined);
+    const mockedFetchFromDOI = vi.mocked(fetchFromDOI);
+    const mockedParseBibTeX = vi.mocked(parseBibTeX);
+    mockedFetchFromDOI.mockRejectedValue(new Error('DOI service unavailable'));
+    mockedParseBibTeX.mockImplementation(() => {
+      throw 'bibtex-failure';
+    });
+
+    const onClose = vi.fn();
+    useAcademicStore.setState({
+      bibliographyEntries: [],
+      citationStyle: 'apa7',
+      addBibliographyEntry,
+      updateBibliographyEntry: vi.fn().mockResolvedValue(undefined),
+      deleteBibliographyEntry: vi.fn().mockResolvedValue(undefined),
+    });
+
+    render(<BibliographyManager onClose={onClose} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Add' }));
+
+    const addButton = screen.getByRole('button', { name: 'Add Reference' });
+    expect(addButton).toBeDisabled();
+
+    const titleInput = screen.getByText('Title *').parentElement?.querySelector('input');
+    const authorsInput = screen
+      .getByText('Authors * (comma or semicolon separated)')
+      .parentElement?.querySelector('input');
+    expect(titleInput).toBeTruthy();
+    expect(authorsInput).toBeTruthy();
+    fireEvent.change(titleInput!, { target: { value: 'Manual Title' } });
+    fireEvent.change(authorsInput!, { target: { value: 'Doe, Jane' } });
+    expect(addButton).not.toBeDisabled();
+    fireEvent.click(addButton);
+
+    await waitFor(() => {
+      expect(screen.getByText('Failed to add reference')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'From DOI' }));
+    expect(addButton).toBeDisabled();
+    fireEvent.change(
+      screen.getByPlaceholderText('10.1000/xyz123 or https://doi.org/10.1000/xyz123'),
+      {
+        target: { value: '10.1000/bad' },
+      }
+    );
+    expect(addButton).not.toBeDisabled();
+    fireEvent.click(addButton);
+
+    await waitFor(() => {
+      expect(screen.getByText('DOI service unavailable')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'BibTeX' }));
+    expect(addButton).toBeDisabled();
+    fireEvent.change(screen.getByPlaceholderText(/@article\{key,/), {
+      target: { value: '@article{bad, title={Oops}}' },
+    });
+    expect(addButton).not.toBeDisabled();
+    fireEvent.click(addButton);
+
+    await waitFor(() => {
+      expect(screen.getByText('Failed to parse BibTeX')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    expect(screen.queryByRole('button', { name: 'Add Reference' })).not.toBeInTheDocument();
+
+    const closeButton = screen.getByText('Reference Library').parentElement?.querySelector('button');
+    expect(closeButton).toBeTruthy();
+    fireEvent.click(closeButton!);
+    expect(onClose).toHaveBeenCalled();
+  });
 });

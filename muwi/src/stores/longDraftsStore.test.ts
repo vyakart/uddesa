@@ -1,10 +1,12 @@
 import { db } from '@/db';
+import * as longDraftsQueries from '@/db/queries/longDrafts';
 import { clearDatabase } from '@/test/db-utils';
 import type { LongDraft, Section } from '@/types/longDrafts';
 import {
   selectCurrentDocumentWordCount,
   selectCurrentLongDraft,
   selectCurrentSection,
+  selectCurrentSections,
   selectIsFocusMode,
   useLongDraftsStore,
 } from './longDraftsStore';
@@ -61,6 +63,10 @@ describe('longDraftsStore', () => {
   beforeEach(async () => {
     await clearDatabase(db);
     useLongDraftsStore.setState(useLongDraftsStore.getInitialState(), true);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('loads drafts, auto-selects current draft, loads sections, and exposes hierarchy getters/selectors', async () => {
@@ -212,5 +218,217 @@ describe('longDraftsStore', () => {
     expect(stateAfterDelete.currentLongDraftId).toBe(draftB.id);
     expect(stateAfterDelete.currentSectionId).toBeNull();
     expect(stateAfterDelete.sectionsMap.has(draftA.id)).toBe(false);
+  });
+
+  it('covers selector fallbacks and no-op action guards', async () => {
+    const initial = useLongDraftsStore.getState();
+    expect(selectCurrentLongDraft(initial)).toBeNull();
+    expect(selectCurrentSection(initial)).toBeNull();
+    expect(selectCurrentSections(initial)).toEqual([]);
+    expect(selectCurrentDocumentWordCount(initial)).toBe(0);
+
+    await useLongDraftsStore.getState().deleteSection('missing-section');
+    await useLongDraftsStore.getState().addFootnote('missing-section', { content: 'x', position: 1 });
+    await useLongDraftsStore.getState().updateFootnote('missing-section', 'missing-footnote', { content: 'y' });
+    await useLongDraftsStore.getState().deleteFootnote('missing-section', 'missing-footnote');
+
+    expect(useLongDraftsStore.getState().error).toBeNull();
+  });
+
+  it('handles load/query failures with fallback error messages', async () => {
+    vi.spyOn(longDraftsQueries, 'getAllLongDrafts').mockRejectedValueOnce('load-drafts-failure');
+    await useLongDraftsStore.getState().loadLongDrafts();
+    expect(useLongDraftsStore.getState().error).toBe('Failed to load long drafts');
+
+    vi.spyOn(longDraftsQueries, 'getLongDraft').mockRejectedValueOnce('load-draft-failure');
+    await useLongDraftsStore.getState().loadLongDraft('doc-fail');
+    expect(useLongDraftsStore.getState().error).toBe('Failed to load long draft');
+
+    vi.spyOn(longDraftsQueries, 'getSectionsByLongDraft').mockRejectedValueOnce('load-sections-failure');
+    await useLongDraftsStore.getState().loadSections('doc-fail');
+    expect(useLongDraftsStore.getState().error).toBe('Failed to load sections');
+  });
+
+  it('handles mutation failures with fallback error messages', async () => {
+    vi.spyOn(longDraftsQueries, 'createLongDraft').mockRejectedValueOnce('create-draft-failure');
+    await expect(useLongDraftsStore.getState().createLongDraft('Will Fail')).rejects.toBe(
+      'create-draft-failure'
+    );
+    expect(useLongDraftsStore.getState().error).toBe('Failed to create long draft');
+
+    vi.spyOn(longDraftsQueries, 'updateLongDraft').mockRejectedValueOnce('update-draft-failure');
+    await useLongDraftsStore.getState().updateLongDraft('doc-fail', { title: 'Updated' });
+    expect(useLongDraftsStore.getState().error).toBe('Failed to update long draft');
+
+    vi.spyOn(longDraftsQueries, 'deleteLongDraft').mockRejectedValueOnce('delete-draft-failure');
+    await useLongDraftsStore.getState().deleteLongDraft('doc-fail');
+    expect(useLongDraftsStore.getState().error).toBe('Failed to delete long draft');
+
+    vi.spyOn(longDraftsQueries, 'createSection').mockRejectedValueOnce('create-section-failure');
+    await expect(useLongDraftsStore.getState().createSection('doc-fail')).rejects.toBe(
+      'create-section-failure'
+    );
+    expect(useLongDraftsStore.getState().error).toBe('Failed to create section');
+
+    vi.spyOn(longDraftsQueries, 'updateSection').mockRejectedValueOnce('update-section-failure');
+    await useLongDraftsStore.getState().updateSection('section-fail', { title: 'Updated' });
+    expect(useLongDraftsStore.getState().error).toBe('Failed to update section');
+
+    const draft = await useLongDraftsStore.getState().createLongDraft('Doc For Failures');
+    const section = await useLongDraftsStore.getState().createSection(draft.id, 'Section For Failures');
+
+    vi.spyOn(longDraftsQueries, 'deleteSection').mockRejectedValueOnce('delete-section-failure');
+    await useLongDraftsStore.getState().deleteSection(section.id);
+    expect(useLongDraftsStore.getState().error).toBe('Failed to delete section');
+
+    vi.spyOn(longDraftsQueries, 'reorderSections').mockRejectedValueOnce('reorder-failure');
+    await useLongDraftsStore.getState().reorderSections(draft.id, [section.id]);
+    expect(useLongDraftsStore.getState().error).toBe('Failed to reorder sections');
+  });
+
+  it('uses Error.message branches for load/query failures', async () => {
+    vi.spyOn(longDraftsQueries, 'getAllLongDrafts').mockRejectedValueOnce(new Error('load long drafts error'));
+    await useLongDraftsStore.getState().loadLongDrafts();
+    expect(useLongDraftsStore.getState().error).toBe('load long drafts error');
+
+    vi.spyOn(longDraftsQueries, 'getLongDraft').mockRejectedValueOnce(new Error('load long draft error'));
+    await useLongDraftsStore.getState().loadLongDraft('doc-fail');
+    expect(useLongDraftsStore.getState().error).toBe('load long draft error');
+
+    vi.spyOn(longDraftsQueries, 'getSectionsByLongDraft').mockRejectedValueOnce(new Error('load sections error'));
+    await useLongDraftsStore.getState().loadSections('doc-fail');
+    expect(useLongDraftsStore.getState().error).toBe('load sections error');
+  });
+
+  it('uses Error.message branches for mutation failures and loadLongDraft merge paths', async () => {
+    const created = await useLongDraftsStore.getState().createLongDraft('Merge Draft');
+    useLongDraftsStore.setState(useLongDraftsStore.getInitialState(), true);
+
+    await useLongDraftsStore.getState().loadLongDraft(created.id);
+    expect(useLongDraftsStore.getState().longDrafts).toHaveLength(1);
+
+    vi.spyOn(longDraftsQueries, 'getLongDraft').mockResolvedValueOnce({
+      ...useLongDraftsStore.getState().longDrafts[0],
+      title: 'Merge Draft Updated',
+    });
+    await useLongDraftsStore.getState().loadLongDraft(created.id);
+    expect(useLongDraftsStore.getState().longDrafts[0].title).toBe('Merge Draft Updated');
+
+    vi.spyOn(longDraftsQueries, 'createLongDraft').mockRejectedValueOnce(new Error('create long draft error'));
+    await expect(useLongDraftsStore.getState().createLongDraft('Will Fail')).rejects.toThrow(
+      'create long draft error'
+    );
+    expect(useLongDraftsStore.getState().error).toBe('create long draft error');
+
+    vi.spyOn(longDraftsQueries, 'updateLongDraft').mockRejectedValueOnce(new Error('update long draft error'));
+    await useLongDraftsStore.getState().updateLongDraft('doc-fail', { title: 'Updated' });
+    expect(useLongDraftsStore.getState().error).toBe('update long draft error');
+
+    vi.spyOn(longDraftsQueries, 'deleteLongDraft').mockRejectedValueOnce(new Error('delete long draft error'));
+    await useLongDraftsStore.getState().deleteLongDraft('doc-fail');
+    expect(useLongDraftsStore.getState().error).toBe('delete long draft error');
+
+    vi.spyOn(longDraftsQueries, 'createSection').mockRejectedValueOnce(new Error('create section error'));
+    await expect(useLongDraftsStore.getState().createSection('doc-fail')).rejects.toThrow(
+      'create section error'
+    );
+    expect(useLongDraftsStore.getState().error).toBe('create section error');
+
+    vi.spyOn(longDraftsQueries, 'updateSection').mockRejectedValueOnce(new Error('update section error'));
+    await useLongDraftsStore.getState().updateSection('section-fail', { title: 'Updated' });
+    expect(useLongDraftsStore.getState().error).toBe('update section error');
+
+    vi.spyOn(longDraftsQueries, 'deleteSection').mockRejectedValueOnce(new Error('delete section error'));
+    const createdDraft = await useLongDraftsStore.getState().createLongDraft('Draft For Delete Error');
+    const createdSection = await useLongDraftsStore.getState().createSection(createdDraft.id, 'Section For Delete');
+    await useLongDraftsStore.getState().deleteSection(createdSection.id);
+    expect(useLongDraftsStore.getState().error).toBe('delete section error');
+
+    vi.spyOn(longDraftsQueries, 'reorderSections').mockRejectedValueOnce(new Error('reorder sections error'));
+    await useLongDraftsStore.getState().reorderSections(createdDraft.id, [createdSection.id]);
+    expect(useLongDraftsStore.getState().error).toBe('reorder sections error');
+  });
+
+  it('covers remaining getter/selectors and branch-heavy document/section paths', async () => {
+    const first = await useLongDraftsStore.getState().createLongDraft('First');
+    const second = await useLongDraftsStore.getState().createLongDraft('Second');
+
+    useLongDraftsStore.setState({
+      ...useLongDraftsStore.getState(),
+      longDrafts: [first, second],
+      currentLongDraftId: first.id,
+    });
+
+    vi.spyOn(longDraftsQueries, 'getLongDraft').mockResolvedValueOnce({
+      ...first,
+      title: 'First Updated',
+    });
+    await useLongDraftsStore.getState().loadLongDraft(first.id);
+    expect(useLongDraftsStore.getState().longDrafts.map((d) => d.title)).toEqual(['First Updated', 'Second']);
+
+    vi.spyOn(longDraftsQueries, 'getLongDraft').mockResolvedValueOnce(undefined);
+    await useLongDraftsStore.getState().loadLongDraft('missing-doc');
+    expect(useLongDraftsStore.getState().error).toBe('Long draft not found');
+
+    useLongDraftsStore.setState({
+      ...useLongDraftsStore.getState(),
+      longDrafts: [first],
+      currentLongDraftId: first.id,
+      sectionsMap: new Map(),
+      currentSectionId: null,
+    });
+    await useLongDraftsStore.getState().deleteLongDraft(first.id);
+    expect(useLongDraftsStore.getState().currentLongDraftId).toBeNull();
+
+    const orphanDoc = await useLongDraftsStore.getState().createLongDraft('Orphan Doc');
+    useLongDraftsStore.setState({
+      ...useLongDraftsStore.getState(),
+      longDrafts: [orphanDoc],
+      currentLongDraftId: orphanDoc.id,
+      sectionsMap: new Map(),
+      currentSectionId: null,
+    });
+    const orphanA = await useLongDraftsStore.getState().createSection(orphanDoc.id, 'Orphan A');
+    const orphanB = await useLongDraftsStore.getState().createSection(orphanDoc.id, 'Orphan B');
+    await useLongDraftsStore.getState().reorderSections(orphanDoc.id, [orphanA.id]);
+    const afterReorder = useLongDraftsStore.getState().getSectionsForDocument(orphanDoc.id);
+    expect(afterReorder.some((section) => section.id === orphanB.id)).toBe(true);
+
+    useLongDraftsStore.setState({
+      ...useLongDraftsStore.getState(),
+      currentLongDraftId: null,
+      currentSectionId: 'missing-section',
+    });
+    expect(useLongDraftsStore.getState().getCurrentLongDraft()).toBeNull();
+    expect(useLongDraftsStore.getState().getCurrentSection()).toBeNull();
+    expect(useLongDraftsStore.getState().getSectionsForDocument('missing-doc')).toEqual([]);
+    expect(useLongDraftsStore.getState().getRootSections('missing-doc')).toEqual([]);
+    expect(useLongDraftsStore.getState().getChildSections('parent', 'missing-doc')).toEqual([]);
+    expect(useLongDraftsStore.getState().getTotalWordCount('missing-doc')).toBe(0);
+    expect(useLongDraftsStore.getState().getSectionHierarchy('missing-doc')).toEqual([]);
+
+    const updateLongDraft = vi.fn().mockResolvedValue(undefined);
+    useLongDraftsStore.setState({
+      ...useLongDraftsStore.getState(),
+      updateLongDraft,
+      longDrafts: [],
+      currentLongDraftId: null,
+    });
+    await useLongDraftsStore.getState().updateDocumentMetadata('metadata-doc');
+    expect(updateLongDraft).toHaveBeenCalledWith(
+      'metadata-doc',
+      expect.objectContaining({
+        metadata: expect.objectContaining({
+          createdAt: expect.any(Date),
+          totalWordCount: 0,
+        }),
+      })
+    );
+
+    const snapshot = useLongDraftsStore.getState();
+    expect(selectCurrentLongDraft({ ...snapshot, currentLongDraftId: 'missing' } as any)).toBeNull();
+    expect(selectCurrentSection({ ...snapshot, currentLongDraftId: 'missing', currentSectionId: 'x' } as any)).toBeNull();
+    expect(selectCurrentSections({ ...snapshot, currentLongDraftId: null } as any)).toEqual([]);
+    expect(selectCurrentDocumentWordCount({ ...snapshot, currentLongDraftId: null } as any)).toBe(0);
   });
 });

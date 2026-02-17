@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@/test';
+import { act, fireEvent, render, screen, waitFor } from '@/test';
 import { useAcademicStore } from '@/stores/academicStore';
 import type { BibliographyEntry } from '@/types/academic';
 import { CitationPicker } from './CitationPicker';
@@ -108,5 +108,48 @@ describe('CitationPicker', () => {
 
     fireEvent.keyDown(screen.getByPlaceholderText('Search references...'), { key: 'Escape' });
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows empty messages and blocks insert when no current paper exists', async () => {
+    const addCitation = vi.fn().mockResolvedValue(undefined);
+    const onInsert = vi.fn();
+    const onClose = vi.fn();
+
+    useAcademicStore.setState({
+      bibliographyEntries: [],
+      citationStyle: 'apa7',
+      currentPaperId: null,
+      loadBibliographyEntries: vi.fn().mockResolvedValue(undefined),
+      addCitation,
+    });
+
+    render(<CitationPicker onInsert={onInsert} onClose={onClose} />);
+    expect(screen.getByText('No references in library')).toBeInTheDocument();
+
+    act(() => {
+      useAcademicStore.setState({
+        ...useAcademicStore.getState(),
+        bibliographyEntries: [makeEntry({ id: 'entry-one', title: 'Visible Entry' })],
+      });
+    });
+
+    fireEvent.change(screen.getByPlaceholderText('Search references...'), {
+      target: { value: 'missing-query' },
+    });
+    expect(screen.getByText('No matching references')).toBeInTheDocument();
+
+    fireEvent.change(screen.getByPlaceholderText('Search references...'), {
+      target: { value: '' },
+    });
+    fireEvent.keyDown(screen.getByPlaceholderText('Search references...'), { key: 'ArrowUp' });
+    fireEvent.keyDown(screen.getByPlaceholderText('Search references...'), { key: 'Enter' });
+    expect(screen.getByText('Back to search')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Insert Citation' }));
+    await waitFor(() => {
+      expect(addCitation).not.toHaveBeenCalled();
+    });
+    expect(onInsert).not.toHaveBeenCalled();
+    expect(onClose).not.toHaveBeenCalled();
   });
 });

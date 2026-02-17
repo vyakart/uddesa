@@ -10,6 +10,10 @@ describe('scratchpadStore', () => {
     useScratchpadStore.setState(useScratchpadStore.getInitialState(), true);
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('creates initial page on load using scratchpad settings', async () => {
     useSettingsStore.setState((state) => ({
       scratchpad: {
@@ -74,5 +78,37 @@ describe('scratchpadStore', () => {
     expect(useScratchpadStore.getState().textBlocks.get(page.id)).toEqual([]);
     expect(useScratchpadStore.getState().pages[0].textBlockIds).toEqual([]);
     expect(await db.textBlocks.get(block.id)).toBeUndefined();
+  });
+
+  it('covers guard/fallback branches for navigation, deletion, and block loading', async () => {
+    expect(useScratchpadStore.getState().getCurrentPage()).toBeNull();
+    expect(useScratchpadStore.getState().getCurrentPageBlocks()).toEqual([]);
+
+    await useScratchpadStore.getState().loadPages();
+    const onlyPage = useScratchpadStore.getState().pages[0];
+
+    // Guard: do not delete the last remaining page
+    await useScratchpadStore.getState().deletePage(onlyPage.id);
+    expect(useScratchpadStore.getState().pages).toHaveLength(1);
+
+    // Guard: invalid navigation index should be ignored
+    useScratchpadStore.getState().navigateToPage(99);
+    expect(useScratchpadStore.getState().currentPageIndex).toBe(0);
+
+    // findFreshPage should create a new page when all pages have blocks
+    await useScratchpadStore.getState().createTextBlock(onlyPage.id, { x: 1, y: 1 });
+    const freshIndex = await useScratchpadStore.getState().findFreshPage();
+    expect(freshIndex).toBe(useScratchpadStore.getState().pages.length - 1);
+
+    // Guard: deleting a missing block should be a no-op
+    await useScratchpadStore.getState().deleteTextBlock('missing-block-id');
+    expect(useScratchpadStore.getState().pages.length).toBeGreaterThan(1);
+
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    vi.spyOn(db.textBlocks, 'where').mockImplementation(() => {
+      throw new Error('text blocks read failure');
+    });
+    await useScratchpadStore.getState().loadTextBlocksForPage(onlyPage.id);
+    expect(consoleSpy).toHaveBeenCalled();
   });
 });
