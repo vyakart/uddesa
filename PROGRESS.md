@@ -5,11 +5,11 @@ Last updated: February 17, 2026
 ## 1) Where we are now
 
 - App development is active and stable.
-- Unit tests are passing (`67` files, `274` tests).
+- Unit tests are passing (`67` files, `275` tests).
 - Latest full coverage snapshot: lines `90.82%`, statements `90.22%`, functions `86.44%`, branches `80.07%`.
 - Recent focus has been adding reliable tests module by module.
 - Blackboard coverage moved from almost none to strong coverage.
-- Current execution stage: Phase `4.1.2` (Long Drafts table of contents).
+- Current execution stage: Phase `4.3.1` (Long Drafts focus mode).
 
 ## 2) Completed tasks so far (brief)
 
@@ -54,6 +54,10 @@ Last updated: February 17, 2026
 | Task wave 32 | Completed `3.4.2` by adding shared `FontSelector` (select + context-menu variants), wiring Blackboard toolbar font selection, and extending settings/defaults with `defaultFont` | New component tests + Blackboard toolbar tests + targeted eslint + full run green |
 | Task wave 33 | Completed `3.4.3` by adding Blackboard right-click font context menu and integrating selected-font application/persistence in `ExcalidrawWrapper` for selected text/new text defaults | Blackboard integration tests + wrapper tests + targeted eslint + full run green |
 | Task wave 34 | Completed `4.1.1` Long Drafts store acceptance by validating document/current-document state, nested section handling, and section CRUD/reorder actions against existing store implementation | `vitest src/stores/longDraftsStore.test.ts` (9 tests passing) |
+| Task wave 35 | Completed `4.1.2` TableOfContents acceptance by validating auto-generated nested hierarchy, click navigation, per-section/total word counts, and adding sibling drag-and-drop reorder wired to store persistence | Long Drafts targeted sweep: `vitest src/components/diaries/long-drafts src/stores/longDraftsStore.test.ts` (32 tests passing) |
+| Task wave 36 | Completed `4.1.3` SectionEditor acceptance by validating title + TipTap body editing, status updates, notes panel editing, and enabling integrated footnote insertion/management UI in-editor | Full run green: `vitest` (`67` files, `275` tests) |
+| Task wave 37 | Completed `4.2.1` Footnote extension acceptance by adding marker/content attributes, auto-marker insertion, bottom footnote rendering in-editor, and click routing between markers and footnote list entries | Extension + Long Drafts sweep: `vitest src/extensions/footnote.test.ts src/components/diaries/long-drafts src/stores/longDraftsStore.test.ts` (36 tests passing) |
+| Task wave 38 | Completed `4.2.2` FootnoteManager acceptance by validating list rendering, inline editing, deletion, and navigation-to-text flows, and wiring manager interactions through `SectionEditor` footnote panel actions | Component + integration tests (`FootnoteManager.test.tsx`, `SectionEditor.test.tsx`) + full run green |
 
 ## 3) Blackboard testing progress
 
@@ -92,6 +96,6 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Implement Phase `4.1.2`: create TableOfContents component.
-2. Implement Phase `4.1.3`: create SectionEditor component.
+1. Implement Phase `4.3.1`: create FocusMode component.
+2. Implement Phase `4.4.1`: create LongDrafts container.
 3. Keep periodic full coverage reruns while feature stages advance to prevent regressions.

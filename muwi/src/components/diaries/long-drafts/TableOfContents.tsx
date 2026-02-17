@@ -36,6 +36,15 @@ function buildSectionHierarchy(sections: Section[], parentId: string | null = nu
     }));
 }
 
+function flattenSectionHierarchy(nodes: SectionNode[]): string[] {
+  const ids: string[] = [];
+  for (const node of nodes) {
+    ids.push(node.section.id);
+    ids.push(...flattenSectionHierarchy(node.children));
+  }
+  return ids;
+}
+
 export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
   const currentLongDraftId = useLongDraftsStore(selectCurrentLongDraftId);
   const currentSectionId = useLongDraftsStore(selectCurrentSectionId);
@@ -59,6 +68,7 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
   const toggleTOC = useLongDraftsStore((state) => state.toggleTOC);
   const deleteSection = useLongDraftsStore((state) => state.deleteSection);
   const updateSection = useLongDraftsStore((state) => state.updateSection);
+  const reorderSections = useLongDraftsStore((state) => state.reorderSections);
   const closeDiary = useAppStore((state) => state.closeDiary);
   const openSettings = useAppStore((state) => state.openSettings);
   const hasPasskey = useSettingsStore((state) => state.hasPasskey);
@@ -67,6 +77,8 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; sectionId: string } | null>(null);
   const [unlockPromptSectionId, setUnlockPromptSectionId] = useState<string | null>(null);
+  const [draggedSectionId, setDraggedSectionId] = useState<string | null>(null);
+  const [dropTargetSectionId, setDropTargetSectionId] = useState<string | null>(null);
   const lockingTargetId = contextMenu?.sectionId ?? unlockPromptSectionId ?? '';
   const allSections = currentLongDraftId ? (sectionsMap.get(currentLongDraftId) ?? []) : [];
   const contextSection = contextMenu
@@ -154,6 +166,66 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
       setContextMenu(null);
     }
   }, [contextMenu]);
+
+  const resetDragState = useCallback(() => {
+    setDraggedSectionId(null);
+    setDropTargetSectionId(null);
+  }, []);
+
+  const handleDragStart = useCallback((sectionId: string) => {
+    setDraggedSectionId(sectionId);
+    setDropTargetSectionId(null);
+    setContextMenu(null);
+  }, []);
+
+  const handleDragOverSection = useCallback((sectionId: string) => {
+    if (!draggedSectionId || draggedSectionId === sectionId) {
+      return;
+    }
+    setDropTargetSectionId(sectionId);
+  }, [draggedSectionId]);
+
+  const handleDropOnSection = useCallback(async (targetSectionId: string) => {
+    if (!currentLongDraftId || !draggedSectionId || draggedSectionId === targetSectionId) {
+      resetDragState();
+      return;
+    }
+
+    const sections = sectionsMap.get(currentLongDraftId) ?? [];
+    const draggedSection = sections.find((section) => section.id === draggedSectionId);
+    const targetSection = sections.find((section) => section.id === targetSectionId);
+    if (!draggedSection || !targetSection || draggedSection.parentId !== targetSection.parentId) {
+      resetDragState();
+      return;
+    }
+
+    const siblingSections = sections
+      .filter((section) => section.parentId === targetSection.parentId)
+      .sort((a, b) => a.order - b.order);
+    const draggedIndex = siblingSections.findIndex((section) => section.id === draggedSectionId);
+    const targetIndex = siblingSections.findIndex((section) => section.id === targetSectionId);
+    if (draggedIndex === -1 || targetIndex === -1 || draggedIndex === targetIndex) {
+      resetDragState();
+      return;
+    }
+
+    const reorderedSiblings = [...siblingSections];
+    const [movedSection] = reorderedSiblings.splice(draggedIndex, 1);
+    reorderedSiblings.splice(targetIndex, 0, movedSection);
+
+    const siblingOrderMap = new Map(reorderedSiblings.map((section, index) => [section.id, index]));
+    const normalizedSections = sections.map((section) => {
+      const nextOrder = siblingOrderMap.get(section.id);
+      return nextOrder === undefined ? section : { ...section, order: nextOrder };
+    });
+    const allSectionIds = flattenSectionHierarchy(buildSectionHierarchy(normalizedSections));
+
+    try {
+      await reorderSections(currentLongDraftId, allSectionIds);
+    } finally {
+      resetDragState();
+    }
+  }, [currentLongDraftId, draggedSectionId, sectionsMap, reorderSections, resetDragState]);
 
   if (!isTOCVisible) {
     return (
@@ -309,6 +381,12 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
               onSelect={setCurrentSection}
               onToggleExpand={toggleExpanded}
               onContextMenu={handleContextMenu}
+              onDragStart={handleDragStart}
+              onDragOverSection={handleDragOverSection}
+              onDropOnSection={handleDropOnSection}
+              onDragEnd={resetDragState}
+              draggedSectionId={draggedSectionId}
+              dropTargetSectionId={dropTargetSectionId}
             />
           ))
         )}
@@ -467,6 +545,12 @@ interface TOCSectionItemProps {
   onSelect: (id: string) => void;
   onToggleExpand: (id: string) => void;
   onContextMenu: (e: React.MouseEvent, id: string) => void;
+  onDragStart: (id: string) => void;
+  onDragOverSection: (id: string) => void;
+  onDropOnSection: (id: string) => Promise<void>;
+  onDragEnd: () => void;
+  draggedSectionId: string | null;
+  dropTargetSectionId: string | null;
 }
 
 const TOCSectionItem = memo(function TOCSectionItem({
@@ -476,26 +560,47 @@ const TOCSectionItem = memo(function TOCSectionItem({
   onSelect,
   onToggleExpand,
   onContextMenu,
+  onDragStart,
+  onDragOverSection,
+  onDropOnSection,
+  onDragEnd,
+  draggedSectionId,
+  dropTargetSectionId,
 }: TOCSectionItemProps) {
   const { section, children, depth } = node;
   const hasChildren = children.length > 0;
   const isExpanded = expandedSections.has(section.id);
   const indentation = depth * 16;
+  const isDragging = draggedSectionId === section.id;
+  const isDropTarget = dropTargetSectionId === section.id && !isDragging;
 
   return (
     <div>
       <div
+        draggable
         onClick={() => onSelect(section.id)}
         onContextMenu={(e) => onContextMenu(e, section.id)}
+        onDragStart={() => onDragStart(section.id)}
+        onDragOver={(e) => {
+          e.preventDefault();
+          onDragOverSection(section.id);
+        }}
+        onDrop={(e) => {
+          e.preventDefault();
+          void onDropOnSection(section.id);
+        }}
+        onDragEnd={onDragEnd}
         style={{
           padding: '8px 12px',
           paddingLeft: `${12 + indentation}px`,
           cursor: 'pointer',
           backgroundColor: isSelected ? '#EFF6FF' : 'transparent',
           borderLeft: isSelected ? '3px solid #4A90A4' : '3px solid transparent',
+          borderTop: isDropTarget ? '2px solid #4A90A4' : '2px solid transparent',
           display: 'flex',
           alignItems: 'center',
           gap: '6px',
+          opacity: isDragging ? 0.6 : 1,
           transition: 'background-color 150ms ease',
         }}
         onMouseEnter={(e) => {
@@ -615,6 +720,12 @@ const TOCSectionItem = memo(function TOCSectionItem({
               onSelect={onSelect}
               onToggleExpand={onToggleExpand}
               onContextMenu={onContextMenu}
+              onDragStart={onDragStart}
+              onDragOverSection={onDragOverSection}
+              onDropOnSection={onDropOnSection}
+              onDragEnd={onDragEnd}
+              draggedSectionId={draggedSectionId}
+              dropTargetSectionId={dropTargetSectionId}
             />
           ))}
         </div>
@@ -630,6 +741,12 @@ function TOCSectionItemWrapper({
   onSelect,
   onToggleExpand,
   onContextMenu,
+  onDragStart,
+  onDragOverSection,
+  onDropOnSection,
+  onDragEnd,
+  draggedSectionId,
+  dropTargetSectionId,
 }: Omit<TOCSectionItemProps, 'isSelected'>) {
   const currentSectionId = useLongDraftsStore(selectCurrentSectionId);
   return (
@@ -640,6 +757,12 @@ function TOCSectionItemWrapper({
       onSelect={onSelect}
       onToggleExpand={onToggleExpand}
       onContextMenu={onContextMenu}
+      onDragStart={onDragStart}
+      onDragOverSection={onDragOverSection}
+      onDropOnSection={onDropOnSection}
+      onDragEnd={onDragEnd}
+      draggedSectionId={draggedSectionId}
+      dropTargetSectionId={dropTargetSectionId}
     />
   );
 }

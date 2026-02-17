@@ -4,12 +4,14 @@ import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
 import { format } from 'date-fns';
-import type { Section } from '@/types/longDrafts';
+import { Footnote } from '@/extensions';
+import type { Section, Footnote as SectionFootnote } from '@/types/longDrafts';
 import { useEditorShortcuts } from '@/hooks';
 import {
   useLongDraftsStore,
   selectViewMode,
 } from '@/stores/longDraftsStore';
+import { FootnoteManager } from './FootnoteManager';
 
 interface SectionEditorProps {
   section: Section | null;
@@ -48,12 +50,15 @@ export function SectionEditor({
   const [notes, setNotes] = useState(() => section?.notes || '');
   const [wordCount, setWordCount] = useState(() => countWords(stripHtml(section?.content || '')));
   const [showNotes, setShowNotes] = useState(false);
+  const [showFootnotes, setShowFootnotes] = useState(false);
   const [showStatusMenu, setShowStatusMenu] = useState(false);
+  const [highlightedFootnoteId, setHighlightedFootnoteId] = useState<string | null>(null);
 
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const titleSaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const notesSaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const statusMenuRef = useRef<HTMLDivElement>(null);
+  const updateSection = useLongDraftsStore((state) => state.updateSection);
 
   const editor = useEditor({
     extensions: [
@@ -66,6 +71,12 @@ export function SectionEditor({
         placeholder: 'Start writing this section...',
       }),
       Underline,
+      Footnote.configure({
+        onFootnoteClick: (footnoteId: string) => {
+          setHighlightedFootnoteId(footnoteId);
+          setShowFootnotes(true);
+        },
+      }),
     ],
     content: section?.content || '',
     editorProps: {
@@ -157,6 +168,90 @@ export function SectionEditor({
   );
 
   const currentStatus = STATUS_OPTIONS.find((s) => s.value === section?.status) || STATUS_OPTIONS[0];
+  const handleInsertFootnote = useCallback(async () => {
+    if (!section || !editor || section.isLocked) {
+      return;
+    }
+
+    const marker = (section.footnotes?.length ?? 0) + 1;
+    const newFootnote: SectionFootnote = {
+      id: crypto.randomUUID(),
+      marker,
+      content: '',
+      position: editor.state.selection.from,
+    };
+
+    await updateSection(section.id, {
+      footnotes: [...(section.footnotes ?? []), newFootnote],
+    });
+
+    editor.chain().focus().insertFootnote(newFootnote.id, marker, '').run();
+    setHighlightedFootnoteId(newFootnote.id);
+    setShowFootnotes(true);
+  }, [editor, section, updateSection]);
+
+  const handleUpdateFootnote = useCallback(async (footnoteId: string, content: string) => {
+    if (!section) {
+      return;
+    }
+
+    const updatedFootnotes = (section.footnotes ?? []).map((footnote) =>
+      footnote.id === footnoteId ? { ...footnote, content } : footnote
+    );
+    await updateSection(section.id, { footnotes: updatedFootnotes });
+    editor?.commands.updateFootnoteContent(footnoteId, content);
+  }, [editor, section, updateSection]);
+
+  const handleDeleteFootnote = useCallback(async (footnoteId: string) => {
+    if (!section) {
+      return;
+    }
+
+    const remainingFootnotes = (section.footnotes ?? [])
+      .filter((footnote) => footnote.id !== footnoteId)
+      .map((footnote, index) => ({ ...footnote, marker: index + 1 }));
+
+    await updateSection(section.id, { footnotes: remainingFootnotes });
+
+    if (editor) {
+      editor.commands.removeFootnote(footnoteId);
+      remainingFootnotes.forEach((footnote) => {
+        editor.commands.updateFootnoteMarker(footnote.id, footnote.marker);
+      });
+    }
+    if (highlightedFootnoteId === footnoteId) {
+      setHighlightedFootnoteId(null);
+    }
+  }, [editor, highlightedFootnoteId, section, updateSection]);
+
+  const handleNavigateToFootnote = useCallback((footnoteId: string) => {
+    if (!editor) {
+      return;
+    }
+
+    let targetPosition: number | null = null;
+    editor.state.doc.descendants((node, pos) => {
+      if (!node.isText) {
+        return true;
+      }
+
+      const hasFootnoteMark = node.marks.some((mark) =>
+        mark.type.name === 'footnote' && mark.attrs.id === footnoteId
+      );
+
+      if (hasFootnoteMark) {
+        targetPosition = pos;
+        return false;
+      }
+
+      return true;
+    });
+
+    if (targetPosition !== null) {
+      editor.chain().focus().setTextSelection(targetPosition).run();
+      setHighlightedFootnoteId(footnoteId);
+    }
+  }, [editor]);
 
   if (!section) {
     return (
@@ -424,9 +519,32 @@ export function SectionEditor({
 
           {/* Notes toggle */}
           <button
-            onClick={() => setShowNotes(!showNotes)}
+            onClick={() => setShowFootnotes(!showFootnotes)}
             style={{
               marginLeft: 'auto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              padding: '4px 8px',
+              fontSize: '12px',
+              color: showFootnotes ? '#4A90A4' : '#6B7280',
+              backgroundColor: showFootnotes ? '#EFF6FF' : 'transparent',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+            }}
+            title="Toggle footnotes panel"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+            </svg>
+            Footnotes
+          </button>
+
+          <button
+            onClick={() => setShowNotes(!showNotes)}
+            style={{
               display: 'flex',
               alignItems: 'center',
               gap: '4px',
@@ -555,6 +673,35 @@ export function SectionEditor({
             />
           </div>
         )}
+
+        {/* Footnotes panel */}
+        {showFootnotes && (
+          <div
+            style={{
+              width: '320px',
+              borderLeft: '1px solid #E5E7EB',
+              backgroundColor: '#FFFFFF',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <FootnoteManager
+              footnotes={section.footnotes ?? []}
+              isLocked={section.isLocked}
+              onAddFootnote={() => {
+                void handleInsertFootnote();
+              }}
+              onUpdateFootnote={(id, content) => {
+                void handleUpdateFootnote(id, content);
+              }}
+              onDeleteFootnote={(id) => {
+                void handleDeleteFootnote(id);
+              }}
+              onNavigateToFootnote={handleNavigateToFootnote}
+              highlightedFootnoteId={highlightedFootnoteId}
+            />
+          </div>
+        )}
       </div>
 
       {/* Formatting toolbar */}
@@ -670,7 +817,14 @@ export function SectionEditor({
 
           <ToolbarDivider />
 
-          <ToolbarButton onClick={() => {}} isActive={false} title="Insert Footnote" disabled>
+          <ToolbarButton
+            onClick={() => {
+              void handleInsertFootnote();
+            }}
+            isActive={false}
+            title="Insert Footnote"
+            disabled={section.isLocked}
+          >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
               <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />

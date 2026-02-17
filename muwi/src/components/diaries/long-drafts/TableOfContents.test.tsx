@@ -49,6 +49,7 @@ describe('TableOfContents', () => {
     const setCurrentSection = vi.fn();
     const toggleTOC = vi.fn();
     const deleteSection = vi.fn().mockResolvedValue(undefined);
+    const reorderSections = vi.fn().mockResolvedValue(undefined);
     const onCreateSection = vi.fn();
     const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
 
@@ -84,6 +85,7 @@ describe('TableOfContents', () => {
       setCurrentSection,
       toggleTOC,
       deleteSection,
+      reorderSections,
     });
 
     render(<TableOfContents onCreateSection={onCreateSection} />);
@@ -94,6 +96,17 @@ describe('TableOfContents', () => {
 
     fireEvent.click(screen.getByText('Methods'));
     expect(setCurrentSection).toHaveBeenCalledWith('root-2');
+
+    const methodsRow = screen.getByText('Methods').closest('div');
+    const introRow = screen.getByText('Introduction').closest('div');
+    expect(methodsRow).toBeTruthy();
+    expect(introRow).toBeTruthy();
+    fireEvent.dragStart(methodsRow!);
+    fireEvent.dragOver(introRow!);
+    fireEvent.drop(introRow!);
+    await waitFor(() => {
+      expect(reorderSections).toHaveBeenCalledWith('doc-1', ['root-2', 'root-1', 'child-1']);
+    });
 
     fireEvent.click(screen.getByRole('button', { name: 'Add Section' }));
     expect(onCreateSection).toHaveBeenCalledWith(null);

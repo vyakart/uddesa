@@ -884,11 +884,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 4.1.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Auto-generated from sections
-  - [ ] Nested section display
-  - [ ] Click navigates to section
-  - [ ] Drag-and-drop reordering
-  - [ ] Section word counts
+  - [x] Auto-generated from sections
+  - [x] Nested section display
+  - [x] Click navigates to section
+  - [x] Drag-and-drop reordering
+  - [x] Section word counts
 - **Testing**: Component tests
 
 #### Task 4.1.3: Create SectionEditor Component
@@ -896,11 +896,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 1.3.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Section title input
-  - [ ] TipTap body editor
-  - [ ] Footnote support
-  - [ ] Status indicator
-  - [ ] Section notes field
+  - [x] Section title input
+  - [x] TipTap body editor
+  - [x] Footnote support
+  - [x] Status indicator
+  - [x] Section notes field
 - **Testing**: Component tests
 
 ### 4.2 Footnotes
@@ -910,11 +910,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 1.3.1
 - **Effort**: L
 - **Acceptance Criteria**:
-  - [ ] Footnote node type
-  - [ ] Footnote marker in text
-  - [ ] Footnote content at bottom
-  - [ ] Click jumps between marker and content
-  - [ ] Auto-numbering
+  - [x] Footnote node type
+  - [x] Footnote marker in text
+  - [x] Footnote content at bottom
+  - [x] Click jumps between marker and content
+  - [x] Auto-numbering
 - **Testing**: Extension tests
 
 #### Task 4.2.2: Create FootnoteManager Component
@@ -922,10 +922,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 4.2.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] List of footnotes
-  - [ ] Edit footnote content
-  - [ ] Delete footnote
-  - [ ] Navigate to footnote in text
+  - [x] List of footnotes
+  - [x] Edit footnote content
+  - [x] Delete footnote
+  - [x] Navigate to footnote in text
 - **Testing**: Component tests
 
 ### 4.3 Focus Mode

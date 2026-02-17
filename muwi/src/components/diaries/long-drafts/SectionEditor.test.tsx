@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@/test';
+import { act, fireEvent, render, screen, waitFor } from '@/test';
 import { useLongDraftsStore } from '@/stores/longDraftsStore';
 import type { Section } from '@/types/longDrafts';
 import { SectionEditor } from './SectionEditor';
@@ -13,13 +13,28 @@ const chain = {
   toggleBulletList: vi.fn().mockReturnThis(),
   toggleOrderedList: vi.fn().mockReturnThis(),
   toggleBlockquote: vi.fn().mockReturnThis(),
+  insertFootnote: vi.fn().mockReturnThis(),
+  setTextSelection: vi.fn().mockReturnThis(),
   undo: vi.fn().mockReturnThis(),
   redo: vi.fn().mockReturnThis(),
   run: vi.fn(),
 };
 
+const commands = {
+  removeFootnote: vi.fn(),
+  updateFootnoteMarker: vi.fn(),
+  updateFootnoteContent: vi.fn(),
+};
+
 const mockEditor = {
   chain: vi.fn(() => chain),
+  commands,
+  state: {
+    selection: { from: 7 },
+    doc: {
+      descendants: vi.fn(),
+    },
+  },
   isActive: vi.fn(() => false),
   can: vi.fn(() => ({
     undo: () => true,
@@ -68,6 +83,10 @@ describe('SectionEditor', () => {
     capturedOnUpdate = undefined;
     vi.clearAllMocks();
     useLongDraftsStore.setState(useLongDraftsStore.getInitialState(), true);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('renders empty state when no section is selected', () => {
@@ -129,7 +148,7 @@ describe('SectionEditor', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Review' }));
     expect(onStatusChange).toHaveBeenCalledWith('review');
 
-    fireEvent.click(screen.getByRole('button', { name: /Notes/i }));
+    fireEvent.click(screen.getByTitle('Toggle author notes'));
     fireEvent.change(screen.getByPlaceholderText('Add private notes about this section...'), {
       target: { value: 'Updated notes' },
     });
@@ -139,6 +158,42 @@ describe('SectionEditor', () => {
     expect(onNotesChange).toHaveBeenCalledWith('Updated notes');
 
     vi.useRealTimers();
+  });
+
+  it('supports footnote insertion and footnote panel integration', async () => {
+    const updateSection = vi.fn().mockResolvedValue(undefined);
+    useLongDraftsStore.setState({ updateSection });
+
+    render(
+      <SectionEditor
+        section={makeSection()}
+        onTitleChange={vi.fn()}
+        onContentChange={vi.fn()}
+        onNotesChange={vi.fn()}
+        onStatusChange={vi.fn()}
+      />
+    );
+
+    fireEvent.click(screen.getByTitle('Insert Footnote'));
+    await waitFor(() => {
+      expect(updateSection).toHaveBeenCalledWith(
+        'section-1',
+        expect.objectContaining({
+          footnotes: expect.arrayContaining([
+            expect.objectContaining({
+              marker: 2,
+              position: 7,
+            }),
+          ]),
+        })
+      );
+    });
+    expect(chain.insertFootnote).toHaveBeenCalledTimes(1);
+
+    if (!screen.queryByText('Footnotes (1)')) {
+      fireEvent.click(screen.getByTitle('Toggle footnotes panel'));
+    }
+    expect(screen.getByText('Footnotes (1)')).toBeInTheDocument();
   });
 
   it('renders simplified focus mode and hides toolbar for locked sections', () => {
