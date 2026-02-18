@@ -1154,117 +1154,940 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 
 ---
 
-## Phase 7: Polish and Launch
-**Goal**: Final polish, accessibility, and distribution
-**Duration**: Weeks 23-26
+## Phase 7: Design System v2 UI Refactor
+**Goal**: Execute the full visual refactor from `muwi-design-system.md` without changing data/store/business logic
+**Duration**: Weeks 23-31
 
-### 7.1 Dark Mode
+### 7.0 Execution Rules (Read Before Starting)
 
-#### Task 7.1.1: Create Dark Theme CSS
-- **Description**: Dark mode color scheme
-- **Dependencies**: 0.1.3
-- **Effort**: M
-- **Acceptance Criteria**:
-  - [ ] All colors have dark variants
-  - [ ] CSS variables for theming
-  - [ ] Smooth transition between themes
-  - [ ] No contrast issues
-- **Testing**: Visual regression tests
-
-#### Task 7.1.2: Implement Theme Switching
-- **Description**: Runtime theme switching
-- **Dependencies**: 7.1.1, 0.5.3
+#### Task 7.0.1: Adopt Slice-by-Slice Refactor Flow
+- **Description**: Execute Phase 7 as vertical slices, not as one large rewrite
+- **Dependencies**: Phase 6 complete
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] Light/Dark/System options
-  - [ ] System preference detection
-  - [ ] Persists across sessions
-  - [ ] Updates immediately
-- **Testing**: Integration tests
+  - [ ] Every slice follows sequence: implement -> test -> manual verify -> merge
+  - [ ] No slice leaves the app in a broken runtime state
+  - [ ] No data model/store logic changes are mixed into visual refactor commits
+  - [ ] Progress logged in `PROGRESS.md` after each slice
 
-### 7.2 Accessibility
-
-#### Task 7.2.1: Accessibility Audit
-- **Description**: Comprehensive accessibility review
-- **Dependencies**: All UI tasks
-- **Effort**: L
+#### Task 7.0.2: Define Phase 7 Done Criteria
+- **Description**: Lock explicit exit criteria to avoid scope drift
+- **Dependencies**: 7.0.1
+- **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] All interactive elements keyboard accessible
-  - [ ] ARIA labels on all controls
-  - [ ] Focus visible at all times
-  - [ ] Color contrast meets WCAG AA
-  - [ ] Screen reader compatible
-- **Testing**: axe-core automated tests
+  - [ ] All CSS magic numbers in shared UI replaced by design tokens
+  - [ ] All 6 diary types run inside the new shared shell
+  - [ ] Command palette available globally (`Cmd+K` / `Ctrl+K`)
+  - [ ] Accessibility checks pass (keyboard + ARIA + contrast + reduced motion)
+  - [ ] Existing unit/integration tests updated and green
 
-#### Task 7.2.2: Fix Accessibility Issues
-- **Description**: Address audit findings
+### 7.1 Foundation: Tokens, Themes, Fonts, CSS Architecture
+
+#### Task 7.1.1: Create Style File Skeleton
+- **Description**: Create style architecture required by design system
+- **Dependencies**: 7.0.2
+- **Effort**: S
+- **Files to Create**:
+  - `muwi/src/styles/tokens.css`
+  - `muwi/src/styles/reset.css`
+  - `muwi/src/styles/fonts.css`
+  - `muwi/src/styles/utilities.css`
+  - `muwi/src/styles/themes/light.css`
+  - `muwi/src/styles/themes/dark.css`
+- **Acceptance Criteria**:
+  - [ ] All files exist and are imported in deterministic order
+  - [ ] No token values duplicated across files
+
+#### Task 7.1.2: Implement Token Set from Design System
+- **Description**: Port spacing/radius/shadow/z-index/transition/type scale tokens
+- **Dependencies**: 7.1.1
+- **Effort**: M
+- **Files to Modify**: `muwi/src/styles/tokens.css`
+- **Acceptance Criteria**:
+  - [ ] Spacing scale and semantic aliases match design spec
+  - [ ] Radius, shadow, z-index, and transition tokens match design spec
+  - [ ] Typography tokens for chrome + content are present
+  - [ ] Motion-reduction media query exists
+
+#### Task 7.1.3: Implement Light and Dark Theme Token Overrides
+- **Description**: Add light/dark color token layers
+- **Dependencies**: 7.1.2
+- **Effort**: M
+- **Files to Modify**:
+  - `muwi/src/styles/themes/light.css`
+  - `muwi/src/styles/themes/dark.css`
+- **Acceptance Criteria**:
+  - [ ] `:root` / `[data-theme="light"]` tokens complete
+  - [ ] `[data-theme="dark"]` overrides complete
+  - [ ] Blackboard and scratchpad-specific color tokens included
+  - [ ] No component hard-codes theme colors
+
+#### Task 7.1.4: Add CSS Reset and Base Element Rules
+- **Description**: Normalize base rendering and remove conflicting defaults
+- **Dependencies**: 7.1.1
+- **Effort**: S
+- **Files to Modify**: `muwi/src/styles/reset.css`
+- **Acceptance Criteria**:
+  - [ ] Reset includes box-sizing, body margin, default typography base
+  - [ ] Buttons/inputs inherit font settings
+  - [ ] Focus outline defaults do not conflict with token focus ring
+
+#### Task 7.1.5: Add Font Strategy (Geist chrome + content fonts)
+- **Description**: Wire chrome/content font loading to match spec
+- **Dependencies**: 7.1.1
+- **Effort**: S
+- **Files to Modify**:
+  - `muwi/package.json`
+  - `muwi/src/styles/fonts.css`
+- **Acceptance Criteria**:
+  - [ ] `@fontsource-variable/geist-sans` and `@fontsource-variable/geist-mono` installed
+  - [ ] Existing content fonts retained (Inter, Crimson Pro, JetBrains Mono, Caveat)
+  - [ ] `font-display: swap` behavior retained
+
+#### Task 7.1.6: Wire Global Style Imports and Decompose `index.css`
+- **Description**: Move token/theme/font ownership out of `index.css`
+- **Dependencies**: 7.1.2, 7.1.3, 7.1.4, 7.1.5
+- **Effort**: M
+- **Files to Modify**:
+  - `muwi/src/main.tsx`
+  - `muwi/src/index.css`
+- **Acceptance Criteria**:
+  - [ ] `main.tsx` imports style stack in stable order
+  - [ ] `index.css` reduced to app-specific/editor-specific rules only
+  - [ ] App renders with no missing variable warnings
+
+#### Task 7.1.7: Add Tailwind Token Mapping Layer
+- **Description**: Expose token names to Tailwind usage pattern used in repo
+- **Dependencies**: 7.1.2, 7.1.3
+- **Effort**: M
+- **Files to Modify**:
+  - `muwi/tailwind.config.ts` (create if absent)
+  - `muwi/src/styles/utilities.css`
+- **Acceptance Criteria**:
+  - [ ] Token-backed color/spacing/radius/shadow utilities are available
+  - [ ] Existing component classes continue to compile
+  - [ ] No breaking changes to existing tests due to class generation
+
+#### Task 7.1.8: Add Foundation Style Tests
+- **Description**: Ensure token and theme wiring remain stable
+- **Dependencies**: 7.1.6, 7.1.7
+- **Effort**: S
+- **Files to Create**:
+  - `muwi/src/styles/tokens.test.ts`
+  - `muwi/src/styles/theme-switching.test.tsx`
+- **Acceptance Criteria**:
+  - [ ] Tests confirm key CSS variables exist
+  - [ ] Tests confirm `[data-theme]` switching updates effective values
+
+### 7.2 Theme Runtime
+
+#### Task 7.2.1: Implement Theme Resolver Utility
+- **Description**: Resolve effective theme from `light|dark|system`
+- **Dependencies**: 7.1.3
+- **Effort**: S
+- **Files to Create**: `muwi/src/utils/theme.ts`
+- **Acceptance Criteria**:
+  - [ ] Utility resolves theme based on settings + `prefers-color-scheme`
+  - [ ] Utility supports realtime OS theme change handling
+
+#### Task 7.2.2: Apply Theme to `<html data-theme>`
+- **Description**: Drive theme via DOM attribute as single source
 - **Dependencies**: 7.2.1
-- **Effort**: L
+- **Effort**: S
+- **Files to Modify**: `muwi/src/App.tsx`
 - **Acceptance Criteria**:
-  - [ ] All issues resolved
-  - [ ] Automated tests pass
-  - [ ] Manual screen reader testing
-- **Testing**: Re-run accessibility tests
+  - [ ] `<html>` gets `data-theme="light|dark"`
+  - [ ] `color-scheme` is set to match effective theme
+  - [ ] No full-page reload needed on theme toggle
 
-### 7.3 Performance
+#### Task 7.2.3: Wire Settings Theme State to Runtime
+- **Description**: Ensure persisted settings fully control runtime theme
+- **Dependencies**: 7.2.2, 0.5.3
+- **Effort**: S
+- **Files to Modify**:
+  - `muwi/src/stores/settingsStore.ts`
+  - `muwi/src/components/shelf/SettingsPanel.tsx`
+- **Acceptance Criteria**:
+  - [ ] Settings exposes Light, Dark, System options
+  - [ ] Theme preference persists and rehydrates correctly
+  - [ ] System mode reacts to OS theme changes after app startup
 
-#### Task 7.3.1: Performance Profiling
-- **Description**: Identify performance bottlenecks
-- **Dependencies**: All features
+#### Task 7.2.4: Add Theme Integration Tests
+- **Description**: Validate theme behavior across render/reload flow
+- **Dependencies**: 7.2.3
+- **Effort**: S
+- **Files to Modify**:
+  - `muwi/src/components/shelf/SettingsPanel.test.tsx`
+  - `muwi/src/stores/settingsStore.test.ts`
+- **Acceptance Criteria**:
+  - [ ] Tests cover all three theme modes
+  - [ ] Tests cover persisted reload behavior
+
+#### Task 7.2.5: Remove Legacy Theme Branching in Components
+- **Description**: Replace ad-hoc theme checks with token-driven styles
+- **Dependencies**: 7.2.2
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Initial load < 3s
-  - [ ] Page navigation < 100ms
-  - [ ] Large document handling
-  - [ ] Memory usage stable
-- **Testing**: Performance tests
+  - [ ] No component branches on literal light/dark color values
+  - [ ] Components rely on CSS variables for appearance
 
-#### Task 7.3.2: Optimize Bundle Size
-- **Description**: Reduce bundle size
+### 7.3 Shared Shell Refactor (Three-Region Model)
+
+#### Task 7.3.1: Build `TitleBar` Component
+- **Description**: Implement Electron-aware title bar per spec
+- **Dependencies**: 7.1.6
+- **Effort**: S
+- **Files to Create**:
+  - `muwi/src/components/common/TitleBar/TitleBar.tsx`
+  - `muwi/src/components/common/TitleBar/index.ts`
+- **Acceptance Criteria**:
+  - [ ] Height and typography match tokenized title bar spec
+  - [ ] macOS drag region behavior preserved
+  - [ ] Context label shows `MUWI` or `MUWI — {Diary}`
+
+#### Task 7.3.2: Build Generic `Sidebar` Shell Component
+- **Description**: Create standardized left-region container
 - **Dependencies**: 7.3.1
 - **Effort**: M
+- **Files to Create**:
+  - `muwi/src/components/common/Sidebar/Sidebar.tsx`
+  - `muwi/src/components/common/Sidebar/index.ts`
 - **Acceptance Criteria**:
-  - [ ] Code splitting implemented
-  - [ ] Lazy loading for heavy components
-  - [ ] Tree shaking verified
-  - [ ] Bundle < 5MB
-- **Testing**: Bundle analysis
+  - [ ] Width = 240px open, collapsible to hidden
+  - [ ] Header/body/footer slots available
+  - [ ] Shared item styles use tokens and support active/hover states
 
-### 7.4 Distribution
+#### Task 7.3.3: Build Generic `StatusBar` Component
+- **Description**: Create shared bottom information strip
+- **Dependencies**: 7.3.1
+- **Effort**: S
+- **Files to Create**:
+  - `muwi/src/components/common/StatusBar/StatusBar.tsx`
+  - `muwi/src/components/common/StatusBar/index.ts`
+- **Acceptance Criteria**:
+  - [ ] Height/padding/border match tokenized status bar spec
+  - [ ] Supports left and right slot content
+  - [ ] Includes `role="status"` with polite updates
 
-#### Task 7.4.1: Configure Electron Builder
-- **Description**: Set up cross-platform builds
+#### Task 7.3.4: Build Generic `RightPanel` Component
+- **Description**: Create on-demand right panel surface
+- **Dependencies**: 7.3.1
+- **Effort**: M
+- **Files to Create**:
+  - `muwi/src/components/common/RightPanel/RightPanel.tsx`
+  - `muwi/src/components/common/RightPanel/index.ts`
+- **Acceptance Criteria**:
+  - [ ] Width = 280px and slide-in animation matches tokens
+  - [ ] Header includes title + close affordance
+  - [ ] Panel can host subviews with optional back control
+
+#### Task 7.3.5: Refactor `DiaryLayout` to Slot-Based Shell
+- **Description**: Replace current top-nav layout with three-region structure
+- **Dependencies**: 7.3.2, 7.3.3, 7.3.4
+- **Effort**: L
+- **Files to Modify**:
+  - `muwi/src/components/common/DiaryLayout/DiaryLayout.tsx`
+  - `muwi/src/components/common/index.ts`
+- **Acceptance Criteria**:
+  - [ ] Layout exposes explicit slots: sidebar, toolbar, canvas, status, right panel
+  - [ ] Canvas region remains centered and width-constrained by tokens
+  - [ ] Sidebar and right panel can toggle independently
+
+#### Task 7.3.6: Extend App Store for Shell UI State
+- **Description**: Add shell controls needed by new layout
+- **Dependencies**: 7.3.5
+- **Effort**: M
+- **Files to Modify**:
+  - `muwi/src/stores/appStore.ts`
+  - `muwi/src/stores/appStore.test.ts`
+- **Acceptance Criteria**:
+  - [ ] Sidebar open/close defaults correct for diary view
+  - [ ] Right panel state includes open, panel type, and context
+  - [ ] Existing store consumers remain compatible
+
+#### Task 7.3.7: Update Layout-Level Tests
+- **Description**: Cover shell behavior before diary migrations
+- **Dependencies**: 7.3.6
+- **Effort**: S
+- **Files to Create/Modify**:
+  - `muwi/src/components/common/DiaryLayout/DiaryLayout.test.tsx` (create if absent)
+  - `muwi/src/components/common/NavigationHeader/NavigationHeader.test.tsx`
+- **Acceptance Criteria**:
+  - [ ] Tests verify sidebar collapse/expand
+  - [ ] Tests verify right panel mount/unmount behavior
+  - [ ] Tests verify toolbar/status bar slot rendering
+
+### 7.4 Shared UI Primitives and Overlays
+
+#### Task 7.4.1: Rebuild Button Variants
+- **Description**: Standardize `primary|secondary|ghost|danger` variants
+- **Dependencies**: 7.1.2
+- **Effort**: M
+- **Files to Create**:
+  - `muwi/src/components/common/Button/Button.tsx`
+  - `muwi/src/components/common/Button/index.ts`
+  - `muwi/src/components/common/Button/Button.test.tsx`
+- **Acceptance Criteria**:
+  - [ ] Sizes 28/32/36 implemented
+  - [ ] Focus ring uses tokenized double-ring
+  - [ ] Disabled and active states match spec
+
+#### Task 7.4.2: Rebuild Form Input Primitives
+- **Description**: Standardize text input/select/toggle controls
+- **Dependencies**: 7.4.1
+- **Effort**: M
+- **Files to Create**:
+  - `muwi/src/components/common/FormControls/FormControls.tsx`
+  - `muwi/src/components/common/FormControls/index.ts`
+  - `muwi/src/components/common/FormControls/FormControls.test.tsx`
+- **Acceptance Criteria**:
+  - [ ] Input, select, and toggle match height/radius/focus/error states
+  - [ ] Placeholder and disabled styles use token values
+  - [ ] Keyboard and screen reader behavior verified
+
+#### Task 7.4.3: Refactor Modal to Spec
+- **Description**: Update generic modal animations, structure, and focus trap behavior
+- **Dependencies**: 7.1.2, 7.4.1
+- **Effort**: M
+- **Files to Modify**:
+  - `muwi/src/components/common/Modal/Modal.tsx`
+  - `muwi/src/components/common/Modal/Modal.test.tsx`
+- **Acceptance Criteria**:
+  - [ ] Backdrop, border radius, shadow, and animations match tokens
+  - [ ] `Esc`, backdrop click, and explicit close button all close modal
+  - [ ] Focus returns to trigger element on close
+
+#### Task 7.4.4: Refactor Context Menu to Spec
+- **Description**: Update context menu visual and keyboard behavior
+- **Dependencies**: 7.4.1
+- **Effort**: M
+- **Files to Modify**:
+  - `muwi/src/components/common/ContextMenu/ContextMenu.tsx`
+  - `muwi/src/components/common/ContextMenu/ContextMenu.test.tsx`
+- **Acceptance Criteria**:
+  - [ ] Item sizing, hover, disabled, separator, destructive styles match spec
+  - [ ] Submenu behavior remains functional
+  - [ ] Keyboard dismissal and focus behavior verified
+
+#### Task 7.4.5: Refactor Toolbar Component to Group Model
+- **Description**: Align toolbar visuals and behavior to grouped action spec
+- **Dependencies**: 7.4.1
+- **Effort**: M
+- **Files to Modify**:
+  - `muwi/src/components/common/Toolbar/Toolbar.tsx`
+  - `muwi/src/components/common/Toolbar/Toolbar.test.tsx`
+- **Acceptance Criteria**:
+  - [ ] 44px toolbar lane with 28px controls
+  - [ ] Group separators rendered as subtle 1px lines
+  - [ ] Active formatting states use accent tokens
+  - [ ] Horizontal overflow scroll support preserved
+
+#### Task 7.4.6: Implement Toast Notification System
+- **Description**: Add shared toast container for non-blocking feedback
+- **Dependencies**: 7.4.1
+- **Effort**: M
+- **Files to Create**:
+  - `muwi/src/components/common/Toast/ToastProvider.tsx`
+  - `muwi/src/components/common/Toast/Toast.tsx`
+  - `muwi/src/components/common/Toast/index.ts`
+  - `muwi/src/components/common/Toast/Toast.test.tsx`
+- **Acceptance Criteria**:
+  - [ ] Bottom-center position, tokenized visuals, and icon slot implemented
+  - [ ] Auto-dismiss = 4s with pause-on-hover/focus
+  - [ ] Supports success/warning/error/info variants
+
+#### Task 7.4.7: Rebuild Settings Modal Layout
+- **Description**: Convert settings UI to left-nav + content-pane structure
+- **Dependencies**: 7.4.2, 7.4.3
+- **Effort**: M
+- **Files to Modify**:
+  - `muwi/src/components/shelf/SettingsPanel.tsx`
+  - `muwi/src/components/shelf/SettingsPanel.test.tsx`
+- **Acceptance Criteria**:
+  - [ ] 640x480 layout with 160px nav rail implemented
+  - [ ] Nav items follow sidebar item interaction model
+  - [ ] Existing settings controls remain functional
+
+#### Task 7.4.8: Replace Inline Style Objects in Shared Components
+- **Description**: Move shared component styling to classes/tokenized CSS
+- **Dependencies**: 7.4.1 through 7.4.7
+- **Effort**: M
+- **Acceptance Criteria**:
+  - [ ] Shared components do not rely on literal inline color/spacing values
+  - [ ] Styling is token-driven and easy to audit
+
+### 7.5 Shelf (Homepage) Rebuild
+
+#### Task 7.5.1: Install and Wire Lucide Icons
+- **Description**: Replace emoji/icon drift with Lucide system
+- **Dependencies**: 7.1.6
+- **Effort**: S
+- **Files to Modify**:
+  - `muwi/package.json`
+  - `muwi/src/components/shelf/DiaryCard.tsx`
+- **Acceptance Criteria**:
+  - [ ] `lucide-react` installed
+  - [ ] All 6 diary types mapped to spec icons
+  - [ ] Icon sizing for shelf cards uses 24px
+
+#### Task 7.5.2: Normalize Diary Card Structure
+- **Description**: Rebuild card layout to title/description/meta hierarchy
+- **Dependencies**: 7.5.1
+- **Effort**: M
+- **Files to Modify**:
+  - `muwi/src/components/shelf/DiaryCard.tsx`
+  - `muwi/src/components/shelf/DiaryCard.test.tsx`
+- **Acceptance Criteria**:
+  - [ ] Card visual treatment matches border/radius/shadow specs
+  - [ ] No diary-specific card background colors
+  - [ ] Hover/active/selected states match transition spec
+
+#### Task 7.5.3: Add Metadata Line from Real Counts + Relative Time
+- **Description**: Populate card metadata line with meaningful values
+- **Dependencies**: 7.5.2, 0.4.3
+- **Effort**: M
+- **Files to Modify**:
+  - `muwi/src/components/shelf/DiaryCard.tsx`
+  - `muwi/src/components/shelf/Shelf.tsx`
+- **Acceptance Criteria**:
+  - [ ] Metadata format: `{count} {unit} · {relative_time}`
+  - [ ] Empty diary shows `No entries yet` style copy
+  - [ ] Relative time uses `date-fns` distance formatting
+
+#### Task 7.5.4: Rebuild Shelf Header and Grid Layout
+- **Description**: Align shelf structure to MUWI v2 layout rules
+- **Dependencies**: 7.5.2
+- **Effort**: M
+- **Files to Modify**: `muwi/src/components/shelf/Shelf.tsx`
+- **Acceptance Criteria**:
+  - [ ] Header shows `MUWI` without subtitle
+  - [ ] Grid max width = 960px
+  - [ ] Grid columns: 4 (>=1024), 3 (>=768), 2 (<768)
+  - [ ] Padding and spacing use token aliases
+
+#### Task 7.5.5: Add Bottom Command Palette Hint
+- **Description**: Add subtle bottom hint for keyboard discovery
+- **Dependencies**: 7.5.4
+- **Effort**: S
+- **Files to Modify**: `muwi/src/components/shelf/Shelf.tsx`
+- **Acceptance Criteria**:
+  - [ ] Hint text appears at bottom area on shelf
+  - [ ] Styling uses tertiary text token and xs size
+
+#### Task 7.5.6: Implement Shelf -> Diary Transition
+- **Description**: Add non-jarring navigation animation sequence
+- **Dependencies**: 7.5.4, 7.3.5
+- **Effort**: M
+- **Acceptance Criteria**:
+  - [ ] Card highlight + fade out + diary fade in sequence implemented
+  - [ ] Transition total remains under ~300ms
+  - [ ] No blank screen during transition
+
+#### Task 7.5.7: Add Return Highlight for Last Opened Diary
+- **Description**: Improve user orientation when returning to shelf
+- **Dependencies**: 7.5.6
+- **Effort**: S
+- **Files to Modify**:
+  - `muwi/src/stores/appStore.ts`
+  - `muwi/src/components/shelf/Shelf.tsx`
+- **Acceptance Criteria**:
+  - [ ] Last-opened diary card has selected state for ~2 seconds after return
+  - [ ] State clears automatically and does not persist incorrectly
+
+#### Task 7.5.8: Add Shelf Regression Tests
+- **Description**: Lock shelf behavior before diary migrations
+- **Dependencies**: 7.5.1 through 7.5.7
+- **Effort**: S
+- **Files to Modify**:
+  - `muwi/src/components/shelf/Shelf.test.tsx`
+  - `muwi/src/components/shelf/DiaryCard.test.tsx`
+- **Acceptance Criteria**:
+  - [ ] Tests cover icon rendering, metadata, layout mode, and selected return state
+
+### 7.6 Command Palette
+
+#### Task 7.6.1: Add Command Palette State to App Store
+- **Description**: Add open/close/query/history state
+- **Dependencies**: 7.3.6
+- **Effort**: S
+- **Files to Modify**: `muwi/src/stores/appStore.ts`
+- **Acceptance Criteria**:
+  - [ ] Store tracks open state, query, highlighted index, recent commands
+  - [ ] Actions exist for open/close/update/execute
+
+#### Task 7.6.2: Create Command Registry
+- **Description**: Build declarative command definition list
+- **Dependencies**: 7.6.1
+- **Effort**: M
+- **Files to Create**: `muwi/src/utils/commands.ts`
+- **Acceptance Criteria**:
+  - [ ] Commands grouped by Navigation/Actions/Settings
+  - [ ] Supports scope filtering by current diary/context
+  - [ ] Includes starter command set from spec
+
+#### Task 7.6.3: Build Command Palette Component
+- **Description**: Implement modal/combobox UI with tokenized styling
+- **Dependencies**: 7.6.2, 7.4.3
+- **Effort**: M
+- **Files to Create**:
+  - `muwi/src/components/common/CommandPalette/CommandPalette.tsx`
+  - `muwi/src/components/common/CommandPalette/index.ts`
+- **Acceptance Criteria**:
+  - [ ] Palette position/size/background/shadow match spec
+  - [ ] Input and results list implement combobox/listbox roles
+  - [ ] Keyboard controls (`↑↓`, `Enter`, `Esc`) work
+
+#### Task 7.6.4: Wire Global Shortcut and App Mount Point
+- **Description**: Open palette from anywhere using keyboard shortcut
+- **Dependencies**: 7.6.3
+- **Effort**: S
+- **Files to Modify**:
+  - `muwi/src/hooks/useGlobalShortcuts.ts`
+  - `muwi/src/App.tsx`
+- **Acceptance Criteria**:
+  - [ ] `Cmd+K` / `Ctrl+K` opens palette globally
+  - [ ] Palette closes on outside click and on command execution
+
+#### Task 7.6.5: Implement Fuzzy Search + Recents
+- **Description**: Improve command discovery and reuse
+- **Dependencies**: 7.6.3
+- **Effort**: M
+- **Acceptance Criteria**:
+  - [ ] Query performs fuzzy matching on command labels/aliases
+  - [ ] Empty query shows up to 3 recent commands
+  - [ ] Context-aware commands appear first when in diary
+
+#### Task 7.6.6: Add Command Palette Tests
+- **Description**: Protect keyboard-first behavior
+- **Dependencies**: 7.6.4, 7.6.5
+- **Effort**: S
+- **Files to Create/Modify**:
+  - `muwi/src/components/common/CommandPalette/CommandPalette.test.tsx`
+  - `muwi/src/hooks/useGlobalShortcuts.test.tsx`
+- **Acceptance Criteria**:
+  - [ ] Tests cover open/close/search/navigation/execute
+  - [ ] Tests cover context-aware command ordering
+
+### 7.7 Scratchpad UI Migration
+
+#### Task 7.7.1: Migrate Scratchpad to New Shell Slots
+- **Description**: Move Scratchpad layout onto new `DiaryLayout` slots
+- **Dependencies**: 7.3.5, 7.4.5
+- **Effort**: M
+- **Files to Modify**: `muwi/src/components/diaries/scratchpad/Scratchpad.tsx`
+- **Acceptance Criteria**:
+  - [ ] Sidebar, toolbar, canvas, and status bar rendered via shared shell
+  - [ ] No legacy top-header layout remains
+
+#### Task 7.7.2: Implement Scratchpad Sidebar and Toolbar Specs
+- **Description**: Align pages list, category indicators, and page controls
+- **Dependencies**: 7.7.1
+- **Effort**: M
+- **Acceptance Criteria**:
+  - [ ] Sidebar has `PAGES` label and category dots
+  - [ ] Bottom action shows `+ New Page`
+  - [ ] Toolbar contains only category + page controls
+
+#### Task 7.7.3: Implement Fixed Page Canvas Visuals
+- **Description**: Match fixed page size and stack indicator behavior
+- **Dependencies**: 7.7.1
+- **Effort**: M
+- **Files to Modify**:
+  - `muwi/src/components/diaries/scratchpad/ScratchpadPage.tsx`
+  - `muwi/src/components/diaries/scratchpad/PageStack.tsx`
+  - `muwi/src/components/diaries/scratchpad/TextBlock.tsx`
+- **Acceptance Criteria**:
+  - [ ] Page size 400x600 centered in canvas region
+  - [ ] Page background follows category tint tokens
+  - [ ] Text block hover/drag/lock visuals match spec
+
+#### Task 7.7.4: Add Scratchpad Status Bar + Empty State
+- **Description**: Add diary-specific status and first-use guidance
+- **Dependencies**: 7.7.2, 7.7.3
+- **Effort**: S
+- **Acceptance Criteria**:
+  - [ ] Status bar shows `Page {n} of {total} · {category}`
+  - [ ] Empty state matches icon/headline/body/action pattern
+
+### 7.8 Blackboard UI Migration
+
+#### Task 7.8.1: Migrate Blackboard to New Shell Slots
+- **Description**: Move Blackboard onto shared shell with right panel support
+- **Dependencies**: 7.3.5
+- **Effort**: M
+- **Files to Modify**: `muwi/src/components/diaries/blackboard/Blackboard.tsx`
+- **Acceptance Criteria**:
+  - [ ] Blackboard uses shell slots for sidebar/toolbar/canvas/status/right panel
+  - [ ] Existing Excalidraw integration remains functional
+
+#### Task 7.8.2: Implement Index Sidebar and Toolbar Groups
+- **Description**: Align Blackboard controls to design grouping
+- **Dependencies**: 7.8.1
+- **Effort**: M
+- **Files to Modify**:
+  - `muwi/src/components/diaries/blackboard/IndexPanel.tsx`
+  - `muwi/src/components/diaries/blackboard/BlackboardToolbar.tsx`
+- **Acceptance Criteria**:
+  - [ ] Sidebar shows heading tree with empty guidance text
+  - [ ] Toolbar groups match tool/stroke/font/zoom model
+
+#### Task 7.8.3: Apply Blackboard Canvas Theme Tokens
+- **Description**: Ensure blackboard canvas and grid visuals use dedicated tokens
+- **Dependencies**: 7.1.3
+- **Effort**: S
+- **Files to Modify**: `muwi/src/components/diaries/blackboard/ExcalidrawWrapper.tsx`
+- **Acceptance Criteria**:
+  - [ ] Blackboard canvas always dark regardless of app theme
+  - [ ] Grid tone and text defaults follow Blackboard token set
+
+#### Task 7.8.4: Add Blackboard Status Bar + Empty State
+- **Description**: Add zoom/info strip and first-use copy
+- **Dependencies**: 7.8.2, 7.8.3
+- **Effort**: S
+- **Acceptance Criteria**:
+  - [ ] Status bar left shows zoom percentage
+  - [ ] Empty state matches diary icon + guidance action
+
+### 7.9 Personal Diary UI Migration
+
+#### Task 7.9.1: Migrate Personal Diary to New Shell Slots
+- **Description**: Adopt shared shell while preserving diary behavior
+- **Dependencies**: 7.3.5
+- **Effort**: M
+- **Files to Modify**: `muwi/src/components/diaries/PersonalDiary/PersonalDiary.tsx`
+- **Acceptance Criteria**:
+  - [ ] Sidebar, toolbar lane, canvas, and status bar run through shell slots
+  - [ ] Existing entry CRUD behavior unchanged
+
+#### Task 7.9.2: Implement Date-Grouped Sidebar + Today Action
+- **Description**: Align sidebar structure and actions to spec
+- **Dependencies**: 7.9.1
+- **Effort**: M
+- **Acceptance Criteria**:
+  - [ ] Sidebar entries grouped by month/year headers
+  - [ ] Optional mood indicator support retained
+  - [ ] Bottom action is `Today`
+
+#### Task 7.9.3: Apply Warm Canvas + Typographic Constraints
+- **Description**: Personal Diary canvas must feel journal-like and constrained
+- **Dependencies**: 7.1.3, 7.9.1
+- **Effort**: S
+- **Acceptance Criteria**:
+  - [ ] Canvas uses warm background token
+  - [ ] Line height defaults to relaxed setting
+  - [ ] Toolbar limited to Undo/Redo + B/I/U + font display
+
+#### Task 7.9.4: Add Personal Diary Status Bar + Empty State
+- **Description**: Add date and reading metrics in status strip
+- **Dependencies**: 7.9.2, 7.9.3
+- **Effort**: S
+- **Acceptance Criteria**:
+  - [ ] Left side shows formatted entry date
+  - [ ] Right side shows word count + read time
+
+### 7.10 Drafts UI Migration
+
+#### Task 7.10.1: Migrate Drafts to New Shell Slots
+- **Description**: Move Drafts layout to shared shell
+- **Dependencies**: 7.3.5
+- **Effort**: M
+- **Files to Modify**: `muwi/src/components/diaries/drafts/Drafts.tsx`
+- **Acceptance Criteria**:
+  - [ ] Draft list in sidebar slot
+  - [ ] Editor canvas in canvas slot
+  - [ ] Status bar present
+
+#### Task 7.10.2: Rebuild Draft Sidebar Visual Hierarchy
+- **Description**: Align draft list rows and status dots to token system
+- **Dependencies**: 7.10.1
+- **Effort**: M
+- **Files to Modify**:
+  - `muwi/src/components/diaries/drafts/DraftList.tsx`
+  - `muwi/src/components/diaries/drafts/StatusBadge.tsx`
+- **Acceptance Criteria**:
+  - [ ] Rows use standardized sidebar item styles
+  - [ ] Status dots map to in-progress/review/complete tokens
+  - [ ] Sort controls remain functional
+
+#### Task 7.10.3: Align Draft Editor Toolbar to Shared Model
+- **Description**: Replace custom inline toolbar visuals with shared system
+- **Dependencies**: 7.4.5, 7.10.1
+- **Effort**: M
+- **Files to Modify**: `muwi/src/components/diaries/drafts/DraftEditor.tsx`
+- **Acceptance Criteria**:
+  - [ ] Toolbar groups match Drafts spec
+  - [ ] Button active states use accent token treatment
+
+#### Task 7.10.4: Add Drafts Status Bar + Empty State
+- **Description**: Add status strip and first-use state
+- **Dependencies**: 7.10.2, 7.10.3
+- **Effort**: S
+- **Acceptance Criteria**:
+  - [ ] Left side shows draft status text
+  - [ ] Right side shows word count + read time
+
+### 7.11 Long Drafts UI Migration
+
+#### Task 7.11.1: Migrate Long Drafts to New Shell Slots
+- **Description**: Move Long Drafts container to shared shell
+- **Dependencies**: 7.3.5
+- **Effort**: M
+- **Files to Modify**: `muwi/src/components/diaries/long-drafts/LongDrafts.tsx`
+- **Acceptance Criteria**:
+  - [ ] Section tree occupies sidebar slot
+  - [ ] Editor canvas and status bar integrated
+  - [ ] Focus mode still works
+
+#### Task 7.11.2: Refactor TOC Sidebar to Spec
+- **Description**: Align section tree visuals and interactions
+- **Dependencies**: 7.11.1
+- **Effort**: M
+- **Files to Modify**: `muwi/src/components/diaries/long-drafts/TableOfContents.tsx`
+- **Acceptance Criteria**:
+  - [ ] Collapsible tree with drag handles and counts
+  - [ ] Active/hover/sidebar section label styling matches tokens
+
+#### Task 7.11.3: Align Long Drafts Toolbar Groups
+- **Description**: Apply spec toolbar groups including footnotes and focus
+- **Dependencies**: 7.11.1, 7.4.5
+- **Effort**: M
+- **Files to Modify**:
+  - `muwi/src/components/diaries/long-drafts/LongDrafts.tsx`
+  - `muwi/src/components/diaries/long-drafts/SectionEditor.tsx`
+- **Acceptance Criteria**:
+  - [ ] Grouping/order follows Long Drafts spec
+  - [ ] Focus mode toggle icon/state reflect spec
+
+#### Task 7.11.4: Implement Right Panel for TOC/Document Settings
+- **Description**: Use on-demand right panel when sidebar collapsed or settings requested
+- **Dependencies**: 7.3.4, 7.11.1
+- **Effort**: M
+- **Acceptance Criteria**:
+  - [ ] TOC panel view available in right panel
+  - [ ] Document settings panel view available in right panel
+
+#### Task 7.11.5: Add Long Drafts Status Bar + Empty State
+- **Description**: Add section-aware metrics and empty guidance
+- **Dependencies**: 7.11.2, 7.11.3
+- **Effort**: S
+- **Acceptance Criteria**:
+  - [ ] Status bar shows `Section: {name}` and `{section_words}/{total_words}`
+  - [ ] Empty state uses long-drafts specific copy/action
+
+### 7.12 Academic UI Migration
+
+#### Task 7.12.1: Migrate Academic Container to New Shell Slots
+- **Description**: Move Academic diary layout to shared shell
+- **Dependencies**: 7.3.5
+- **Effort**: M
+- **Files to Modify**: `muwi/src/components/diaries/academic/Academic.tsx`
+- **Acceptance Criteria**:
+  - [ ] Sidebar, toolbar, canvas, status bar, and right panel integrated
+  - [ ] Existing citation/reference logic preserved
+
+#### Task 7.12.2: Refactor Academic Sidebar Structure
+- **Description**: Implement structure template and bibliography shortcut model
+- **Dependencies**: 7.12.1
+- **Effort**: M
+- **Acceptance Criteria**:
+  - [ ] Sidebar shows section template structure
+  - [ ] Bibliography shortcut visible and actionable
+  - [ ] New section/new paper actions available
+
+#### Task 7.12.3: Align Academic Toolbar Groups and Controls
+- **Description**: Apply full academic toolbar grouping from spec
+- **Dependencies**: 7.12.1, 7.4.5
+- **Effort**: M
+- **Files to Modify**: `muwi/src/components/diaries/academic/AcademicSectionEditor.tsx`
+- **Acceptance Criteria**:
+  - [ ] Includes line spacing, citation, cross-reference, and table actions
+  - [ ] Group separators and active states match tokenized toolbar
+
+#### Task 7.12.4: Implement Academic Right Panel Workflows
+- **Description**: Move bibliography/reference flows into right panel
+- **Dependencies**: 7.12.1, 7.3.4
+- **Effort**: M
+- **Files to Modify**:
+  - `muwi/src/components/diaries/academic/BibliographyManager.tsx`
+  - `muwi/src/components/diaries/academic/ReferenceLibraryPanel.tsx`
+  - `muwi/src/components/diaries/academic/CitationPicker.tsx`
+- **Acceptance Criteria**:
+  - [ ] Bibliography manager opens in right panel
+  - [ ] Reference library opens in right panel
+  - [ ] Citation style selector is available in panel context
+
+#### Task 7.12.5: Apply Academic Canvas + Status Specs
+- **Description**: Implement academic page simulation and metrics strip
+- **Dependencies**: 7.12.1
+- **Effort**: M
+- **Acceptance Criteria**:
+  - [ ] Page margins/header/footer zones visually represented
+  - [ ] Default line spacing is double-spaced
+  - [ ] Status bar shows citation style, page size, word/char metrics
+
+### 7.13 Accessibility and Keyboard Compliance
+
+#### Task 7.13.1: Keyboard Navigation Matrix Implementation
+- **Description**: Ensure all global/editor shortcuts and focus traversal work
+- **Dependencies**: 7.6.4, 7.7 through 7.12
+- **Effort**: M
+- **Acceptance Criteria**:
+  - [ ] Global shortcuts (`Cmd/Ctrl+K`, `Cmd+,`, `Cmd+B`, `Cmd+1-6`, `Esc`) work
+  - [ ] Editor shortcuts remain functional in each diary
+  - [ ] Focus order follows visual order
+
+#### Task 7.13.2: ARIA and Semantic Roles Pass
+- **Description**: Add/fix semantic roles and labels per spec
+- **Dependencies**: 7.7 through 7.12
+- **Effort**: M
+- **Acceptance Criteria**:
+  - [ ] Toolbar, sidebar, modal, command palette, status, and toast roles applied
+  - [ ] Decorative icons use `aria-hidden`
+  - [ ] Interactive icons have explicit labels
+
+#### Task 7.13.3: Focus Ring and Focus Restoration Pass
+- **Description**: Standardize focus visibility and return behavior
+- **Dependencies**: 7.4.1 through 7.4.6
+- **Effort**: S
+- **Acceptance Criteria**:
+  - [ ] All interactive controls show tokenized focus ring
+  - [ ] Overlay close returns focus to trigger
+  - [ ] Focus is never trapped outside active modal/palette
+
+#### Task 7.13.4: Contrast and Color-State Validation
+- **Description**: Verify WCAG contrast and non-color-only status indicators
+- **Dependencies**: 7.1.3, 7.7 through 7.12
+- **Effort**: S
+- **Acceptance Criteria**:
+  - [ ] Normal text meets 4.5:1 where required
+  - [ ] Large text and controls meet applicable ratios
+  - [ ] Status indicators combine text/icon with color
+
+#### Task 7.13.5: Reduced Motion Compliance
+- **Description**: Ensure all transitions respect reduced-motion preference
+- **Dependencies**: 7.1.2, 7.5.6, 7.6.3
+- **Effort**: S
+- **Acceptance Criteria**:
+  - [ ] Reduced-motion mode effectively neutralizes non-essential animations
+  - [ ] Critical information remains visible without animation cues
+
+#### Task 7.13.6: Accessibility Test Suite + Manual Audit
+- **Description**: Automate and manually validate accessibility baseline
+- **Dependencies**: 7.13.1 through 7.13.5
+- **Effort**: M
+- **Acceptance Criteria**:
+  - [ ] Automated checks (axe or equivalent) run in CI
+  - [ ] Manual keyboard-only audit complete
+  - [ ] Manual screen reader spot-check complete
+
+### 7.14 Responsive and Window-Resize Behavior
+
+#### Task 7.14.1: Implement In-Diary Breakpoint Rules
+- **Description**: Add responsive behavior for sidebar/right panel/canvas at width thresholds
+- **Dependencies**: 7.3.5
+- **Effort**: M
+- **Acceptance Criteria**:
+  - [ ] Behavior at `>=1200`, `960-1199`, `800-959`, `<800` matches spec
+  - [ ] Sidebar overlays canvas below 800px
+
+#### Task 7.14.2: Implement Shelf Grid Responsiveness
+- **Description**: Enforce 4/3/2 column shelf layout thresholds
+- **Dependencies**: 7.5.4
+- **Effort**: S
+- **Acceptance Criteria**:
+  - [ ] Shelf cards reflow without overlap or clipping
+  - [ ] Card minimum widths respect spec
+
+#### Task 7.14.3: Enforce Electron Minimum Window Size
+- **Description**: Ensure minimum app size matches design constraints
 - **Dependencies**: 0.2.2
+- **Effort**: S
+- **Files to Modify**: `muwi/electron/main.ts`
+- **Acceptance Criteria**:
+  - [ ] Minimum window set to 800x600
+  - [ ] UI remains usable at minimum size
+
+#### Task 7.14.4: Add Responsive Regression Tests
+- **Description**: Capture layout behavior across key widths
+- **Dependencies**: 7.14.1, 7.14.2
+- **Effort**: S
+- **Acceptance Criteria**:
+  - [ ] Test coverage for shelf and in-diary breakpoints
+  - [ ] No major layout regressions across width classes
+
+### 7.15 Performance and Refactor Stabilization
+
+#### Task 7.15.1: Profile Initial Render and Diary Switching
+- **Description**: Measure and record performance after refactor
+- **Dependencies**: 7.12.5
+- **Effort**: S
+- **Acceptance Criteria**:
+  - [ ] Baseline profile captured for startup and diary switch
+  - [ ] Regressions documented with follow-up tasks if needed
+
+#### Task 7.15.2: Remove Remaining Inline Style Bottlenecks
+- **Description**: Eliminate remaining heavy inline style usage in diary components
+- **Dependencies**: 7.7 through 7.12
+- **Effort**: M
+- **Acceptance Criteria**:
+  - [ ] No high-churn components create large inline style objects per render
+  - [ ] Styling is largely class/token driven
+
+#### Task 7.15.3: Add Code Splitting for Heavy Diary Views
+- **Description**: Lazy-load heavy diary surfaces to improve startup time
+- **Dependencies**: 7.15.1
+- **Effort**: M
+- **Files to Modify**: `muwi/src/App.tsx`
+- **Acceptance Criteria**:
+  - [ ] Heavy diaries loaded via dynamic import boundaries
+  - [ ] Loading states are accessible and non-jarring
+
+#### Task 7.15.4: Bundle and Runtime Verification
+- **Description**: Validate bundle size and runtime behavior post-refactor
+- **Dependencies**: 7.15.2, 7.15.3
+- **Effort**: S
+- **Acceptance Criteria**:
+  - [ ] Build completes with no new critical warnings
+  - [ ] Runtime memory/CPU does not regress significantly from baseline
+
+### 7.16 Distribution and Release (Post-Refactor)
+
+#### Task 7.16.1: Configure Electron Builder Targets
+- **Description**: Prepare production packaging for desktop platforms
+- **Dependencies**: 7.15.4
 - **Effort**: L
 - **Acceptance Criteria**:
-  - [ ] macOS build (DMG, zip)
-  - [ ] Windows build (NSIS, portable)
-  - [ ] Linux build (AppImage, deb)
-  - [ ] Code signing configured
-  - [ ] Auto-update configured
-- **Files**: `electron-builder.config.js`
+  - [ ] macOS build (DMG/zip)
+  - [ ] Windows build (NSIS/portable)
+  - [ ] Linux build (AppImage/deb)
+  - [ ] Signing/update settings wired where applicable
 
-#### Task 7.4.2: Create GitHub Actions CI/CD
-- **Description**: Automated testing and builds
-- **Dependencies**: 0.3.1, 0.3.3
+#### Task 7.16.2: Update CI Workflow for Phase 7 Gates
+- **Description**: Require tests/build checks for refactor stability
+- **Dependencies**: 7.13.6, 7.15.4
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Unit tests run on PR
-  - [ ] E2E tests run on PR
-  - [ ] Builds created on release
-  - [ ] Artifacts uploaded
-- **Files**: `.github/workflows/`
+  - [ ] Unit + integration tests run on PR
+  - [ ] E2E smoke tests run on PR/release branch
+  - [ ] Build artifacts uploaded for tagged releases
 
-#### Task 7.4.3: Create Release Workflow
-- **Description**: Automated release process
-- **Dependencies**: 7.4.1, 7.4.2
+#### Task 7.16.3: Release Automation and Changelog
+- **Description**: Finalize automated release process with versioning
+- **Dependencies**: 7.16.1, 7.16.2
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Semantic versioning
-  - [ ] Changelog generation
-  - [ ] GitHub release creation
-  - [ ] Binary upload
-  - [ ] Update manifest
+  - [ ] Semantic version workflow established
+  - [ ] Changelog generated from commits
+  - [ ] Release artifacts and update manifest published
+
+#### Task 7.16.4: Final Phase 7 Go/No-Go Checklist
+- **Description**: Explicit final verification before declaring Phase 7 complete
+- **Dependencies**: 7.16.3
+- **Effort**: S
+- **Acceptance Criteria**:
+  - [ ] All Phase 7 tasks either complete or explicitly deferred
+  - [ ] UI matches design-system invariants (tokens, layout model, typography hierarchy)
+  - [ ] No open P0/P1 regressions
 
 ---
 
@@ -1279,8 +2102,8 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 | Phase 4: Long Drafts | 8 | ~4 weeks |
 | Phase 5: Academic | 10 | ~4 weeks |
 | Phase 6: Export/Backup | 6 | ~2 weeks |
-| Phase 7: Polish | 9 | ~3 weeks |
-| **Total** | **90** | **~26 weeks** |
+| Phase 7: Design System v2 UI Refactor | 88 | ~9 weeks |
+| **Total** | **170** | **~32 weeks** |
 
 ---
 
@@ -1292,7 +2115,7 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 ├── 0.1.3 (Tailwind) ─────────────────────────────────────────┐  │
 ├── 0.2.1 (Electron) ───────────────────────────────────────┐ │  │
 │   └── 0.2.2 (Main process)                                │ │  │
-│       └── 7.4.1 (Distribution)                            │ │  │
+│       └── 7.16.1 (Distribution targets)                   │ │  │
 ├── 0.3.1 (Vitest) ───────────────────────────────────────┐ │ │  │
 │   └── 0.3.2 (Test utilities)                            │ │ │  │
 └── 0.4.1 (Dexie) ──────────────────────────────────────┐ │ │ │  │
@@ -1322,10 +2145,20 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
         └── 3.1.3 (ExcalidrawWrapper)                       │
             └── 3.3.2 (Blackboard)                          │
                                                             │
-All UI components ──────────────────────────────────────────┘
-    └── 7.2.1 (Accessibility audit)
-        └── 7.2.2 (Fix issues)
-            └── 7.4.3 (Release)
+All Phase 0-6 features complete ────────────────────────────┘
+    └── 7.0.1 (Slice-by-slice execution)
+        └── 7.1.1 (Style architecture)
+            └── 7.1.6 (Global style wiring)
+                └── 7.2.2 (Runtime theming)
+                    └── 7.3.5 (Shared shell)
+                        ├── 7.4.8 (Shared primitives complete)
+                        ├── 7.5.8 (Shelf complete)
+                        ├── 7.6.6 (Command palette complete)
+                        └── 7.7-7.12 (Diary migrations)
+                            └── 7.13.6 (Accessibility suite)
+                                └── 7.14.4 (Responsive regression tests)
+                                    └── 7.15.4 (Performance validation)
+                                        └── 7.16.4 (Go/No-Go checklist)
 ```
 
 ---
@@ -1340,5 +2173,5 @@ All UI components ────────────────────�
 
 ---
 
-*Document Version: 1.0*
-*Last Updated: January 2026*
+*Document Version: 1.1*
+*Last Updated: February 2026*
