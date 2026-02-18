@@ -1,4 +1,8 @@
-import { fireEvent, render, screen } from '@/test';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { useState } from 'react';
+import userEvent from '@testing-library/user-event';
+import { fireEvent, render, screen, waitFor } from '@/test';
 import { ContextMenu, type ContextMenuItem } from './ContextMenu';
 
 function createItems(spies?: {
@@ -43,8 +47,10 @@ describe('ContextMenu', () => {
     render(<ContextMenu isOpen x={500} y={500} items={items} onClose={vi.fn()} />);
 
     const menu = screen.getByRole('menu', { name: 'Context menu' });
-    expect(parseInt(menu.style.left, 10)).toBeLessThanOrEqual(72);
-    expect(parseInt(menu.style.top, 10)).toBeLessThanOrEqual(8);
+    expect(parseInt(menu.style.left, 10)).toBeGreaterThanOrEqual(8);
+    expect(parseInt(menu.style.left, 10)).toBeLessThanOrEqual(window.innerWidth - 200 - 8);
+    expect(parseInt(menu.style.top, 10)).toBeGreaterThanOrEqual(8);
+    expect(parseInt(menu.style.top, 10)).toBeLessThanOrEqual(window.innerHeight - 8);
   });
 
   it('supports keyboard navigation with enter and escape', () => {
@@ -82,5 +88,65 @@ describe('ContextMenu', () => {
 
     fireEvent.mouseDown(screen.getByRole('button', { name: 'Outside' }));
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders separator, destructive item, and disabled item states', () => {
+    const items: ContextMenuItem[] = [
+      { id: 'open', label: 'Open', onSelect: vi.fn() },
+      { id: 'sep-1', type: 'separator' },
+      { id: 'delete', label: 'Delete', destructive: true, onSelect: vi.fn() },
+      { id: 'disabled', label: 'Disabled action', disabled: true, onSelect: vi.fn() },
+    ];
+
+    render(<ContextMenu isOpen x={24} y={24} items={items} onClose={vi.fn()} />);
+
+    expect(screen.getAllByRole('separator')).toHaveLength(1);
+    expect(screen.getByRole('menuitem', { name: 'Delete' })).toHaveAttribute('data-destructive', 'true');
+    expect(screen.getByRole('menuitem', { name: 'Disabled action' })).toBeDisabled();
+  });
+
+  it('closes on tab and returns focus to trigger element', async () => {
+    const user = userEvent.setup();
+
+    function Harness() {
+      const [isOpen, setIsOpen] = useState(false);
+      const items: ContextMenuItem[] = [{ id: 'open', label: 'Open', onSelect: vi.fn() }];
+
+      return (
+        <div>
+          <button type="button" onClick={() => setIsOpen(true)}>
+            Open menu
+          </button>
+          <ContextMenu isOpen={isOpen} x={80} y={80} items={items} onClose={() => setIsOpen(false)} />
+        </div>
+      );
+    }
+
+    render(<Harness />);
+    const trigger = screen.getByRole('button', { name: 'Open menu' });
+
+    await user.click(trigger);
+    const menu = screen.getByRole('menu', { name: 'Context menu' });
+    await waitFor(() => expect(menu).toHaveFocus());
+
+    fireEvent.keyDown(menu, { key: 'Tab' });
+
+    await waitFor(() => {
+      expect(screen.queryByRole('menu', { name: 'Context menu' })).not.toBeInTheDocument();
+      expect(trigger).toHaveFocus();
+    });
+  });
+
+  it('uses tokenized context-menu layout and item styles', () => {
+    const css = readFileSync(resolve(process.cwd(), 'src/styles/shell.css'), 'utf8');
+
+    expect(css).toContain('.muwi-context-menu');
+    expect(css).toContain('min-width: 200px;');
+    expect(css).toContain('max-width: 280px;');
+    expect(css).toContain('border-radius: var(--radius-md);');
+    expect(css).toContain('.muwi-context-menu__item');
+    expect(css).toContain('min-height: 32px;');
+    expect(css).toContain('padding: var(--space-1) var(--space-3);');
+    expect(css).toContain('.muwi-context-menu__item[data-destructive=\'true\']');
   });
 });

@@ -1492,9 +1492,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/common/ContextMenu/ContextMenu.tsx`
   - `muwi/src/components/common/ContextMenu/ContextMenu.test.tsx`
 - **Acceptance Criteria**:
-  - [ ] Item sizing, hover, disabled, separator, destructive styles match spec
-  - [ ] Submenu behavior remains functional
-  - [ ] Keyboard dismissal and focus behavior verified
+  - [x] Item sizing, hover, disabled, separator, destructive styles match spec
+  - [x] Submenu behavior remains functional
+  - [x] Keyboard dismissal and focus behavior verified
 
 #### Task 7.4.5: Refactor Toolbar Component to Group Model
 - **Description**: Align toolbar visuals and behavior to grouped action spec
