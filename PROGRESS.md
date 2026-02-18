@@ -5,11 +5,11 @@ Last updated: February 18, 2026
 ## 1) Where we are now
 
 - App development is active and stable.
-- Unit tests are passing (`73` files, `300` tests).
+- Unit tests are passing (`74` files, `304` tests).
 - Latest full coverage snapshot: lines `90.82%`, statements `90.22%`, functions `86.44%`, branches `80.07%`.
 - Recent focus has been adding reliable tests module by module.
 - Blackboard coverage moved from almost none to strong coverage.
-- Current execution stage: Phase `7.2.5` (legacy theme-branching cleanup and shell refactor prep).
+- Current execution stage: Phase `7.3.8` (post-shared-shell cleanup and module path normalization).
 
 ## 2) Completed tasks so far (brief)
 
@@ -77,6 +77,7 @@ Last updated: February 18, 2026
 | Task wave 55 | Completed `6.2.3` auto-backup acceptance by wiring scheduled saves with `maxBackups` retention policy support, enforcing backup cleanup in Electron main process for auto-backup files (`muwi-backup-*.json`), and surfacing completion notifications through `BackupPanel` auto-backup callback messaging | Backup utility + panel tests + lint green: `vitest src/utils/backup.test.ts src/components/common/BackupPanel/BackupPanel.test.tsx` (`14` tests), `eslint src/utils/backup.ts src/utils/backup.test.ts src/components/common/BackupPanel/BackupPanel.tsx src/components/common/BackupPanel/BackupPanel.test.tsx src/types/electron.ts electron/preload.ts electron/main.ts` |
 | Task wave 56 | Completed Phase `7` foundation slice (`7.1.1`-`7.1.9`, `7.2.1`-`7.2.4`): created style architecture (`tokens`, `themes`, `fonts`, `reset`, `utilities`, `editor`), installed Geist font packages, wired global style import stack in `main.tsx`, added runtime theme application on `<html data-theme>`, and added theme/token tests | Targeted tests (`tokens`, `theme-switching`, `settingsStore`, `SettingsPanel`, `App`) + full run green: `vitest --run` (`73` files, `300` tests) + `eslint .` |
 | Task wave 57 | Completed `7.15.0` production build boundary fix by excluding `*.test.*` from app typecheck and resolving strict TypeScript build errors in `PasskeyPrompt`, `ExcalidrawWrapper`, and `crypto` so production build path is clean again | `npm run build` green (`tsc -b && vite build`) + existing test suite/lint still green |
+| Task wave 58 | Completed `7.2.5` + shared shell `7.3.1`-`7.3.7`: replaced legacy layout chrome hardcoded colors with tokenized shell styles, added `TitleBar`/`Sidebar`/`StatusBar`/`RightPanel`, refactored `DiaryLayout` to slot-based regions, extended app store with right-panel state and diary sidebar defaults, and added layout-level behavior tests | Targeted tests (`appStore`, `appRouter`, `DiaryLayout`, `NavigationHeader`) + full run + lint green: `vitest --run` (`74` files, `304` tests), `eslint .` |
 
 ## 3) Blackboard testing progress
 
@@ -116,6 +117,6 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Execute `7.2.5`: remove legacy component-level theme branching and enforce token-driven styling.
-2. Start shared shell slice (`7.3.1`-`7.3.7`): TitleBar, Sidebar, StatusBar, RightPanel, and slot-based `DiaryLayout`.
+1. Execute `7.3.8`: normalize Personal Diary module pathing to a single canonical route.
+2. Start `7.4` shared UI primitive refresh (`Button`, `Input`, `Dropdown`, and overlay standardization) on top of the new shell.
 3. Keep full test/lint reruns after each vertical slice to catch regressions early.

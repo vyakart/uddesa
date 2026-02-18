@@ -1342,8 +1342,8 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 7.2.2
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] No component branches on literal light/dark color values
-  - [ ] Components rely on CSS variables for appearance
+  - [x] No component branches on literal light/dark color values
+  - [x] Components rely on CSS variables for appearance
 
 ### 7.3 Shared Shell Refactor (Three-Region Model)
 
@@ -1355,9 +1355,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/common/TitleBar/TitleBar.tsx`
   - `muwi/src/components/common/TitleBar/index.ts`
 - **Acceptance Criteria**:
-  - [ ] Height and typography match tokenized title bar spec
-  - [ ] macOS drag region behavior preserved
-  - [ ] Context label shows `MUWI` or `MUWI — {Diary}`
+  - [x] Height and typography match tokenized title bar spec
+  - [x] macOS drag region behavior preserved
+  - [x] Context label shows `MUWI` or `MUWI — {Diary}`
 
 #### Task 7.3.2: Build Generic `Sidebar` Shell Component
 - **Description**: Create standardized left-region container
@@ -1367,9 +1367,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/common/Sidebar/Sidebar.tsx`
   - `muwi/src/components/common/Sidebar/index.ts`
 - **Acceptance Criteria**:
-  - [ ] Width = 240px open, collapsible to hidden
-  - [ ] Header/body/footer slots available
-  - [ ] Shared item styles use tokens and support active/hover states
+  - [x] Width = 240px open, collapsible to hidden
+  - [x] Header/body/footer slots available
+  - [x] Shared item styles use tokens and support active/hover states
 
 #### Task 7.3.3: Build Generic `StatusBar` Component
 - **Description**: Create shared bottom information strip
@@ -1379,9 +1379,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/common/StatusBar/StatusBar.tsx`
   - `muwi/src/components/common/StatusBar/index.ts`
 - **Acceptance Criteria**:
-  - [ ] Height/padding/border match tokenized status bar spec
-  - [ ] Supports left and right slot content
-  - [ ] Includes `role="status"` with polite updates
+  - [x] Height/padding/border match tokenized status bar spec
+  - [x] Supports left and right slot content
+  - [x] Includes `role="status"` with polite updates
 
 #### Task 7.3.4: Build Generic `RightPanel` Component
 - **Description**: Create on-demand right panel surface
@@ -1391,9 +1391,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/common/RightPanel/RightPanel.tsx`
   - `muwi/src/components/common/RightPanel/index.ts`
 - **Acceptance Criteria**:
-  - [ ] Width = 280px and slide-in animation matches tokens
-  - [ ] Header includes title + close affordance
-  - [ ] Panel can host subviews with optional back control
+  - [x] Width = 280px and slide-in animation matches tokens
+  - [x] Header includes title + close affordance
+  - [x] Panel can host subviews with optional back control
 
 #### Task 7.3.5: Refactor `DiaryLayout` to Slot-Based Shell
 - **Description**: Replace current top-nav layout with three-region structure
@@ -1403,9 +1403,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/common/DiaryLayout/DiaryLayout.tsx`
   - `muwi/src/components/common/index.ts`
 - **Acceptance Criteria**:
-  - [ ] Layout exposes explicit slots: sidebar, toolbar, canvas, status, right panel
-  - [ ] Canvas region remains centered and width-constrained by tokens
-  - [ ] Sidebar and right panel can toggle independently
+  - [x] Layout exposes explicit slots: sidebar, toolbar, canvas, status, right panel
+  - [x] Canvas region remains centered and width-constrained by tokens
+  - [x] Sidebar and right panel can toggle independently
 
 #### Task 7.3.6: Extend App Store for Shell UI State
 - **Description**: Add shell controls needed by new layout
@@ -1415,9 +1415,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/stores/appStore.ts`
   - `muwi/src/stores/appStore.test.ts`
 - **Acceptance Criteria**:
-  - [ ] Sidebar open/close defaults correct for diary view
-  - [ ] Right panel state includes open, panel type, and context
-  - [ ] Existing store consumers remain compatible
+  - [x] Sidebar open/close defaults correct for diary view
+  - [x] Right panel state includes open, panel type, and context
+  - [x] Existing store consumers remain compatible
 
 #### Task 7.3.7: Update Layout-Level Tests
 - **Description**: Cover shell behavior before diary migrations
@@ -1427,9 +1427,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/common/DiaryLayout/DiaryLayout.test.tsx` (create if absent)
   - `muwi/src/components/common/NavigationHeader/NavigationHeader.test.tsx`
 - **Acceptance Criteria**:
-  - [ ] Tests verify sidebar collapse/expand
-  - [ ] Tests verify right panel mount/unmount behavior
-  - [ ] Tests verify toolbar/status bar slot rendering
+  - [x] Tests verify sidebar collapse/expand
+  - [x] Tests verify right panel mount/unmount behavior
+  - [x] Tests verify toolbar/status bar slot rendering
 
 #### Task 7.3.8: Normalize Diary Module Pathing
 - **Description**: Remove naming ambiguity between `PersonalDiary` and `personal-diary` module paths

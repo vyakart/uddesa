@@ -15,6 +15,7 @@ describe('appStore', () => {
     expect(useAppStore.getState().currentView).toBe('diary');
     expect(useAppStore.getState().activeDiary).toBe('drafts');
     expect(useAppStore.getState().activeItemId).toBe('draft-1');
+    expect(useAppStore.getState().isSidebarOpen).toBe(true);
 
     state.setActiveItem('draft-2');
     expect(useAppStore.getState().activeItemId).toBe('draft-2');
@@ -23,9 +24,10 @@ describe('appStore', () => {
     expect(useAppStore.getState().currentView).toBe('shelf');
     expect(useAppStore.getState().activeDiary).toBeNull();
     expect(useAppStore.getState().activeItemId).toBeNull();
+    expect(useAppStore.getState().isSidebarOpen).toBe(false);
   });
 
-  it('manages sidebar, context menu, and settings modal state', () => {
+  it('manages sidebar, right panel, context menu, and settings modal state', () => {
     const state = useAppStore.getState();
 
     state.openSidebar();
@@ -33,6 +35,37 @@ describe('appStore', () => {
 
     state.toggleSidebar();
     expect(useAppStore.getState().isSidebarOpen).toBe(false);
+
+    state.openRightPanel('outline', { sectionId: 's-1' });
+    expect(useAppStore.getState().rightPanel).toEqual({
+      isOpen: true,
+      panelType: 'outline',
+      context: { sectionId: 's-1' },
+    });
+
+    state.setRightPanelContext({ sectionId: 's-2' });
+    expect(useAppStore.getState().rightPanel.context).toEqual({ sectionId: 's-2' });
+
+    state.toggleRightPanel('bibliography');
+    expect(useAppStore.getState().rightPanel).toEqual({
+      isOpen: false,
+      panelType: null,
+      context: null,
+    });
+
+    state.toggleRightPanel('bibliography');
+    expect(useAppStore.getState().rightPanel).toEqual({
+      isOpen: true,
+      panelType: 'bibliography',
+      context: null,
+    });
+
+    state.closeRightPanel();
+    expect(useAppStore.getState().rightPanel).toEqual({
+      isOpen: false,
+      panelType: null,
+      context: null,
+    });
 
     state.openContextMenu(100, 200, 'item-1', 'draft');
     expect(useAppStore.getState().contextMenu).toEqual({
@@ -75,6 +108,11 @@ describe('appStore', () => {
     expect(resetState.isLoading).toBe(false);
     expect(resetState.error).toBeNull();
     expect(resetState.isSidebarOpen).toBe(false);
+    expect(resetState.rightPanel).toEqual({
+      isOpen: false,
+      panelType: null,
+      context: null,
+    });
     expect(resetState.contextMenu).toBeNull();
     expect(resetState.isSettingsOpen).toBe(false);
     expect(resetState.isAppLocked).toBe(false);

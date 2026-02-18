@@ -11,6 +11,22 @@ export type DiaryType =
 
 export type View = 'shelf' | 'diary' | 'settings';
 
+export type RightPanelType =
+  | 'index'
+  | 'outline'
+  | 'bibliography'
+  | 'reference-library'
+  | 'export'
+  | 'backup'
+  | 'document-settings'
+  | 'custom';
+
+export interface RightPanelState {
+  isOpen: boolean;
+  panelType: RightPanelType | null;
+  context: Record<string, unknown> | null;
+}
+
 export interface AppState {
   // Navigation
   currentView: View;
@@ -21,6 +37,7 @@ export interface AppState {
   isLoading: boolean;
   error: string | null;
   isSidebarOpen: boolean;
+  rightPanel: RightPanelState;
   contextMenu: {
     isOpen: boolean;
     x: number;
@@ -46,6 +63,10 @@ export interface AppState {
   openSidebar: () => void;
   closeSidebar: () => void;
   toggleSidebar: () => void;
+  openRightPanel: (panelType: RightPanelType, context?: Record<string, unknown> | null) => void;
+  closeRightPanel: () => void;
+  toggleRightPanel: (panelType: RightPanelType, context?: Record<string, unknown> | null) => void;
+  setRightPanelContext: (context: Record<string, unknown> | null) => void;
   openContextMenu: (x: number, y: number, targetId?: string, targetType?: string) => void;
   closeContextMenu: () => void;
   openSettings: () => void;
@@ -56,6 +77,12 @@ export interface AppState {
   reset: () => void;
 }
 
+const initialRightPanelState: RightPanelState = {
+  isOpen: false,
+  panelType: null,
+  context: null,
+};
+
 const initialState = {
   currentView: 'shelf' as View,
   activeDiary: null,
@@ -63,6 +90,7 @@ const initialState = {
   isLoading: false,
   error: null,
   isSidebarOpen: false,
+  rightPanel: initialRightPanelState,
   contextMenu: null,
   isSettingsOpen: false,
   isAppLocked: false,
@@ -82,6 +110,8 @@ export const useAppStore = create<AppState>()(
             currentView: 'diary',
             activeDiary: type,
             activeItemId: itemId || null,
+            isSidebarOpen: true,
+            rightPanel: initialRightPanelState,
           },
           false,
           'openDiary'
@@ -93,6 +123,8 @@ export const useAppStore = create<AppState>()(
             currentView: 'shelf',
             activeDiary: null,
             activeItemId: null,
+            isSidebarOpen: false,
+            rightPanel: initialRightPanelState,
           },
           false,
           'closeDiary'
@@ -113,6 +145,63 @@ export const useAppStore = create<AppState>()(
           (state) => ({ isSidebarOpen: !state.isSidebarOpen }),
           false,
           'toggleSidebar'
+        ),
+
+      openRightPanel: (panelType, context = null) =>
+        set(
+          {
+            rightPanel: {
+              isOpen: true,
+              panelType,
+              context,
+            },
+          },
+          false,
+          'openRightPanel'
+        ),
+
+      closeRightPanel: () =>
+        set(
+          {
+            rightPanel: {
+              isOpen: false,
+              panelType: null,
+              context: null,
+            },
+          },
+          false,
+          'closeRightPanel'
+        ),
+
+      toggleRightPanel: (panelType, context = null) =>
+        set(
+          (state) => ({
+            rightPanel: state.rightPanel.isOpen
+              ? {
+                  isOpen: false,
+                  panelType: null,
+                  context: null,
+                }
+              : {
+                  isOpen: true,
+                  panelType,
+                  context,
+                },
+          }),
+          false,
+          'toggleRightPanel'
+        ),
+
+      setRightPanelContext: (context) =>
+        set(
+          (state) => ({
+            rightPanel: {
+              ...state.rightPanel,
+              context,
+            },
+          }),
+          false,
+          'setRightPanelContext'
         ),
 
       openContextMenu: (x, y, targetId, targetType) =>
@@ -155,5 +244,6 @@ export const selectActiveItemId = (state: AppState) => state.activeItemId;
 export const selectAppIsLoading = (state: AppState) => state.isLoading;
 export const selectAppError = (state: AppState) => state.error;
 export const selectIsSidebarOpen = (state: AppState) => state.isSidebarOpen;
+export const selectRightPanel = (state: AppState) => state.rightPanel;
 export const selectContextMenu = (state: AppState) => state.contextMenu;
 export const selectIsAppLocked = (state: AppState) => state.isAppLocked;

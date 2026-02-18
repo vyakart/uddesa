@@ -10,3 +10,7 @@ export * from './BackupPanel';
 export * from './NavigationHeader';
 export * from './PasskeyPrompt';
 export * from './FontSelector';
+export * from './TitleBar';
+export * from './Sidebar';
+export * from './StatusBar';
+export * from './RightPanel';

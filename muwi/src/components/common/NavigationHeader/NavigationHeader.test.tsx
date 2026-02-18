@@ -18,4 +18,16 @@ describe('NavigationHeader', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Back to shelf' }));
     expect(onBack).toHaveBeenCalledTimes(1);
   });
+
+  it('renders right content slot when provided', () => {
+    render(
+      <NavigationHeader
+        title="Drafts"
+        onBack={vi.fn()}
+        rightContent={<span>Right slot</span>}
+      />
+    );
+
+    expect(screen.getByText('Right slot')).toBeInTheDocument();
+  });
 });

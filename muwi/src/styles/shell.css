@@ -1,0 +1,295 @@
+.muwi-titlebar {
+  height: var(--space-titlebar-height);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--space-4);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-wide);
+  -webkit-app-region: drag;
+  user-select: none;
+}
+
+.muwi-titlebar__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.muwi-sidebar-shell {
+  width: var(--space-sidebar-width);
+  min-width: 0;
+  flex-shrink: 0;
+  transition: var(--transition-sidebar);
+}
+
+.muwi-sidebar-shell[data-open='false'] {
+  width: 0;
+}
+
+.muwi-sidebar {
+  height: 100%;
+  width: var(--space-sidebar-width);
+  background: var(--color-bg-secondary);
+  border-right: 1px solid var(--color-border-default);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: var(--transition-sidebar);
+}
+
+.muwi-sidebar-shell[data-open='false'] .muwi-sidebar {
+  transform: translateX(calc(-1 * var(--space-sidebar-width)));
+  opacity: 0;
+  pointer-events: none;
+}
+
+.muwi-sidebar__header {
+  min-height: var(--space-toolbar-height);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-2);
+  padding-inline: var(--space-2);
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.muwi-sidebar__title {
+  font-size: var(--font-size-md);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.muwi-sidebar__slot {
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.muwi-sidebar__body {
+  padding: var(--space-2);
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1;
+}
+
+.muwi-sidebar__footer {
+  border-top: 1px solid var(--color-border-default);
+  padding: var(--space-2);
+}
+
+.muwi-sidebar-button {
+  border: 0;
+  background: transparent;
+  color: var(--color-text-secondary);
+  min-height: 28px;
+  min-width: 28px;
+  border-radius: var(--radius-sm);
+  padding: var(--space-1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: var(--transition-colors);
+}
+
+.muwi-sidebar-button:hover {
+  background: var(--color-hover-overlay);
+  color: var(--color-text-primary);
+}
+
+.muwi-sidebar-button:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.muwi-sidebar-item {
+  min-height: 32px;
+  width: 100%;
+  border: 0;
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-3);
+  background: transparent;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--weight-regular);
+  text-align: left;
+  transition: var(--transition-colors);
+}
+
+.muwi-sidebar-item:hover {
+  background: var(--color-hover-overlay);
+  color: var(--color-text-primary);
+}
+
+.muwi-sidebar-item.is-active {
+  background: var(--color-selected-bg);
+  color: var(--color-text-primary);
+  font-weight: var(--weight-medium);
+}
+
+.muwi-sidebar-item__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.muwi-statusbar {
+  min-height: var(--space-statusbar-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-inline: var(--space-3);
+  background: var(--color-bg-secondary);
+  border-top: 1px solid var(--color-border-default);
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-xs);
+}
+
+.muwi-statusbar__left,
+.muwi-statusbar__right {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.muwi-right-panel {
+  width: var(--space-panel-width);
+  min-width: var(--space-panel-width);
+  flex-shrink: 0;
+  background: var(--color-bg-secondary);
+  border-left: 1px solid var(--color-border-default);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(0);
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+.muwi-right-panel[data-open='false'] {
+  transform: translateX(var(--space-panel-width));
+}
+
+.muwi-right-panel__header {
+  min-height: var(--space-toolbar-height);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-2);
+  border-bottom: 1px solid var(--color-border-default);
+  padding-inline: var(--space-2);
+}
+
+.muwi-right-panel__title {
+  margin: 0;
+  font-size: var(--font-size-md);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.muwi-right-panel__body {
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
+}
+
+.muwi-diary-layout {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-bg-primary);
+}
+
+.muwi-shell {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+}
+
+.muwi-shell-center {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.muwi-shell-toolbar {
+  min-height: var(--space-toolbar-height);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-inline: var(--space-3);
+  border-bottom: 1px solid var(--color-border-default);
+  background: var(--color-bg-primary);
+}
+
+.muwi-shell-toolbar__leading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.muwi-shell-toolbar__content {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.muwi-shell-canvas-region {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--color-bg-canvas);
+}
+
+.muwi-shell-canvas-inner {
+  height: 100%;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  padding-inline: var(--space-3);
+}
+
+.muwi-shell-canvas-slot {
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+.muwi-shell-canvas-inner[data-constrained='true'] .muwi-shell-canvas-slot {
+  max-width: var(--space-canvas-wide-max-width);
+}
+
+.muwi-shell-floating-controls {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  z-index: var(--z-toolbar);
+}

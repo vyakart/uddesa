@@ -20,7 +20,9 @@ export function NavigationHeader({
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: '0.75rem 1rem',
-        borderBottom: '1px solid #E0E0E0',
+        borderBottom: '1px solid var(--color-border-default)',
+        color: 'var(--color-text-primary)',
+        backgroundColor: 'var(--color-bg-primary)',
       }}
     >
       <button
@@ -36,7 +38,7 @@ export function NavigationHeader({
           cursor: 'pointer',
           fontSize: '0.875rem',
           fontWeight: 500,
-          color: '#666666',
+          color: 'var(--color-text-secondary)',
         }}
         aria-label="Back to shelf"
       >
@@ -50,7 +52,7 @@ export function NavigationHeader({
           display: 'flex',
           alignItems: 'center',
           gap: '0.5rem',
-          color: '#1A1A1A',
+          color: 'var(--color-text-primary)',
         }}
       >
         {icon ? (
