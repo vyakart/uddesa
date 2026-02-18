@@ -8,6 +8,7 @@ export interface ToolbarButtonItem {
   isActive?: boolean;
   tooltip?: string;
   toggle?: boolean;
+  showLabel?: boolean;
 }
 
 export interface ToolbarSeparatorItem {
@@ -31,6 +32,7 @@ export function Toolbar({ items, ariaLabel = 'Toolbar' }: ToolbarProps) {
     <div
       role="toolbar"
       aria-label={ariaLabel}
+      className="muwi-toolbar"
       onKeyDown={(event) => {
         if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') {
           return;
@@ -56,17 +58,6 @@ export function Toolbar({ items, ariaLabel = 'Toolbar' }: ToolbarProps) {
         event.preventDefault();
         enabledButtons[nextIndex].focus();
       }}
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 6,
-        minHeight: 40,
-        padding: '0.25rem 0.5rem',
-        borderRadius: 10,
-        border: '1px solid #dddddd',
-        backgroundColor: '#ffffff',
-      }}
     >
       {items.map((item) => {
         if (isSeparator(item)) {
@@ -75,17 +66,13 @@ export function Toolbar({ items, ariaLabel = 'Toolbar' }: ToolbarProps) {
               key={item.id}
               role="separator"
               aria-orientation="vertical"
-              style={{
-                width: 1,
-                height: 22,
-                margin: '0 4px',
-                backgroundColor: '#d5d5d5',
-              }}
+              className="muwi-toolbar__separator"
             />
           );
         }
 
         const isPressed = Boolean(item.toggle && item.isActive);
+        const showLabel = item.showLabel || !item.icon;
         return (
           <button
             key={item.id}
@@ -96,23 +83,11 @@ export function Toolbar({ items, ariaLabel = 'Toolbar' }: ToolbarProps) {
             aria-label={item.label}
             aria-pressed={item.toggle ? isPressed : undefined}
             data-active={item.isActive ? 'true' : 'false'}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 6,
-              borderRadius: 8,
-              border: item.isActive ? '1px solid #4A90A4' : '1px solid #cfcfcf',
-              minHeight: 30,
-              padding: '0 10px',
-              backgroundColor: item.isActive ? '#e7f4f8' : '#f8f8f8',
-              color: '#202020',
-              cursor: item.disabled ? 'not-allowed' : 'pointer',
-              fontSize: '0.875rem',
-            }}
+            data-icon-only={!showLabel ? 'true' : 'false'}
+            className="muwi-toolbar__button"
           >
-            {item.icon ? <span aria-hidden="true">{item.icon}</span> : null}
-            <span>{item.label}</span>
+            {item.icon ? <span className="muwi-toolbar__icon" aria-hidden="true">{item.icon}</span> : null}
+            {showLabel ? <span className="muwi-toolbar__label">{item.label}</span> : null}
           </button>
         );
       })}

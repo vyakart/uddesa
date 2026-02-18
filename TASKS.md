@@ -1504,10 +1504,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/common/Toolbar/Toolbar.tsx`
   - `muwi/src/components/common/Toolbar/Toolbar.test.tsx`
 - **Acceptance Criteria**:
-  - [ ] 44px toolbar lane with 28px controls
-  - [ ] Group separators rendered as subtle 1px lines
-  - [ ] Active formatting states use accent tokens
-  - [ ] Horizontal overflow scroll support preserved
+  - [x] 44px toolbar lane with 28px controls
+  - [x] Group separators rendered as subtle 1px lines
+  - [x] Active formatting states use accent tokens
+  - [x] Horizontal overflow scroll support preserved
 
 #### Task 7.4.6: Implement Toast Notification System
 - **Description**: Add shared toast container for non-blocking feedback

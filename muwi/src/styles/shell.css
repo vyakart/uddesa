@@ -258,6 +258,88 @@
   gap: var(--space-2);
 }
 
+.muwi-toolbar {
+  min-height: var(--space-toolbar-height);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding-inline: var(--space-3);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  background: var(--color-bg-primary);
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.muwi-toolbar__button {
+  min-width: var(--size-button-sm);
+  height: var(--size-button-sm);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  font-size: var(--font-size-sm);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: var(--transition-colors), var(--transition-shadow);
+}
+
+.muwi-toolbar__button[data-icon-only='false'] {
+  min-width: 0;
+  padding-inline: var(--space-2);
+}
+
+.muwi-toolbar__button:hover:not(:disabled) {
+  background: var(--color-hover-overlay);
+  color: var(--color-text-primary);
+}
+
+.muwi-toolbar__button[data-active='true']:not(:disabled) {
+  background: var(--color-accent-subtle);
+  color: var(--color-accent-default);
+}
+
+.muwi-toolbar__button:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.muwi-toolbar__button:disabled {
+  color: var(--color-text-tertiary);
+  cursor: default;
+}
+
+.muwi-toolbar__icon {
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.muwi-toolbar__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.muwi-toolbar__separator {
+  width: 1px;
+  height: 16px;
+  margin-inline: var(--space-1);
+  background: var(--color-border-subtle);
+  flex-shrink: 0;
+}
+
 .muwi-shell-canvas-region {
   flex: 1;
   min-height: 0;
