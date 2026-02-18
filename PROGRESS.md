@@ -5,11 +5,11 @@ Last updated: February 18, 2026
 ## 1) Where we are now
 
 - App development is active and stable.
-- Unit tests are passing (`68` files, `280` tests).
+- Unit tests are passing (`68` files, `281` tests).
 - Latest full coverage snapshot: lines `90.82%`, statements `90.22%`, functions `86.44%`, branches `80.07%`.
 - Recent focus has been adding reliable tests module by module.
 - Blackboard coverage moved from almost none to strong coverage.
-- Current execution stage: Phase `5.2.2` (BibliographyManager acceptance verification and expansion).
+- Current execution stage: Phase `5.2.3` (ReferenceLibrary panel implementation).
 
 ## 2) Completed tasks so far (brief)
 
@@ -64,6 +64,7 @@ Last updated: February 18, 2026
 | Task wave 42 | Completed `5.1.2` citation utilities by consolidating `citation.ts` with the citeproc baseline, adding `formatCitation` aliasing, preserving DOI/BibTeX helpers, and implementing full style switching (`apa7`/`mla9`/`chicago` via bundled citeproc + `harvard`/`ieee` fallback path) | Citation-targeted tests + full run green: `vitest --run` (`68` files, `280` tests) |
 | Task wave 43 | Completed `5.1.3` CitationPicker phase by validating search/filter, reference selection, page-number input, citation insertion wiring, and keyboard shortcut behavior, and by consolidating shortcut handling through shared `useCitationShortcut` with case-insensitive key matching | Academic targeted tests + full run green + eslint green: `vitest --run` (`68` files, `280` tests), `eslint .` |
 | Task wave 44 | Completed `5.2.1` Academic Store acceptance by verifying `papers`/`currentPaper`/`bibliographyEntries` state slices, full store CRUD flows, and citation insertion/linking actions against existing implementation and unit coverage | Store-targeted evidence + full run green + eslint green: `academicStore.test.ts`, `vitest --run` (`68` files, `280` tests), `eslint .` |
+| Task wave 45 | Completed `5.2.2` BibliographyManager acceptance by implementing tag-based organization (capture/display/filter), preserving manual/DOI/BibTeX add flows, edit/delete/search flows, and extending component coverage for tag filtering behavior | Academic component-targeted tests + full run green + eslint green: `BibliographyManager.test.tsx` (`5` tests), `vitest --run` (`68` files, `281` tests), `eslint .` |
 
 ## 3) Blackboard testing progress
 
@@ -102,5 +103,5 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Implement Phase `5.2.2`: BibliographyManager component acceptance (list/add/edit/delete/tag-search flows).
+1. Implement Phase `5.2.3`: ReferenceLibrary panel (separate global library, import/export references, paper linking).
 2. Keep periodic full coverage reruns while feature stages advance to prevent regressions.

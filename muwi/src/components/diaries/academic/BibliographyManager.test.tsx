@@ -85,6 +85,36 @@ describe('BibliographyManager', () => {
     confirmSpy.mockRestore();
   });
 
+  it('supports tag organization with tag chips and tag filtering', () => {
+    const first = makeEntry({ id: 'entry-1', title: 'Tagged AI Entry', tags: ['ai', 'review'] });
+    const second = makeEntry({ id: 'entry-2', title: 'Tagged ML Entry', tags: ['ml'] });
+
+    useAcademicStore.setState({
+      bibliographyEntries: [first, second],
+      citationStyle: 'apa7',
+      addBibliographyEntry: vi.fn().mockResolvedValue(second),
+      updateBibliographyEntry: vi.fn().mockResolvedValue(undefined),
+      deleteBibliographyEntry: vi.fn().mockResolvedValue(undefined),
+    });
+
+    render(<BibliographyManager />);
+
+    expect(screen.getByRole('button', { name: 'All tags' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '#ai' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '#ml' })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: '#ai' }));
+    expect(screen.getByText('Tagged AI Entry (2024)')).toBeInTheDocument();
+    expect(screen.queryByText('Tagged ML Entry (2024)')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'All tags' }));
+    fireEvent.change(screen.getByPlaceholderText('Search references...'), {
+      target: { value: 'review' },
+    });
+    expect(screen.getByText('Tagged AI Entry (2024)')).toBeInTheDocument();
+    expect(screen.queryByText('Tagged ML Entry (2024)')).not.toBeInTheDocument();
+  });
+
   it('imports a reference from DOI', async () => {
     const addBibliographyEntry = vi.fn().mockResolvedValue(undefined);
     const mockedFetchFromDOI = vi.mocked(fetchFromDOI);

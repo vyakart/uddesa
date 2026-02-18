@@ -22,6 +22,13 @@ const entryTypeLabels: Record<BibliographyEntryType, string> = {
   other: 'Other',
 };
 
+function parseDelimitedList(value: string): string[] {
+  return value
+    .split(/[,;]/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
 export function BibliographyManager({ onSelectEntry, onClose }: BibliographyManagerProps) {
   const entries = useAcademicStore(selectBibliographyEntries);
   const citationStyle = useAcademicStore(selectCitationStyle);
@@ -30,6 +37,7 @@ export function BibliographyManager({ onSelectEntry, onClose }: BibliographyMana
   const deleteBibliographyEntry = useAcademicStore((state) => state.deleteBibliographyEntry);
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [addMode, setAddMode] = useState<'manual' | 'doi' | 'bibtex'>('manual');
   const [editingEntry, setEditingEntry] = useState<BibliographyEntry | null>(null);
@@ -38,15 +46,31 @@ export function BibliographyManager({ onSelectEntry, onClose }: BibliographyMana
 
   // Filter entries by search query
   const filteredEntries = useMemo(() => {
-    if (!searchQuery.trim()) return entries;
-    const query = searchQuery.toLowerCase();
-    return entries.filter(
-      (entry) =>
+    const query = searchQuery.trim().toLowerCase();
+
+    return entries.filter((entry) => {
+      const matchesTag = !selectedTag || entry.tags.includes(selectedTag);
+      if (!matchesTag) {
+        return false;
+      }
+
+      if (!query) {
+        return true;
+      }
+
+      return (
         entry.title.toLowerCase().includes(query) ||
         entry.authors.some((a) => a.toLowerCase().includes(query)) ||
+        entry.tags.some((tag) => tag.toLowerCase().includes(query)) ||
         (entry.year && entry.year.toString().includes(query))
-    );
-  }, [entries, searchQuery]);
+      );
+    });
+  }, [entries, searchQuery, selectedTag]);
+
+  const availableTags = useMemo(
+    () => Array.from(new Set(entries.flatMap((entry) => entry.tags))).sort(),
+    [entries]
+  );
 
   const handleDelete = useCallback(
     async (id: string) => {
@@ -141,6 +165,53 @@ export function BibliographyManager({ onSelectEntry, onClose }: BibliographyMana
           Add
         </button>
       </div>
+
+      {/* Tag filters */}
+      {availableTags.length > 0 && (
+        <div
+          style={{
+            padding: '8px 16px',
+            borderBottom: '1px solid #E5E7EB',
+            display: 'flex',
+            gap: '6px',
+            overflowX: 'auto',
+          }}
+        >
+          <button
+            onClick={() => setSelectedTag(null)}
+            style={{
+              padding: '4px 10px',
+              border: selectedTag === null ? '1px solid #4A90A4' : '1px solid #E5E7EB',
+              borderRadius: '999px',
+              backgroundColor: selectedTag === null ? '#EFF6FF' : 'white',
+              color: selectedTag === null ? '#4A90A4' : '#6B7280',
+              fontSize: '12px',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            All tags
+          </button>
+          {availableTags.map((tag) => (
+            <button
+              key={tag}
+              onClick={() => setSelectedTag(tag)}
+              style={{
+                padding: '4px 10px',
+                border: selectedTag === tag ? '1px solid #4A90A4' : '1px solid #E5E7EB',
+                borderRadius: '999px',
+                backgroundColor: selectedTag === tag ? '#EFF6FF' : 'white',
+                color: selectedTag === tag ? '#4A90A4' : '#6B7280',
+                fontSize: '12px',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              #{tag}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Entry List */}
       <div style={{ flex: 1, overflowY: 'auto' }}>
@@ -288,6 +359,7 @@ const BibliographyEntryItem = memo(function BibliographyEntryItem({
             style={{
               display: 'flex',
               gap: '8px',
+              flexWrap: 'wrap',
               marginTop: '6px',
               fontSize: '11px',
               color: '#9CA3AF',
@@ -302,6 +374,19 @@ const BibliographyEntryItem = memo(function BibliographyEntryItem({
             >
               {entryTypeLabels[entry.type]}
             </span>
+            {entry.tags.map((tag) => (
+              <span
+                key={`${entry.id}-${tag}`}
+                style={{
+                  padding: '2px 6px',
+                  backgroundColor: '#EFF6FF',
+                  borderRadius: '999px',
+                  color: '#4A90A4',
+                }}
+              >
+                #{tag}
+              </span>
+            ))}
             {entry.doi && <span>DOI: {entry.doi}</span>}
           </div>
         </div>
@@ -382,15 +467,14 @@ function AddReferenceModal({
     publisher: '',
     doi: '',
     url: '',
+    tags: '',
   });
   const [doiInput, setDoiInput] = useState('');
   const [bibtexInput, setBibtexInput] = useState('');
 
   const handleManualSubmit = () => {
-    const authors = formData.authors
-      .split(/[,;]/)
-      .map((a) => a.trim())
-      .filter(Boolean);
+    const authors = parseDelimitedList(formData.authors);
+    const tags = parseDelimitedList(formData.tags);
     onAdd({
       type: formData.type,
       title: formData.title,
@@ -403,7 +487,7 @@ function AddReferenceModal({
       publisher: formData.publisher || undefined,
       doi: formData.doi || undefined,
       url: formData.url || undefined,
-      tags: [],
+      tags,
     });
   };
 
@@ -674,6 +758,25 @@ function AddReferenceModal({
                   }}
                 />
               </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '4px' }}>
+                  Tags (comma or semicolon separated)
+                </label>
+                <input
+                  type="text"
+                  placeholder="ai, methods, review"
+                  value={formData.tags}
+                  onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    border: '1px solid #E5E7EB',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                  }}
+                />
+              </div>
             </div>
           )}
 
@@ -803,15 +906,14 @@ function EditReferenceModal({ entry, onClose, onSave }: EditReferenceModalProps)
     publisher: entry.publisher || '',
     doi: entry.doi || '',
     url: entry.url || '',
+    tags: entry.tags.join('; '),
   });
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = async () => {
     setIsSaving(true);
-    const authors = formData.authors
-      .split(/[,;]/)
-      .map((a) => a.trim())
-      .filter(Boolean);
+    const authors = parseDelimitedList(formData.authors);
+    const tags = parseDelimitedList(formData.tags);
     await onSave({
       type: formData.type,
       title: formData.title,
@@ -824,6 +926,7 @@ function EditReferenceModal({ entry, onClose, onSave }: EditReferenceModalProps)
       publisher: formData.publisher || undefined,
       doi: formData.doi || undefined,
       url: formData.url || undefined,
+      tags,
     });
     setIsSaving(false);
   };
@@ -983,6 +1086,24 @@ function EditReferenceModal({ entry, onClose, onSave }: EditReferenceModalProps)
                 type="text"
                 value={formData.doi}
                 onChange={(e) => setFormData({ ...formData, doi: e.target.value })}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #E5E7EB',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                }}
+                />
+              </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '4px' }}>
+                Tags (comma or semicolon separated)
+              </label>
+              <input
+                type="text"
+                value={formData.tags}
+                onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
                 style={{
                   width: '100%',
                   padding: '8px 12px',

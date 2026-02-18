@@ -1017,12 +1017,12 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 5.2.1
 - **Effort**: L
 - **Acceptance Criteria**:
-  - [ ] List all references
-  - [ ] Add reference (manual, DOI, BibTeX)
-  - [ ] Edit reference
-  - [ ] Delete reference
-  - [ ] Tag/folder organization
-  - [ ] Search references
+  - [x] List all references
+  - [x] Add reference (manual, DOI, BibTeX)
+  - [x] Edit reference
+  - [x] Delete reference
+  - [x] Tag/folder organization
+  - [x] Search references
 - **Testing**: Component tests
 
 #### Task 5.2.3: Create ReferenceLibrary Panel
