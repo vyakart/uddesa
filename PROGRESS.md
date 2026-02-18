@@ -9,7 +9,7 @@ Last updated: February 18, 2026
 - Latest full coverage snapshot: lines `90.82%`, statements `90.22%`, functions `86.44%`, branches `80.07%`.
 - Recent focus has been adding reliable tests module by module.
 - Blackboard coverage moved from almost none to strong coverage.
-- Current execution stage: Phase `6.2.2` (BackupPanel component).
+- Current execution stage: Phase `7.1.1` (dark theme CSS baseline).
 
 ## 2) Completed tasks so far (brief)
 
@@ -73,6 +73,8 @@ Last updated: February 18, 2026
 | Task wave 51 | Completed `6.1.2` Word export utility acceptance by applying document-wide text styling controls (font family, font size, line spacing), preserving block formatting (headings/lists/blockquotes), supporting configurable headers/footers + page numbering, and adding dedicated DOCX unit tests with mocked `docx` primitives | Export-targeted tests + lint green: `vitest src/utils/export.test.ts src/utils/export.pdf.test.ts src/utils/export.word.test.ts` (`12` tests), `eslint src/utils/export.ts src/utils/export.word.test.ts` |
 | Task wave 52 | Completed `6.1.3` ExportPanel acceptance by keeping format selection for `PDF`/`DOCX`/`LaTeX`, adding format-specific options (header/footer + page numbering only for binary exports), introducing explicit export progress indicator states (`generating`/`saving`) with an accessible progressbar, and handling save-location cancellation messaging | Export panel targeted tests + lint green: `vitest src/components/common/ExportPanel/ExportPanel.test.tsx` (`5` tests), `vitest src/utils/export.test.ts src/utils/export.pdf.test.ts src/utils/export.word.test.ts src/components/common/ExportPanel/ExportPanel.test.tsx` (`17` tests), `eslint src/components/common/ExportPanel/ExportPanel.tsx src/components/common/ExportPanel/ExportPanel.test.tsx` |
 | Task wave 53 | Completed `6.2.1` backup utility acceptance by validating complete table coverage in `createBackup`, strengthening backup metadata/version/date validation (`semver`, ISO timestamp, table count, total record constraints), preserving JSON export/parse flows, and confirming restore compatibility checks | Backup-targeted tests + lint green: `vitest src/utils/backup.test.ts` (`11` tests), `eslint src/utils/backup.ts src/utils/backup.test.ts` |
+| Task wave 54 | Completed `6.2.2` BackupPanel acceptance by validating manual backup + restore workflows, location selector flow for automatic backups, auto-backup toggle/save behavior, and last-backup display updates after successful manual backups; added guardrail that blocks enabling auto-backup without a selected location | Backup panel tests + lint green: `vitest src/components/common/BackupPanel/BackupPanel.test.tsx` (`3` tests), `vitest src/utils/backup.test.ts src/components/common/BackupPanel/BackupPanel.test.tsx` (`14` tests), `eslint src/components/common/BackupPanel/BackupPanel.tsx src/components/common/BackupPanel/BackupPanel.test.tsx` |
+| Task wave 55 | Completed `6.2.3` auto-backup acceptance by wiring scheduled saves with `maxBackups` retention policy support, enforcing backup cleanup in Electron main process for auto-backup files (`muwi-backup-*.json`), and surfacing completion notifications through `BackupPanel` auto-backup callback messaging | Backup utility + panel tests + lint green: `vitest src/utils/backup.test.ts src/components/common/BackupPanel/BackupPanel.test.tsx` (`14` tests), `eslint src/utils/backup.ts src/utils/backup.test.ts src/components/common/BackupPanel/BackupPanel.tsx src/components/common/BackupPanel/BackupPanel.test.tsx src/types/electron.ts electron/preload.ts electron/main.ts` |
 
 ## 3) Blackboard testing progress
 
@@ -111,5 +113,5 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Implement Phase `6.2.2`: `BackupPanel` component acceptance (manual backup, restore flow, location selector, auto-backup toggle, last-backup display).
+1. Implement Phase `7.1.1`: dark theme CSS baseline (token set + global palette variants).
 2. Keep periodic full coverage reruns while feature stages advance to prevent regressions.

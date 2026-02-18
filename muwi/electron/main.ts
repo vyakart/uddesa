@@ -3,6 +3,32 @@ import path from 'path';
 import fs from 'fs/promises';
 
 let mainWindow: BrowserWindow | null = null;
+const AUTO_BACKUP_FILE_PATTERN = /^muwi-backup-(\d+)\.json$/;
+
+async function cleanupOldAutoBackups(location: string, maxBackups: number): Promise<void> {
+  if (!Number.isFinite(maxBackups) || maxBackups <= 0) {
+    return;
+  }
+
+  const entries = await fs.readdir(location, { withFileTypes: true });
+  const backupFiles = entries
+    .filter((entry) => entry.isFile())
+    .map((entry) => {
+      const match = entry.name.match(AUTO_BACKUP_FILE_PATTERN);
+      if (!match) return null;
+      return {
+        name: entry.name,
+        timestamp: Number(match[1]),
+      };
+    })
+    .filter((item): item is { name: string; timestamp: number } => item !== null)
+    .sort((a, b) => b.timestamp - a.timestamp);
+
+  const staleFiles = backupFiles.slice(maxBackups);
+  await Promise.all(
+    staleFiles.map((file) => fs.unlink(path.join(location, file.name)).catch(() => undefined))
+  );
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -55,7 +81,7 @@ ipcMain.handle('select-backup-location', async () => {
   return result.filePaths[0];
 });
 
-ipcMain.handle('save-backup', async (_event, backup: string, location?: string) => {
+ipcMain.handle('save-backup', async (_event, backup: string, location?: string, maxBackups = 10) => {
   if (!mainWindow) return null;
 
   let filepath: string;
@@ -75,6 +101,11 @@ ipcMain.handle('save-backup', async (_event, backup: string, location?: string) 
   }
 
   await fs.writeFile(filepath, backup);
+
+  if (location) {
+    await cleanupOldAutoBackups(location, maxBackups);
+  }
+
   return filepath;
 });
 

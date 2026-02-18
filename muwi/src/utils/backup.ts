@@ -465,14 +465,14 @@ function getBackupIntervalMs(frequency: AutoBackupConfig['frequency']): number {
 /**
  * Perform auto-backup to configured location
  */
-export async function performAutoBackup(location: string): Promise<BackupResult> {
+export async function performAutoBackup(location: string, maxBackups = 10): Promise<BackupResult> {
   try {
     const backup = await createBackup();
     const jsonString = backupToJSON(backup);
 
     if (window.electronAPI?.saveBackup) {
       // Save directly to configured location for auto-backups
-      const filePath = await window.electronAPI.saveBackup(jsonString, location);
+      const filePath = await window.electronAPI.saveBackup(jsonString, location, maxBackups);
       if (filePath) {
         return {
           success: true,
@@ -508,7 +508,7 @@ export function startAutoBackup(
   const intervalMs = getBackupIntervalMs(config.frequency);
 
   autoBackupInterval = setInterval(async () => {
-    const result = await performAutoBackup(config.location);
+    const result = await performAutoBackup(config.location, config.maxBackups);
     onBackupComplete?.(result);
   }, intervalMs);
 
@@ -517,7 +517,7 @@ export function startAutoBackup(
     const lastBackupTime = new Date(config.lastBackup).getTime();
     const now = Date.now();
     if (now - lastBackupTime > intervalMs) {
-      performAutoBackup(config.location).then(onBackupComplete);
+      performAutoBackup(config.location, config.maxBackups).then(onBackupComplete);
     }
   }
 }

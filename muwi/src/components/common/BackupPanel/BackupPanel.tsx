@@ -47,6 +47,7 @@ export function BackupPanel({
   const [localAutoEnabled, setLocalAutoEnabled] = useState(autoBackupEnabled);
   const [localFrequency, setLocalFrequency] = useState(autoBackupFrequency);
   const [localLocation, setLocalLocation] = useState(backupLocation);
+  const [localLastBackup, setLocalLastBackup] = useState(lastBackup);
 
   // Load stats on open
   useEffect(() => {
@@ -55,8 +56,9 @@ export function BackupPanel({
       setLocalAutoEnabled(autoBackupEnabled);
       setLocalFrequency(autoBackupFrequency);
       setLocalLocation(backupLocation);
+      setLocalLastBackup(lastBackup);
     }
-  }, [isOpen, autoBackupEnabled, autoBackupFrequency, backupLocation]);
+  }, [isOpen, autoBackupEnabled, autoBackupFrequency, backupLocation, lastBackup]);
 
   const handleBackup = useCallback(async () => {
     setIsBackingUp(true);
@@ -66,6 +68,7 @@ export function BackupPanel({
       const result: BackupResult = await saveBackupToFile();
 
       if (result.success) {
+        setLocalLastBackup(new Date().toISOString());
         setMessage({
           type: 'success',
           text: `Backup created successfully! (${result.recordCount} records)`,
@@ -118,35 +121,63 @@ export function BackupPanel({
       if (location) {
         setLocalLocation(location);
       }
+    } else {
+      setMessage({
+        type: 'error',
+        text: 'Location picker requires the desktop app.',
+      });
     }
   }, []);
 
   const handleSaveSettings = useCallback(() => {
+    const normalizedLocation = localLocation.trim();
+    if (localAutoEnabled && !normalizedLocation) {
+      setMessage({
+        type: 'error',
+        text: 'Select a backup location to enable automatic backups.',
+      });
+      return;
+    }
+
     onSettingsChange?.({
       autoBackupEnabled: localAutoEnabled,
       autoBackupFrequency: localFrequency,
-      backupLocation: localLocation,
+      backupLocation: normalizedLocation,
     });
 
     // Update auto-backup scheduler
-    if (localAutoEnabled && localLocation) {
+    if (localAutoEnabled && normalizedLocation) {
       startAutoBackup({
         enabled: true,
         frequency: localFrequency,
-        location: localLocation,
+        location: normalizedLocation,
         maxBackups: 10,
-        lastBackup,
+        lastBackup: localLastBackup,
+      }, (result) => {
+        if (result.success) {
+          setLocalLastBackup(new Date().toISOString());
+          setMessage({
+            type: 'success',
+            text: `Auto-backup completed${result.recordCount ? ` (${result.recordCount} records)` : ''}.`,
+          });
+        } else {
+          setMessage({
+            type: 'error',
+            text: result.error || 'Auto-backup failed',
+          });
+        }
       });
     } else {
       stopAutoBackup();
     }
 
     setMessage({ type: 'success', text: 'Settings saved' });
-  }, [localAutoEnabled, localFrequency, localLocation, lastBackup, onSettingsChange]);
+  }, [localAutoEnabled, localFrequency, localLocation, localLastBackup, onSettingsChange]);
 
   const formatLastBackup = (timestamp?: string) => {
     if (!timestamp) return 'Never';
     const date = new Date(timestamp);
+    if (Number.isNaN(date.getTime())) return 'Invalid date';
     return date.toLocaleString();
   };
 
@@ -333,7 +364,7 @@ export function BackupPanel({
               </button>
             </div>
             <div style={{ marginTop: '8px', fontSize: '12px', color: '#6B7280' }}>
-              Last backup: {formatLastBackup(lastBackup)}
+              Last backup: {formatLastBackup(localLastBackup)}
             </div>
           </div>
 

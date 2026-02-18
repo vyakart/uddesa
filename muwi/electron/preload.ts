@@ -5,8 +5,8 @@ import { contextBridge, ipcRenderer } from 'electron';
 contextBridge.exposeInMainWorld('electronAPI', {
   // Backup operations
   selectBackupLocation: () => ipcRenderer.invoke('select-backup-location'),
-  saveBackup: (backup: string, location: string) =>
-    ipcRenderer.invoke('save-backup', backup, location),
+  saveBackup: (backup: string, location?: string, maxBackups?: number) =>
+    ipcRenderer.invoke('save-backup', backup, location, maxBackups),
   loadBackup: () => ipcRenderer.invoke('load-backup'),
 
   // Export operations

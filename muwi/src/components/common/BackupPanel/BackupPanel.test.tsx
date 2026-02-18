@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@/test';
+import { act, fireEvent, render, screen, waitFor } from '@/test';
 import { BackupPanel } from './BackupPanel';
 import {
   getBackupStats,
@@ -54,7 +54,7 @@ describe('BackupPanel', () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('runs backup and restore flows and refreshes stats after restore', async () => {
+  it('runs backup and restore flows, updates last backup timestamp, and refreshes stats after restore', async () => {
     vi.mocked(saveBackupToFile).mockResolvedValue({ success: true, recordCount: 12 });
     vi.mocked(loadBackupFromFile).mockResolvedValue({
       success: true,
@@ -73,17 +73,20 @@ describe('BackupPanel', () => {
         estimatedSize: '40 KB',
       });
 
-    render(<BackupPanel isOpen onClose={vi.fn()} lastBackup="2026-02-10T10:00:00.000Z" />);
+    render(<BackupPanel isOpen onClose={vi.fn()} />);
 
     await waitFor(() => {
       expect(screen.getByText('Total: 5 records')).toBeInTheDocument();
     });
+    expect(screen.getByText('Last backup: Never')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Create Backup' }));
     await waitFor(() => {
       expect(saveBackupToFile).toHaveBeenCalledTimes(1);
       expect(screen.getByText('Backup created successfully! (12 records)')).toBeInTheDocument();
     });
+    expect(screen.queryByText('Last backup: Never')).not.toBeInTheDocument();
+    expect(screen.getByText(/^Last backup:/)).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Restore Backup' }));
     expect(screen.getByText('Restore Backup?')).toBeInTheDocument();
@@ -101,7 +104,7 @@ describe('BackupPanel', () => {
   it('saves auto-backup settings and handles scheduler start/stop conditions', async () => {
     const onSettingsChange = vi.fn();
     vi.mocked(isAutoBackupRunning).mockReturnValue(true);
-    window.electronAPI.selectBackupLocation = vi.fn().mockResolvedValue('/chosen/backups');
+    window.electronAPI.selectBackupLocation = vi.fn().mockResolvedValue('/chosen/backups  ');
 
     render(
       <BackupPanel
@@ -122,14 +125,17 @@ describe('BackupPanel', () => {
     fireEvent.click(screen.getByRole('checkbox'));
     fireEvent.click(screen.getByRole('button', { name: 'Save Settings' }));
 
-    expect(stopAutoBackup).toHaveBeenCalledTimes(1);
+    expect(screen.getByText('Select a backup location to enable automatic backups.')).toBeInTheDocument();
+    expect(onSettingsChange).not.toHaveBeenCalled();
+    expect(stopAutoBackup).not.toHaveBeenCalled();
+    expect(startAutoBackup).not.toHaveBeenCalled();
 
     fireEvent.change(screen.getByRole('combobox'), { target: { value: 'weekly' } });
     fireEvent.click(screen.getByRole('button', { name: 'Browse' }));
 
     await waitFor(() => {
       expect(window.electronAPI.selectBackupLocation).toHaveBeenCalledTimes(1);
-      expect(screen.getByDisplayValue('/chosen/backups')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText('Select a folder...')).toHaveValue('/chosen/backups  ');
     });
 
     fireEvent.click(screen.getByRole('button', { name: 'Save Settings' }));
@@ -139,14 +145,26 @@ describe('BackupPanel', () => {
       autoBackupFrequency: 'weekly',
       backupLocation: '/chosen/backups',
     });
-    expect(startAutoBackup).toHaveBeenCalledWith({
-      enabled: true,
-      frequency: 'weekly',
-      location: '/chosen/backups',
-      maxBackups: 10,
-      lastBackup: '2026-02-11T09:30:00.000Z',
-    });
+    expect(startAutoBackup).toHaveBeenCalledWith(
+      {
+        enabled: true,
+        frequency: 'weekly',
+        location: '/chosen/backups',
+        maxBackups: 10,
+        lastBackup: '2026-02-11T09:30:00.000Z',
+      },
+      expect.any(Function)
+    );
     expect(screen.getByText('Settings saved')).toBeInTheDocument();
+
+    const onBackupComplete = vi.mocked(startAutoBackup).mock.calls.at(-1)?.[1] as
+      | ((result: { success: boolean; recordCount?: number; error?: string }) => void)
+      | undefined;
+    await act(async () => {
+      onBackupComplete?.({ success: true, recordCount: 6 });
+    });
+    expect(screen.getByText('Auto-backup completed (6 records).')).toBeInTheDocument();
+
     expect(screen.getByText('Active')).toBeInTheDocument();
   });
 });

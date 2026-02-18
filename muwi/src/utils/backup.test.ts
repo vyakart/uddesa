@@ -396,6 +396,7 @@ describe('backup utils', () => {
     const immediate = await performAutoBackup('/tmp');
     expect(immediate.success).toBe(true);
     expect(immediate.filePath).toBe('/tmp/muwi-auto-backup.json');
+    expect(saveBackup).toHaveBeenCalledWith(expect.any(String), '/tmp', 10);
 
     delete window.electronAPI.saveBackup;
     const noElectron = await performAutoBackup('/tmp');
@@ -447,6 +448,7 @@ describe('backup utils', () => {
     expect(onComplete).toHaveBeenCalledWith(
       expect.objectContaining({ success: true, filePath: '/tmp/scheduled.json' })
     );
+    expect(saveBackup).toHaveBeenLastCalledWith(expect.any(String), '/tmp', 3);
 
     stopAutoBackup();
     startAutoBackup({
@@ -467,6 +469,7 @@ describe('backup utils', () => {
     });
     await Promise.resolve();
     expect(saveBackup).toHaveBeenCalled();
+    expect(saveBackup).toHaveBeenLastCalledWith(expect.any(String), '/tmp', 3);
 
     stopAutoBackup();
     startAutoBackup({ enabled: false, frequency: 'hourly', location: '/tmp', maxBackups: 3 });

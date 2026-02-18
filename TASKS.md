@@ -1134,11 +1134,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 6.2.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Manual backup button
-  - [ ] Restore from file
-  - [ ] Backup location selector
-  - [ ] Auto-backup toggle
-  - [ ] Last backup timestamp
+  - [x] Manual backup button
+  - [x] Restore from file
+  - [x] Backup location selector
+  - [x] Auto-backup toggle
+  - [x] Last backup timestamp
 - **Testing**: Component tests
 
 #### Task 6.2.3: Implement Auto-Backup
@@ -1146,10 +1146,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 6.2.1, 0.5.3
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Backup on schedule (hourly/daily/weekly)
-  - [ ] Background operation
-  - [ ] Notification on completion
-  - [ ] Cleanup old backups
+  - [x] Backup on schedule (hourly/daily/weekly)
+  - [x] Background operation
+  - [x] Notification on completion
+  - [x] Cleanup old backups
 - **Testing**: Integration tests
 
 ---
