@@ -267,6 +267,7 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
 
   return (
     <div
+      data-testid="long-drafts-toc"
       onClick={handleBackgroundClick}
       style={{
         width: '260px',
@@ -577,6 +578,7 @@ const TOCSectionItem = memo(function TOCSectionItem({
   return (
     <div>
       <div
+        data-testid={`toc-section-${section.id}`}
         draggable
         onClick={() => onSelect(section.id)}
         onContextMenu={(e) => onContextMenu(e, section.id)}

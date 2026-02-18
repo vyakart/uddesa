@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useState } from 'react';
+import { format } from 'date-fns';
 import { DiaryLayout } from '@/components/common/DiaryLayout';
 import {
   useLongDraftsStore,
@@ -6,6 +7,7 @@ import {
   selectLongDraftsError,
   selectCurrentLongDraft,
   selectCurrentSection,
+  selectSectionsMap,
   selectLongDraftsCount,
   selectCurrentDocumentWordCount,
   selectViewMode,
@@ -20,6 +22,7 @@ export function LongDrafts() {
   const error = useLongDraftsStore(selectLongDraftsError);
   const currentDocument = useLongDraftsStore(selectCurrentLongDraft);
   const currentSection = useLongDraftsStore(selectCurrentSection);
+  const sectionsMap = useLongDraftsStore(selectSectionsMap);
   const documentCount = useLongDraftsStore(selectLongDraftsCount);
   const totalWordCount = useLongDraftsStore(selectCurrentDocumentWordCount);
   const viewMode = useLongDraftsStore(selectViewMode);
@@ -40,6 +43,7 @@ export function LongDrafts() {
   // Memoize IDs for stable callback dependencies
   const currentDocumentId = currentDocument?.id;
   const currentSectionId = currentSection?.id;
+  const currentSections = currentDocumentId ? (sectionsMap.get(currentDocumentId) ?? []) : [];
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -207,7 +211,7 @@ export function LongDrafts() {
     return (
       <DiaryLayout
         diaryType="long-drafts"
-        toolbar={<LongDraftsToolbar documentCount={0} wordCount={0} />}
+        toolbar={<LongDraftsToolbar documentCount={0} sectionCount={0} wordCount={0} />}
       >
         <div
           style={{
@@ -299,7 +303,12 @@ export function LongDrafts() {
       toolbar={
         <LongDraftsToolbar
           documentCount={documentCount}
+          sectionCount={currentSections.length}
           wordCount={totalWordCount}
+          metadataCreatedAt={currentDocument.metadata?.createdAt ?? currentDocument.createdAt}
+          metadataModifiedAt={currentDocument.metadata?.modifiedAt ?? currentDocument.modifiedAt}
+          author={currentDocument.author}
+          subtitle={currentDocument.subtitle}
           documentTitle={currentDocument.title}
           onDocumentSelect={() => setShowDocumentList(!showDocumentList)}
         />
@@ -320,17 +329,43 @@ export function LongDrafts() {
 
 interface LongDraftsToolbarProps {
   documentCount: number;
+  sectionCount: number;
   wordCount: number;
+  metadataCreatedAt?: Date;
+  metadataModifiedAt?: Date;
+  author?: string;
+  subtitle?: string;
   documentTitle?: string;
   onDocumentSelect?: () => void;
 }
 
+function formatMetadataDate(value?: Date): string | null {
+  if (!value) {
+    return null;
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
+
+  return format(parsed, 'MMM d, yyyy');
+}
+
 function LongDraftsToolbar({
   documentCount,
+  sectionCount,
   wordCount,
+  metadataCreatedAt,
+  metadataModifiedAt,
+  author,
+  subtitle,
   documentTitle,
   onDocumentSelect,
 }: LongDraftsToolbarProps) {
+  const formattedCreatedAt = formatMetadataDate(metadataCreatedAt);
+  const formattedModifiedAt = formatMetadataDate(metadataModifiedAt);
+
   return (
     <div
       style={{
@@ -372,8 +407,28 @@ function LongDraftsToolbar({
       {/* Stats */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '13px', color: '#6B7280' }}>
         <span>{documentCount} document{documentCount !== 1 ? 's' : ''}</span>
+        <span>{sectionCount} section{sectionCount !== 1 ? 's' : ''}</span>
         <span>{wordCount.toLocaleString()} words</span>
       </div>
+
+      {(formattedModifiedAt || formattedCreatedAt || author || subtitle) && (
+        <div
+          data-testid="long-drafts-document-metadata"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            fontSize: '12px',
+            color: '#9CA3AF',
+            flexWrap: 'wrap',
+          }}
+        >
+          {formattedModifiedAt && <span>Updated {formattedModifiedAt}</span>}
+          {formattedCreatedAt && <span>Created {formattedCreatedAt}</span>}
+          {author && <span>Author {author}</span>}
+          {subtitle && <span>{subtitle}</span>}
+        </div>
+      )}
 
       <div style={{ flex: 1 }} />
 
@@ -478,61 +533,66 @@ function DocumentSwitcher({ onClose, onCreateNew }: DocumentSwitcherProps) {
 
         {/* Document list */}
         <div style={{ flex: 1, overflowY: 'auto' }}>
-          {documents.map((doc) => (
-            <div
-              key={doc.id}
-              onClick={() => handleSelect(doc.id)}
-              style={{
-                padding: '12px 20px',
-                borderBottom: '1px solid #E5E7EB',
-                cursor: 'pointer',
-                backgroundColor: doc.id === currentDocumentId ? '#EFF6FF' : 'transparent',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-              onMouseEnter={(e) => {
-                if (doc.id !== currentDocumentId) {
-                  e.currentTarget.style.backgroundColor = '#F9FAFB';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (doc.id !== currentDocumentId) {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                }
-              }}
-            >
-              <div>
-                <div style={{ fontSize: '14px', fontWeight: 500, color: '#374151' }}>
-                  {doc.title}
-                </div>
-                <div style={{ fontSize: '12px', color: '#9CA3AF', marginTop: '2px' }}>
-                  {(doc.metadata?.totalWordCount ?? 0).toLocaleString()} words
-                </div>
-              </div>
-              <button
-                onClick={(e) => handleDelete(doc.id, e)}
+          {documents.map((doc) => {
+            const updatedDate = formatMetadataDate(doc.metadata?.modifiedAt ?? doc.modifiedAt);
+
+            return (
+              <div
+                key={doc.id}
+                onClick={() => handleSelect(doc.id)}
                 style={{
-                  width: '24px',
-                  height: '24px',
-                  border: 'none',
-                  backgroundColor: 'transparent',
+                  padding: '12px 20px',
+                  borderBottom: '1px solid #E5E7EB',
                   cursor: 'pointer',
+                  backgroundColor: doc.id === currentDocumentId ? '#EFF6FF' : 'transparent',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#DC2626',
-                  opacity: 0.5,
-                  borderRadius: '4px',
+                  justifyContent: 'space-between',
                 }}
-                title="Delete document"
+                onMouseEnter={(e) => {
+                  if (doc.id !== currentDocumentId) {
+                    e.currentTarget.style.backgroundColor = '#F9FAFB';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (doc.id !== currentDocumentId) {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }
+                }}
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-                </svg>
-              </button>
-            </div>
-          ))}
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: 500, color: '#374151' }}>
+                    {doc.title}
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#9CA3AF', marginTop: '2px' }}>
+                    {(doc.metadata?.totalWordCount ?? 0).toLocaleString()} words
+                    {updatedDate ? ` • Updated ${updatedDate}` : ''}
+                  </div>
+                </div>
+                <button
+                  onClick={(e) => handleDelete(doc.id, e)}
+                  style={{
+                    width: '24px',
+                    height: '24px',
+                    border: 'none',
+                    backgroundColor: 'transparent',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#DC2626',
+                    opacity: 0.5,
+                    borderRadius: '4px',
+                  }}
+                  title="Delete document"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                  </svg>
+                </button>
+              </div>
+            );
+          })}
         </div>
 
         {/* Create new button */}

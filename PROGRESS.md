@@ -1,6 +1,6 @@
 # MUWI Progress (Simple Status)
 
-Last updated: February 17, 2026
+Last updated: February 18, 2026
 
 ## 1) Where we are now
 
@@ -9,7 +9,7 @@ Last updated: February 17, 2026
 - Latest full coverage snapshot: lines `90.82%`, statements `90.22%`, functions `86.44%`, branches `80.07%`.
 - Recent focus has been adding reliable tests module by module.
 - Blackboard coverage moved from almost none to strong coverage.
-- Current execution stage: Phase `4.4.1` (Long Drafts container assembly).
+- Current execution stage: Phase `5.1.1` (citation libraries and formatting baseline).
 
 ## 2) Completed tasks so far (brief)
 
@@ -59,6 +59,7 @@ Last updated: February 17, 2026
 | Task wave 37 | Completed `4.2.1` Footnote extension acceptance by adding marker/content attributes, auto-marker insertion, bottom footnote rendering in-editor, and click routing between markers and footnote list entries | Extension + Long Drafts sweep: `vitest src/extensions/footnote.test.ts src/components/diaries/long-drafts src/stores/longDraftsStore.test.ts` (36 tests passing) |
 | Task wave 38 | Completed `4.2.2` FootnoteManager acceptance by validating list rendering, inline editing, deletion, and navigation-to-text flows, and wiring manager interactions through `SectionEditor` footnote panel actions | Component + integration tests (`FootnoteManager.test.tsx`, `SectionEditor.test.tsx`) + full run green |
 | Task wave 39 | Completed `4.3.1` FocusMode acceptance by adding full-screen distraction-free overlay behavior, keyboard toggles (`Esc`, `F11`, `Cmd/Ctrl+Shift+F`), typewriter centering in focus editor scroll, and smooth overlay transitions | Long Drafts targeted tests + full run green: `vitest --run` (`67` files, `276` tests) |
+| Task wave 40 | Completed `4.4.1` LongDrafts container acceptance by validating document switching modal, TOC + SectionEditor composition, focus-mode toggle presence, and explicit document metadata rendering (sections/word count/created+updated dates), plus adding Long Drafts E2E create/add/reorder flow | Integration tests + full run green (`67` files, `276` tests) + Playwright: `e2e/long-drafts.spec.ts` passing |
 
 ## 3) Blackboard testing progress
 
@@ -97,5 +98,5 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Implement Phase `4.4.1`: create LongDrafts container.
+1. Implement Phase `5.1.1`: install and wire citation libraries baseline.
 2. Keep periodic full coverage reruns while feature stages advance to prevent regressions.

@@ -175,7 +175,17 @@ describe('LongDrafts', () => {
     const deleteLongDraft = vi.fn().mockResolvedValue(undefined);
     const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
 
-    const docOne = makeLongDraft({ id: 'doc-1', title: 'Document One', metadata: { createdAt: new Date('2026-02-12T10:00:00.000Z'), modifiedAt: new Date('2026-02-12T10:00:00.000Z'), totalWordCount: 100 } });
+    const docOne = makeLongDraft({
+      id: 'doc-1',
+      title: 'Document One',
+      subtitle: 'A Memoir',
+      author: 'Alex Writer',
+      metadata: {
+        createdAt: new Date('2026-02-12T10:00:00.000Z'),
+        modifiedAt: new Date('2026-02-12T10:00:00.000Z'),
+        totalWordCount: 100,
+      },
+    });
     const docTwo = makeLongDraft({ id: 'doc-2', title: 'Document Two', metadata: { createdAt: new Date('2026-02-12T11:00:00.000Z'), modifiedAt: new Date('2026-02-12T11:00:00.000Z'), totalWordCount: 200 } });
     const section = makeSection({ id: 'section-1', longDraftId: docOne.id, title: 'Intro', wordCount: 42 });
 
@@ -199,6 +209,11 @@ describe('LongDrafts', () => {
 
     expect(screen.getByTestId('toc-panel')).toBeInTheDocument();
     expect(screen.getByTestId('section-editor')).toHaveTextContent('Section: Intro');
+    expect(screen.getByRole('button', { name: 'Focus Toggle' })).toBeInTheDocument();
+    expect(screen.getByTestId('long-drafts-document-metadata')).toHaveTextContent('Updated Feb 12, 2026');
+    expect(screen.getByTestId('long-drafts-document-metadata')).toHaveTextContent('Created Feb 12, 2026');
+    expect(screen.getByTestId('long-drafts-document-metadata')).toHaveTextContent('Author Alex Writer');
+    expect(screen.getByTestId('long-drafts-document-metadata')).toHaveTextContent('A Memoir');
 
     fireEvent.click(screen.getByRole('button', { name: 'Mock Title Update' }));
     expect(updateSection).toHaveBeenCalledWith(section.id, { title: 'Updated Section Title' });

@@ -948,11 +948,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 4.1.1, 4.1.2, 4.1.3, 4.3.1
 - **Effort**: L
 - **Acceptance Criteria**:
-  - [ ] Document list/selection
-  - [ ] TOC sidebar
-  - [ ] Section editor
-  - [ ] Focus mode toggle
-  - [ ] Document metadata
+  - [x] Document list/selection
+  - [x] TOC sidebar
+  - [x] Section editor
+  - [x] Focus mode toggle
+  - [x] Document metadata
 - **Testing**: Integration tests
 - **E2E**: Create document, add sections, reorder
 
