@@ -10,6 +10,7 @@ import {
   selectAcademicViewMode,
 } from '@/stores/academicStore';
 import { CitationPicker } from './CitationPicker';
+import { useCitationShortcut } from './useCitationShortcut';
 
 interface AcademicSectionEditorProps {
   section: AcademicSection | null;
@@ -103,16 +104,7 @@ export function AcademicSectionEditor({
     setShowCitationPicker(true);
   }, [editor]);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') {
-        e.preventDefault();
-        openCitationPicker();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [openCitationPicker]);
+  useCitationShortcut(openCitationPicker);
 
   const handleTitleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -9,7 +9,7 @@ Last updated: February 18, 2026
 - Latest full coverage snapshot: lines `90.82%`, statements `90.22%`, functions `86.44%`, branches `80.07%`.
 - Recent focus has been adding reliable tests module by module.
 - Blackboard coverage moved from almost none to strong coverage.
-- Current execution stage: Phase `5.1.3` (CitationPicker component).
+- Current execution stage: Phase `5.2.2` (BibliographyManager acceptance verification and expansion).
 
 ## 2) Completed tasks so far (brief)
 
@@ -62,6 +62,8 @@ Last updated: February 18, 2026
 | Task wave 40 | Completed `4.4.1` LongDrafts container acceptance by validating document switching modal, TOC + SectionEditor composition, focus-mode toggle presence, and explicit document metadata rendering (sections/word count/created+updated dates), plus adding Long Drafts E2E create/add/reorder flow | Integration tests + full run green (`67` files, `276` tests) + Playwright: `e2e/long-drafts.spec.ts` passing |
 | Task wave 41 | Completed `5.1.1` citation-library baseline by adding direct `citeproc` dependency, bundling CSL style files (`APA`, `MLA`, `Chicago`) and locale asset, and shipping tested citeproc-backed formatting helpers for in-text citations and bibliographies | Citation-targeted tests + full run green: `vitest --run` (`68` files, `279` tests) |
 | Task wave 42 | Completed `5.1.2` citation utilities by consolidating `citation.ts` with the citeproc baseline, adding `formatCitation` aliasing, preserving DOI/BibTeX helpers, and implementing full style switching (`apa7`/`mla9`/`chicago` via bundled citeproc + `harvard`/`ieee` fallback path) | Citation-targeted tests + full run green: `vitest --run` (`68` files, `280` tests) |
+| Task wave 43 | Completed `5.1.3` CitationPicker phase by validating search/filter, reference selection, page-number input, citation insertion wiring, and keyboard shortcut behavior, and by consolidating shortcut handling through shared `useCitationShortcut` with case-insensitive key matching | Academic targeted tests + full run green + eslint green: `vitest --run` (`68` files, `280` tests), `eslint .` |
+| Task wave 44 | Completed `5.2.1` Academic Store acceptance by verifying `papers`/`currentPaper`/`bibliographyEntries` state slices, full store CRUD flows, and citation insertion/linking actions against existing implementation and unit coverage | Store-targeted evidence + full run green + eslint green: `academicStore.test.ts`, `vitest --run` (`68` files, `280` tests), `eslint .` |
 
 ## 3) Blackboard testing progress
 
@@ -100,5 +102,5 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Implement Phase `5.1.3`: CitationPicker component (search/select/page input/insert + keyboard shortcut).
+1. Implement Phase `5.2.2`: BibliographyManager component acceptance (list/add/edit/delete/tag-search flows).
 2. Keep periodic full coverage reruns while feature stages advance to prevent regressions.

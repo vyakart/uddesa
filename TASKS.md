@@ -991,11 +991,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 5.1.2
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Search references
-  - [ ] Select reference(s)
-  - [ ] Page number input
-  - [ ] Insert formatted citation
-  - [ ] Keyboard shortcut (Ctrl+Shift+C)
+  - [x] Search references
+  - [x] Select reference(s)
+  - [x] Page number input
+  - [x] Insert formatted citation
+  - [x] Keyboard shortcut (Ctrl+Shift+C)
 - **Testing**: Component tests
 
 ### 5.2 Reference Library
@@ -1005,11 +1005,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.5.1, 0.4.3
 - **Effort**: L
 - **Acceptance Criteria**:
-  - [ ] papers state
-  - [ ] currentPaper state
-  - [ ] bibliographyEntries state
-  - [ ] All CRUD actions
-  - [ ] Citation insertion action
+  - [x] papers state
+  - [x] currentPaper state
+  - [x] bibliographyEntries state
+  - [x] All CRUD actions
+  - [x] Citation insertion action
 - **Testing**: Unit tests
 
 #### Task 5.2.2: Create BibliographyManager Component

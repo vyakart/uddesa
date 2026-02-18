@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 export function useCitationShortcut(onOpen: () => void) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'c') {
         e.preventDefault();
         onOpen();
       }
