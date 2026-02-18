@@ -5,11 +5,11 @@ Last updated: February 18, 2026
 ## 1) Where we are now
 
 - App development is active and stable.
-- Unit tests are passing (`68` files, `281` tests).
+- Unit tests are passing (`69` files, `284` tests).
 - Latest full coverage snapshot: lines `90.82%`, statements `90.22%`, functions `86.44%`, branches `80.07%`.
 - Recent focus has been adding reliable tests module by module.
 - Blackboard coverage moved from almost none to strong coverage.
-- Current execution stage: Phase `5.2.3` (ReferenceLibrary panel implementation).
+- Current execution stage: Phase `5.3.1` (AcademicSection component acceptance verification and expansion).
 
 ## 2) Completed tasks so far (brief)
 
@@ -65,6 +65,7 @@ Last updated: February 18, 2026
 | Task wave 43 | Completed `5.1.3` CitationPicker phase by validating search/filter, reference selection, page-number input, citation insertion wiring, and keyboard shortcut behavior, and by consolidating shortcut handling through shared `useCitationShortcut` with case-insensitive key matching | Academic targeted tests + full run green + eslint green: `vitest --run` (`68` files, `280` tests), `eslint .` |
 | Task wave 44 | Completed `5.2.1` Academic Store acceptance by verifying `papers`/`currentPaper`/`bibliographyEntries` state slices, full store CRUD flows, and citation insertion/linking actions against existing implementation and unit coverage | Store-targeted evidence + full run green + eslint green: `academicStore.test.ts`, `vitest --run` (`68` files, `280` tests), `eslint .` |
 | Task wave 45 | Completed `5.2.2` BibliographyManager acceptance by implementing tag-based organization (capture/display/filter), preserving manual/DOI/BibTeX add flows, edit/delete/search flows, and extending component coverage for tag filtering behavior | Academic component-targeted tests + full run green + eslint green: `BibliographyManager.test.tsx` (`5` tests), `vitest --run` (`68` files, `281` tests), `eslint .` |
+| Task wave 46 | Completed `5.2.3` ReferenceLibrary panel by introducing a separate global library panel (`ReferenceLibraryPanel`) with JSON import/export workflows and per-reference linking/unlinking to papers, then wiring it into the Academic layout | Academic targeted tests + full run green + eslint green: `ReferenceLibraryPanel.test.tsx` (`3` tests), `vitest --run` (`69` files, `284` tests), `eslint .` |
 
 ## 3) Blackboard testing progress
 
@@ -103,5 +104,5 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Implement Phase `5.2.3`: ReferenceLibrary panel (separate global library, import/export references, paper linking).
+1. Implement Phase `5.3.1`: AcademicSection component acceptance (`citation insertion`, `cross-references`, `figure/table numbering`, academic formatting).
 2. Keep periodic full coverage reruns while feature stages advance to prevent regressions.

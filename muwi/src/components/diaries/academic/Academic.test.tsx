@@ -35,8 +35,8 @@ vi.mock('./AcademicSectionEditor', () => ({
   ),
 }));
 
-vi.mock('./BibliographyManager', () => ({
-  BibliographyManager: ({ onClose }: { onClose: () => void }) => (
+vi.mock('./ReferenceLibraryPanel', () => ({
+  ReferenceLibraryPanel: ({ onClose }: { onClose: () => void }) => (
     <div data-testid="bibliography-panel">
       Bibliography Panel
       <button type="button" onClick={onClose}>

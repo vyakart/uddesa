@@ -16,7 +16,7 @@ import {
 } from '@/stores/academicStore';
 import type { CitationStyle } from '@/types/academic';
 import { AcademicSectionEditor } from './AcademicSectionEditor';
-import { BibliographyManager } from './BibliographyManager';
+import { ReferenceLibraryPanel } from './ReferenceLibraryPanel';
 import { TemplateSelector } from './TemplateSelector';
 
 const CITATION_STYLE_LABELS: Record<CitationStyle, string> = {
@@ -534,15 +534,15 @@ export function Academic() {
           onContentChange={handleContentChange}
         />
 
-        {/* Bibliography panel */}
+        {/* Reference library panel */}
         {isBibliographyPanelVisible && (
           <div
             style={{
-              width: '320px',
+              width: '560px',
               borderLeft: '1px solid #E5E7EB',
             }}
           >
-            <BibliographyManager onClose={toggleBibliographyPanel} />
+            <ReferenceLibraryPanel onClose={toggleBibliographyPanel} />
           </div>
         )}
       </div>

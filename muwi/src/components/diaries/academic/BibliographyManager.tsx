@@ -10,6 +10,7 @@ import { formatBibliographyEntry, parseBibTeX, fetchFromDOI } from '@/utils/cita
 interface BibliographyManagerProps {
   onSelectEntry?: (entry: BibliographyEntry) => void;
   onClose?: () => void;
+  hideHeader?: boolean;
 }
 
 const entryTypeLabels: Record<BibliographyEntryType, string> = {
@@ -29,7 +30,7 @@ function parseDelimitedList(value: string): string[] {
     .filter(Boolean);
 }
 
-export function BibliographyManager({ onSelectEntry, onClose }: BibliographyManagerProps) {
+export function BibliographyManager({ onSelectEntry, onClose, hideHeader = false }: BibliographyManagerProps) {
   const entries = useAcademicStore(selectBibliographyEntries);
   const citationStyle = useAcademicStore(selectCitationStyle);
   const addBibliographyEntry = useAcademicStore((state) => state.addBibliographyEntry);
@@ -91,35 +92,37 @@ export function BibliographyManager({ onSelectEntry, onClose }: BibliographyMana
       }}
     >
       {/* Header */}
-      <div
-        style={{
-          padding: '16px',
-          borderBottom: '1px solid #E5E7EB',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1F2937' }}>
-          Reference Library
-        </h2>
-        {onClose && (
-          <button
-            onClick={onClose}
-            style={{
-              padding: '4px',
-              border: 'none',
-              backgroundColor: 'transparent',
-              cursor: 'pointer',
-              color: '#6B7280',
-            }}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M18 6L6 18M6 6l12 12" />
-            </svg>
-          </button>
-        )}
-      </div>
+      {!hideHeader && (
+        <div
+          style={{
+            padding: '16px',
+            borderBottom: '1px solid #E5E7EB',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1F2937' }}>
+            Reference Library
+          </h2>
+          {onClose && (
+            <button
+              onClick={onClose}
+              style={{
+                padding: '4px',
+                border: 'none',
+                backgroundColor: 'transparent',
+                cursor: 'pointer',
+                color: '#6B7280',
+              }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Search and Add */}
       <div

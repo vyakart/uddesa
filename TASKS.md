@@ -1030,9 +1030,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 5.2.2
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Separate from papers
-  - [ ] Import/export references
-  - [ ] Link to papers
+  - [x] Separate from papers
+  - [x] Import/export references
+  - [x] Link to papers
 - **Testing**: Component tests
 
 ### 5.3 Academic Paper Assembly
