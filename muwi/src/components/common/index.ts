@@ -16,3 +16,4 @@ export * from './StatusBar';
 export * from './RightPanel';
 export * from './Button';
 export * from './FormControls';
+export * from './Toast';

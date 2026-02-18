@@ -1519,9 +1519,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/common/Toast/index.ts`
   - `muwi/src/components/common/Toast/Toast.test.tsx`
 - **Acceptance Criteria**:
-  - [ ] Bottom-center position, tokenized visuals, and icon slot implemented
-  - [ ] Auto-dismiss = 4s with pause-on-hover/focus
-  - [ ] Supports success/warning/error/info variants
+  - [x] Bottom-center position, tokenized visuals, and icon slot implemented
+  - [x] Auto-dismiss = 4s with pause-on-hover/focus
+  - [x] Supports success/warning/error/info variants
 
 #### Task 7.4.7: Rebuild Settings Modal Layout
 - **Description**: Convert settings UI to left-nav + content-pane structure

@@ -818,3 +818,105 @@
   margin: var(--space-1) 0;
   background: var(--color-border-default);
 }
+
+.muwi-toast-viewport {
+  position: fixed;
+  left: 50%;
+  bottom: var(--space-6);
+  transform: translateX(-50%);
+  z-index: var(--z-toast);
+  width: min(560px, calc(100vw - var(--space-6) * 2));
+  display: grid;
+  gap: var(--space-2);
+  pointer-events: none;
+}
+
+.muwi-toast {
+  pointer-events: auto;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  gap: var(--space-2);
+  padding: var(--space-inset-default);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-elevated);
+  box-shadow: var(--shadow-lg);
+  animation: muwi-toast-in var(--duration-moderate) var(--ease-out);
+}
+
+.muwi-toast__icon {
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+  color: var(--color-info);
+}
+
+.muwi-toast[data-variant='success'] .muwi-toast__icon {
+  color: var(--color-success);
+}
+
+.muwi-toast[data-variant='warning'] .muwi-toast__icon {
+  color: var(--color-warning);
+}
+
+.muwi-toast[data-variant='error'] .muwi-toast__icon {
+  color: var(--color-error);
+}
+
+.muwi-toast__content {
+  min-width: 0;
+  display: grid;
+  gap: var(--space-0-5);
+}
+
+.muwi-toast__title {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.muwi-toast__message {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.muwi-toast__close {
+  width: 24px;
+  height: 24px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-tertiary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: var(--transition-colors), var(--transition-shadow);
+}
+
+.muwi-toast__close:hover {
+  background: var(--color-hover-overlay);
+  color: var(--color-text-primary);
+}
+
+.muwi-toast__close:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+@keyframes muwi-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
