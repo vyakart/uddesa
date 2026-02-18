@@ -1440,9 +1440,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/diaries/personal-diary/index.ts`
   - imports referencing duplicated aliases
 - **Acceptance Criteria**:
-  - [ ] Single canonical import path for Personal Diary modules
-  - [ ] No duplicate barrel paths causing confusion during refactor
-  - [ ] All tests continue passing after path normalization
+  - [x] Single canonical import path for Personal Diary modules
+  - [x] No duplicate barrel paths causing confusion during refactor
+  - [x] All tests continue passing after path normalization
 
 ### 7.4 Shared UI Primitives and Overlays
 

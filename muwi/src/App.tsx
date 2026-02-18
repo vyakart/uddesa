@@ -10,7 +10,7 @@ import { useGlobalShortcuts, usePasteHandler } from '@/hooks';
 import { applyThemeToDocument, getSystemPrefersDark, resolveTheme, watchSystemTheme } from '@/utils/theme';
 import { Shelf } from '@/components/shelf';
 import { ErrorBoundary } from '@/components/common';
-import { PersonalDiary } from '@/components/diaries/PersonalDiary';
+import { PersonalDiary } from '@/components/diaries/personal-diary';
 import { Blackboard } from '@/components/diaries/blackboard';
 import { Scratchpad } from '@/components/diaries/scratchpad';
 import { Drafts } from '@/components/diaries/drafts';
