@@ -1,0 +1,25 @@
+@import 'tailwindcss';
+
+@layer utilities {
+  .muwi-focus-ring {
+    box-shadow: var(--shadow-focus);
+  }
+
+  .muwi-chrome-text {
+    font-family: var(--font-family-chrome-sans);
+    font-size: var(--font-size-base);
+    line-height: var(--leading-snug);
+  }
+
+  .muwi-content-column {
+    max-width: var(--content-measure);
+    margin-inline: auto;
+    width: 100%;
+  }
+
+  .muwi-content-column-wide {
+    max-width: var(--content-measure-wide);
+    margin-inline: auto;
+    width: 100%;
+  }
+}

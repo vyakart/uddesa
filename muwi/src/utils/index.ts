@@ -5,3 +5,4 @@ export * from './export';
 export * from './backup';
 export * from './appRouter';
 export * from './crypto';
+export * from './theme';

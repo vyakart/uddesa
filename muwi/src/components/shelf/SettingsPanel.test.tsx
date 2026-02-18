@@ -26,6 +26,8 @@ describe('SettingsPanel', () => {
   it('updates appearance and backup settings', async () => {
     render(<SettingsPanel />);
 
+    expect(screen.getByRole('combobox', { name: 'Theme' })).toHaveValue('system');
+
     fireEvent.change(screen.getByRole('combobox', { name: 'Theme' }), {
       target: { value: 'dark' },
     });
@@ -41,6 +43,14 @@ describe('SettingsPanel', () => {
       expect(global.theme).toBe('dark');
       expect(global.accentColor).toBe('#112233');
       expect(global.shelfLayout).toBe('list');
+    });
+
+    fireEvent.change(screen.getByRole('combobox', { name: 'Theme' }), {
+      target: { value: 'system' },
+    });
+
+    await waitFor(() => {
+      expect(useSettingsStore.getState().global.theme).toBe('system');
     });
 
     fireEvent.click(screen.getByRole('tab', { name: 'Backup' }));

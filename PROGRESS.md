@@ -5,11 +5,11 @@ Last updated: February 18, 2026
 ## 1) Where we are now
 
 - App development is active and stable.
-- Unit tests are passing (`69` files, `287` tests).
+- Unit tests are passing (`73` files, `300` tests).
 - Latest full coverage snapshot: lines `90.82%`, statements `90.22%`, functions `86.44%`, branches `80.07%`.
 - Recent focus has been adding reliable tests module by module.
 - Blackboard coverage moved from almost none to strong coverage.
-- Current execution stage: Phase `7.1.1` (dark theme CSS baseline).
+- Current execution stage: Phase `7.2.5` (legacy theme-branching cleanup and shell refactor prep).
 
 ## 2) Completed tasks so far (brief)
 
@@ -75,6 +75,8 @@ Last updated: February 18, 2026
 | Task wave 53 | Completed `6.2.1` backup utility acceptance by validating complete table coverage in `createBackup`, strengthening backup metadata/version/date validation (`semver`, ISO timestamp, table count, total record constraints), preserving JSON export/parse flows, and confirming restore compatibility checks | Backup-targeted tests + lint green: `vitest src/utils/backup.test.ts` (`11` tests), `eslint src/utils/backup.ts src/utils/backup.test.ts` |
 | Task wave 54 | Completed `6.2.2` BackupPanel acceptance by validating manual backup + restore workflows, location selector flow for automatic backups, auto-backup toggle/save behavior, and last-backup display updates after successful manual backups; added guardrail that blocks enabling auto-backup without a selected location | Backup panel tests + lint green: `vitest src/components/common/BackupPanel/BackupPanel.test.tsx` (`3` tests), `vitest src/utils/backup.test.ts src/components/common/BackupPanel/BackupPanel.test.tsx` (`14` tests), `eslint src/components/common/BackupPanel/BackupPanel.tsx src/components/common/BackupPanel/BackupPanel.test.tsx` |
 | Task wave 55 | Completed `6.2.3` auto-backup acceptance by wiring scheduled saves with `maxBackups` retention policy support, enforcing backup cleanup in Electron main process for auto-backup files (`muwi-backup-*.json`), and surfacing completion notifications through `BackupPanel` auto-backup callback messaging | Backup utility + panel tests + lint green: `vitest src/utils/backup.test.ts src/components/common/BackupPanel/BackupPanel.test.tsx` (`14` tests), `eslint src/utils/backup.ts src/utils/backup.test.ts src/components/common/BackupPanel/BackupPanel.tsx src/components/common/BackupPanel/BackupPanel.test.tsx src/types/electron.ts electron/preload.ts electron/main.ts` |
+| Task wave 56 | Completed Phase `7` foundation slice (`7.1.1`-`7.1.9`, `7.2.1`-`7.2.4`): created style architecture (`tokens`, `themes`, `fonts`, `reset`, `utilities`, `editor`), installed Geist font packages, wired global style import stack in `main.tsx`, added runtime theme application on `<html data-theme>`, and added theme/token tests | Targeted tests (`tokens`, `theme-switching`, `settingsStore`, `SettingsPanel`, `App`) + full run green: `vitest --run` (`73` files, `300` tests) + `eslint .` |
+| Task wave 57 | Completed `7.15.0` production build boundary fix by excluding `*.test.*` from app typecheck and resolving strict TypeScript build errors in `PasskeyPrompt`, `ExcalidrawWrapper`, and `crypto` so production build path is clean again | `npm run build` green (`tsc -b && vite build`) + existing test suite/lint still green |
 
 ## 3) Blackboard testing progress
 
@@ -98,7 +100,8 @@ Last updated: February 18, 2026
   - Statements `90.22%`
   - Functions `86.44%`
   - Branches `80.07%`
-- Active work is now focused on feature-stage completion (Phase `3.x` onward), not threshold rescue.
+- Active work is now focused on Phase `7` UI refactor slices (design system adoption and layout migration), not threshold rescue.
+- Release build path is currently healthy (`npm run build` passing after `7.15.0`).
 
 ## 5) How tasks are being completed (process)
 
@@ -113,5 +116,6 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Implement Phase `7.1.1`: dark theme CSS baseline (token set + global palette variants).
-2. Keep periodic full coverage reruns while feature stages advance to prevent regressions.
+1. Execute `7.2.5`: remove legacy component-level theme branching and enforce token-driven styling.
+2. Start shared shell slice (`7.3.1`-`7.3.7`): TitleBar, Sidebar, StatusBar, RightPanel, and slot-based `DiaryLayout`.
+3. Keep full test/lint reruns after each vertical slice to catch regressions early.

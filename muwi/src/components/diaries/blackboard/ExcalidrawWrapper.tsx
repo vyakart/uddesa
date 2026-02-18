@@ -90,7 +90,7 @@ export function ExcalidrawWrapper({
       if (canvas.settings.showGrid) {
         appStateUpdate.gridSize = canvas.settings.gridSize ?? 20;
       }
-      excalidrawAPI.updateScene({ appState: appStateUpdate });
+      excalidrawAPI.updateScene({ appState: appStateUpdate as unknown as AppState });
 
       const selectedIds = excalidrawAPI.getAppState().selectedElementIds;
       const sceneElements = excalidrawAPI.getSceneElements();
@@ -168,7 +168,9 @@ export function ExcalidrawWrapper({
             gridSize: canvas?.settings?.showGrid ? (canvas?.settings?.gridSize ?? 20) : undefined,
             scrollX: canvas?.viewportState?.panX ?? 0,
             scrollY: canvas?.viewportState?.panY ?? 0,
-            zoom: { value: canvas?.viewportState?.zoom ?? 1 },
+            zoom: {
+              value: (canvas?.viewportState?.zoom ?? 1) as unknown as AppState['zoom']['value'],
+            },
             currentItemFontFamily: selectedFontFamily as AppState['currentItemFontFamily'],
           },
         }}

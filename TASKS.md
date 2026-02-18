@@ -1165,10 +1165,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: Phase 6 complete
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] Every slice follows sequence: implement -> test -> manual verify -> merge
-  - [ ] No slice leaves the app in a broken runtime state
-  - [ ] No data model/store logic changes are mixed into visual refactor commits
-  - [ ] Progress logged in `PROGRESS.md` after each slice
+  - [x] Every slice follows sequence: implement -> test -> manual verify -> merge
+  - [x] No slice leaves the app in a broken runtime state
+  - [x] No data model/store logic changes are mixed into visual refactor commits
+  - [x] Progress logged in `PROGRESS.md` after each slice
 
 #### Task 7.0.2: Define Phase 7 Done Criteria
 - **Description**: Lock explicit exit criteria to avoid scope drift
@@ -1195,8 +1195,8 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/styles/themes/light.css`
   - `muwi/src/styles/themes/dark.css`
 - **Acceptance Criteria**:
-  - [ ] All files exist and are imported in deterministic order
-  - [ ] No token values duplicated across files
+  - [x] All files exist and are imported in deterministic order
+  - [x] No token values duplicated across files
 
 #### Task 7.1.2: Implement Token Set from Design System
 - **Description**: Port spacing/radius/shadow/z-index/transition/type scale tokens
@@ -1204,10 +1204,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Effort**: M
 - **Files to Modify**: `muwi/src/styles/tokens.css`
 - **Acceptance Criteria**:
-  - [ ] Spacing scale and semantic aliases match design spec
-  - [ ] Radius, shadow, z-index, and transition tokens match design spec
-  - [ ] Typography tokens for chrome + content are present
-  - [ ] Motion-reduction media query exists
+  - [x] Spacing scale and semantic aliases match design spec
+  - [x] Radius, shadow, z-index, and transition tokens match design spec
+  - [x] Typography tokens for chrome + content are present
+  - [x] Motion-reduction media query exists
 
 #### Task 7.1.3: Implement Light and Dark Theme Token Overrides
 - **Description**: Add light/dark color token layers
@@ -1217,9 +1217,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/styles/themes/light.css`
   - `muwi/src/styles/themes/dark.css`
 - **Acceptance Criteria**:
-  - [ ] `:root` / `[data-theme="light"]` tokens complete
-  - [ ] `[data-theme="dark"]` overrides complete
-  - [ ] Blackboard and scratchpad-specific color tokens included
+  - [x] `:root` / `[data-theme="light"]` tokens complete
+  - [x] `[data-theme="dark"]` overrides complete
+  - [x] Blackboard and scratchpad-specific color tokens included
   - [ ] No component hard-codes theme colors
 
 #### Task 7.1.4: Add CSS Reset and Base Element Rules
@@ -1228,9 +1228,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Effort**: S
 - **Files to Modify**: `muwi/src/styles/reset.css`
 - **Acceptance Criteria**:
-  - [ ] Reset includes box-sizing, body margin, default typography base
-  - [ ] Buttons/inputs inherit font settings
-  - [ ] Focus outline defaults do not conflict with token focus ring
+  - [x] Reset includes box-sizing, body margin, default typography base
+  - [x] Buttons/inputs inherit font settings
+  - [x] Focus outline defaults do not conflict with token focus ring
 
 #### Task 7.1.5: Add Font Strategy (Geist chrome + content fonts)
 - **Description**: Wire chrome/content font loading to match spec
@@ -1240,8 +1240,8 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/package.json`
   - `muwi/src/styles/fonts.css`
 - **Acceptance Criteria**:
-  - [ ] `@fontsource-variable/geist-sans` and `@fontsource-variable/geist-mono` installed
-  - [ ] Existing content fonts retained (Inter, Crimson Pro, JetBrains Mono, Caveat)
+  - [x] Geist packages installed (`@fontsource/geist-sans`, `@fontsource/geist-mono`)
+  - [x] Existing content fonts retained (Inter, Crimson Pro, JetBrains Mono, Caveat)
   - [ ] `font-display: swap` behavior retained
 
 #### Task 7.1.6: Wire Global Style Imports and Decompose `index.css`
@@ -1252,21 +1252,22 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/main.tsx`
   - `muwi/src/index.css`
 - **Acceptance Criteria**:
-  - [ ] `main.tsx` imports style stack in stable order
-  - [ ] `index.css` reduced to app-specific/editor-specific rules only
-  - [ ] App renders with no missing variable warnings
+  - [x] `main.tsx` imports style stack in stable order
+  - [x] `index.css` reduced to app-specific/editor-specific rules only
+  - [x] App renders with no missing variable warnings
 
 #### Task 7.1.7: Add Tailwind Token Mapping Layer
 - **Description**: Expose token names to Tailwind usage pattern used in repo
 - **Dependencies**: 7.1.2, 7.1.3
 - **Effort**: M
 - **Files to Modify**:
-  - `muwi/tailwind.config.ts` (create if absent)
+  - `muwi/tailwind.config.ts` (if needed for current Tailwind mode)
   - `muwi/src/styles/utilities.css`
 - **Acceptance Criteria**:
-  - [ ] Token-backed color/spacing/radius/shadow utilities are available
-  - [ ] Existing component classes continue to compile
-  - [ ] No breaking changes to existing tests due to class generation
+  - [x] Token-backed color/spacing/radius/shadow utilities are available
+  - [x] Mapping works with the project's active Tailwind v4 setup (`@import "tailwindcss"`) without breaking build
+  - [x] Existing component classes continue to compile
+  - [x] No breaking changes to existing tests due to class generation
 
 #### Task 7.1.8: Add Foundation Style Tests
 - **Description**: Ensure token and theme wiring remain stable
@@ -1276,8 +1277,21 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/styles/tokens.test.ts`
   - `muwi/src/styles/theme-switching.test.tsx`
 - **Acceptance Criteria**:
-  - [ ] Tests confirm key CSS variables exist
-  - [ ] Tests confirm `[data-theme]` switching updates effective values
+  - [x] Tests confirm key CSS variables exist
+  - [x] Tests confirm `[data-theme]` switching updates effective values
+
+#### Task 7.1.9: Extract Editor Base Styles from `index.css`
+- **Description**: Move TipTap/editor styles into dedicated stylesheet(s) to avoid global sprawl
+- **Dependencies**: 7.1.6
+- **Effort**: S
+- **Files to Create/Modify**:
+  - `muwi/src/styles/editor.css` (create)
+  - `muwi/src/index.css`
+  - `muwi/src/main.tsx`
+- **Acceptance Criteria**:
+  - [x] Editor heading/list/code/placeholder styles moved out of `index.css`
+  - [x] Editor visuals remain unchanged before diary-specific refinements
+  - [x] No global style regressions in non-editor components
 
 ### 7.2 Theme Runtime
 
@@ -1287,8 +1301,8 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Effort**: S
 - **Files to Create**: `muwi/src/utils/theme.ts`
 - **Acceptance Criteria**:
-  - [ ] Utility resolves theme based on settings + `prefers-color-scheme`
-  - [ ] Utility supports realtime OS theme change handling
+  - [x] Utility resolves theme based on settings + `prefers-color-scheme`
+  - [x] Utility supports realtime OS theme change handling
 
 #### Task 7.2.2: Apply Theme to `<html data-theme>`
 - **Description**: Drive theme via DOM attribute as single source
@@ -1296,9 +1310,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Effort**: S
 - **Files to Modify**: `muwi/src/App.tsx`
 - **Acceptance Criteria**:
-  - [ ] `<html>` gets `data-theme="light|dark"`
-  - [ ] `color-scheme` is set to match effective theme
-  - [ ] No full-page reload needed on theme toggle
+  - [x] `<html>` gets `data-theme="light|dark"`
+  - [x] `color-scheme` is set to match effective theme
+  - [x] No full-page reload needed on theme toggle
 
 #### Task 7.2.3: Wire Settings Theme State to Runtime
 - **Description**: Ensure persisted settings fully control runtime theme
@@ -1308,9 +1322,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/stores/settingsStore.ts`
   - `muwi/src/components/shelf/SettingsPanel.tsx`
 - **Acceptance Criteria**:
-  - [ ] Settings exposes Light, Dark, System options
-  - [ ] Theme preference persists and rehydrates correctly
-  - [ ] System mode reacts to OS theme changes after app startup
+  - [x] Settings exposes Light, Dark, System options
+  - [x] Theme preference persists and rehydrates correctly
+  - [x] System mode reacts to OS theme changes after app startup
 
 #### Task 7.2.4: Add Theme Integration Tests
 - **Description**: Validate theme behavior across render/reload flow
@@ -1320,8 +1334,8 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/shelf/SettingsPanel.test.tsx`
   - `muwi/src/stores/settingsStore.test.ts`
 - **Acceptance Criteria**:
-  - [ ] Tests cover all three theme modes
-  - [ ] Tests cover persisted reload behavior
+  - [x] Tests cover all three theme modes
+  - [x] Tests cover persisted reload behavior
 
 #### Task 7.2.5: Remove Legacy Theme Branching in Components
 - **Description**: Replace ad-hoc theme checks with token-driven styles
@@ -1416,6 +1430,19 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - [ ] Tests verify sidebar collapse/expand
   - [ ] Tests verify right panel mount/unmount behavior
   - [ ] Tests verify toolbar/status bar slot rendering
+
+#### Task 7.3.8: Normalize Diary Module Pathing
+- **Description**: Remove naming ambiguity between `PersonalDiary` and `personal-diary` module paths
+- **Dependencies**: 7.3.5
+- **Effort**: S
+- **Files to Modify**:
+  - `muwi/src/components/diaries/index.ts`
+  - `muwi/src/components/diaries/personal-diary/index.ts`
+  - imports referencing duplicated aliases
+- **Acceptance Criteria**:
+  - [ ] Single canonical import path for Personal Diary modules
+  - [ ] No duplicate barrel paths causing confusion during refactor
+  - [ ] All tests continue passing after path normalization
 
 ### 7.4 Shared UI Primitives and Overlays
 
@@ -1515,6 +1542,32 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Acceptance Criteria**:
   - [ ] Shared components do not rely on literal inline color/spacing values
   - [ ] Styling is token-driven and easy to audit
+
+#### Task 7.4.9: Refactor Export/Backup Panels to Tokenized Surfaces
+- **Description**: Migrate highly styled panel components to design-system tokens
+- **Dependencies**: 7.4.1 through 7.4.8
+- **Effort**: M
+- **Files to Modify**:
+  - `muwi/src/components/common/ExportPanel/ExportPanel.tsx`
+  - `muwi/src/components/common/BackupPanel/BackupPanel.tsx`
+  - related tests in both folders
+- **Acceptance Criteria**:
+  - [ ] No hard-coded color literals remain in these panels
+  - [ ] Layout/controls use shared button/input patterns where applicable
+  - [ ] Existing export/backup behavior and tests remain intact
+
+#### Task 7.4.10: Refactor Passkey/ErrorBoundary/FontSelector Visuals
+- **Description**: Tokenize remaining shared utility components with heavy inline styling
+- **Dependencies**: 7.4.1 through 7.4.8
+- **Effort**: M
+- **Files to Modify**:
+  - `muwi/src/components/common/PasskeyPrompt/PasskeyPrompt.tsx`
+  - `muwi/src/components/common/ErrorBoundary/ErrorBoundary.tsx`
+  - `muwi/src/components/common/FontSelector/FontSelector.tsx`
+- **Acceptance Criteria**:
+  - [ ] Components use shared tokens and focus treatments
+  - [ ] Accessibility roles and labels preserved or improved
+  - [ ] Existing tests updated and passing
 
 ### 7.5 Shelf (Homepage) Rebuild
 
@@ -1980,6 +2033,19 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - [ ] Manual keyboard-only audit complete
   - [ ] Manual screen reader spot-check complete
 
+#### Task 7.13.7: Resolve Shortcut Conflicts and Document Final Map
+- **Description**: Eliminate collisions in shortcut assignments across global and diary scopes
+- **Dependencies**: 7.6.4, 7.13.1
+- **Effort**: S
+- **Files to Modify**:
+  - `muwi/src/hooks/useKeyboardShortcuts.ts`
+  - `muwi/src/hooks/useGlobalShortcuts.ts`
+  - `muwi/src/components/shelf/SettingsPanel.tsx`
+- **Acceptance Criteria**:
+  - [ ] No conflicting shortcut combinations for different actions in same context
+  - [ ] Shortcut map is visible in settings/help copy
+  - [ ] Shortcut-related tests updated and passing
+
 ### 7.14 Responsive and Window-Resize Behavior
 
 #### Task 7.14.1: Implement In-Diary Breakpoint Rules
@@ -2015,7 +2081,30 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - [ ] Test coverage for shelf and in-diary breakpoints
   - [ ] No major layout regressions across width classes
 
+#### Task 7.14.5: Add E2E Resize Smoke Coverage
+- **Description**: Validate critical layout behaviors through browser-level resize tests
+- **Dependencies**: 7.14.1, 7.14.2
+- **Effort**: S
+- **Files to Modify**:
+  - `muwi/e2e/smoke.spec.ts`
+- **Acceptance Criteria**:
+  - [ ] E2E smoke covers at least desktop and narrow-width transitions
+  - [ ] Sidebar/right panel behavior at small widths is validated
+
 ### 7.15 Performance and Refactor Stabilization
+
+#### Task 7.15.0: Fix Production Typecheck Boundary
+- **Description**: Ensure production build typecheck excludes test-only globals and test files
+- **Dependencies**: 7.1.6
+- **Effort**: S
+- **Files to Modify**:
+  - `muwi/tsconfig.app.json`
+  - `muwi/tsconfig.json`
+  - build scripts if needed
+- **Acceptance Criteria**:
+  - [x] `npm run build` no longer fails on `describe`/`it`/`vi` test globals
+  - [x] Test typing remains available in Vitest context
+  - [x] Production bundle build path is cleanly separated from test typechecking
 
 #### Task 7.15.1: Profile Initial Render and Diary Switching
 - **Description**: Measure and record performance after refactor
@@ -2049,6 +2138,15 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Acceptance Criteria**:
   - [ ] Build completes with no new critical warnings
   - [ ] Runtime memory/CPU does not regress significantly from baseline
+
+#### Task 7.15.5: Stabilize Tests Against Styling Refactors
+- **Description**: Reduce brittle tests that assert raw style literals likely to change with tokenization
+- **Dependencies**: 7.4.8, 7.15.2
+- **Effort**: M
+- **Acceptance Criteria**:
+  - [ ] Style-literal assertions replaced with semantic assertions where possible
+  - [ ] Snapshot noise reduced for style-only churn
+  - [ ] Test suite remains green during ongoing UI migration
 
 ### 7.16 Distribution and Release (Post-Refactor)
 
@@ -2102,8 +2200,8 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 | Phase 4: Long Drafts | 8 | ~4 weeks |
 | Phase 5: Academic | 10 | ~4 weeks |
 | Phase 6: Export/Backup | 6 | ~2 weeks |
-| Phase 7: Design System v2 UI Refactor | 88 | ~9 weeks |
-| **Total** | **170** | **~32 weeks** |
+| Phase 7: Design System v2 UI Refactor | 96 | ~10 weeks |
+| **Total** | **178** | **~33 weeks** |
 
 ---
 
@@ -2156,9 +2254,10 @@ All Phase 0-6 features complete ────────────────
                         ├── 7.6.6 (Command palette complete)
                         └── 7.7-7.12 (Diary migrations)
                             └── 7.13.6 (Accessibility suite)
-                                └── 7.14.4 (Responsive regression tests)
-                                    └── 7.15.4 (Performance validation)
-                                        └── 7.16.4 (Go/No-Go checklist)
+                                └── 7.14.5 (Responsive + resize e2e tests)
+                                    └── 7.15.0 (Production build typecheck boundary)
+                                        └── 7.15.5 (Performance + test stabilization)
+                                            └── 7.16.4 (Go/No-Go checklist)
 ```
 
 ---
@@ -2173,5 +2272,5 @@ All Phase 0-6 features complete ────────────────
 
 ---
 
-*Document Version: 1.1*
+*Document Version: 1.4*
 *Last Updated: February 2026*

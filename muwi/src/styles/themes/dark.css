@@ -1,0 +1,63 @@
+[data-theme='dark'] {
+  /* Backgrounds */
+  --color-bg-primary: #161618;
+  --color-bg-secondary: #1c1c1e;
+  --color-bg-tertiary: #242426;
+  --color-bg-canvas: #1e1e20;
+  --color-bg-canvas-warm: #1f1e1b;
+  --color-bg-elevated: #242426;
+  --color-bg-sunken: #131315;
+  --color-bg-overlay: rgba(0, 0, 0, 0.6);
+
+  /* Text */
+  --color-text-primary: #e5e5e7;
+  --color-text-secondary: #9a9a9e;
+  --color-text-tertiary: #6b6b6f;
+  --color-text-inverse: #1c1c1e;
+  --color-text-on-canvas: #e5e5e7;
+
+  /* Borders */
+  --color-border-default: #2c2c2e;
+  --color-border-subtle: #242426;
+  --color-border-strong: #3a3a3c;
+  --color-border-on-canvas: #2c2c2e;
+
+  /* Accent */
+  --color-accent-default: hsl(var(--color-accent-h), var(--color-accent-s), 60%);
+  --color-accent-hover: hsl(var(--color-accent-h), var(--color-accent-s), 68%);
+  --color-accent-subtle: hsl(var(--color-accent-h), var(--color-accent-s), 15%);
+  --color-accent-text: hsl(var(--color-accent-h), var(--color-accent-s), 65%);
+
+  /* Semantic */
+  --color-success: #57d27a;
+  --color-success-subtle: rgba(87, 210, 122, 0.12);
+  --color-warning: #f5c543;
+  --color-warning-subtle: rgba(245, 197, 67, 0.12);
+  --color-error: #f28b82;
+  --color-error-subtle: rgba(242, 139, 130, 0.12);
+  --color-info: #8ab4f8;
+  --color-info-subtle: rgba(138, 180, 248, 0.12);
+  --color-locked: #757575;
+  --color-locked-bg: rgba(117, 117, 117, 0.1);
+
+  /* Interactive */
+  --color-hover-overlay: rgba(255, 255, 255, 0.06);
+  --color-active-overlay: rgba(255, 255, 255, 0.09);
+  --color-selected-bg: var(--color-accent-subtle);
+  --color-focus-ring: var(--color-accent-default);
+
+  /* Dark shadow overrides */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px -1px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.35), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
+  --shadow-toolbar: 0 1px 0 0 var(--color-border-default);
+  --shadow-sidebar: 1px 0 0 0 var(--color-border-default);
+
+  /* Focus ring depends on colors */
+  --shadow-focus: 0 0 0 2px var(--color-bg-primary),
+    0 0 0 4px var(--color-accent-default);
+
+  /* Compatibility aliases */
+  --color-bg-paper: var(--color-bg-canvas-warm);
+}

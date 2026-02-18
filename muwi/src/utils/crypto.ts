@@ -40,6 +40,8 @@ export async function hashPasskey(passkey: string, saltHex: string): Promise<str
   }
 
   const salt = hexToBytes(saltHex);
+  const saltBuffer = new Uint8Array(salt.length);
+  saltBuffer.set(salt);
   const encoder = new TextEncoder();
   const passkeyBytes = encoder.encode(passkey);
 
@@ -50,7 +52,7 @@ export async function hashPasskey(passkey: string, saltHex: string): Promise<str
   const derivedBits = await cryptoApi.subtle.deriveBits(
     {
       name: 'PBKDF2',
-      salt,
+      salt: saltBuffer,
       iterations: PBKDF2_ITERATIONS,
       hash: 'SHA-256',
     },
@@ -73,4 +75,3 @@ export async function verifyPasskey(
   const computedHash = await hashPasskey(passkey, saltHex);
   return computedHash === expectedHashHex;
 }
-

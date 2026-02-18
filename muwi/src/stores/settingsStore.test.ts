@@ -22,6 +22,9 @@ describe('settingsStore', () => {
 
     await state.updateTheme('light');
     expect(useSettingsStore.getState().global.theme).toBe('light');
+
+    await state.updateTheme('system');
+    expect(useSettingsStore.getState().global.theme).toBe('system');
   });
 
   it('updates per-diary settings through generic and specific actions', () => {

@@ -7,6 +7,7 @@ import {
 } from '@/stores/appStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useGlobalShortcuts, usePasteHandler } from '@/hooks';
+import { applyThemeToDocument, getSystemPrefersDark, resolveTheme, watchSystemTheme } from '@/utils/theme';
 import { Shelf } from '@/components/shelf';
 import { ErrorBoundary } from '@/components/common';
 import { PersonalDiary } from '@/components/diaries/PersonalDiary';
@@ -23,6 +24,7 @@ function App() {
   const activeItemId = useAppStore(selectActiveItemId);
   const loadSettings = useSettingsStore((state) => state.loadSettings);
   const isSettingsLoaded = useSettingsStore((state) => state.isLoaded);
+  const themeMode = useSettingsStore((state) => state.global.theme);
 
   // Enable global keyboard shortcuts
   useGlobalShortcuts();
@@ -34,6 +36,23 @@ function App() {
       loadSettings();
     }
   }, [isSettingsLoaded, loadSettings]);
+
+  // Apply effective theme to document root.
+  useEffect(() => {
+    const applyResolvedTheme = () => {
+      applyThemeToDocument(resolveTheme(themeMode, getSystemPrefersDark()));
+    };
+
+    applyResolvedTheme();
+
+    if (themeMode !== 'system') {
+      return undefined;
+    }
+
+    return watchSystemTheme((theme) => {
+      applyThemeToDocument(theme);
+    });
+  }, [themeMode]);
 
   // Sync store state from URL on first load and browser history navigation.
   useEffect(() => {
