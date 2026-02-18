@@ -1480,9 +1480,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/common/Modal/Modal.tsx`
   - `muwi/src/components/common/Modal/Modal.test.tsx`
 - **Acceptance Criteria**:
-  - [ ] Backdrop, border radius, shadow, and animations match tokens
-  - [ ] `Esc`, backdrop click, and explicit close button all close modal
-  - [ ] Focus returns to trigger element on close
+  - [x] Backdrop, border radius, shadow, and animations match tokens
+  - [x] `Esc`, backdrop click, and explicit close button all close modal
+  - [x] Focus returns to trigger element on close
 
 #### Task 7.4.4: Refactor Context Menu to Spec
 - **Description**: Update context menu visual and keyboard behavior

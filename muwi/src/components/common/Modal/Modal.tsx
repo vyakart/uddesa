@@ -14,6 +14,7 @@ export interface ModalProps {
   initialFocusRef?: React.RefObject<HTMLElement | null>;
   className?: string;
   maxWidth?: number;
+  closeButtonLabel?: string;
 }
 
 export function Modal({
@@ -26,14 +27,19 @@ export function Modal({
   initialFocusRef,
   className,
   maxWidth = 720,
+  closeButtonLabel = 'Close modal',
 }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
   const titleId = useId();
 
   useEffect(() => {
     if (!isOpen) {
       return;
     }
+
+    returnFocusRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
 
     const modalNode = modalRef.current;
     if (!modalNode) {
@@ -79,6 +85,12 @@ export function Modal({
     document.addEventListener('keydown', onKeyDown);
     return () => {
       document.removeEventListener('keydown', onKeyDown);
+
+      const focusTarget = returnFocusRef.current;
+      if (focusTarget && document.contains(focusTarget)) {
+        focusTarget.focus();
+      }
+      returnFocusRef.current = null;
     };
   }, [closeOnEscape, initialFocusRef, isOpen, onClose]);
 
@@ -88,24 +100,12 @@ export function Modal({
 
   return createPortal(
     <div
+      className="muwi-modal-backdrop"
       data-testid="modal-backdrop"
       onMouseDown={(event) => {
         if (closeOnBackdropClick && event.target === event.currentTarget) {
           onClose();
         }
-      }}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 1000,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '1.5rem',
-        backgroundColor: 'rgba(0, 0, 0, 0.45)',
-        opacity: 1,
-        transition: 'opacity 180ms ease',
-        animation: 'muwi-fade-in 180ms ease',
       }}
     >
       <div
@@ -114,35 +114,33 @@ export function Modal({
         aria-modal="true"
         aria-labelledby={title ? titleId : undefined}
         tabIndex={-1}
-        className={className}
-        style={{
-          width: '100%',
-          maxWidth,
-          maxHeight: '90vh',
-          overflow: 'auto',
-          borderRadius: 12,
-          border: '1px solid #d8d8d8',
-          backgroundColor: '#fffef9',
-          boxShadow: '0 12px 40px rgba(0, 0, 0, 0.2)',
-          transform: 'translateY(0)',
-          transition: 'transform 180ms ease, opacity 180ms ease',
-          animation: 'muwi-modal-in 180ms ease',
-        }}
+        className={['muwi-modal', className ?? null].filter(Boolean).join(' ')}
+        style={{ maxWidth }}
       >
-        {title ? (
-          <header
-            style={{
-              padding: '1rem 1.25rem',
-              borderBottom: '1px solid #ececec',
-            }}
-          >
-            <h2 id={titleId} style={{ margin: 0, fontSize: '1.125rem', fontWeight: 600 }}>
+        <header className="muwi-modal__header" data-has-title={title ? 'true' : 'false'}>
+          {title ? (
+            <h2 id={titleId} className="muwi-modal__title">
               {title}
             </h2>
-          </header>
-        ) : null}
+          ) : (
+            <span aria-hidden="true" />
+          )}
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label={closeButtonLabel}
+            className="muwi-button"
+            data-variant="ghost"
+            data-size="sm"
+            data-icon-only="true"
+            data-active="false"
+            data-testid="modal-close-button"
+          >
+            ×
+          </button>
+        </header>
 
-        <div style={{ padding: '1.25rem' }}>{children}</div>
+        <div className="muwi-modal__body">{children}</div>
       </div>
     </div>,
     document.body

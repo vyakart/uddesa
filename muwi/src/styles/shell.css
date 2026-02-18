@@ -579,3 +579,70 @@
 .muwi-field.is-invalid .muwi-field__label {
   color: var(--color-error);
 }
+
+.muwi-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  background: var(--color-bg-overlay);
+  animation: muwi-modal-backdrop-in var(--duration-normal) var(--ease-out);
+}
+
+.muwi-modal {
+  width: 100%;
+  max-height: 90vh;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-modal);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: muwi-modal-surface-in var(--duration-normal) var(--ease-out);
+}
+
+.muwi-modal__header {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-gap-default);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.muwi-modal__title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.muwi-modal__body {
+  padding: var(--space-5);
+  overflow: auto;
+}
+
+@keyframes muwi-modal-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes muwi-modal-surface-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
