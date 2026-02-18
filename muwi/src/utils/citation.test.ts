@@ -1,9 +1,11 @@
 import type { BibliographyEntry } from '@/types/academic';
 import Cite from 'citation-js';
+import CSL from 'citeproc';
 import {
   fetchFromDOI,
   formatBibliography,
   formatBibliographyEntry,
+  formatCitation,
   formatInTextCitation,
   generateCitationKey,
   parseBibTeX,
@@ -43,7 +45,8 @@ describe('citation utils', () => {
     const entryC = makeEntry({ id: 'c', authors: ['Clark, Chris'], year: 2026 });
 
     const inText = formatInTextCitation(entryA, 'apa7', '12-13');
-    expect(inText).toContain('p. 12-13');
+    expect(inText).toContain('12-13');
+    expect(formatCitation(entryA, 'apa7', '12-13')).toBe(inText);
 
     const bibliographyHtml = formatBibliography([entryA], 'apa7');
     expect(bibliographyHtml.length).toBeGreaterThan(0);
@@ -60,24 +63,37 @@ describe('citation utils', () => {
     ]);
   });
 
-  it('handles in-text page-number formats for parenthesis, brackets, and plain citations', () => {
+  it('supports style switching across bundled and legacy styles', () => {
+    const entry = makeEntry({ authors: ['Ada Lovelace'], year: 2025 });
+
+    const styles = ['apa7', 'mla9', 'chicago', 'harvard', 'ieee'] as const;
+    styles.forEach((style) => {
+      expect(formatInTextCitation(entry, style, '45').length).toBeGreaterThan(0);
+      expect(formatBibliographyEntry(entry, style).length).toBeGreaterThan(0);
+    });
+  });
+
+  it('handles in-text page-number formats for legacy citation-js templates', () => {
     const formatSpy = vi.spyOn(Cite.prototype, 'format')
       .mockReturnValueOnce('(Smith, 2024)')
       .mockReturnValueOnce('[1]')
       .mockReturnValueOnce('Smith 2024');
 
     const entry = makeEntry({ authors: ['Ada Lovelace'] });
-    expect(formatInTextCitation(entry, 'apa7', '45')).toBe('(Smith, 2024, p. 45)');
+    expect(formatInTextCitation(entry, 'harvard', '45')).toBe('(Smith, 2024, p. 45)');
     expect(formatInTextCitation(entry, 'ieee', '45')).toBe('[1, p. 45]');
-    expect(formatInTextCitation(entry, 'mla9', '45')).toBe('Smith 2024 (p. 45)');
+    expect(formatInTextCitation(entry, 'harvard', '45')).toBe('Smith 2024 (p. 45)');
 
     expect(formatSpy).toHaveBeenCalledTimes(3);
   });
 
   it('falls back when citation formatting fails', () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    vi.spyOn(Cite.prototype, 'format').mockImplementation(() => {
-      throw 'boom';
+    vi.spyOn(CSL.Engine.prototype, 'appendCitationCluster').mockImplementation(() => {
+      throw new Error('boom');
+    });
+    vi.spyOn(CSL.Engine.prototype, 'makeBibliography').mockImplementation(() => {
+      throw new Error('boom');
     });
 
     const fallbackWithUnknownAuthor = formatInTextCitation(

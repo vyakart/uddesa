@@ -1,8 +1,14 @@
 import Cite from 'citation-js';
+import CSL from 'citeproc';
 import type { BibliographyEntry, CitationStyle } from '@/types/academic';
+import apaStyle from '@/assets/csl/apa.csl?raw';
+import mlaStyle from '@/assets/csl/mla.csl?raw';
+import chicagoStyle from '@/assets/csl/chicago-author-date.csl?raw';
+import enUsLocale from '@/assets/csl/locales-en-US.xml?raw';
 
-// Map our citation styles to CSL style names
-const STYLE_MAP: Record<CitationStyle, string> = {
+type BundledCiteprocStyle = 'apa' | 'mla' | 'chicago';
+
+const LEGACY_STYLE_MAP: Record<CitationStyle, string> = {
   apa7: 'apa',
   mla9: 'mla',
   chicago: 'chicago-author-date',
@@ -10,37 +16,32 @@ const STYLE_MAP: Record<CitationStyle, string> = {
   ieee: 'ieee',
 };
 
-// Convert BibliographyEntry to CSL-JSON format for citation-js
-function entryToCSL(entry: BibliographyEntry): object {
-  const csl: Record<string, unknown> = {
-    id: entry.id,
-    type: mapEntryTypeToCSL(entry.type),
-    title: entry.title,
-    issued: entry.year ? { 'date-parts': [[entry.year]] } : undefined,
-    author: entry.authors.map(parseAuthorString),
-    DOI: entry.doi,
-    URL: entry.url,
-  };
+const BUNDLED_STYLE_MAP: Partial<Record<CitationStyle, BundledCiteprocStyle>> = {
+  apa7: 'apa',
+  mla9: 'mla',
+  chicago: 'chicago',
+};
 
-  // Add optional fields based on entry type
-  if (entry.journal) {
-    csl['container-title'] = entry.journal;
-  }
-  if (entry.volume) {
-    csl.volume = entry.volume;
-  }
-  if (entry.issue) {
-    csl.issue = entry.issue;
-  }
-  if (entry.pages) {
-    csl.page = entry.pages;
-  }
-  if (entry.publisher) {
-    csl.publisher = entry.publisher;
-  }
+const STYLE_XML_MAP: Record<BundledCiteprocStyle, string> = {
+  apa: apaStyle,
+  mla: mlaStyle,
+  chicago: chicagoStyle,
+};
 
-  return csl;
-}
+type CSLItem = {
+  id: string;
+  type: string;
+  title?: string;
+  issued?: { 'date-parts': number[][] };
+  author?: Array<{ family?: string; given?: string }>;
+  DOI?: string;
+  URL?: string;
+  volume?: string;
+  issue?: string;
+  page?: string;
+  publisher?: string;
+  'container-title'?: string;
+};
 
 // Map our entry types to CSL types
 function mapEntryTypeToCSL(type: BibliographyEntry['type']): string {
@@ -58,20 +59,160 @@ function mapEntryTypeToCSL(type: BibliographyEntry['type']): string {
 
 // Parse author string "Last, First" or "First Last" into CSL author object
 function parseAuthorString(authorStr: string): { family: string; given: string } {
-  const parts = authorStr.split(',').map(s => s.trim());
+  const parts = authorStr.split(',').map((value) => value.trim());
   if (parts.length === 2) {
-    // "Last, First" format
     return { family: parts[0], given: parts[1] };
   }
-  // "First Last" format
-  const nameParts = authorStr.trim().split(/\s+/);
+
+  const nameParts = authorStr.trim().split(/\s+/).filter(Boolean);
   if (nameParts.length >= 2) {
-    const family = nameParts[nameParts.length - 1];
-    const given = nameParts.slice(0, -1).join(' ');
-    return { family, given };
+    return {
+      family: nameParts[nameParts.length - 1],
+      given: nameParts.slice(0, -1).join(' '),
+    };
   }
-  // Single name
-  return { family: authorStr.trim(), given: '' };
+
+  return { family: authorStr.trim() || 'Unknown', given: '' };
+}
+
+function entryToCSLItem(entry: BibliographyEntry): CSLItem {
+  return {
+    id: entry.id,
+    type: mapEntryTypeToCSL(entry.type),
+    title: entry.title,
+    issued: entry.year ? { 'date-parts': [[entry.year]] } : undefined,
+    author: entry.authors.map(parseAuthorString),
+    DOI: entry.doi,
+    URL: entry.url,
+    volume: entry.volume,
+    issue: entry.issue,
+    page: entry.pages,
+    publisher: entry.publisher,
+    'container-title': entry.journal,
+  };
+}
+
+function buildCiteprocEngine(
+  items: CSLItem[],
+  style: BundledCiteprocStyle
+): InstanceType<typeof CSL.Engine> {
+  const itemsById = Object.fromEntries(items.map((item) => [item.id, item]));
+  const sys = {
+    retrieveLocale: () => enUsLocale,
+    retrieveItem: (id: string) => itemsById[id],
+  };
+
+  return new CSL.Engine(sys, STYLE_XML_MAP[style], 'en-US');
+}
+
+function htmlToText(value: string): string {
+  return value
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&#39;/gi, "'")
+    .replace(/&quot;/gi, '"')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function appendPageNumbers(citation: string, pageNumbers?: string): string {
+  if (!pageNumbers) {
+    return citation;
+  }
+  if (citation.includes(pageNumbers)) {
+    return citation;
+  }
+
+  if (citation.endsWith(')')) {
+    return citation.slice(0, -1) + `, p. ${pageNumbers})`;
+  }
+  if (citation.endsWith(']')) {
+    return citation.slice(0, -1) + `, p. ${pageNumbers}]`;
+  }
+  return citation + ` (p. ${pageNumbers})`;
+}
+
+function formatCitationWithBundledCiteproc(
+  entry: BibliographyEntry,
+  style: BundledCiteprocStyle,
+  pageNumbers?: string
+): string {
+  const item = entryToCSLItem(entry);
+  const engine = buildCiteprocEngine([item], style);
+  engine.updateItems([item.id]);
+  const result = engine.appendCitationCluster({
+    citationItems: [
+      pageNumbers
+        ? { id: item.id, locator: pageNumbers, label: 'page' }
+        : { id: item.id },
+    ],
+    properties: { noteIndex: 0 },
+  });
+  return appendPageNumbers(result?.[0]?.[1] ?? '', pageNumbers);
+}
+
+function formatBibliographyWithBundledCiteproc(
+  entries: BibliographyEntry[],
+  style: BundledCiteprocStyle
+): string {
+  const items = entries.map(entryToCSLItem);
+  const engine = buildCiteprocEngine(items, style);
+  engine.updateItems(items.map((item) => item.id));
+  const [, bibliographyEntries] = engine.makeBibliography();
+  return bibliographyEntries.join('\n');
+}
+
+function formatBibliographyEntryWithBundledCiteproc(
+  entry: BibliographyEntry,
+  style: BundledCiteprocStyle
+): string {
+  const html = formatBibliographyWithBundledCiteproc([entry], style);
+  return htmlToText(html);
+}
+
+function formatCitationWithLegacyTemplate(
+  entry: BibliographyEntry,
+  style: CitationStyle,
+  pageNumbers?: string
+): string {
+  const cite = new Cite(entryToCSLItem(entry));
+  const cslStyle = LEGACY_STYLE_MAP[style];
+  const citation = cite.format('citation', {
+    format: 'text',
+    template: cslStyle,
+    lang: 'en-US',
+  });
+
+  return appendPageNumbers(citation, pageNumbers);
+}
+
+function formatBibliographyWithLegacyTemplate(
+  entries: BibliographyEntry[],
+  style: CitationStyle
+): string {
+  const cite = new Cite(entries.map(entryToCSLItem));
+  const cslStyle = LEGACY_STYLE_MAP[style];
+  return cite.format('bibliography', {
+    format: 'html',
+    template: cslStyle,
+    lang: 'en-US',
+  });
+}
+
+function formatBibliographyEntryWithLegacyTemplate(
+  entry: BibliographyEntry,
+  style: CitationStyle
+): string {
+  const cite = new Cite(entryToCSLItem(entry));
+  const cslStyle = LEGACY_STYLE_MAP[style];
+  return cite.format('bibliography', {
+    format: 'text',
+    template: cslStyle,
+    lang: 'en-US',
+  });
 }
 
 /**
@@ -87,37 +228,37 @@ export function formatInTextCitation(
   pageNumbers?: string
 ): string {
   try {
-    const cite = new Cite(entryToCSL(entry));
-    const cslStyle = STYLE_MAP[style];
-
-    // Get the in-text citation format
-    let citation = cite.format('citation', {
-      format: 'text',
-      template: cslStyle,
-      lang: 'en-US',
-    });
-
-    // Add page numbers if provided
-    if (pageNumbers) {
-      // Remove closing parenthesis/bracket, add page, then close
-      if (citation.endsWith(')')) {
-        citation = citation.slice(0, -1) + `, p. ${pageNumbers})`;
-      } else if (citation.endsWith(']')) {
-        citation = citation.slice(0, -1) + `, p. ${pageNumbers}]`;
-      } else {
-        citation += ` (p. ${pageNumbers})`;
+    const bundledStyle = BUNDLED_STYLE_MAP[style];
+    if (bundledStyle) {
+      const citation = formatCitationWithBundledCiteproc(entry, bundledStyle, pageNumbers);
+      if (citation) {
+        return citation;
       }
     }
 
-    return citation;
+    return formatCitationWithLegacyTemplate(entry, style, pageNumbers);
   } catch (error) {
     console.error('Error formatting citation:', error);
-    // Fallback to basic format
     const author = entry.authors[0]?.split(',')[0] || 'Unknown';
     const yearStr = entry.year ? `, ${entry.year}` : '';
     const pageStr = pageNumbers ? `, p. ${pageNumbers}` : '';
     return `(${author}${yearStr}${pageStr})`;
   }
+}
+
+/**
+ * Format a single citation for in-text use
+ * @param entry - The bibliography entry to cite
+ * @param style - Citation style to use
+ * @param pageNumbers - Optional page numbers for the citation
+ * @returns Formatted in-text citation string
+ */
+export function formatCitation(
+  entry: BibliographyEntry,
+  style: CitationStyle = 'apa7',
+  pageNumbers?: string
+): string {
+  return formatInTextCitation(entry, style, pageNumbers);
 }
 
 /**
@@ -133,20 +274,19 @@ export function formatBibliography(
   if (entries.length === 0) return '';
 
   try {
-    const cslEntries = entries.map(entryToCSL);
-    const cite = new Cite(cslEntries);
-    const cslStyle = STYLE_MAP[style];
+    const bundledStyle = BUNDLED_STYLE_MAP[style];
+    if (bundledStyle) {
+      const bibliography = formatBibliographyWithBundledCiteproc(entries, bundledStyle);
+      if (bibliography) {
+        return bibliography;
+      }
+    }
 
-    return cite.format('bibliography', {
-      format: 'html',
-      template: cslStyle,
-      lang: 'en-US',
-    });
+    return formatBibliographyWithLegacyTemplate(entries, style);
   } catch (error) {
     console.error('Error formatting bibliography:', error);
-    // Fallback to basic format
     return entries
-      .map(entry => {
+      .map((entry) => {
         const authors = entry.authors.join(', ');
         const year = entry.year ? ` (${entry.year})` : '';
         const title = entry.title;
@@ -168,14 +308,15 @@ export function formatBibliographyEntry(
   style: CitationStyle = 'apa7'
 ): string {
   try {
-    const cite = new Cite(entryToCSL(entry));
-    const cslStyle = STYLE_MAP[style];
+    const bundledStyle = BUNDLED_STYLE_MAP[style];
+    if (bundledStyle) {
+      const bibliographyEntry = formatBibliographyEntryWithBundledCiteproc(entry, bundledStyle);
+      if (bibliographyEntry) {
+        return bibliographyEntry;
+      }
+    }
 
-    return cite.format('bibliography', {
-      format: 'text',
-      template: cslStyle,
-      lang: 'en-US',
-    });
+    return formatBibliographyEntryWithLegacyTemplate(entry, style);
   } catch (error) {
     console.error('Error formatting bibliography entry:', error);
     const authors = entry.authors.join(', ');
@@ -195,8 +336,7 @@ export function parseBibTeX(bibtex: string): Partial<BibliographyEntry>[] {
     const data = cite.data as Array<Record<string, unknown>>;
 
     return data.map((item) => {
-      const authors = ((item.author as Array<{ family?: string; given?: string }>) || [])
-        .map(a => {
+      const authors = ((item.author as Array<{ family?: string; given?: string }>) || []).map((a) => {
           if (a.family && a.given) {
             return `${a.family}, ${a.given}`;
           }
@@ -251,7 +391,6 @@ function mapCSLTypeToEntry(cslType: string): BibliographyEntry['type'] {
  * @returns Parsed bibliography entry data
  */
 export async function fetchFromDOI(doi: string): Promise<Partial<BibliographyEntry>> {
-  // Clean up DOI - remove URL prefix if present
   const cleanDOI = doi
     .replace(/^https?:\/\/(dx\.)?doi\.org\//i, '')
     .replace(/^doi:/i, '')
@@ -262,7 +401,6 @@ export async function fetchFromDOI(doi: string): Promise<Partial<BibliographyEnt
   }
 
   try {
-    // Fetch from DOI.org with content negotiation for CSL-JSON
     const response = await fetch(`https://doi.org/${cleanDOI}`, {
       headers: {
         Accept: 'application/vnd.citationstyles.csl+json',
@@ -278,9 +416,7 @@ export async function fetchFromDOI(doi: string): Promise<Partial<BibliographyEnt
 
     const data = await response.json() as Record<string, unknown>;
 
-    // Parse the CSL-JSON response
-    const authors = ((data.author as Array<{ family?: string; given?: string }>) || [])
-      .map(a => {
+    const authors = ((data.author as Array<{ family?: string; given?: string }>) || []).map((a) => {
         if (a.family && a.given) {
           return `${a.family}, ${a.given}`;
         }

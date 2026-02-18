@@ -979,11 +979,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 5.1.1
 - **Effort**: L
 - **Acceptance Criteria**:
-  - [ ] formatCitation function
-  - [ ] formatBibliography function
-  - [ ] parseBibTeX function
-  - [ ] fetchFromDOI function
-  - [ ] Style switching
+  - [x] formatCitation function
+  - [x] formatBibliography function
+  - [x] parseBibTeX function
+  - [x] fetchFromDOI function
+  - [x] Style switching
 - **Testing**: Unit tests for each function
 
 #### Task 5.1.3: Create CitationPicker Component

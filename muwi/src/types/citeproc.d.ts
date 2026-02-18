@@ -20,19 +20,26 @@ declare module 'citeproc' {
   }
 
   interface CitationCluster {
-    citationItems: Array<{ id: string }>;
+    citationItems: Array<{
+      id: string;
+      locator?: string;
+      label?: string;
+    }>;
     properties: { noteIndex: number };
   }
 
-  class Engine {
-    constructor(sys: EngineSystem, style: string, lang?: string);
+  interface Engine {
     updateItems(ids: string[]): void;
     appendCitationCluster(citation: CitationCluster): Array<[number, string]>;
     makeBibliography(): [unknown, string[]];
   }
 
+  interface EngineConstructor {
+    new (sys: EngineSystem, style: string, lang?: string): Engine;
+  }
+
   const CSL: {
-    Engine: typeof Engine;
+    Engine: EngineConstructor;
   };
 
   export default CSL;
