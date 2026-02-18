@@ -9,7 +9,7 @@ Last updated: February 18, 2026
 - Latest full coverage snapshot: lines `90.82%`, statements `90.22%`, functions `86.44%`, branches `80.07%`.
 - Recent focus has been adding reliable tests module by module.
 - Blackboard coverage moved from almost none to strong coverage.
-- Current execution stage: Phase `6.1.1` (PDF export utility acceptance and implementation).
+- Current execution stage: Phase `6.2.1` (backup utilities).
 
 ## 2) Completed tasks so far (brief)
 
@@ -69,6 +69,9 @@ Last updated: February 18, 2026
 | Task wave 47 | Completed `5.3.1` AcademicSection acceptance by adding figure/table insertion with automatic numbering, cross-reference insertion panel for section/figure/table targets, and paper-format controls (line spacing, font size, margin presets) wired to paper settings | Academic editor tests + targeted suite + full run green + eslint green: `AcademicSectionEditor.test.tsx` (`5` tests), `vitest src/components/diaries/academic`, `vitest --run` (`69` files, `285` tests), `eslint .` |
 | Task wave 48 | Completed `5.3.2` TemplateSelector acceptance by implementing IMRAD/custom template selection, custom section-definition input, abstract/keywords fields, author fields (multi-author add/remove), and create-paper metadata flow through `academicStore.createPaper` | Template/store/integration tests + full run green + eslint green: `TemplateSelector.test.tsx` (`3` tests), `academicStore.test.ts` (`11` tests), `Academic.test.tsx` (`5` tests), `vitest --run` (`69` files, `287` tests), `eslint .` |
 | Task wave 49 | Completed `5.3.3` AcademicPaper container acceptance by validating template selection flow, section navigation, bibliography panel integration, citation style selector, and adding explicit word/character count display in the Academic toolbar, then adding E2E coverage for academic create-paper/add-reference/citation insertion workflow | Integration + E2E evidence + full run green + eslint green: `Academic.test.tsx` (`5` tests), `academic.spec.ts` passing (`1` test), `vitest --run` (`69` files, `287` tests), `playwright test e2e/academic.spec.ts`, `eslint .` |
+| Task wave 50 | Completed `6.1.1` PDF export utility acceptance by confirming `jspdf` dependency usage, adding explicit PDF header/footer options, reserving content layout bands for headers/footers, preserving block-level formatting (headings/lists/blockquotes), and validating page-size option wiring | Export-targeted tests + lint green: `vitest src/utils/export.test.ts src/utils/export.pdf.test.ts` (`9` tests), `eslint src/utils/export.ts src/utils/export.pdf.test.ts` |
+| Task wave 51 | Completed `6.1.2` Word export utility acceptance by applying document-wide text styling controls (font family, font size, line spacing), preserving block formatting (headings/lists/blockquotes), supporting configurable headers/footers + page numbering, and adding dedicated DOCX unit tests with mocked `docx` primitives | Export-targeted tests + lint green: `vitest src/utils/export.test.ts src/utils/export.pdf.test.ts src/utils/export.word.test.ts` (`12` tests), `eslint src/utils/export.ts src/utils/export.word.test.ts` |
+| Task wave 52 | Completed `6.1.3` ExportPanel acceptance by keeping format selection for `PDF`/`DOCX`/`LaTeX`, adding format-specific options (header/footer + page numbering only for binary exports), introducing explicit export progress indicator states (`generating`/`saving`) with an accessible progressbar, and handling save-location cancellation messaging | Export panel targeted tests + lint green: `vitest src/components/common/ExportPanel/ExportPanel.test.tsx` (`5` tests), `vitest src/utils/export.test.ts src/utils/export.pdf.test.ts src/utils/export.word.test.ts src/components/common/ExportPanel/ExportPanel.test.tsx` (`17` tests), `eslint src/components/common/ExportPanel/ExportPanel.tsx src/components/common/ExportPanel/ExportPanel.test.tsx` |
 
 ## 3) Blackboard testing progress
 
@@ -107,5 +110,5 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Implement Phase `6.1.1`: PDF export utility acceptance (`text export`, `formatting preserved`, page options, headers/footers).
+1. Implement Phase `6.2.1`: backup utility acceptance (`createBackup`, `restoreBackup`, version validation, JSON format).
 2. Keep periodic full coverage reruns while feature stages advance to prevent regressions.

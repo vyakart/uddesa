@@ -25,6 +25,7 @@ interface ExportPanelProps {
 type ExportFormat = 'pdf' | 'docx' | 'tex';
 type PageSize = 'a4' | 'letter';
 type LineSpacing = 1 | 1.5 | 2;
+type ExportStage = 'idle' | 'generating' | 'saving';
 
 export function ExportPanel({
   isOpen,
@@ -43,13 +44,24 @@ export function ExportPanel({
   const [fontSize, setFontSize] = useState(12);
   const [includeTitle, setIncludeTitle] = useState(true);
   const [includePageNumbers, setIncludePageNumbers] = useState(true);
+  const [includeHeader, setIncludeHeader] = useState(true);
+  const [includeFooter, setIncludeFooter] = useState(true);
+  const [headerText, setHeaderText] = useState('');
+  const [footerText, setFooterText] = useState('');
   const [includeBibliography, setIncludeBibliography] = useState(true);
   const [isExporting, setIsExporting] = useState(false);
+  const [exportStage, setExportStage] = useState<ExportStage>('idle');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const isTexFormat = format === 'tex';
+  const supportsPageNumbers = !isTexFormat;
+  const supportsHeaderFooter = !isTexFormat;
+  const progressValue = exportStage === 'generating' ? 45 : exportStage === 'saving' ? 85 : 0;
+  const progressLabel = exportStage === 'saving' ? 'Saving file...' : 'Generating export...';
 
   const handleExport = useCallback(async () => {
     setIsExporting(true);
+    setExportStage('generating');
     setError(null);
     setSuccess(null);
 
@@ -60,7 +72,11 @@ export function ExportPanel({
         lineSpacing,
         fontSize,
         includeTitle,
-        includePageNumbers,
+        includePageNumbers: supportsPageNumbers ? includePageNumbers : false,
+        includeHeader: supportsHeaderFooter ? includeHeader : false,
+        includeFooter: supportsHeaderFooter ? includeFooter : false,
+        headerText: supportsHeaderFooter ? headerText : '',
+        footerText: supportsHeaderFooter ? footerText : '',
         includeBibliography,
       };
 
@@ -79,6 +95,7 @@ export function ExportPanel({
       const filename = `${sanitizedTitle}.${extension}`;
 
       // Save file
+      setExportStage('saving');
       const result = await saveExport(data as Uint8Array, filename);
 
       if (result) {
@@ -86,11 +103,14 @@ export function ExportPanel({
         setTimeout(() => {
           onClose();
         }, 1500);
+      } else {
+        setError('Export cancelled or no save location selected.');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Export failed');
     } finally {
       setIsExporting(false);
+      setExportStage('idle');
     }
   }, [
     format,
@@ -99,7 +119,13 @@ export function ExportPanel({
     fontSize,
     includeTitle,
     includePageNumbers,
+    includeHeader,
+    includeFooter,
+    headerText,
+    footerText,
     includeBibliography,
+    supportsPageNumbers,
+    supportsHeaderFooter,
     documentType,
     documentTitle,
     content,
@@ -123,7 +149,7 @@ export function ExportPanel({
         justifyContent: 'center',
         zIndex: 100,
       }}
-      onClick={(e) => e.target === e.currentTarget && onClose()}
+      onClick={(e) => !isExporting && e.target === e.currentTarget && onClose()}
     >
       <div
         style={{
@@ -150,13 +176,16 @@ export function ExportPanel({
             Export Document
           </h2>
           <button
+            aria-label="Close export panel"
             onClick={onClose}
+            disabled={isExporting}
             style={{
               padding: '4px',
               border: 'none',
               backgroundColor: 'transparent',
-              cursor: 'pointer',
+              cursor: isExporting ? 'not-allowed' : 'pointer',
               color: '#6B7280',
+              opacity: isExporting ? 0.5 : 1,
             }}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -183,6 +212,47 @@ export function ExportPanel({
               {documentTitle}
             </div>
           </div>
+
+          {/* Progress indicator */}
+          {isExporting && (
+            <div
+              role="status"
+              style={{
+                marginBottom: '20px',
+                padding: '12px',
+                border: '1px solid #DBEAFE',
+                borderRadius: '8px',
+                backgroundColor: '#EFF6FF',
+              }}
+            >
+              <div style={{ fontSize: '13px', fontWeight: 600, color: '#1D4ED8', marginBottom: '8px' }}>
+                {progressLabel}
+              </div>
+              <div
+                role="progressbar"
+                aria-label="Export progress"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={progressValue}
+                style={{
+                  width: '100%',
+                  height: '8px',
+                  backgroundColor: '#DBEAFE',
+                  borderRadius: '999px',
+                  overflow: 'hidden',
+                }}
+              >
+                <div
+                  style={{
+                    width: `${progressValue}%`,
+                    height: '100%',
+                    backgroundColor: '#2563EB',
+                    transition: 'width 200ms ease',
+                  }}
+                />
+              </div>
+            </div>
+          )}
 
           {/* Format selection */}
           <div style={{ marginBottom: '20px' }}>
@@ -352,22 +422,94 @@ export function ExportPanel({
                 />
                 <span style={{ fontSize: '14px', color: '#374151' }}>Include title page</span>
               </label>
-              <label
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  cursor: 'pointer',
-                }}
-              >
+              {supportsPageNumbers ? (
+                <label
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={includePageNumbers}
+                    onChange={(e) => setIncludePageNumbers(e.target.checked)}
+                    style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+                  />
+                  <span style={{ fontSize: '14px', color: '#374151' }}>Include page numbers</span>
+                </label>
+              ) : (
+                <div style={{ fontSize: '13px', color: '#6B7280' }}>
+                  Page numbers and header/footer controls are not applied to LaTeX source output.
+                </div>
+              )}
+              {supportsHeaderFooter && (
+                <label
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={includeHeader}
+                    onChange={(e) => setIncludeHeader(e.target.checked)}
+                    style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+                  />
+                  <span style={{ fontSize: '14px', color: '#374151' }}>Include header</span>
+                </label>
+              )}
+              {supportsHeaderFooter && includeHeader && (
                 <input
-                  type="checkbox"
-                  checked={includePageNumbers}
-                  onChange={(e) => setIncludePageNumbers(e.target.checked)}
-                  style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+                  type="text"
+                  value={headerText}
+                  onChange={(e) => setHeaderText(e.target.value)}
+                  placeholder="Header text (optional)"
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    border: '1px solid #E5E7EB',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                  }}
                 />
-                <span style={{ fontSize: '14px', color: '#374151' }}>Include page numbers</span>
-              </label>
+              )}
+              {supportsHeaderFooter && (
+                <label
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={includeFooter}
+                    onChange={(e) => setIncludeFooter(e.target.checked)}
+                    style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+                  />
+                  <span style={{ fontSize: '14px', color: '#374151' }}>Include footer</span>
+                </label>
+              )}
+              {supportsHeaderFooter && includeFooter && (
+                <input
+                  type="text"
+                  value={footerText}
+                  onChange={(e) => setFooterText(e.target.value)}
+                  placeholder="Footer text (optional)"
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    border: '1px solid #E5E7EB',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                  }}
+                />
+              )}
               {documentType === 'academic' && (
                 <label
                   style={{
@@ -434,13 +576,14 @@ export function ExportPanel({
         >
           <button
             onClick={onClose}
+            disabled={isExporting}
             style={{
               padding: '10px 20px',
               border: '1px solid #E5E7EB',
-              backgroundColor: 'white',
+              backgroundColor: isExporting ? '#F3F4F6' : 'white',
               borderRadius: '8px',
               fontSize: '14px',
-              cursor: 'pointer',
+              cursor: isExporting ? 'not-allowed' : 'pointer',
             }}
           >
             Cancel
@@ -477,7 +620,7 @@ export function ExportPanel({
                 >
                   <circle cx="12" cy="12" r="10" strokeDasharray="32" strokeDashoffset="8" />
                 </svg>
-                Exporting...
+                {exportStage === 'saving' ? 'Saving...' : 'Exporting...'}
               </>
             ) : (
               <>

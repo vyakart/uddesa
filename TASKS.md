@@ -1085,11 +1085,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.1.1
 - **Effort**: L
 - **Acceptance Criteria**:
-  - [ ] jsPDF or similar installed
-  - [ ] Text content exports
-  - [ ] Formatting preserved
-  - [ ] Page size options
-  - [ ] Headers/footers
+  - [x] jsPDF or similar installed
+  - [x] Text content exports
+  - [x] Formatting preserved
+  - [x] Page size options
+  - [x] Headers/footers
 - **Packages**: `npm install jspdf`
 - **Testing**: Unit tests
 
@@ -1098,10 +1098,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.1.1
 - **Effort**: L
 - **Acceptance Criteria**:
-  - [ ] docx library installed
-  - [ ] Text content exports
-  - [ ] Formatting preserved
-  - [ ] Styles applied
+  - [x] docx library installed
+  - [x] Text content exports
+  - [x] Formatting preserved
+  - [x] Styles applied
 - **Packages**: `npm install docx`
 - **Testing**: Unit tests
 
@@ -1110,10 +1110,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 6.1.1, 6.1.2
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Format selection (PDF, Word, LaTeX)
-  - [ ] Options per format
-  - [ ] Progress indicator
-  - [ ] Download or save to location
+  - [x] Format selection (PDF, Word, LaTeX)
+  - [x] Options per format
+  - [x] Progress indicator
+  - [x] Download or save to location
 - **Testing**: Component tests
 
 ### 6.2 Backup System

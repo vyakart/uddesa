@@ -32,6 +32,10 @@ export interface ExportOptions {
   fontSize: number;
   fontFamily: string;
   includeTitle: boolean;
+  includeHeader: boolean;
+  includeFooter: boolean;
+  headerText: string;
+  footerText: string;
   includePageNumbers: boolean;
   includeTableOfContents: boolean;
   includeBibliography: boolean;
@@ -45,6 +49,10 @@ export const defaultExportOptions: ExportOptions = {
   fontSize: 12,
   fontFamily: 'Times New Roman',
   includeTitle: true,
+  includeHeader: true,
+  includeFooter: true,
+  headerText: '',
+  footerText: '',
   includePageNumbers: true,
   includeTableOfContents: false,
   includeBibliography: true,
@@ -175,15 +183,70 @@ export async function exportToPDF(
   });
 
   const contentWidth = pageSize.width - opts.margins.left - opts.margins.right;
-  let yPosition = opts.margins.top;
   const lineHeight = opts.fontSize * opts.lineSpacing;
+  const hasHeader = opts.includeHeader;
+  const hasFooter = opts.includeFooter || opts.includePageNumbers;
+  const headerBandHeight = hasHeader ? Math.max(24, opts.fontSize * 1.8) : 0;
+  const footerBandHeight = hasFooter ? Math.max(24, opts.fontSize * 1.8) : 0;
+  const contentTop = opts.margins.top + headerBandHeight;
+  const contentBottom = pageSize.height - opts.margins.bottom - footerBandHeight;
+  let yPosition = contentTop;
 
   // Helper to add a new page if needed
   const checkPageBreak = (requiredSpace: number = lineHeight * 2) => {
-    if (yPosition + requiredSpace > pageSize.height - opts.margins.bottom) {
+    if (yPosition + requiredSpace > contentBottom) {
       pdf.addPage();
-      yPosition = opts.margins.top;
+      yPosition = contentTop;
     }
+  };
+
+  const drawHeaderFooter = (pageNumber: number, pageCount: number) => {
+    if (hasHeader) {
+      const headerText = opts.headerText.trim() || title;
+      if (headerText) {
+        pdf.setFontSize(10);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(90);
+        pdf.text(headerText, opts.margins.left, opts.margins.top + 12);
+      }
+      pdf.setDrawColor(220);
+      pdf.line(
+        opts.margins.left,
+        opts.margins.top + headerBandHeight,
+        pageSize.width - opts.margins.right,
+        opts.margins.top + headerBandHeight
+      );
+    }
+
+    if (hasFooter) {
+      const footerParts: string[] = [];
+      if (opts.includeFooter && opts.footerText.trim()) {
+        footerParts.push(opts.footerText.trim());
+      }
+      if (opts.includePageNumbers) {
+        footerParts.push(`Page ${pageNumber} of ${pageCount}`);
+      }
+
+      const footerText = footerParts.join(' | ');
+      if (footerText) {
+        pdf.setFontSize(10);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(90);
+        pdf.text(footerText, pageSize.width / 2, pageSize.height - opts.margins.bottom / 2, {
+          align: 'center',
+        });
+      }
+
+      pdf.setDrawColor(220);
+      pdf.line(
+        opts.margins.left,
+        pageSize.height - opts.margins.bottom - footerBandHeight,
+        pageSize.width - opts.margins.right,
+        pageSize.height - opts.margins.bottom - footerBandHeight
+      );
+    }
+
+    pdf.setTextColor(0);
   };
 
   // Add title if enabled
@@ -231,6 +294,16 @@ export async function exportToPDF(
     const lines = pdf.splitTextToSize(block.text, contentWidth - (block.type === 'blockquote' ? 40 : 0));
     const xOffset = block.type === 'blockquote' ? opts.margins.left + 20 : opts.margins.left;
 
+    if (block.type === 'blockquote') {
+      pdf.setDrawColor(160);
+      pdf.line(
+        opts.margins.left + 8,
+        yPosition - lineHeight * 0.2,
+        opts.margins.left + 8,
+        yPosition + lineHeight * Math.max(1, lines.length) + lineHeight * 0.1
+      );
+    }
+
     for (const line of lines) {
       checkPageBreak();
       pdf.text(line, xOffset, yPosition);
@@ -247,19 +320,11 @@ export async function exportToPDF(
     yPosition += lineHeight * 0.3;
   }
 
-  // Add page numbers if enabled
-  if (opts.includePageNumbers) {
+  if (hasHeader || hasFooter) {
     const pageCount = pdf.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
       pdf.setPage(i);
-      pdf.setFontSize(10);
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(
-        `${i}`,
-        pageSize.width / 2,
-        pageSize.height - opts.margins.bottom / 2,
-        { align: 'center' }
-      );
+      drawHeaderFooter(i, pageCount);
     }
   }
 
@@ -350,16 +415,38 @@ export async function exportToWord(
 ): Promise<Uint8Array> {
   const opts = { ...defaultExportOptions, ...options };
   const blocks = typeof content === 'string' ? parseHtmlToBlocks(content) : content;
+  const baseLineSpacing = opts.lineSpacing * 240; // docx: 240 = single
+  const baseRunSize = opts.fontSize * 2; // docx uses half-points
 
   const children: Paragraph[] = [];
+  const createTextRun = (
+    text: string,
+    options: {
+      size?: number;
+      bold?: boolean;
+      italics?: boolean;
+    } = {}
+  ) =>
+    new TextRun({
+      text,
+      font: opts.fontFamily,
+      size: options.size ?? baseRunSize,
+      bold: options.bold,
+      italics: options.italics,
+    });
 
   // Add title if enabled
   if (opts.includeTitle && title) {
     children.push(
       new Paragraph({
-        text: title,
+        children: [
+          createTextRun(title, {
+            size: Math.round(baseRunSize * 1.6),
+            bold: true,
+          }),
+        ],
         heading: HeadingLevel.TITLE,
-        spacing: { after: 400 },
+        spacing: { before: 200, after: 400, line: baseLineSpacing },
       })
     );
   }
@@ -371,59 +458,90 @@ export async function exportToWord(
     switch (block.type) {
       case 'heading1':
         paragraph = new Paragraph({
-          text: block.text,
+          children: [
+            createTextRun(block.text, {
+              size: Math.round(baseRunSize * 1.3),
+              bold: true,
+            }),
+          ],
           heading: HeadingLevel.HEADING_1,
-          spacing: { before: 400, after: 200 },
+          spacing: { before: 400, after: 220, line: baseLineSpacing },
         });
         break;
       case 'heading2':
         paragraph = new Paragraph({
-          text: block.text,
+          children: [
+            createTextRun(block.text, {
+              size: Math.round(baseRunSize * 1.15),
+              bold: true,
+            }),
+          ],
           heading: HeadingLevel.HEADING_2,
-          spacing: { before: 300, after: 150 },
+          spacing: { before: 300, after: 180, line: baseLineSpacing },
         });
         break;
       case 'heading3':
         paragraph = new Paragraph({
-          text: block.text,
+          children: [
+            createTextRun(block.text, {
+              size: Math.round(baseRunSize * 1.05),
+              bold: true,
+            }),
+          ],
           heading: HeadingLevel.HEADING_3,
-          spacing: { before: 200, after: 100 },
+          spacing: { before: 240, after: 140, line: baseLineSpacing },
         });
         break;
       case 'blockquote':
         paragraph = new Paragraph({
-          children: [
-            new TextRun({
-              text: block.text,
-              italics: true,
-            }),
-          ],
+          children: [createTextRun(block.text, { italics: true })],
           indent: { left: 720 }, // 0.5 inch
-          spacing: { before: 200, after: 200 },
+          spacing: { before: 200, after: 200, line: baseLineSpacing },
         });
         break;
       case 'list-item':
-        paragraph = new Paragraph({
-          text: block.text,
-          indent: { left: 360 },
-        });
+        // strip parser-applied symbol and let DOCX render native bullets
+        {
+          const itemText = block.text.replace(/^•\s*/, '');
+          paragraph = new Paragraph({
+            children: [createTextRun(itemText)],
+            bullet: { level: 0 },
+            spacing: { line: baseLineSpacing, after: 120 },
+          });
+        }
         break;
       default:
         paragraph = new Paragraph({
-          children: [
-            new TextRun({
-              text: block.text,
-              size: opts.fontSize * 2, // docx uses half-points
-            }),
-          ],
+          children: [createTextRun(block.text)],
           spacing: {
-            line: opts.lineSpacing * 240, // 240 = single line spacing
+            line: baseLineSpacing,
             after: 200,
           },
         });
     }
 
     children.push(paragraph);
+  }
+
+  const hasHeader = opts.includeHeader;
+  const hasFooter = opts.includeFooter || opts.includePageNumbers;
+  const headerText = opts.headerText.trim() || title;
+
+  const footerRuns: TextRun[] = [];
+  if (opts.includeFooter && opts.footerText.trim()) {
+    footerRuns.push(createTextRun(opts.footerText.trim(), { size: 20 }));
+  }
+  if (opts.includePageNumbers) {
+    if (footerRuns.length > 0) {
+      footerRuns.push(createTextRun(' | ', { size: 20 }));
+    }
+    footerRuns.push(
+      new TextRun({
+        children: [PageNumber.CURRENT, ' of ', PageNumber.TOTAL_PAGES],
+        font: opts.fontFamily,
+        size: 20,
+      })
+    );
   }
 
   const doc = new Document({
@@ -443,23 +561,24 @@ export async function exportToWord(
             },
           },
         },
-        headers: opts.includePageNumbers
+        headers: hasHeader
           ? {
               default: new Header({
-                children: [new Paragraph({ text: title, alignment: AlignmentType.CENTER })],
+                children: [
+                  new Paragraph({
+                    children: [createTextRun(headerText, { size: 20 })],
+                    alignment: AlignmentType.CENTER,
+                  }),
+                ],
               }),
             }
           : undefined,
-        footers: opts.includePageNumbers
+        footers: hasFooter
           ? {
               default: new Footer({
                 children: [
                   new Paragraph({
-                    children: [
-                      new TextRun({
-                        children: [PageNumber.CURRENT, ' of ', PageNumber.TOTAL_PAGES],
-                      }),
-                    ],
+                    children: footerRuns,
                     alignment: AlignmentType.CENTER,
                   }),
                 ],
