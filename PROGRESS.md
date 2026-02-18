@@ -5,11 +5,11 @@ Last updated: February 18, 2026
 ## 1) Where we are now
 
 - App development is active and stable.
-- Unit tests are passing (`69` files, `284` tests).
+- Unit tests are passing (`69` files, `287` tests).
 - Latest full coverage snapshot: lines `90.82%`, statements `90.22%`, functions `86.44%`, branches `80.07%`.
 - Recent focus has been adding reliable tests module by module.
 - Blackboard coverage moved from almost none to strong coverage.
-- Current execution stage: Phase `5.3.1` (AcademicSection component acceptance verification and expansion).
+- Current execution stage: Phase `6.1.1` (PDF export utility acceptance and implementation).
 
 ## 2) Completed tasks so far (brief)
 
@@ -66,6 +66,9 @@ Last updated: February 18, 2026
 | Task wave 44 | Completed `5.2.1` Academic Store acceptance by verifying `papers`/`currentPaper`/`bibliographyEntries` state slices, full store CRUD flows, and citation insertion/linking actions against existing implementation and unit coverage | Store-targeted evidence + full run green + eslint green: `academicStore.test.ts`, `vitest --run` (`68` files, `280` tests), `eslint .` |
 | Task wave 45 | Completed `5.2.2` BibliographyManager acceptance by implementing tag-based organization (capture/display/filter), preserving manual/DOI/BibTeX add flows, edit/delete/search flows, and extending component coverage for tag filtering behavior | Academic component-targeted tests + full run green + eslint green: `BibliographyManager.test.tsx` (`5` tests), `vitest --run` (`68` files, `281` tests), `eslint .` |
 | Task wave 46 | Completed `5.2.3` ReferenceLibrary panel by introducing a separate global library panel (`ReferenceLibraryPanel`) with JSON import/export workflows and per-reference linking/unlinking to papers, then wiring it into the Academic layout | Academic targeted tests + full run green + eslint green: `ReferenceLibraryPanel.test.tsx` (`3` tests), `vitest --run` (`69` files, `284` tests), `eslint .` |
+| Task wave 47 | Completed `5.3.1` AcademicSection acceptance by adding figure/table insertion with automatic numbering, cross-reference insertion panel for section/figure/table targets, and paper-format controls (line spacing, font size, margin presets) wired to paper settings | Academic editor tests + targeted suite + full run green + eslint green: `AcademicSectionEditor.test.tsx` (`5` tests), `vitest src/components/diaries/academic`, `vitest --run` (`69` files, `285` tests), `eslint .` |
+| Task wave 48 | Completed `5.3.2` TemplateSelector acceptance by implementing IMRAD/custom template selection, custom section-definition input, abstract/keywords fields, author fields (multi-author add/remove), and create-paper metadata flow through `academicStore.createPaper` | Template/store/integration tests + full run green + eslint green: `TemplateSelector.test.tsx` (`3` tests), `academicStore.test.ts` (`11` tests), `Academic.test.tsx` (`5` tests), `vitest --run` (`69` files, `287` tests), `eslint .` |
+| Task wave 49 | Completed `5.3.3` AcademicPaper container acceptance by validating template selection flow, section navigation, bibliography panel integration, citation style selector, and adding explicit word/character count display in the Academic toolbar, then adding E2E coverage for academic create-paper/add-reference/citation insertion workflow | Integration + E2E evidence + full run green + eslint green: `Academic.test.tsx` (`5` tests), `academic.spec.ts` passing (`1` test), `vitest --run` (`69` files, `287` tests), `playwright test e2e/academic.spec.ts`, `eslint .` |
 
 ## 3) Blackboard testing progress
 
@@ -104,5 +107,5 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Implement Phase `5.3.1`: AcademicSection component acceptance (`citation insertion`, `cross-references`, `figure/table numbering`, academic formatting).
+1. Implement Phase `6.1.1`: PDF export utility acceptance (`text export`, `formatting preserved`, page options, headers/footers).
 2. Keep periodic full coverage reruns while feature stages advance to prevent regressions.

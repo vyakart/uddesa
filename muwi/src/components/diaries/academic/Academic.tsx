@@ -5,6 +5,7 @@ import {
   selectPapers,
   selectCurrentPaperId,
   selectCurrentPaper,
+  selectAcademicCurrentSections,
   selectAcademicCurrentSection,
   selectAcademicIsLoading,
   selectAcademicError,
@@ -14,7 +15,7 @@ import {
   selectCurrentPaperWordCount,
   type AcademicSectionNode,
 } from '@/stores/academicStore';
-import type { CitationStyle } from '@/types/academic';
+import type { CitationStyle, PaperCreationOptions } from '@/types/academic';
 import { AcademicSectionEditor } from './AcademicSectionEditor';
 import { ReferenceLibraryPanel } from './ReferenceLibraryPanel';
 import { TemplateSelector } from './TemplateSelector';
@@ -27,10 +28,15 @@ const CITATION_STYLE_LABELS: Record<CitationStyle, string> = {
   ieee: 'IEEE',
 };
 
+function stripHtml(content: string): string {
+  return content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
 export function Academic() {
   const papers = useAcademicStore(selectPapers);
   const currentPaperId = useAcademicStore(selectCurrentPaperId);
   const currentPaper = useAcademicStore(selectCurrentPaper);
+  const currentSections = useAcademicStore(selectAcademicCurrentSections);
   const currentSection = useAcademicStore(selectAcademicCurrentSection);
   const isLoading = useAcademicStore(selectAcademicIsLoading);
   const error = useAcademicStore(selectAcademicError);
@@ -38,6 +44,10 @@ export function Academic() {
   const isBibliographyPanelVisible = useAcademicStore(selectIsBibliographyPanelVisible);
   const citationStyle = useAcademicStore(selectCitationStyle);
   const totalWordCount = useAcademicStore(selectCurrentPaperWordCount);
+  const totalCharacterCount = currentSections.reduce(
+    (total, section) => total + stripHtml(section.content).length,
+    0
+  );
 
   const loadPapers = useAcademicStore((state) => state.loadPapers);
   const loadBibliographyEntries = useAcademicStore((state) => state.loadBibliographyEntries);
@@ -88,8 +98,12 @@ export function Academic() {
   }, [toggleBibliographyPanel]);
 
   const handleCreatePaper = useCallback(
-    async (title: string, template: string | null) => {
-      await createPaper(title, template || undefined);
+    async (title: string, template: string | null, options?: PaperCreationOptions) => {
+      if (options) {
+        await createPaper(title, template || undefined, options);
+      } else {
+        await createPaper(title, template || undefined);
+      }
       setShowTemplateSelector(false);
     },
     [createPaper]
@@ -227,8 +241,10 @@ export function Academic() {
         )}
       </div>
 
-      {/* Word count */}
-      <span style={{ fontSize: '13px', color: '#6B7280' }}>{totalWordCount} words</span>
+      {/* Word/character count */}
+      <span style={{ fontSize: '13px', color: '#6B7280' }}>
+        {totalWordCount} words · {totalCharacterCount} chars
+      </span>
 
       <div style={{ flex: 1 }} />
 

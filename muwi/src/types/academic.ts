@@ -17,6 +17,13 @@ export interface Author {
   affiliation?: string;
 }
 
+export interface PaperCreationOptions {
+  abstract?: string;
+  keywords?: string[];
+  authors?: Author[];
+  customSections?: string[];
+}
+
 export interface BibliographyEntry {
   id: string;
   type: BibliographyEntryType;

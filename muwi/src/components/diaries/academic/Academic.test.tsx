@@ -51,7 +51,7 @@ vi.mock('./TemplateSelector', () => ({
     onSelect,
     onClose,
   }: {
-    onSelect: (title: string, template: string | null) => void;
+    onSelect: (title: string, template: string | null, options?: unknown) => void;
     onClose: () => void;
   }) => (
     <div data-testid="template-selector">
@@ -226,7 +226,8 @@ describe('Academic', () => {
 
     expect(screen.getByTestId('academic-section-editor')).toHaveTextContent('Section: Intro');
     expect(screen.getByTestId('bibliography-panel')).toBeInTheDocument();
-    expect(screen.getByText('42 words')).toBeInTheDocument();
+    expect(screen.getByText(/42 words/)).toBeInTheDocument();
+    expect(screen.getByText(/5 chars/)).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Mock Title Update' }));
     expect(updateSection).toHaveBeenCalledWith(section.id, { title: 'Updated Academic Title' });

@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen } from '@/test';
 import { useAcademicStore } from '@/stores/academicStore';
-import type { AcademicSection } from '@/types/academic';
+import type { AcademicPaper, AcademicSection } from '@/types/academic';
 import { AcademicSectionEditor } from './AcademicSectionEditor';
 
 const chain = {
@@ -20,6 +20,7 @@ const chain = {
 
 const mockEditor = {
   chain: vi.fn(() => chain),
+  setOptions: vi.fn(),
   isActive: vi.fn(() => false),
   can: vi.fn(() => ({
     undo: () => true,
@@ -75,6 +76,38 @@ function makeSection(overrides: Partial<AcademicSection> = {}): AcademicSection 
     order: 0,
     parentId: null,
     wordCount: 2,
+    ...overrides,
+  };
+}
+
+function makePaper(overrides: Partial<AcademicPaper> = {}): AcademicPaper {
+  const now = new Date('2026-02-18T12:00:00.000Z');
+  return {
+    id: 'paper-1',
+    title: 'Academic Paper',
+    authors: [],
+    abstract: '',
+    keywords: [],
+    sectionIds: ['section-1'],
+    citationIds: [],
+    bibliographyEntryIds: [],
+    figureIds: [],
+    tableIds: [],
+    settings: {
+      citationStyle: 'apa7',
+      pageSize: 'a4',
+      margins: { top: 25.4, right: 25.4, bottom: 25.4, left: 25.4 },
+      lineSpacing: 2,
+      fontFamily: 'Times New Roman',
+      fontSize: 12,
+    },
+    metadata: {
+      createdAt: now,
+      modifiedAt: now,
+      totalWordCount: 0,
+    },
+    createdAt: now,
+    modifiedAt: now,
     ...overrides,
   };
 }
@@ -194,5 +227,64 @@ describe('AcademicSectionEditor', () => {
       undo: () => true,
       redo: () => true,
     });
+  });
+
+  it('supports figure/table numbering, cross-references, and academic formatting controls', () => {
+    const updatePaper = vi.fn().mockResolvedValue(undefined);
+    const paper = makePaper();
+
+    useAcademicStore.setState({
+      papers: [paper],
+      currentPaperId: paper.id,
+      updatePaper,
+    });
+
+    render(
+      <AcademicSectionEditor
+        section={makeSection()}
+        onTitleChange={vi.fn()}
+        onContentChange={vi.fn()}
+      />
+    );
+
+    fireEvent.click(screen.getByTitle('Insert Figure'));
+    fireEvent.click(screen.getByTitle('Insert Figure'));
+    fireEvent.click(screen.getByTitle('Insert Table'));
+    expect(chain.insertContent).toHaveBeenCalledWith(expect.stringContaining('Figure 1.'));
+    expect(chain.insertContent).toHaveBeenCalledWith(expect.stringContaining('Figure 2.'));
+    expect(chain.insertContent).toHaveBeenCalledWith(expect.stringContaining('Table 1.'));
+
+    fireEvent.click(screen.getByTitle('Insert Cross-reference'));
+    fireEvent.change(screen.getByLabelText('Cross-reference target'), {
+      target: { value: '2' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Insert' }));
+    expect(chain.insertContent).toHaveBeenCalledWith('see Figure 2');
+
+    fireEvent.change(screen.getByTitle('Line spacing'), { target: { value: '1.5' } });
+    expect(updatePaper).toHaveBeenCalledWith(
+      paper.id,
+      expect.objectContaining({
+        settings: expect.objectContaining({ lineSpacing: 1.5 }),
+      })
+    );
+
+    fireEvent.change(screen.getByTitle('Font size'), { target: { value: '14' } });
+    expect(updatePaper).toHaveBeenCalledWith(
+      paper.id,
+      expect.objectContaining({
+        settings: expect.objectContaining({ fontSize: 14 }),
+      })
+    );
+
+    fireEvent.change(screen.getByTitle('Margins'), { target: { value: 'narrow' } });
+    expect(updatePaper).toHaveBeenCalledWith(
+      paper.id,
+      expect.objectContaining({
+        settings: expect.objectContaining({
+          margins: { top: 19.05, right: 19.05, bottom: 19.05, left: 19.05 },
+        }),
+      })
+    );
   });
 });

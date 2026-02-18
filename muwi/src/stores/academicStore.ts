@@ -3,9 +3,11 @@ import { devtools } from 'zustand/middleware';
 import type {
   AcademicPaper,
   AcademicSection,
+  Author,
   BibliographyEntry,
   Citation,
   CitationStyle,
+  PaperCreationOptions,
 } from '@/types/academic';
 import * as academicQueries from '@/db/queries/academic';
 
@@ -38,7 +40,7 @@ interface AcademicState {
   // Actions - Papers
   loadPapers: () => Promise<void>;
   loadPaper: (id: string) => Promise<void>;
-  createPaper: (title?: string, template?: string) => Promise<AcademicPaper>;
+  createPaper: (title?: string, template?: string, options?: PaperCreationOptions) => Promise<AcademicPaper>;
   updatePaper: (id: string, updates: Partial<AcademicPaper>) => Promise<void>;
   deletePaper: (id: string) => Promise<void>;
   setCurrentPaper: (id: string | null) => void;
@@ -104,6 +106,31 @@ const IMRAD_SECTIONS = [
   'Discussion',
   'Conclusion',
 ];
+
+function sanitizeAuthors(authors: Author[] | undefined): Author[] {
+  if (!authors || authors.length === 0) return [];
+  return authors
+    .map((author) => ({
+      firstName: author.firstName.trim(),
+      lastName: author.lastName.trim(),
+      affiliation: author.affiliation?.trim(),
+    }))
+    .filter((author) => author.firstName || author.lastName)
+    .map((author) => ({
+      ...author,
+      affiliation: author.affiliation || undefined,
+    }));
+}
+
+function sanitizeKeywords(keywords: string[] | undefined): string[] {
+  if (!keywords || keywords.length === 0) return [];
+  return keywords.map((keyword) => keyword.trim()).filter(Boolean);
+}
+
+function sanitizeSections(customSections: string[] | undefined): string[] {
+  if (!customSections || customSections.length === 0) return [];
+  return customSections.map((section) => section.trim()).filter(Boolean);
+}
 
 function calculateWordCount(content: string): number {
   const text = content.replace(/<[^>]*>/g, ' ');
@@ -185,14 +212,15 @@ export const useAcademicStore = create<AcademicState>()(
         }
       },
 
-      createPaper: async (title = 'Untitled Paper', template?: string) => {
+      createPaper: async (title = 'Untitled Paper', template?: string, options?: PaperCreationOptions) => {
         const now = new Date();
+        const customSections = sanitizeSections(options?.customSections);
         const newPaper: AcademicPaper = {
           id: crypto.randomUUID(),
           title,
-          authors: [],
-          abstract: '',
-          keywords: [],
+          authors: sanitizeAuthors(options?.authors),
+          abstract: options?.abstract?.trim() || '',
+          keywords: sanitizeKeywords(options?.keywords),
           sectionIds: [],
           citationIds: [],
           bibliographyEntryIds: [],
@@ -228,6 +256,11 @@ export const useAcademicStore = create<AcademicState>()(
           if (template === 'imrad') {
             for (let i = 0; i < IMRAD_SECTIONS.length; i++) {
               await get().createSection(newPaper.id, IMRAD_SECTIONS[i]);
+            }
+          }
+          if (template === 'custom') {
+            for (let i = 0; i < customSections.length; i++) {
+              await get().createSection(newPaper.id, customSections[i]);
             }
           }
 

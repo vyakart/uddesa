@@ -1042,10 +1042,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 4.1.3, 5.1.3
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Citation insertion
-  - [ ] Cross-references
-  - [ ] Figure/table numbering
-  - [ ] Academic formatting
+  - [x] Citation insertion
+  - [x] Cross-references
+  - [x] Figure/table numbering
+  - [x] Academic formatting
 - **Testing**: Component tests
 
 #### Task 5.3.2: Create AcademicTemplate Selector
@@ -1053,10 +1053,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 5.2.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] IMRAD template
-  - [ ] Custom structure
-  - [ ] Abstract/Keywords fields
-  - [ ] Author fields
+  - [x] IMRAD template
+  - [x] Custom structure
+  - [x] Abstract/Keywords fields
+  - [x] Author fields
 - **Testing**: Component tests
 
 #### Task 5.3.3: Create AcademicPaper Container
@@ -1064,11 +1064,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 5.3.1, 5.3.2, 5.2.2
 - **Effort**: L
 - **Acceptance Criteria**:
-  - [ ] Template selection
-  - [ ] Section navigation
-  - [ ] Bibliography panel
-  - [ ] Citation style selector
-  - [ ] Word/character count
+  - [x] Template selection
+  - [x] Section navigation
+  - [x] Bibliography panel
+  - [x] Citation style selector
+  - [x] Word/character count
 - **Testing**: Integration tests
 - **E2E**: Create paper, add citations, generate bibliography
 

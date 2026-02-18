@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import type { Author, PaperCreationOptions } from '@/types/academic';
 
 interface TemplateSelectorProps {
-  onSelect: (title: string, template: string | null) => void;
+  onSelect: (title: string, template: string | null, options?: PaperCreationOptions) => void;
   onClose: () => void;
 }
 
@@ -17,7 +18,7 @@ const TEMPLATES: Template[] = [
   {
     id: 'blank',
     name: 'Blank Paper',
-    description: 'Start with a clean slate',
+    description: 'Start with an empty document',
     sections: [],
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -29,7 +30,7 @@ const TEMPLATES: Template[] = [
   {
     id: 'imrad',
     name: 'IMRAD',
-    description: 'Introduction, Methods, Results, and Discussion',
+    description: 'Introduction, Methods, Results, Discussion, Conclusion',
     sections: ['Introduction', 'Methods', 'Results', 'Discussion', 'Conclusion'],
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -40,59 +41,98 @@ const TEMPLATES: Template[] = [
     ),
   },
   {
-    id: 'literature-review',
-    name: 'Literature Review',
-    description: 'Structured review of existing research',
-    sections: ['Introduction', 'Methodology', 'Thematic Analysis', 'Discussion', 'Conclusion'],
+    id: 'custom',
+    name: 'Custom Structure',
+    description: 'Define your own ordered section list',
+    sections: ['Abstract', 'Background', 'Analysis', 'Conclusion'],
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
-        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
-      </svg>
-    ),
-  },
-  {
-    id: 'case-study',
-    name: 'Case Study',
-    description: 'In-depth analysis of a specific case',
-    sections: ['Introduction', 'Background', 'Case Description', 'Analysis', 'Discussion', 'Conclusion'],
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <circle cx="11" cy="11" r="8" />
-        <path d="M21 21l-4.35-4.35" />
-      </svg>
-    ),
-  },
-  {
-    id: 'thesis',
-    name: 'Thesis/Dissertation',
-    description: 'Extended academic document structure',
-    sections: [
-      'Abstract',
-      'Introduction',
-      'Literature Review',
-      'Methodology',
-      'Results',
-      'Discussion',
-      'Conclusion',
-      'References',
-    ],
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-        <path d="M6 12v5c3 3 9 3 12 0v-5" />
+        <path d="M3 12h18" />
+        <path d="M12 3v18" />
+        <path d="M5 5l14 14" />
       </svg>
     ),
   },
 ];
 
+const inputStyle: React.CSSProperties = {
+  width: '100%',
+  padding: '10px 12px',
+  border: '1px solid #E5E7EB',
+  borderRadius: '8px',
+  fontSize: '14px',
+  color: '#1F2937',
+  outline: 'none',
+  backgroundColor: '#FFFFFF',
+};
+
+const sectionLabelStyle: React.CSSProperties = {
+  display: 'block',
+  fontSize: '13px',
+  fontWeight: 600,
+  color: '#374151',
+  marginBottom: '8px',
+};
+
+function normalizeAuthors(authors: Author[]): Author[] {
+  return authors
+    .map((author) => ({
+      firstName: author.firstName.trim(),
+      lastName: author.lastName.trim(),
+      affiliation: author.affiliation?.trim(),
+    }))
+    .filter((author) => author.firstName || author.lastName)
+    .map((author) => ({
+      ...author,
+      affiliation: author.affiliation || undefined,
+    }));
+}
+
 export function TemplateSelector({ onSelect, onClose }: TemplateSelectorProps) {
   const [title, setTitle] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState<string>('blank');
+  const [paperAbstract, setPaperAbstract] = useState('');
+  const [keywordsInput, setKeywordsInput] = useState('');
+  const [customSectionsInput, setCustomSectionsInput] = useState('Introduction\nMethods\nResults\nDiscussion\nConclusion');
+  const [authors, setAuthors] = useState<Author[]>([{ firstName: '', lastName: '', affiliation: '' }]);
+
+  const isCustomTemplate = selectedTemplate === 'custom';
+
+  const parsedKeywords = useMemo(
+    () =>
+      keywordsInput
+        .split(',')
+        .map((keyword) => keyword.trim())
+        .filter(Boolean),
+    [keywordsInput]
+  );
+
+  const parsedCustomSections = useMemo(
+    () =>
+      customSectionsInput
+        .split('\n')
+        .map((section) => section.trim())
+        .filter(Boolean),
+    [customSectionsInput]
+  );
 
   const handleCreate = () => {
     const template = selectedTemplate === 'blank' ? null : selectedTemplate;
-    onSelect(title || 'Untitled Paper', template);
+    const options: PaperCreationOptions = {
+      abstract: paperAbstract.trim(),
+      keywords: parsedKeywords,
+      authors: normalizeAuthors(authors),
+      customSections: selectedTemplate === 'custom' ? parsedCustomSections : undefined,
+    };
+    onSelect(title || 'Untitled Paper', template, options);
+  };
+
+  const updateAuthor = (index: number, field: keyof Author, value: string) => {
+    setAuthors((currentAuthors) =>
+      currentAuthors.map((author, currentIndex) =>
+        currentIndex === index ? { ...author, [field]: value } : author
+      )
+    );
   };
 
   return (
@@ -112,14 +152,13 @@ export function TemplateSelector({ onSelect, onClose }: TemplateSelectorProps) {
         style={{
           backgroundColor: 'white',
           borderRadius: '12px',
-          width: '600px',
-          maxHeight: '80vh',
+          width: '760px',
+          maxHeight: '86vh',
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
         }}
       >
-        {/* Header */}
         <div
           style={{
             padding: '20px 24px',
@@ -148,57 +187,24 @@ export function TemplateSelector({ onSelect, onClose }: TemplateSelectorProps) {
           </button>
         </div>
 
-        {/* Content */}
         <div style={{ flex: 1, overflow: 'auto', padding: '24px' }}>
-          {/* Title input */}
-          <div style={{ marginBottom: '24px' }}>
-            <label
-              style={{
-                display: 'block',
-                fontSize: '13px',
-                fontWeight: 600,
-                color: '#374151',
-                marginBottom: '8px',
-              }}
-            >
-              Paper Title
-            </label>
+          <div style={{ marginBottom: '22px' }}>
+            <label style={sectionLabelStyle}>Paper Title</label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Enter paper title..."
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                border: '1px solid #E5E7EB',
-                borderRadius: '8px',
-                fontSize: '15px',
-                outline: 'none',
-              }}
-              onFocus={(e) => (e.target.style.borderColor = '#4A90A4')}
-              onBlur={(e) => (e.target.style.borderColor = '#E5E7EB')}
+              style={inputStyle}
             />
           </div>
 
-          {/* Template selection */}
-          <div>
-            <label
-              style={{
-                display: 'block',
-                fontSize: '13px',
-                fontWeight: 600,
-                color: '#374151',
-                marginBottom: '12px',
-              }}
-            >
-              Choose a Template
-            </label>
-
+          <div style={{ marginBottom: '24px' }}>
+            <label style={sectionLabelStyle}>Choose a Template</label>
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(2, 1fr)',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
                 gap: '12px',
               }}
             >
@@ -207,59 +213,33 @@ export function TemplateSelector({ onSelect, onClose }: TemplateSelectorProps) {
                   key={template.id}
                   onClick={() => setSelectedTemplate(template.id)}
                   style={{
-                    padding: '16px',
+                    padding: '14px',
                     border: `2px solid ${selectedTemplate === template.id ? '#4A90A4' : '#E5E7EB'}`,
                     borderRadius: '12px',
-                    backgroundColor: selectedTemplate === template.id ? '#EFF6FF' : 'white',
+                    backgroundColor: selectedTemplate === template.id ? '#EFF6FF' : '#FFFFFF',
                     cursor: 'pointer',
                     textAlign: 'left',
                     transition: 'all 150ms ease',
                   }}
                 >
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: '12px',
-                    }}
-                  >
+                  <div style={{ display: 'flex', gap: '10px' }}>
                     <div
                       style={{
                         padding: '8px',
-                        backgroundColor: selectedTemplate === template.id ? '#DBEAFE' : '#F3F4F6',
                         borderRadius: '8px',
+                        backgroundColor: selectedTemplate === template.id ? '#DBEAFE' : '#F3F4F6',
                         color: selectedTemplate === template.id ? '#4A90A4' : '#6B7280',
                       }}
                     >
                       {template.icon}
                     </div>
-                    <div style={{ flex: 1 }}>
-                      <div
-                        style={{
-                          fontSize: '14px',
-                          fontWeight: 600,
-                          color: '#1F2937',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        {template.name}
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '12px',
-                          color: '#6B7280',
-                          marginBottom: template.sections.length > 0 ? '8px' : 0,
-                        }}
-                      >
+                    <div>
+                      <div style={{ fontSize: '14px', fontWeight: 600, color: '#1F2937' }}>{template.name}</div>
+                      <div style={{ fontSize: '12px', color: '#6B7280', marginTop: '2px' }}>
                         {template.description}
                       </div>
                       {template.sections.length > 0 && (
-                        <div
-                          style={{
-                            fontSize: '11px',
-                            color: '#9CA3AF',
-                          }}
-                        >
+                        <div style={{ marginTop: '6px', fontSize: '11px', color: '#9CA3AF' }}>
                           {template.sections.slice(0, 3).join(' / ')}
                           {template.sections.length > 3 && ` + ${template.sections.length - 3} more`}
                         </div>
@@ -270,9 +250,130 @@ export function TemplateSelector({ onSelect, onClose }: TemplateSelectorProps) {
               ))}
             </div>
           </div>
+
+          {isCustomTemplate && (
+            <div style={{ marginBottom: '24px' }}>
+              <label style={sectionLabelStyle}>Custom Sections (one per line)</label>
+              <textarea
+                value={customSectionsInput}
+                onChange={(e) => setCustomSectionsInput(e.target.value)}
+                rows={5}
+                placeholder={'Introduction\nMethods\nResults\nDiscussion\nConclusion'}
+                style={inputStyle}
+              />
+            </div>
+          )}
+
+          <div style={{ marginBottom: '24px' }}>
+            <label style={sectionLabelStyle}>Abstract</label>
+            <textarea
+              value={paperAbstract}
+              onChange={(e) => setPaperAbstract(e.target.value)}
+              rows={4}
+              placeholder="Summarize the paper in 150-250 words..."
+              style={inputStyle}
+            />
+          </div>
+
+          <div style={{ marginBottom: '24px' }}>
+            <label style={sectionLabelStyle}>Keywords (comma-separated)</label>
+            <input
+              type="text"
+              value={keywordsInput}
+              onChange={(e) => setKeywordsInput(e.target.value)}
+              placeholder="machine learning, citation analysis, writing workflows"
+              style={inputStyle}
+            />
+            {parsedKeywords.length > 0 && (
+              <div style={{ marginTop: '8px', fontSize: '12px', color: '#6B7280' }}>
+                {parsedKeywords.length} keyword{parsedKeywords.length === 1 ? '' : 's'} detected
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label style={sectionLabelStyle}>Authors</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {authors.map((author, index) => (
+                <div
+                  key={`author-${index}`}
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(3, minmax(0, 1fr)) auto',
+                    gap: '8px',
+                    alignItems: 'center',
+                  }}
+                >
+                  <input
+                    type="text"
+                    value={author.firstName}
+                    onChange={(e) => updateAuthor(index, 'firstName', e.target.value)}
+                    placeholder="First name"
+                    style={inputStyle}
+                  />
+                  <input
+                    type="text"
+                    value={author.lastName}
+                    onChange={(e) => updateAuthor(index, 'lastName', e.target.value)}
+                    placeholder="Last name"
+                    style={inputStyle}
+                  />
+                  <input
+                    type="text"
+                    value={author.affiliation || ''}
+                    onChange={(e) => updateAuthor(index, 'affiliation', e.target.value)}
+                    placeholder="Affiliation"
+                    style={inputStyle}
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setAuthors((currentAuthors) =>
+                        currentAuthors.length === 1
+                          ? [{ firstName: '', lastName: '', affiliation: '' }]
+                          : currentAuthors.filter((_, currentIndex) => currentIndex !== index)
+                      )
+                    }
+                    style={{
+                      border: '1px solid #E5E7EB',
+                      borderRadius: '8px',
+                      backgroundColor: '#FFFFFF',
+                      color: '#6B7280',
+                      padding: '10px 12px',
+                      cursor: 'pointer',
+                    }}
+                    aria-label={`Remove author ${index + 1}`}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={() =>
+                setAuthors((currentAuthors) => [
+                  ...currentAuthors,
+                  { firstName: '', lastName: '', affiliation: '' },
+                ])
+              }
+              style={{
+                marginTop: '10px',
+                border: '1px solid #E5E7EB',
+                borderRadius: '8px',
+                backgroundColor: '#FFFFFF',
+                color: '#4A90A4',
+                padding: '8px 12px',
+                cursor: 'pointer',
+                fontSize: '13px',
+              }}
+            >
+              + Add Author
+            </button>
+          </div>
         </div>
 
-        {/* Footer */}
         <div
           style={{
             padding: '16px 24px',
@@ -287,7 +388,7 @@ export function TemplateSelector({ onSelect, onClose }: TemplateSelectorProps) {
             style={{
               padding: '10px 20px',
               border: '1px solid #E5E7EB',
-              backgroundColor: 'white',
+              backgroundColor: '#FFFFFF',
               borderRadius: '8px',
               fontSize: '14px',
               cursor: 'pointer',
@@ -300,7 +401,7 @@ export function TemplateSelector({ onSelect, onClose }: TemplateSelectorProps) {
             style={{
               padding: '10px 24px',
               backgroundColor: '#4A90A4',
-              color: 'white',
+              color: '#FFFFFF',
               border: 'none',
               borderRadius: '8px',
               fontSize: '14px',

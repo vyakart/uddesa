@@ -1,13 +1,14 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
-import type { AcademicSection } from '@/types/academic';
+import type { AcademicSection, AcademicSettings } from '@/types/academic';
 import { useEditorShortcuts } from '@/hooks';
 import {
   useAcademicStore,
   selectAcademicViewMode,
+  selectCurrentPaper,
 } from '@/stores/academicStore';
 import { CitationPicker } from './CitationPicker';
 import { useCitationShortcut } from './useCitationShortcut';
@@ -26,21 +27,104 @@ function stripHtml(content: string): string {
   return content.replace(/<[^>]*>/g, ' ');
 }
 
+function getHighestNumber(content: string, pattern: RegExp): number {
+  let max = 0;
+  let match = pattern.exec(content);
+  while (match) {
+    max = Math.max(max, Number.parseInt(match[1], 10) || 0);
+    match = pattern.exec(content);
+  }
+  return max;
+}
+
+interface HeadingReference {
+  id: string;
+  label: string;
+}
+
+function extractHeadingReferences(content: string): HeadingReference[] {
+  const headings: HeadingReference[] = [];
+  const matches = content.matchAll(/<h([1-6])[^>]*>(.*?)<\/h\1>/gi);
+  let index = 1;
+
+  for (const match of matches) {
+    const text = stripHtml(match[2]).replace(/\s+/g, ' ').trim();
+    if (!text) continue;
+    headings.push({
+      id: `section-${index}`,
+      label: text,
+    });
+    index += 1;
+  }
+
+  return headings;
+}
+
+interface MarginPreset {
+  id: string;
+  label: string;
+  value: number;
+}
+
+const MARGIN_PRESETS: MarginPreset[] = [
+  { id: 'narrow', label: 'Narrow (0.75in)', value: 19.05 },
+  { id: 'normal', label: 'Normal (1in)', value: 25.4 },
+  { id: 'wide', label: 'Wide (1.25in)', value: 31.75 },
+];
+
+function getMarginPresetId(margins: AcademicSettings['margins'] | undefined): string {
+  if (!margins) return 'normal';
+  const match = MARGIN_PRESETS.find((preset) => Math.abs(preset.value - margins.top) < 0.001);
+  return match?.id || 'normal';
+}
+
+const selectStyle: React.CSSProperties = {
+  border: '1px solid #D1D5DB',
+  borderRadius: '6px',
+  padding: '4px 8px',
+  fontSize: '12px',
+  backgroundColor: '#FFFFFF',
+  color: '#374151',
+};
+
 export function AcademicSectionEditor({
   section,
   onTitleChange,
   onContentChange,
 }: AcademicSectionEditorProps) {
   const viewMode = useAcademicStore(selectAcademicViewMode);
+  const currentPaper = useAcademicStore(selectCurrentPaper);
+  const updatePaper = useAcademicStore((state) => state.updatePaper);
   const isFocusMode = viewMode === 'focus';
 
   const [title, setTitle] = useState(() => section?.title || '');
   const [wordCount, setWordCount] = useState(() => countWords(stripHtml(section?.content || '')));
+  const [figureCount, setFigureCount] = useState(() =>
+    getHighestNumber(section?.content || '', /Figure\s+(\d+)\./gi)
+  );
+  const [tableCount, setTableCount] = useState(() =>
+    getHighestNumber(section?.content || '', /Table\s+(\d+)\./gi)
+  );
+  const [headingReferences, setHeadingReferences] = useState<HeadingReference[]>(() =>
+    extractHeadingReferences(section?.content || '')
+  );
   const [showCitationPicker, setShowCitationPicker] = useState(false);
   const [citationPickerPosition, setCitationPickerPosition] = useState<{ x: number; y: number } | undefined>();
+  const [showCrossReferencePanel, setShowCrossReferencePanel] = useState(false);
+  const [crossReferenceType, setCrossReferenceType] = useState<'section' | 'figure' | 'table'>('figure');
+  const [selectedCrossReference, setSelectedCrossReference] = useState('');
 
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const titleSaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const currentSettings = currentPaper?.settings;
+  const lineSpacing = currentSettings?.lineSpacing ?? 2;
+  const fontSize = currentSettings?.fontSize ?? 12;
+  const marginPreset = getMarginPresetId(currentSettings?.margins);
+  const fontFamily = (currentSettings?.fontFamily || 'Times New Roman').replace(/["']/g, '');
+  const editorContainerPadding = Math.max(
+    40,
+    Math.round((currentSettings?.margins?.left ?? 25.4) * 1.6)
+  );
 
   const editor = useEditor({
     extensions: [
@@ -60,9 +144,9 @@ export function AcademicSectionEditor({
         style: `
           min-height: 400px;
           outline: none;
-          font-family: 'Times New Roman', 'Georgia', serif;
-          font-size: 12pt;
-          line-height: 2;
+          font-family: '${fontFamily}', 'Times New Roman', 'Georgia', serif;
+          font-size: ${fontSize}pt;
+          line-height: ${lineSpacing};
           color: #1A1A1A;
         `,
       },
@@ -72,6 +156,9 @@ export function AcademicSectionEditor({
       const text = editor.getText();
 
       setWordCount(countWords(text));
+      setFigureCount(getHighestNumber(html, /Figure\s+(\d+)\./gi));
+      setTableCount(getHighestNumber(html, /Table\s+(\d+)\./gi));
+      setHeadingReferences(extractHeadingReferences(html));
 
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
@@ -83,6 +170,46 @@ export function AcademicSectionEditor({
   });
 
   useEditorShortcuts(editor, { includeUnderline: true, includeHeadings: true });
+
+  useEffect(() => {
+    if (!editor) return;
+    editor.setOptions({
+      editorProps: {
+        attributes: {
+          style: `
+            min-height: 400px;
+            outline: none;
+            font-family: '${fontFamily}', 'Times New Roman', 'Georgia', serif;
+            font-size: ${fontSize}pt;
+            line-height: ${lineSpacing};
+            color: #1A1A1A;
+          `,
+        },
+      },
+    });
+  }, [editor, fontFamily, fontSize, lineSpacing]);
+
+  const crossReferenceOptions = useMemo(() => {
+    if (crossReferenceType === 'section') {
+      return headingReferences.map((heading) => ({
+        value: heading.id,
+        label: heading.label,
+      }));
+    }
+    const count = crossReferenceType === 'figure' ? figureCount : tableCount;
+    return Array.from({ length: count }, (_, index) => ({
+      value: String(index + 1),
+      label: `${crossReferenceType === 'figure' ? 'Figure' : 'Table'} ${index + 1}`,
+    }));
+  }, [crossReferenceType, headingReferences, figureCount, tableCount]);
+
+  const effectiveCrossReferenceTarget = useMemo(() => {
+    if (crossReferenceOptions.length === 0) return '';
+    const hasSelection = crossReferenceOptions.some(
+      (option) => option.value === selectedCrossReference
+    );
+    return hasSelection ? selectedCrossReference : crossReferenceOptions[0].value;
+  }, [crossReferenceOptions, selectedCrossReference]);
 
   // Cleanup timeouts
   useEffect(() => {
@@ -129,6 +256,61 @@ export function AcademicSectionEditor({
       setShowCitationPicker(false);
     },
     [editor]
+  );
+
+  const handleInsertFigure = useCallback(() => {
+    if (!editor) return;
+    const nextFigureNumber = figureCount + 1;
+    editor
+      .chain()
+      .focus()
+      .insertContent(`<p><strong>Figure ${nextFigureNumber}.</strong> Figure caption.</p>`)
+      .run();
+    setFigureCount(nextFigureNumber);
+  }, [editor, figureCount]);
+
+  const handleInsertTable = useCallback(() => {
+    if (!editor) return;
+    const nextTableNumber = tableCount + 1;
+    editor
+      .chain()
+      .focus()
+      .insertContent(
+        `<p><strong>Table ${nextTableNumber}.</strong> Table caption.</p><table><tbody><tr><td>Cell</td><td>Cell</td></tr></tbody></table>`
+      )
+      .run();
+    setTableCount(nextTableNumber);
+  }, [editor, tableCount]);
+
+  const handleInsertCrossReference = useCallback(() => {
+    if (!editor || !effectiveCrossReferenceTarget) return;
+
+    if (crossReferenceType === 'section') {
+      const targetSection = crossReferenceOptions.find(
+        (option) => option.value === effectiveCrossReferenceTarget
+      );
+      if (targetSection) {
+        editor.chain().focus().insertContent(`see Section "${targetSection.label}"`).run();
+      }
+    } else {
+      const prefix = crossReferenceType === 'figure' ? 'Figure' : 'Table';
+      editor.chain().focus().insertContent(`see ${prefix} ${effectiveCrossReferenceTarget}`).run();
+    }
+
+    setShowCrossReferencePanel(false);
+  }, [editor, crossReferenceOptions, crossReferenceType, effectiveCrossReferenceTarget]);
+
+  const updateAcademicSettings = useCallback(
+    (updates: Partial<AcademicSettings>) => {
+      if (!currentPaper) return;
+      void updatePaper(currentPaper.id, {
+        settings: {
+          ...currentPaper.settings,
+          ...updates,
+        },
+      });
+    },
+    [currentPaper, updatePaper]
   );
 
   if (!section) {
@@ -280,11 +462,14 @@ export function AcademicSectionEditor({
             display: 'flex',
             alignItems: 'center',
             gap: '16px',
+            flexWrap: 'wrap',
             fontSize: '13px',
             color: '#6B7280',
           }}
         >
           <span>{wordCount} words</span>
+          <span>{figureCount} figures</span>
+          <span>{tableCount} tables</span>
           <span style={{ color: '#9CA3AF' }}>
             Press{' '}
             <kbd
@@ -300,6 +485,107 @@ export function AcademicSectionEditor({
             to insert citation
           </span>
         </div>
+
+        <div
+          style={{
+            marginTop: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            flexWrap: 'wrap',
+          }}
+        >
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '12px',
+              color: '#6B7280',
+            }}
+          >
+            Line
+            <select
+              title="Line spacing"
+              value={lineSpacing}
+              disabled={!currentPaper}
+              onChange={(e) =>
+                updateAcademicSettings({
+                  lineSpacing: Number.parseFloat(e.target.value),
+                })
+              }
+              style={selectStyle}
+            >
+              <option value={1}>1.0</option>
+              <option value={1.5}>1.5</option>
+              <option value={2}>2.0</option>
+            </select>
+          </label>
+
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '12px',
+              color: '#6B7280',
+            }}
+          >
+            Font Size
+            <select
+              title="Font size"
+              value={fontSize}
+              disabled={!currentPaper}
+              onChange={(e) =>
+                updateAcademicSettings({
+                  fontSize: Number.parseInt(e.target.value, 10),
+                })
+              }
+              style={selectStyle}
+            >
+              <option value={10}>10pt</option>
+              <option value={11}>11pt</option>
+              <option value={12}>12pt</option>
+              <option value={14}>14pt</option>
+            </select>
+          </label>
+
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '12px',
+              color: '#6B7280',
+            }}
+          >
+            Margins
+            <select
+              title="Margins"
+              value={marginPreset}
+              disabled={!currentPaper}
+              onChange={(e) => {
+                const selected = MARGIN_PRESETS.find((preset) => preset.id === e.target.value);
+                if (!selected) return;
+                updateAcademicSettings({
+                  margins: {
+                    top: selected.value,
+                    right: selected.value,
+                    bottom: selected.value,
+                    left: selected.value,
+                  },
+                });
+              }}
+              style={selectStyle}
+            >
+              {MARGIN_PRESETS.map((preset) => (
+                <option key={preset.id} value={preset.id}>
+                  {preset.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
       </div>
 
       {/* Main content area */}
@@ -314,7 +600,7 @@ export function AcademicSectionEditor({
           style={{
             maxWidth: '720px',
             margin: '0 auto',
-            padding: '32px 48px',
+            padding: `32px ${editorContainerPadding}px`,
           }}
         >
           <EditorContent editor={editor} />
@@ -439,6 +725,89 @@ export function AcademicSectionEditor({
               <line x1="21" y1="12" x2="9" y2="12" />
             </svg>
           </ToolbarButton>
+          <ToolbarButton
+            onClick={handleInsertFigure}
+            isActive={false}
+            title="Insert Figure"
+          >
+            Fig +
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={handleInsertTable}
+            isActive={false}
+            title="Insert Table"
+          >
+            Tbl +
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => setShowCrossReferencePanel((visible) => !visible)}
+            isActive={showCrossReferencePanel}
+            title="Insert Cross-reference"
+          >
+            X-Ref
+          </ToolbarButton>
+
+          {showCrossReferencePanel && (
+            <div
+              data-testid="cross-reference-panel"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                marginLeft: '8px',
+                padding: '6px 8px',
+                border: '1px solid #E5E7EB',
+                borderRadius: '8px',
+                backgroundColor: '#F9FAFB',
+              }}
+            >
+              <select
+                aria-label="Cross-reference type"
+                value={crossReferenceType}
+                onChange={(e) =>
+                  setCrossReferenceType(e.target.value as 'section' | 'figure' | 'table')
+                }
+                style={selectStyle}
+              >
+                <option value="section">Section</option>
+                <option value="figure">Figure</option>
+                <option value="table">Table</option>
+              </select>
+
+              {crossReferenceOptions.length > 0 ? (
+                <>
+                  <select
+                    aria-label="Cross-reference target"
+                    value={effectiveCrossReferenceTarget}
+                    onChange={(e) => setSelectedCrossReference(e.target.value)}
+                    style={selectStyle}
+                  >
+                    {crossReferenceOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={handleInsertCrossReference}
+                    style={{
+                      padding: '5px 10px',
+                      border: '1px solid #D1D5DB',
+                      borderRadius: '6px',
+                      backgroundColor: '#FFFFFF',
+                      fontSize: '12px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Insert
+                  </button>
+                </>
+              ) : (
+                <span style={{ fontSize: '12px', color: '#9CA3AF' }}>No references yet</span>
+              )}
+            </div>
+          )}
 
           <ToolbarDivider />
 

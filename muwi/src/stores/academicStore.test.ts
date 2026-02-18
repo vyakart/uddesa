@@ -64,6 +64,32 @@ describe('academicStore', () => {
     expect(loadedState.getCitationsForPaper(created.id)).toEqual([]);
   });
 
+  it('creates custom-template papers with abstract, keywords, authors, and custom sections', async () => {
+    const created = await useAcademicStore.getState().createPaper('Custom Paper', 'custom', {
+      abstract: 'Structured paper abstract',
+      keywords: ['analysis', ' writing ', ''],
+      authors: [
+        { firstName: 'Ada', lastName: 'Lovelace', affiliation: 'Engine Lab' },
+        { firstName: ' ', lastName: ' ', affiliation: 'ignored' },
+      ],
+      customSections: ['Background', ' Method ', '', 'Conclusion'],
+    });
+
+    const state = useAcademicStore.getState();
+    const createdPaper = state.papers.find((paper) => paper.id === created.id);
+
+    expect(createdPaper?.abstract).toBe('Structured paper abstract');
+    expect(createdPaper?.keywords).toEqual(['analysis', 'writing']);
+    expect(createdPaper?.authors).toEqual([
+      { firstName: 'Ada', lastName: 'Lovelace', affiliation: 'Engine Lab' },
+    ]);
+    expect(state.getSectionsForPaper(created.id).map((section) => section.title)).toEqual([
+      'Background',
+      'Method',
+      'Conclusion',
+    ]);
+  });
+
   it('manages section update/reorder/hierarchy/delete and keeps metadata in sync', async () => {
     const paper = await useAcademicStore.getState().createPaper('Structure Paper');
     const rootA = await useAcademicStore.getState().createSection(paper.id, 'Root A');
