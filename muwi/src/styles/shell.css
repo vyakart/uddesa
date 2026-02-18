@@ -426,3 +426,156 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.muwi-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-gap-tight);
+  min-width: 0;
+}
+
+.muwi-field__label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.muwi-field__hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.muwi-field__error {
+  font-size: var(--font-size-xs);
+  color: var(--color-error);
+}
+
+.muwi-form-control {
+  --muwi-control-bg: var(--color-bg-primary);
+  --muwi-control-fg: var(--color-text-primary);
+  --muwi-control-border: var(--color-border-subtle);
+
+  height: var(--size-control);
+  width: 100%;
+  border: 1px solid var(--muwi-control-border);
+  border-radius: var(--radius-sm);
+  background: var(--muwi-control-bg);
+  color: var(--muwi-control-fg);
+  padding-inline: var(--space-2);
+  font-family: var(--font-family-chrome-sans);
+  font-size: var(--font-size-base);
+  line-height: var(--leading-snug);
+  transition: var(--transition-colors), var(--transition-shadow);
+}
+
+.muwi-form-control::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.muwi-form-control:hover:not(:disabled) {
+  border-color: var(--color-border-default);
+}
+
+.muwi-form-control:focus-visible {
+  outline: none;
+  border-color: var(--color-accent-default);
+  box-shadow: var(--shadow-focus);
+}
+
+.muwi-form-control[data-invalid='true'] {
+  border-color: var(--color-error);
+}
+
+.muwi-form-control:disabled {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-tertiary);
+  border-color: var(--color-border-default);
+  cursor: not-allowed;
+}
+
+.muwi-select-wrap {
+  position: relative;
+}
+
+.muwi-select {
+  appearance: none;
+  padding-right: var(--space-8);
+}
+
+.muwi-select__chevron {
+  position: absolute;
+  right: var(--space-2);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-tertiary);
+  pointer-events: none;
+}
+
+.muwi-select:disabled + .muwi-select__chevron {
+  color: var(--color-text-tertiary);
+}
+
+.muwi-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-gap-default);
+}
+
+.muwi-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.muwi-toggle__input {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.muwi-toggle__track {
+  width: var(--size-toggle-width);
+  height: var(--size-toggle-height);
+  border-radius: var(--radius-full);
+  background: var(--color-border-default);
+  border: 1px solid transparent;
+  position: relative;
+  transition: background-color var(--duration-normal) var(--ease-default);
+}
+
+.muwi-toggle__thumb {
+  position: absolute;
+  top: calc((var(--size-toggle-height) - var(--size-toggle-thumb)) / 2);
+  left: calc((var(--size-toggle-height) - var(--size-toggle-thumb)) / 2);
+  width: var(--size-toggle-thumb);
+  height: var(--size-toggle-thumb);
+  border-radius: var(--radius-full);
+  background: #fff;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--duration-normal) var(--ease-default);
+}
+
+.muwi-toggle__input:checked + .muwi-toggle__track {
+  background: var(--color-accent-default);
+}
+
+.muwi-toggle__input:checked + .muwi-toggle__track .muwi-toggle__thumb {
+  transform: translateX(calc(var(--size-toggle-width) - var(--size-toggle-height)));
+}
+
+.muwi-toggle__input:focus-visible + .muwi-toggle__track {
+  box-shadow: var(--shadow-focus);
+}
+
+.muwi-toggle__input:disabled + .muwi-toggle__track {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.muwi-field.is-invalid .muwi-field__label {
+  color: var(--color-error);
+}

@@ -39,6 +39,10 @@
   --size-button-sm: 28px;
   --size-button-md: 32px;
   --size-button-lg: 36px;
+  --size-control: 32px;
+  --size-toggle-width: 36px;
+  --size-toggle-height: 20px;
+  --size-toggle-thumb: 16px;
 
   /* Radius */
   --radius-sm: 3px;

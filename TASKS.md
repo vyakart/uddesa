@@ -1468,9 +1468,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/common/FormControls/index.ts`
   - `muwi/src/components/common/FormControls/FormControls.test.tsx`
 - **Acceptance Criteria**:
-  - [ ] Input, select, and toggle match height/radius/focus/error states
-  - [ ] Placeholder and disabled styles use token values
-  - [ ] Keyboard and screen reader behavior verified
+  - [x] Input, select, and toggle match height/radius/focus/error states
+  - [x] Placeholder and disabled styles use token values
+  - [x] Keyboard and screen reader behavior verified
 
 #### Task 7.4.3: Refactor Modal to Spec
 - **Description**: Update generic modal animations, structure, and focus trap behavior
