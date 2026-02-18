@@ -14,3 +14,4 @@ export * from './TitleBar';
 export * from './Sidebar';
 export * from './StatusBar';
 export * from './RightPanel';
+export * from './Button';

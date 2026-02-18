@@ -293,3 +293,136 @@
   left: var(--space-3);
   z-index: var(--z-toolbar);
 }
+
+.muwi-button {
+  --muwi-button-height: var(--size-button-md);
+  --muwi-button-bg: transparent;
+  --muwi-button-fg: var(--color-text-primary);
+  --muwi-button-border: var(--color-border-default);
+  --muwi-button-hover-bg: var(--color-hover-overlay);
+  --muwi-button-active-bg: var(--color-active-overlay);
+  --muwi-button-hover-fg: var(--muwi-button-fg);
+  --muwi-button-active-fg: var(--muwi-button-fg);
+  --muwi-button-hover-border: var(--muwi-button-border);
+  --muwi-button-active-border: var(--muwi-button-border);
+
+  height: var(--muwi-button-height);
+  min-width: 0;
+  border: 1px solid var(--muwi-button-border);
+  border-radius: var(--radius-md);
+  background: var(--muwi-button-bg);
+  color: var(--muwi-button-fg);
+  padding-inline: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-gap-default);
+  font-family: var(--font-family-chrome-sans);
+  font-size: var(--font-size-base);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  text-decoration: none;
+  text-transform: none;
+  user-select: none;
+  white-space: nowrap;
+  transition: var(--transition-colors), var(--transition-shadow);
+}
+
+.muwi-button:hover:not(:disabled) {
+  background: var(--muwi-button-hover-bg);
+  color: var(--muwi-button-hover-fg);
+  border-color: var(--muwi-button-hover-border);
+}
+
+.muwi-button:active:not(:disabled),
+.muwi-button[data-active='true']:not(:disabled) {
+  background: var(--muwi-button-active-bg);
+  color: var(--muwi-button-active-fg);
+  border-color: var(--muwi-button-active-border);
+}
+
+.muwi-button:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.muwi-button:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.muwi-button[data-size='sm'] {
+  --muwi-button-height: var(--size-button-sm);
+  padding-inline: var(--space-2);
+}
+
+.muwi-button[data-size='md'] {
+  --muwi-button-height: var(--size-button-md);
+  padding-inline: var(--space-3);
+}
+
+.muwi-button[data-size='lg'] {
+  --muwi-button-height: var(--size-button-lg);
+  padding-inline: var(--space-4);
+}
+
+.muwi-button[data-variant='primary'] {
+  --muwi-button-bg: var(--color-accent-default);
+  --muwi-button-fg: var(--color-text-inverse);
+  --muwi-button-border: var(--color-accent-default);
+  --muwi-button-hover-bg: var(--color-accent-hover);
+  --muwi-button-hover-border: var(--color-accent-hover);
+  --muwi-button-active-bg: color-mix(in srgb, var(--color-accent-hover) 95%, black);
+  --muwi-button-active-border: color-mix(in srgb, var(--color-accent-hover) 95%, black);
+}
+
+.muwi-button[data-variant='secondary'] {
+  --muwi-button-bg: transparent;
+  --muwi-button-fg: var(--color-text-primary);
+  --muwi-button-border: var(--color-border-default);
+  --muwi-button-hover-bg: var(--color-hover-overlay);
+  --muwi-button-active-bg: var(--color-active-overlay);
+}
+
+.muwi-button[data-variant='ghost'] {
+  --muwi-button-bg: transparent;
+  --muwi-button-fg: var(--color-text-secondary);
+  --muwi-button-border: transparent;
+  --muwi-button-hover-bg: var(--color-hover-overlay);
+  --muwi-button-hover-fg: var(--color-text-primary);
+  --muwi-button-active-bg: var(--color-active-overlay);
+  --muwi-button-active-fg: var(--color-text-primary);
+}
+
+.muwi-button[data-variant='danger'] {
+  --muwi-button-bg: var(--color-error);
+  --muwi-button-fg: var(--color-text-inverse);
+  --muwi-button-border: var(--color-error);
+  --muwi-button-hover-bg: color-mix(in srgb, var(--color-error) 95%, black);
+  --muwi-button-hover-border: color-mix(in srgb, var(--color-error) 95%, black);
+  --muwi-button-active-bg: color-mix(in srgb, var(--color-error) 90%, black);
+  --muwi-button-active-border: color-mix(in srgb, var(--color-error) 90%, black);
+}
+
+.muwi-button[data-icon-only='true'] {
+  width: var(--muwi-button-height);
+  padding-inline: 0;
+  gap: 0;
+}
+
+.muwi-button.is-full-width {
+  width: 100%;
+}
+
+.muwi-button__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.muwi-button__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

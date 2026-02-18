@@ -1455,9 +1455,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/common/Button/index.ts`
   - `muwi/src/components/common/Button/Button.test.tsx`
 - **Acceptance Criteria**:
-  - [ ] Sizes 28/32/36 implemented
-  - [ ] Focus ring uses tokenized double-ring
-  - [ ] Disabled and active states match spec
+  - [x] Sizes 28/32/36 implemented
+  - [x] Focus ring uses tokenized double-ring
+  - [x] Disabled and active states match spec
 
 #### Task 7.4.2: Rebuild Form Input Primitives
 - **Description**: Standardize text input/select/toggle controls

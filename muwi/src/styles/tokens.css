@@ -36,6 +36,9 @@
   --space-canvas-max-width: 720px;
   --space-canvas-wide-max-width: 960px;
   --space-panel-width: 280px;
+  --size-button-sm: 28px;
+  --size-button-md: 32px;
+  --size-button-lg: 36px;
 
   /* Radius */
   --radius-sm: 3px;
