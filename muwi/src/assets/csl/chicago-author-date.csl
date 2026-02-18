@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<style xmlns="http://purl.org/net/xbiblio/csl" version="1.0" class="in-text" default-locale="en-US">
+  <info>
+    <title>MUWI Chicago Author-Date Baseline</title>
+    <id>http://muwi.dev/csl/chicago-author-date-baseline</id>
+    <category citation-format="author-date"/>
+    <updated>2026-02-18T00:00:00+00:00</updated>
+  </info>
+
+  <macro name="author-short">
+    <names variable="author">
+      <name form="short"/>
+      <substitute>
+        <text value="Anonymous"/>
+      </substitute>
+    </names>
+  </macro>
+
+  <macro name="author-bib">
+    <names variable="author">
+      <name and="text" delimiter=", "/>
+      <substitute>
+        <text value="Anonymous"/>
+      </substitute>
+    </names>
+  </macro>
+
+  <macro name="issued-year">
+    <date variable="issued">
+      <date-part name="year"/>
+    </date>
+  </macro>
+
+  <citation>
+    <layout prefix="(" suffix=")">
+      <text macro="author-short"/>
+      <text value=" "/>
+      <text macro="issued-year"/>
+    </layout>
+  </citation>
+
+  <bibliography hanging-indent="true" entry-spacing="1">
+    <layout>
+      <text macro="author-bib" suffix=". "/>
+      <text macro="issued-year" suffix=". "/>
+      <text variable="title" suffix=". "/>
+      <text variable="container-title" suffix=". "/>
+      <group>
+        <text variable="volume"/>
+        <text variable="issue" prefix=", no. "/>
+      </group>
+      <text variable="page" prefix=": " suffix="."/>
+    </layout>
+  </bibliography>
+</style>

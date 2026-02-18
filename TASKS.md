@@ -969,9 +969,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.1.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] citeproc-js installed
-  - [ ] Citation style files bundled (APA, MLA, Chicago)
-  - [ ] Basic citation formatting works
+  - [x] citeproc-js installed
+  - [x] Citation style files bundled (APA, MLA, Chicago)
+  - [x] Basic citation formatting works
 - **Packages**: Research best citation library for browser
 
 #### Task 5.1.2: Create Citation Utilities

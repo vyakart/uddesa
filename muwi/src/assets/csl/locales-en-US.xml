@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<locale xmlns="http://purl.org/net/xbiblio/csl" xml:lang="en-US">
+  <info>
+    <translator>
+      <name>MUWI</name>
+    </translator>
+    <rights license="http://creativecommons.org/licenses/by-sa/3.0/">
+      This locale file is provided for MUWI integration testing.
+    </rights>
+  </info>
+  <terms>
+    <term name="and">and</term>
+    <term name="et-al">et al.</term>
+    <term name="editor">editor</term>
+    <term name="editors">editors</term>
+    <term name="volume" form="short">vol.</term>
+    <term name="issue" form="short">no.</term>
+    <term name="page">page</term>
+    <term name="page" form="short">p.</term>
+    <term name="page-range-delimiter">-</term>
+  </terms>
+</locale>

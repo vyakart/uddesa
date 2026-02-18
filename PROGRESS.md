@@ -5,11 +5,11 @@ Last updated: February 18, 2026
 ## 1) Where we are now
 
 - App development is active and stable.
-- Unit tests are passing (`67` files, `276` tests).
+- Unit tests are passing (`68` files, `279` tests).
 - Latest full coverage snapshot: lines `90.82%`, statements `90.22%`, functions `86.44%`, branches `80.07%`.
 - Recent focus has been adding reliable tests module by module.
 - Blackboard coverage moved from almost none to strong coverage.
-- Current execution stage: Phase `5.1.1` (citation libraries and formatting baseline).
+- Current execution stage: Phase `5.1.2` (citation utilities implementation).
 
 ## 2) Completed tasks so far (brief)
 
@@ -60,6 +60,7 @@ Last updated: February 18, 2026
 | Task wave 38 | Completed `4.2.2` FootnoteManager acceptance by validating list rendering, inline editing, deletion, and navigation-to-text flows, and wiring manager interactions through `SectionEditor` footnote panel actions | Component + integration tests (`FootnoteManager.test.tsx`, `SectionEditor.test.tsx`) + full run green |
 | Task wave 39 | Completed `4.3.1` FocusMode acceptance by adding full-screen distraction-free overlay behavior, keyboard toggles (`Esc`, `F11`, `Cmd/Ctrl+Shift+F`), typewriter centering in focus editor scroll, and smooth overlay transitions | Long Drafts targeted tests + full run green: `vitest --run` (`67` files, `276` tests) |
 | Task wave 40 | Completed `4.4.1` LongDrafts container acceptance by validating document switching modal, TOC + SectionEditor composition, focus-mode toggle presence, and explicit document metadata rendering (sections/word count/created+updated dates), plus adding Long Drafts E2E create/add/reorder flow | Integration tests + full run green (`67` files, `276` tests) + Playwright: `e2e/long-drafts.spec.ts` passing |
+| Task wave 41 | Completed `5.1.1` citation-library baseline by adding direct `citeproc` dependency, bundling CSL style files (`APA`, `MLA`, `Chicago`) and locale asset, and shipping tested citeproc-backed formatting helpers for in-text citations and bibliographies | Citation-targeted tests + full run green: `vitest --run` (`68` files, `279` tests) |
 
 ## 3) Blackboard testing progress
 
@@ -98,5 +99,5 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Implement Phase `5.1.1`: install and wire citation libraries baseline.
+1. Implement Phase `5.1.2`: citation utility functions (`formatCitation`, `formatBibliography`, DOI/BibTeX utilities, style switching).
 2. Keep periodic full coverage reruns while feature stages advance to prevent regressions.
