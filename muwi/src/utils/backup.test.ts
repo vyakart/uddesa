@@ -34,6 +34,24 @@ function makeDraft(overrides: Partial<Draft> = {}): Draft {
   };
 }
 
+const REQUIRED_BACKUP_TABLES = [
+  'scratchpadPages',
+  'textBlocks',
+  'blackboardCanvases',
+  'canvasElements',
+  'diaryEntries',
+  'drafts',
+  'longDrafts',
+  'sections',
+  'academicPapers',
+  'academicSections',
+  'bibliographyEntries',
+  'citations',
+  'figures',
+  'settings',
+  'lockedContent',
+] as const;
+
 function makeBackup(overrides: Partial<BackupData> = {}): BackupData {
   const base: BackupData = {
     metadata: {
@@ -120,8 +138,9 @@ describe('backup utils', () => {
     await db.settings.put(defaultGlobalSettings);
 
     const backup = await createBackup();
-    expect(backup.metadata.tableCount).toBe(15);
+    expect(backup.metadata.tableCount).toBe(REQUIRED_BACKUP_TABLES.length);
     expect(backup.metadata.totalRecords).toBe(2);
+    expect(Object.keys(backup.data).sort()).toEqual([...REQUIRED_BACKUP_TABLES].sort());
     expect(backup.data.drafts).toHaveLength(1);
     expect(backup.data.settings).toHaveLength(1);
 
@@ -143,6 +162,16 @@ describe('backup utils', () => {
     expect(validateBackup(null)).toBe(false);
     expect(validateBackup({})).toBe(false);
     expect(validateBackup({ metadata: {}, data: backup.data })).toBe(false);
+    expect(validateBackup({ metadata: { ...backup.metadata, version: 'v1' }, data: backup.data })).toBe(false);
+    expect(
+      validateBackup({ metadata: { ...backup.metadata, createdAt: 'not-a-date' }, data: backup.data })
+    ).toBe(false);
+    expect(
+      validateBackup({ metadata: { ...backup.metadata, tableCount: 14 }, data: backup.data })
+    ).toBe(false);
+    expect(
+      validateBackup({ metadata: { ...backup.metadata, totalRecords: -1 }, data: backup.data })
+    ).toBe(false);
     expect(validateBackup({ metadata: { version: '1.0.0', createdAt: new Date().toISOString() }, data: null })).toBe(
       false
     );
@@ -185,6 +214,13 @@ describe('backup utils', () => {
     const incompatibleResult = await restoreBackup(incompatibleBackup);
     expect(incompatibleResult.success).toBe(false);
     expect(incompatibleResult.error).toContain('Incompatible backup version');
+
+    const invalidVersionBackup = {
+      ...backup,
+      metadata: { ...backup.metadata, version: 'invalid' },
+    };
+    const invalidVersionResult = await restoreBackup(invalidVersionBackup);
+    expect(invalidVersionResult).toEqual({ success: false, error: 'Invalid backup format' });
   });
 
   it('restores all non-empty tables when clearExisting is false and handles restore failures', async () => {

@@ -76,6 +76,32 @@ export interface AutoBackupConfig {
 // Current backup schema version
 const BACKUP_VERSION = '1.0.0';
 const APP_VERSION = '1.0.0';
+const REQUIRED_BACKUP_TABLES = [
+  'scratchpadPages',
+  'textBlocks',
+  'blackboardCanvases',
+  'canvasElements',
+  'diaryEntries',
+  'drafts',
+  'longDrafts',
+  'sections',
+  'academicPapers',
+  'academicSections',
+  'bibliographyEntries',
+  'citations',
+  'figures',
+  'settings',
+  'lockedContent',
+] as const;
+
+function isValidSemver(version: string): boolean {
+  return /^\d+\.\d+\.\d+$/.test(version);
+}
+
+function isValidIsoDate(date: string): boolean {
+  const parsed = Date.parse(date);
+  return !Number.isNaN(parsed);
+}
 
 // ============================================================================
 // Backup Creation
@@ -144,7 +170,7 @@ export async function createBackup(): Promise<BackupData> {
         version: BACKUP_VERSION,
         createdAt: new Date().toISOString(),
         appVersion: APP_VERSION,
-        tableCount: 15,
+        tableCount: REQUIRED_BACKUP_TABLES.length,
         totalRecords,
       },
       data: {
@@ -240,7 +266,28 @@ export function validateBackup(data: unknown): data is BackupData {
     return false;
   }
 
-  if (!backup.metadata.version || !backup.metadata.createdAt) {
+  if (
+    !backup.metadata.version ||
+    !backup.metadata.createdAt ||
+    !isValidSemver(backup.metadata.version) ||
+    !isValidIsoDate(backup.metadata.createdAt)
+  ) {
+    return false;
+  }
+
+  if (
+    typeof backup.metadata.tableCount !== 'number' ||
+    !Number.isFinite(backup.metadata.tableCount) ||
+    backup.metadata.tableCount !== REQUIRED_BACKUP_TABLES.length
+  ) {
+    return false;
+  }
+
+  if (
+    typeof backup.metadata.totalRecords !== 'number' ||
+    !Number.isFinite(backup.metadata.totalRecords) ||
+    backup.metadata.totalRecords < 0
+  ) {
     return false;
   }
 
@@ -250,25 +297,7 @@ export function validateBackup(data: unknown): data is BackupData {
   }
 
   // Check required tables exist (they can be empty arrays)
-  const requiredTables = [
-    'scratchpadPages',
-    'textBlocks',
-    'blackboardCanvases',
-    'canvasElements',
-    'diaryEntries',
-    'drafts',
-    'longDrafts',
-    'sections',
-    'academicPapers',
-    'academicSections',
-    'bibliographyEntries',
-    'citations',
-    'figures',
-    'settings',
-    'lockedContent',
-  ];
-
-  for (const table of requiredTables) {
+  for (const table of REQUIRED_BACKUP_TABLES) {
     if (!Array.isArray((backup.data as Record<string, unknown>)[table])) {
       return false;
     }
@@ -311,6 +340,12 @@ export async function restoreBackup(backup: BackupData, clearExisting = true): P
     // Check version compatibility
     const [majorVersion] = backup.metadata.version.split('.');
     const [currentMajor] = BACKUP_VERSION.split('.');
+    if (!isValidSemver(backup.metadata.version)) {
+      return {
+        success: false,
+        error: `Invalid backup version format: ${backup.metadata.version}`,
+      };
+    }
     if (majorVersion !== currentMajor) {
       return {
         success: false,

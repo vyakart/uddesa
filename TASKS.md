@@ -1123,10 +1123,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.4.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] createBackup function (all tables)
-  - [ ] restoreBackup function
-  - [ ] Version validation
-  - [ ] JSON format
+  - [x] createBackup function (all tables)
+  - [x] restoreBackup function
+  - [x] Version validation
+  - [x] JSON format
 - **Testing**: Unit tests
 
 #### Task 6.2.2: Create BackupPanel Component
