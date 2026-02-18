@@ -426,9 +426,13 @@ describe('longDraftsStore', () => {
     );
 
     const snapshot = useLongDraftsStore.getState();
-    expect(selectCurrentLongDraft({ ...snapshot, currentLongDraftId: 'missing' } as any)).toBeNull();
-    expect(selectCurrentSection({ ...snapshot, currentLongDraftId: 'missing', currentSectionId: 'x' } as any)).toBeNull();
-    expect(selectCurrentSections({ ...snapshot, currentLongDraftId: null } as any)).toEqual([]);
-    expect(selectCurrentDocumentWordCount({ ...snapshot, currentLongDraftId: null } as any)).toBe(0);
+    type StoreState = Parameters<typeof selectCurrentLongDraft>[0];
+
+    expect(selectCurrentLongDraft({ ...snapshot, currentLongDraftId: 'missing' } as StoreState)).toBeNull();
+    expect(
+      selectCurrentSection({ ...snapshot, currentLongDraftId: 'missing', currentSectionId: 'x' } as StoreState)
+    ).toBeNull();
+    expect(selectCurrentSections({ ...snapshot, currentLongDraftId: null } as StoreState)).toEqual([]);
+    expect(selectCurrentDocumentWordCount({ ...snapshot, currentLongDraftId: null } as StoreState)).toBe(0);
   });
 });
