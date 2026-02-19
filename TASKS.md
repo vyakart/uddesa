@@ -1809,8 +1809,8 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Effort**: M
 - **Files to Modify**: `muwi/src/components/diaries/PersonalDiary/PersonalDiary.tsx`
 - **Acceptance Criteria**:
-  - [ ] Sidebar, toolbar lane, canvas, and status bar run through shell slots
-  - [ ] Existing entry CRUD behavior unchanged
+  - [x] Sidebar, toolbar lane, canvas, and status bar run through shell slots
+  - [x] Existing entry CRUD behavior unchanged
 
 #### Task 7.9.2: Implement Date-Grouped Sidebar + Today Action
 - **Description**: Align sidebar structure and actions to spec

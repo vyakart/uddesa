@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { addDays, format, parseISO, subDays } from 'date-fns';
-import { DiaryLayout } from '@/components/common';
+import { Button, DiaryLayout } from '@/components/common';
 import { usePersonalDiaryStore } from '@/stores/personalDiaryStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { EntryNavigation } from './EntryNavigation';
@@ -15,7 +15,6 @@ function toDate(date: string | Date): Date {
 }
 
 export function PersonalDiary() {
-  const [isNavCollapsed, setIsNavCollapsed] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
   const entries = usePersonalDiaryStore((state) => state.entries);
@@ -62,10 +61,6 @@ export function PersonalDiary() {
     },
     [currentEntry, updateEntry]
   );
-
-  const handleToggleCollapse = () => {
-    setIsNavCollapsed(!isNavCollapsed);
-  };
 
   const handleCreateNewEntry = useCallback(() => {
     const existingDates = new Set(entries.map((entry) => format(toDate(entry.date), 'yyyy-MM-dd')));
@@ -115,90 +110,113 @@ export function PersonalDiary() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [currentEntry, loadEntry, handleCreateNewEntry]);
 
-  // Show loading state during initialization
-  if (!isInitialized) {
-    return (
-      <DiaryLayout diaryType="personal-diary">
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '100%',
-            color: '#888888',
-          }}
-        >
-          Loading...
-        </div>
-      </DiaryLayout>
-    );
-  }
+  const isBusy = !isInitialized;
+  const currentDate = currentEntry ? toDate(currentEntry.date) : new Date();
+  const selectedDateLabel = currentEntry
+    ? format(currentDate, diarySettings.dateFormat)
+    : 'No entry selected';
 
-  // Show error state
-  if (error) {
-    return (
-      <DiaryLayout diaryType="personal-diary">
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '100%',
-            color: '#F44336',
-            gap: '16px',
-          }}
-        >
-          <p>Error: {error}</p>
-          <button
-            onClick={() => window.location.reload()}
+  const toolbar = (
+    <div
+      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}
+      data-testid="personal-diary-toolbar"
+    >
+      <span style={{ fontSize: '0.875rem', color: '#666666' }}>{selectedDateLabel}</span>
+      <Button
+        type="button"
+        onClick={handleCreateNewEntry}
+        variant="secondary"
+        size="sm"
+        disabled={isBusy || Boolean(error)}
+      >
+        New Entry
+      </Button>
+    </div>
+  );
+
+  const sidebar = (
+    <EntryNavigation
+      entries={entries}
+      currentDate={currentDate}
+      onDateChange={handleDateChange}
+    />
+  );
+
+  const status = isBusy
+    ? { left: 'Loading personal diary...', right: 'Preparing entries' }
+    : error
+      ? { left: 'Personal diary unavailable', right: 'Reload to retry' }
+      : {
+          left: `${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}`,
+          right: currentEntry?.isLocked ? 'Locked' : 'Unlocked',
+        };
+
+  const loadingCanvas = (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100%',
+        color: '#888888',
+      }}
+    >
+      Loading...
+    </div>
+  );
+
+  const errorCanvas = (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100%',
+        color: '#F44336',
+        gap: '16px',
+      }}
+    >
+      <p>Error: {error}</p>
+      <Button type="button" onClick={() => window.location.reload()} variant="danger" size="sm">
+        Reload
+      </Button>
+    </div>
+  );
+
+  const canvas = isBusy
+    ? loadingCanvas
+    : error
+      ? errorCanvas
+      : (
+          <div
             style={{
-              padding: '8px 16px',
-              border: '1px solid #F44336',
-              borderRadius: '6px',
-              backgroundColor: 'transparent',
-              color: '#F44336',
-              cursor: 'pointer',
+              display: 'flex',
+              height: '100%',
+              overflow: 'hidden',
+              background: `${paperBackground}, ${diarySettings.paperColor}`,
+              backgroundSize: '160px 160px',
             }}
+            data-testid="personal-diary-container"
           >
-            Reload
-          </button>
-        </div>
-      </DiaryLayout>
-    );
-  }
+            <DiaryEntry
+              key={currentEntry?.id ?? 'empty-entry'}
+              entry={currentEntry}
+              onContentChange={handleContentChange}
+              onDateChange={handleDateChange}
+              onLockChange={handleLockChange}
+              settings={diarySettings}
+            />
+          </div>
+        );
 
   return (
-    <DiaryLayout diaryType="personal-diary" showToolbar={false}>
-      <div
-        style={{
-          display: 'flex',
-          height: '100%',
-          overflow: 'hidden',
-          background: `${paperBackground}, ${diarySettings.paperColor}`,
-          backgroundSize: '160px 160px',
-        }}
-        data-testid="personal-diary-container"
-      >
-        {/* Entry Navigation Sidebar */}
-        <EntryNavigation
-          entries={entries}
-          currentDate={currentEntry ? toDate(currentEntry.date) : new Date()}
-          onDateChange={handleDateChange}
-          isCollapsed={isNavCollapsed}
-          onToggleCollapse={handleToggleCollapse}
-        />
-
-        {/* Main Editor Area */}
-        <DiaryEntry
-          key={currentEntry?.id ?? 'empty-entry'}
-          entry={currentEntry}
-          onContentChange={handleContentChange}
-          onDateChange={handleDateChange}
-          onLockChange={handleLockChange}
-          settings={diarySettings}
-        />
-      </div>
-    </DiaryLayout>
+    <DiaryLayout
+      diaryType="personal-diary"
+      sidebar={sidebar}
+      toolbar={toolbar}
+      canvas={canvas}
+      status={status}
+    />
   );
 }

@@ -35,7 +35,7 @@ describe('PersonalDiary', () => {
     useSettingsStore.setState(useSettingsStore.getInitialState(), true);
   });
 
-  it('loads entries on mount and renders navigation + editor', async () => {
+  it('loads entries on mount and renders sidebar, toolbar, canvas, and status slots', async () => {
     const entry = makeEntry();
     const loadEntries = vi.fn().mockResolvedValue(undefined);
     const loadEntry = vi.fn().mockImplementation(async () => {
@@ -58,7 +58,10 @@ describe('PersonalDiary', () => {
     });
 
     expect(screen.getByTestId('entry-navigation')).toBeInTheDocument();
+    expect(screen.getByTestId('personal-diary-toolbar')).toHaveTextContent('New Entry');
     expect(screen.getByTestId('diary-entry-view')).toHaveTextContent('entry-today');
+    expect(screen.getByText('1 entry')).toBeInTheDocument();
+    expect(screen.getByText('Unlocked')).toBeInTheDocument();
   });
 
   it('applies paper background settings to container', async () => {
