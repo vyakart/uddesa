@@ -38,6 +38,14 @@ describe('useGlobalShortcuts', () => {
     expect(useAppStore.getState().isSettingsOpen).toBe(true);
   });
 
+  it('opens command palette with Ctrl/Cmd+K', () => {
+    renderHook(() => useGlobalShortcuts());
+
+    fireEvent.keyDown(window, { key: 'k', ...ctrlOrMetaModifier() });
+
+    expect(useAppStore.getState().isCommandPaletteOpen).toBe(true);
+  });
+
   it('escape closes settings when settings are open', () => {
     useAppStore.setState(
       { currentView: 'diary', activeDiary: 'scratchpad', isSettingsOpen: true },
@@ -50,6 +58,26 @@ describe('useGlobalShortcuts', () => {
 
     expect(useAppStore.getState().isSettingsOpen).toBe(false);
     expect(useAppStore.getState().currentView).toBe('diary');
+  });
+
+  it('escape closes command palette before other overlays', () => {
+    useAppStore.setState(
+      {
+        currentView: 'diary',
+        activeDiary: 'scratchpad',
+        isSettingsOpen: true,
+        isCommandPaletteOpen: true,
+      },
+      false
+    );
+
+    renderHook(() => useGlobalShortcuts());
+
+    fireEvent.keyDown(window, { key: 'Escape' });
+
+    const state = useAppStore.getState();
+    expect(state.isCommandPaletteOpen).toBe(false);
+    expect(state.isSettingsOpen).toBe(true);
   });
 
   it('escape returns to shelf when in diary and settings are closed', () => {

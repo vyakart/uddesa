@@ -25,14 +25,11 @@ export function FontSelector({
   disabled = false,
   className,
 }: FontSelectorProps) {
+  const containerClasses = ['muwi-font-selector', className ?? null].filter(Boolean).join(' ');
+
   if (variant === 'context-menu') {
     return (
-      <div
-        role="menu"
-        aria-label={`${label} menu`}
-        className={className}
-        style={{ display: 'grid', gap: 2, minWidth: 180 }}
-      >
+      <div role="menu" aria-label={`${label} menu`} className={[containerClasses, 'is-menu'].join(' ')}>
         {fonts.map((font) => (
           <button
             key={font}
@@ -41,16 +38,9 @@ export function FontSelector({
             aria-checked={value === font}
             disabled={disabled}
             onClick={() => onChange(font)}
-            style={{
-              textAlign: 'left',
-              padding: '6px 8px',
-              border: 'none',
-              borderRadius: 4,
-              cursor: disabled ? 'not-allowed' : 'pointer',
-              backgroundColor: value === font ? '#eef4f6' : 'transparent',
-              fontFamily: getPreviewFontFamily(font),
-              fontSize: 13,
-            }}
+            className="muwi-font-selector__menu-item"
+            data-selected={value === font ? 'true' : 'false'}
+            style={{ fontFamily: getPreviewFontFamily(font) }}
           >
             {font}
           </button>
@@ -60,15 +50,14 @@ export function FontSelector({
   }
 
   return (
-    <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#666' }}>
-      {label}
+    <label className={[containerClasses, 'is-select'].join(' ')}>
+      <span className="muwi-font-selector__label">{label}</span>
       <select
         aria-label={label}
         disabled={disabled}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className={className}
-        style={{ height: '26px', border: '1px solid #d8d8d8', borderRadius: '4px', fontSize: '12px' }}
+        className="muwi-form-control muwi-font-selector__select"
       >
         {fonts.map((font) => (
           <option key={font} value={font} style={{ fontFamily: getPreviewFontFamily(font) }}>

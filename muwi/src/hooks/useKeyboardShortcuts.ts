@@ -109,6 +109,7 @@ export const SHORTCUT_KEYS = {
   HEADING_2: { key: '2', modifiers: ['ctrl'] as ModifierKey[] },
   HEADING_3: { key: '3', modifiers: ['ctrl'] as ModifierKey[] },
   FIND: { key: 'f', modifiers: ['ctrl'] as ModifierKey[] },
+  COMMAND_PALETTE: { key: 'k', modifiers: ['ctrl'] as ModifierKey[] },
   ZOOM_IN: { key: '=', modifiers: ['ctrl'] as ModifierKey[] },
   ZOOM_OUT: { key: '-', modifiers: ['ctrl'] as ModifierKey[] },
   ZOOM_RESET: { key: '0', modifiers: ['ctrl'] as ModifierKey[] },

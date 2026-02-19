@@ -17,3 +17,4 @@ export * from './RightPanel';
 export * from './Button';
 export * from './FormControls';
 export * from './Toast';
+export * from './CommandPalette';

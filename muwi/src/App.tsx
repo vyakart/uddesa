@@ -9,7 +9,7 @@ import { useSettingsStore } from '@/stores/settingsStore';
 import { useGlobalShortcuts, usePasteHandler } from '@/hooks';
 import { applyThemeToDocument, getSystemPrefersDark, resolveTheme, watchSystemTheme } from '@/utils/theme';
 import { Shelf } from '@/components/shelf';
-import { ErrorBoundary } from '@/components/common';
+import { CommandPalette, ErrorBoundary } from '@/components/common';
 import { PersonalDiary } from '@/components/diaries/personal-diary';
 import { Blackboard } from '@/components/diaries/blackboard';
 import { Scratchpad } from '@/components/diaries/scratchpad';
@@ -101,7 +101,12 @@ function App() {
 
   // Render based on current view
   if (currentView === 'shelf' || !activeDiary) {
-    return <Shelf />;
+    return (
+      <>
+        <Shelf />
+        <CommandPalette />
+      </>
+    );
   }
 
   // Render the appropriate diary component wrapped in ErrorBoundary
@@ -124,7 +129,12 @@ function App() {
     }
   };
 
-  return <ErrorBoundary key={activeDiary}>{renderDiary()}</ErrorBoundary>;
+  return (
+    <>
+      <ErrorBoundary key={activeDiary}>{renderDiary()}</ErrorBoundary>
+      <CommandPalette />
+    </>
+  );
 }
 
 export default App;

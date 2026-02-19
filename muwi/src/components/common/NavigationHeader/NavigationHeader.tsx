@@ -14,47 +14,21 @@ export function NavigationHeader({
   rightContent,
 }: NavigationHeaderProps) {
   return (
-    <header
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0.75rem 1rem',
-        borderBottom: '1px solid var(--color-border-default)',
-        color: 'var(--color-text-primary)',
-        backgroundColor: 'var(--color-bg-primary)',
-      }}
-    >
+    <header className="muwi-navigation-header">
       <button
+        type="button"
         onClick={onBack}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          padding: '0.375rem 0.75rem',
-          borderRadius: '8px',
-          border: 'none',
-          backgroundColor: 'transparent',
-          cursor: 'pointer',
-          fontSize: '0.875rem',
-          fontWeight: 500,
-          color: 'var(--color-text-secondary)',
-        }}
+        className="muwi-button muwi-navigation-header__back"
+        data-variant="ghost"
+        data-size="md"
+        data-active="false"
+        data-icon-only="false"
         aria-label="Back to shelf"
       >
         ← Shelf
       </button>
 
-      <h1
-        style={{
-          fontSize: '1.125rem',
-          fontWeight: 600,
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          color: 'var(--color-text-primary)',
-        }}
-      >
+      <h1 className="muwi-navigation-header__title">
         {icon ? (
           <span role="img" aria-hidden="true">
             {icon}
@@ -63,7 +37,7 @@ export function NavigationHeader({
         {title}
       </h1>
 
-      <div style={{ minWidth: '80px' }}>{rightContent}</div>
+      <div className="muwi-navigation-header__right">{rightContent}</div>
     </header>
   );
 }

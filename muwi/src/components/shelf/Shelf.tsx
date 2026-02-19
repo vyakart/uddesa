@@ -1,9 +1,11 @@
-import type React from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
+import { formatDistanceToNow } from 'date-fns';
+import { Settings } from 'lucide-react';
+import { db } from '@/db/database';
 import { DiaryCard } from './DiaryCard';
 import { useAppStore, type DiaryType } from '@/stores/appStore';
 import { useSettingsStore, selectShelfLayout } from '@/stores/settingsStore';
-import { ContextMenu, Modal, type ContextMenuItem } from '@/components/common';
-import { useMemo, useState } from 'react';
+import { ContextMenu, Modal, Button, type ContextMenuItem } from '@/components/common';
 import { SettingsPanel } from './SettingsPanel';
 
 const DIARY_ORDER: DiaryType[] = [
@@ -15,56 +17,177 @@ const DIARY_ORDER: DiaryType[] = [
   'academic',
 ];
 
+const DIARY_UNITS: Record<DiaryType, string> = {
+  scratchpad: 'page',
+  blackboard: 'canvas',
+  'personal-diary': 'entry',
+  drafts: 'draft',
+  'long-drafts': 'document',
+  academic: 'paper',
+};
+
+const EMPTY_METADATA = 'No entries yet';
+
+type DiaryMetadata = Record<DiaryType, { count: number; lastModified: Date | null; text: string }>;
+
+function toDate(value: Date | string | null | undefined): Date | null {
+  if (!value) return null;
+  const date = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function latestByModifiedAt<T extends { modifiedAt?: Date | string }>(records: T[]): Date | null {
+  let latest: Date | null = null;
+
+  for (const record of records) {
+    const candidate = toDate(record.modifiedAt);
+    if (!candidate) {
+      continue;
+    }
+
+    if (!latest || candidate.getTime() > latest.getTime()) {
+      latest = candidate;
+    }
+  }
+
+  return latest;
+}
+
+function formatMetadata(type: DiaryType, count: number, lastModified: Date | null): string {
+  if (count === 0) {
+    return EMPTY_METADATA;
+  }
+
+  const unit = DIARY_UNITS[type];
+  const unitLabel = count === 1 ? unit : `${unit}s`;
+
+  if (!lastModified) {
+    return `${count} ${unitLabel}`;
+  }
+
+  return `${count} ${unitLabel} · ${formatDistanceToNow(lastModified, { addSuffix: true })}`;
+}
+
+function createEmptyMetadata(): DiaryMetadata {
+  return {
+    scratchpad: { count: 0, lastModified: null, text: EMPTY_METADATA },
+    blackboard: { count: 0, lastModified: null, text: EMPTY_METADATA },
+    'personal-diary': { count: 0, lastModified: null, text: EMPTY_METADATA },
+    drafts: { count: 0, lastModified: null, text: EMPTY_METADATA },
+    'long-drafts': { count: 0, lastModified: null, text: EMPTY_METADATA },
+    academic: { count: 0, lastModified: null, text: EMPTY_METADATA },
+  };
+}
+
 export function Shelf() {
   const openDiary = useAppStore((state) => state.openDiary);
   const openSettings = useAppStore((state) => state.openSettings);
   const closeSettings = useAppStore((state) => state.closeSettings);
   const isSettingsOpen = useAppStore((state) => state.isSettingsOpen);
+  const lastOpenedDiary = useAppStore((state) => state.lastOpenedDiary);
+
   const shelfLayout = useSettingsStore(selectShelfLayout);
+  const updateShelfLayout = useSettingsStore((state) => state.updateShelfLayout);
+
+  const [metadata, setMetadata] = useState<DiaryMetadata>(() => createEmptyMetadata());
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [transitionDiary, setTransitionDiary] = useState<DiaryType | null>(null);
+  const transitionTimerRef = useRef<number | null>(null);
+
   const [contextMenuState, setContextMenuState] = useState<{
     x: number;
     y: number;
     diaryType: DiaryType;
   } | null>(null);
 
-  const handleDiaryClick = (type: DiaryType) => {
-    openDiary(type);
-  };
+  useEffect(() => {
+    let isCancelled = false;
 
-  const gridStyles: React.CSSProperties = useMemo(() => {
-    if (shelfLayout === 'list') {
-      return {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '0.85rem',
-        maxWidth: '760px',
-        margin: '0 auto',
+    const loadMetadata = async () => {
+      const [scratchpadPages, blackboardCanvases, diaryEntries, drafts, longDrafts, academicPapers] =
+        await Promise.all([
+          db.scratchpadPages.toArray(),
+          db.blackboardCanvases.toArray(),
+          db.diaryEntries.toArray(),
+          db.drafts.toArray(),
+          db.longDrafts.toArray(),
+          db.academicPapers.toArray(),
+        ]);
+
+      if (isCancelled) {
+        return;
+      }
+
+      const scratchpadLastModified = latestByModifiedAt(scratchpadPages);
+      const blackboardLastModified = latestByModifiedAt(blackboardCanvases);
+      const personalDiaryLastModified = latestByModifiedAt(diaryEntries);
+      const draftsLastModified = latestByModifiedAt(drafts);
+      const longDraftsLastModified = latestByModifiedAt(longDrafts);
+      const academicLastModified = latestByModifiedAt(academicPapers);
+
+      const next: DiaryMetadata = {
+        scratchpad: {
+          count: scratchpadPages.length,
+          lastModified: scratchpadLastModified,
+          text: formatMetadata('scratchpad', scratchpadPages.length, scratchpadLastModified),
+        },
+        blackboard: {
+          count: blackboardCanvases.length,
+          lastModified: blackboardLastModified,
+          text: formatMetadata('blackboard', blackboardCanvases.length, blackboardLastModified),
+        },
+        'personal-diary': {
+          count: diaryEntries.length,
+          lastModified: personalDiaryLastModified,
+          text: formatMetadata('personal-diary', diaryEntries.length, personalDiaryLastModified),
+        },
+        drafts: {
+          count: drafts.length,
+          lastModified: draftsLastModified,
+          text: formatMetadata('drafts', drafts.length, draftsLastModified),
+        },
+        'long-drafts': {
+          count: longDrafts.length,
+          lastModified: longDraftsLastModified,
+          text: formatMetadata('long-drafts', longDrafts.length, longDraftsLastModified),
+        },
+        academic: {
+          count: academicPapers.length,
+          lastModified: academicLastModified,
+          text: formatMetadata('academic', academicPapers.length, academicLastModified),
+        },
       };
-    }
 
-    if (shelfLayout === 'shelf') {
-      return {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
-        gap: '0.9rem',
-        maxWidth: '1200px',
-        margin: '0 auto',
-        padding: '1rem',
-        borderRadius: 14,
-        border: '1px solid #d7d2c3',
-        background:
-          'linear-gradient(180deg, rgba(169, 137, 92, 0.18) 0%, rgba(143, 111, 68, 0.28) 100%)',
-      };
-    }
-
-    return {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-      gap: '1.5rem',
-      maxWidth: '1200px',
-      margin: '0 auto',
+      setMetadata(next);
     };
-  }, [shelfLayout]);
+
+    void loadMetadata();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (transitionTimerRef.current !== null) {
+        window.clearTimeout(transitionTimerRef.current);
+      }
+    };
+  }, []);
+
+  const handleDiaryClick = (type: DiaryType) => {
+    if (isTransitioning) {
+      return;
+    }
+
+    setTransitionDiary(type);
+    setIsTransitioning(true);
+
+    transitionTimerRef.current = window.setTimeout(() => {
+      openDiary(type);
+    }, 220);
+  };
 
   const contextItems: ContextMenuItem[] = useMemo(() => {
     if (!contextMenuState) {
@@ -81,92 +204,40 @@ export function Shelf() {
         id: 'layout',
         label: 'Layout',
         submenu: [
-          { id: 'layout-grid', label: 'Grid View' },
-          { id: 'layout-list', label: 'List View' },
-          { id: 'layout-shelf', label: 'Shelf View' },
+          { id: 'layout-grid', label: 'Grid View', onSelect: () => void updateShelfLayout('grid') },
+          { id: 'layout-list', label: 'List View', onSelect: () => void updateShelfLayout('list') },
+          { id: 'layout-shelf', label: 'Shelf View', onSelect: () => void updateShelfLayout('shelf') },
         ],
       },
     ];
-  }, [contextMenuState, openDiary]);
+  }, [contextMenuState, openDiary, updateShelfLayout]);
+
+  const mainClassName = ['muwi-shelf__grid', `is-${shelfLayout}`].join(' ');
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        padding: '2rem',
-        backgroundColor: '#FAFAFA',
-      }}
-    >
-      {/* Header */}
-      <header
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: '2rem',
-          maxWidth: '1200px',
-          margin: '0 auto 2rem auto',
-        }}
-      >
-        <h1
-          style={{
-            fontSize: '1.875rem',
-            fontWeight: 600,
-            color: '#1A1A1A',
-          }}
-        >
-          MUWI
-        </h1>
-        <button
+    <div className="muwi-shelf" data-transitioning={isTransitioning ? 'true' : 'false'}>
+      <header className="muwi-shelf__header">
+        <h1 className="muwi-shelf__title">MUWI</h1>
+        <Button
+          type="button"
           onClick={openSettings}
-          style={{
-            padding: '0.5rem',
-            borderRadius: '8px',
-            border: 'none',
-            backgroundColor: 'transparent',
-            cursor: 'pointer',
-          }}
+          variant="ghost"
+          size="md"
+          iconOnly
           aria-label="Settings"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            style={{ color: '#666666' }}
-          >
-            <circle cx="12" cy="12" r="3" />
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-          </svg>
-        </button>
+          <Settings size={20} aria-hidden="true" />
+        </Button>
       </header>
 
-      {/* Subtitle */}
-      <p
-        style={{
-          fontSize: '1.125rem',
-          marginBottom: '2rem',
-          opacity: 0.75,
-          color: '#666666',
-          maxWidth: '1200px',
-          margin: '0 auto 2rem auto',
-        }}
-      >
-        Multi-Utility Writing Interface
-      </p>
-
-      {/* Diary Grid */}
-      <main style={gridStyles} data-layout={shelfLayout} data-testid="shelf-layout">
+      <main className={mainClassName} data-layout={shelfLayout} data-testid="shelf-layout">
         {DIARY_ORDER.map((type) => (
           <DiaryCard
             key={type}
             type={type}
             layout={shelfLayout}
+            metadata={metadata[type].text}
+            isSelected={transitionDiary === type || lastOpenedDiary === type}
             onClick={handleDiaryClick}
             onContextMenu={(event, diaryType) => {
               setContextMenuState({
@@ -178,6 +249,8 @@ export function Shelf() {
           />
         ))}
       </main>
+
+      <p className="muwi-shelf__hint">⌘K to open command palette</p>
 
       <ContextMenu
         isOpen={Boolean(contextMenuState)}

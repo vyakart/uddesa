@@ -9,6 +9,8 @@ import {
   type BackupResult,
   type RestoreResult,
 } from '@/utils/backup';
+import { Modal } from '../Modal';
+import { Button } from '../Button';
 
 interface BackupPanelProps {
   isOpen: boolean;
@@ -49,15 +51,16 @@ export function BackupPanel({
   const [localLocation, setLocalLocation] = useState(backupLocation);
   const [localLastBackup, setLocalLastBackup] = useState(lastBackup);
 
-  // Load stats on open
   useEffect(() => {
-    if (isOpen) {
-      getBackupStats().then(setStats);
-      setLocalAutoEnabled(autoBackupEnabled);
-      setLocalFrequency(autoBackupFrequency);
-      setLocalLocation(backupLocation);
-      setLocalLastBackup(lastBackup);
+    if (!isOpen) {
+      return;
     }
+
+    getBackupStats().then(setStats);
+    setLocalAutoEnabled(autoBackupEnabled);
+    setLocalFrequency(autoBackupFrequency);
+    setLocalLocation(backupLocation);
+    setLocalLastBackup(lastBackup);
   }, [isOpen, autoBackupEnabled, autoBackupFrequency, backupLocation, lastBackup]);
 
   const handleBackup = useCallback(async () => {
@@ -99,7 +102,6 @@ export function BackupPanel({
           type: 'success',
           text: `Restored ${result.recordsRestored} records from ${result.tablesRestored} tables. Refresh to see changes.`,
         });
-        // Refresh stats
         const newStats = await getBackupStats();
         setStats(newStats);
       } else {
@@ -121,12 +123,13 @@ export function BackupPanel({
       if (location) {
         setLocalLocation(location);
       }
-    } else {
-      setMessage({
-        type: 'error',
-        text: 'Location picker requires the desktop app.',
-      });
+      return;
     }
+
+    setMessage({
+      type: 'error',
+      text: 'Location picker requires the desktop app.',
+    });
   }, []);
 
   const handleSaveSettings = useCallback(() => {
@@ -145,28 +148,30 @@ export function BackupPanel({
       backupLocation: normalizedLocation,
     });
 
-    // Update auto-backup scheduler
     if (localAutoEnabled && normalizedLocation) {
-      startAutoBackup({
-        enabled: true,
-        frequency: localFrequency,
-        location: normalizedLocation,
-        maxBackups: 10,
-        lastBackup: localLastBackup,
-      }, (result) => {
-        if (result.success) {
-          setLocalLastBackup(new Date().toISOString());
-          setMessage({
-            type: 'success',
-            text: `Auto-backup completed${result.recordCount ? ` (${result.recordCount} records)` : ''}.`,
-          });
-        } else {
-          setMessage({
-            type: 'error',
-            text: result.error || 'Auto-backup failed',
-          });
+      startAutoBackup(
+        {
+          enabled: true,
+          frequency: localFrequency,
+          location: normalizedLocation,
+          maxBackups: 10,
+          lastBackup: localLastBackup,
+        },
+        (result) => {
+          if (result.success) {
+            setLocalLastBackup(new Date().toISOString());
+            setMessage({
+              type: 'success',
+              text: `Auto-backup completed${result.recordCount ? ` (${result.recordCount} records)` : ''}.`,
+            });
+          } else {
+            setMessage({
+              type: 'error',
+              text: result.error || 'Auto-backup failed',
+            });
+          }
         }
-      });
+      );
     } else {
       stopAutoBackup();
     }
@@ -181,454 +186,149 @@ export function BackupPanel({
     return date.toLocaleString();
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 100,
-      }}
-      onClick={(e) => e.target === e.currentTarget && onClose()}
-    >
-      <div
-        style={{
-          backgroundColor: 'white',
-          borderRadius: '12px',
-          width: '520px',
-          maxHeight: '90vh',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
+    <>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        title="Backup & Restore"
+        maxWidth={520}
+        className="muwi-backup-modal"
       >
-        {/* Header */}
-        <div
-          style={{
-            padding: '20px 24px',
-            borderBottom: '1px solid #E5E7EB',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: '#1F2937' }}>
-            Backup & Restore
-          </h2>
-          <button
-            onClick={onClose}
-            style={{
-              padding: '4px',
-              border: 'none',
-              backgroundColor: 'transparent',
-              cursor: 'pointer',
-              color: '#6B7280',
-            }}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M18 6L6 18M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
-        {/* Content */}
-        <div style={{ flex: 1, overflow: 'auto', padding: '24px' }}>
-          {/* Database stats */}
-          {stats && (
-            <div
-              style={{
-                padding: '16px',
-                backgroundColor: '#F9FAFB',
-                borderRadius: '8px',
-                marginBottom: '24px',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: '12px',
-                }}
-              >
-                <span style={{ fontSize: '14px', fontWeight: 600, color: '#374151' }}>
-                  Database Overview
-                </span>
-                <span style={{ fontSize: '13px', color: '#6B7280' }}>
-                  Est. size: {stats.estimatedSize}
-                </span>
-              </div>
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(3, 1fr)',
-                  gap: '12px',
-                }}
-              >
-                {stats.tables
-                  .filter((t) => t.count > 0)
-                  .slice(0, 6)
-                  .map((table) => (
-                    <div
-                      key={table.name}
-                      style={{
-                        padding: '8px 12px',
-                        backgroundColor: 'white',
-                        borderRadius: '6px',
-                        border: '1px solid #E5E7EB',
-                      }}
-                    >
-                      <div style={{ fontSize: '11px', color: '#6B7280' }}>{table.name}</div>
-                      <div style={{ fontSize: '16px', fontWeight: 600, color: '#1F2937' }}>
-                        {table.count}
-                      </div>
-                    </div>
-                  ))}
-              </div>
-              <div style={{ marginTop: '12px', fontSize: '13px', color: '#6B7280' }}>
-                Total: {stats.totalRecords} records
-              </div>
-            </div>
-          )}
-
-          {/* Manual backup/restore */}
-          <div style={{ marginBottom: '24px' }}>
-            <label
-              style={{
-                display: 'block',
-                fontSize: '13px',
-                fontWeight: 600,
-                color: '#374151',
-                marginBottom: '12px',
-              }}
-            >
-              Manual Backup
-            </label>
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <button
-                onClick={handleBackup}
-                disabled={isBackingUp}
-                style={{
-                  flex: 1,
-                  padding: '14px 20px',
-                  backgroundColor: isBackingUp ? '#9CA3AF' : '#4A90A4',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  cursor: isBackingUp ? 'not-allowed' : 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                }}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-                  <polyline points="17 8 12 3 7 8" />
-                  <line x1="12" y1="3" x2="12" y2="15" />
-                </svg>
-                {isBackingUp ? 'Creating Backup...' : 'Create Backup'}
-              </button>
-              <button
-                onClick={() => setShowConfirmRestore(true)}
-                disabled={isRestoring}
-                style={{
-                  flex: 1,
-                  padding: '14px 20px',
-                  backgroundColor: 'white',
-                  color: isRestoring ? '#9CA3AF' : '#374151',
-                  border: '1px solid #E5E7EB',
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  cursor: isRestoring ? 'not-allowed' : 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                }}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-                  <polyline points="7 10 12 15 17 10" />
-                  <line x1="12" y1="15" x2="12" y2="3" />
-                </svg>
-                {isRestoring ? 'Restoring...' : 'Restore Backup'}
-              </button>
-            </div>
-            <div style={{ marginTop: '8px', fontSize: '12px', color: '#6B7280' }}>
-              Last backup: {formatLastBackup(localLastBackup)}
-            </div>
-          </div>
-
-          {/* Auto-backup settings */}
-          <div style={{ marginBottom: '20px' }}>
-            <label
-              style={{
-                display: 'block',
-                fontSize: '13px',
-                fontWeight: 600,
-                color: '#374151',
-                marginBottom: '12px',
-              }}
-            >
-              Automatic Backup
-            </label>
-
-            <label
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                cursor: 'pointer',
-                marginBottom: '16px',
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={localAutoEnabled}
-                onChange={(e) => setLocalAutoEnabled(e.target.checked)}
-                style={{ width: '16px', height: '16px', cursor: 'pointer' }}
-              />
-              <span style={{ fontSize: '14px', color: '#374151' }}>Enable automatic backups</span>
-              {isAutoBackupRunning() && (
-                <span
-                  style={{
-                    fontSize: '11px',
-                    padding: '2px 8px',
-                    backgroundColor: '#D1FAE5',
-                    color: '#059669',
-                    borderRadius: '4px',
-                  }}
-                >
-                  Active
-                </span>
-              )}
-            </label>
-
-            {localAutoEnabled && (
-              <div style={{ marginLeft: '26px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '12px',
-                      color: '#6B7280',
-                      marginBottom: '6px',
-                    }}
-                  >
-                    Frequency
-                  </label>
-                  <select
-                    value={localFrequency}
-                    onChange={(e) => setLocalFrequency(e.target.value as 'hourly' | 'daily' | 'weekly')}
-                    style={{
-                      width: '100%',
-                      padding: '10px 12px',
-                      border: '1px solid #E5E7EB',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      backgroundColor: 'white',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <option value="hourly">Every hour</option>
-                    <option value="daily">Every day</option>
-                    <option value="weekly">Every week</option>
-                  </select>
+        <div className="muwi-backup-panel">
+          <div className="muwi-backup-panel__content">
+            {stats ? (
+              <section className="muwi-backup-panel__section muwi-backup-panel__overview">
+                <div className="muwi-backup-panel__overview-header">
+                  <span className="muwi-backup-panel__overview-title">Database Overview</span>
+                  <span className="muwi-backup-panel__overview-size">Est. size: {stats.estimatedSize}</span>
                 </div>
+                <div className="muwi-backup-panel__table-grid">
+                  {stats.tables
+                    .filter((table) => table.count > 0)
+                    .slice(0, 6)
+                    .map((table) => (
+                      <div key={table.name} className="muwi-backup-panel__table-card">
+                        <div className="muwi-backup-panel__table-name">{table.name}</div>
+                        <div className="muwi-backup-panel__table-count">{table.count}</div>
+                      </div>
+                    ))}
+                </div>
+                <div className="muwi-backup-panel__total">Total: {stats.totalRecords} records</div>
+              </section>
+            ) : null}
 
-                <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '12px',
-                      color: '#6B7280',
-                      marginBottom: '6px',
-                    }}
-                  >
-                    Backup Location
-                  </label>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <input
-                      type="text"
-                      value={localLocation}
-                      readOnly
-                      placeholder="Select a folder..."
-                      style={{
-                        flex: 1,
-                        padding: '10px 12px',
-                        border: '1px solid #E5E7EB',
-                        borderRadius: '8px',
-                        fontSize: '14px',
-                        backgroundColor: '#F9FAFB',
-                        color: '#6B7280',
-                      }}
-                    />
-                    <button
-                      onClick={handleSelectLocation}
-                      style={{
-                        padding: '10px 16px',
-                        backgroundColor: 'white',
-                        border: '1px solid #E5E7EB',
-                        borderRadius: '8px',
-                        fontSize: '14px',
-                        cursor: 'pointer',
-                      }}
+            <section className="muwi-backup-panel__section">
+              <p className="muwi-backup-panel__label">Manual Backup</p>
+              <div className="muwi-backup-panel__button-row">
+                <Button type="button" onClick={handleBackup} disabled={isBackingUp} variant="primary" size="md" fullWidth>
+                  {isBackingUp ? 'Creating Backup...' : 'Create Backup'}
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => setShowConfirmRestore(true)}
+                  disabled={isRestoring}
+                  variant="secondary"
+                  size="md"
+                  fullWidth
+                >
+                  {isRestoring ? 'Restoring...' : 'Restore Backup'}
+                </Button>
+              </div>
+              <p className="muwi-backup-panel__last">Last backup: {formatLastBackup(localLastBackup)}</p>
+            </section>
+
+            <section className="muwi-backup-panel__section">
+              <p className="muwi-backup-panel__label">Automatic Backup</p>
+
+              <label className="muwi-backup-panel__checkbox-row">
+                <input
+                  type="checkbox"
+                  checked={localAutoEnabled}
+                  onChange={(event) => setLocalAutoEnabled(event.target.checked)}
+                />
+                <span>Enable automatic backups</span>
+                {isAutoBackupRunning() ? <span className="muwi-backup-panel__active-badge">Active</span> : null}
+              </label>
+
+              {localAutoEnabled ? (
+                <div className="muwi-backup-panel__auto-settings">
+                  <div className="muwi-field">
+                    <label htmlFor="backup-frequency" className="muwi-field__label">Frequency</label>
+                    <select
+                      id="backup-frequency"
+                      value={localFrequency}
+                      onChange={(event) => setLocalFrequency(event.target.value as 'hourly' | 'daily' | 'weekly')}
+                      className="muwi-form-control"
                     >
-                      Browse
-                    </button>
+                      <option value="hourly">Every hour</option>
+                      <option value="daily">Every day</option>
+                      <option value="weekly">Every week</option>
+                    </select>
+                  </div>
+
+                  <div className="muwi-field">
+                    <label htmlFor="backup-location" className="muwi-field__label">Backup Location</label>
+                    <div className="muwi-backup-panel__location-row">
+                      <input
+                        id="backup-location"
+                        type="text"
+                        value={localLocation}
+                        readOnly
+                        placeholder="Select a folder..."
+                        className="muwi-form-control"
+                      />
+                      <Button type="button" onClick={handleSelectLocation} variant="secondary" size="md">
+                        Browse
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Button type="button" onClick={handleSaveSettings} variant="primary" size="md">
+                      Save Settings
+                    </Button>
                   </div>
                 </div>
+              ) : null}
+            </section>
 
-                <button
-                  onClick={handleSaveSettings}
-                  style={{
-                    alignSelf: 'flex-start',
-                    padding: '8px 16px',
-                    backgroundColor: '#4A90A4',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '6px',
-                    fontSize: '13px',
-                    fontWeight: 500,
-                    cursor: 'pointer',
-                  }}
-                >
-                  Save Settings
-                </button>
+            {message ? (
+              <div className="muwi-backup-panel__message" data-variant={message.type === 'success' ? 'success' : 'error'}>
+                {message.text}
               </div>
-            )}
+            ) : null}
           </div>
 
-          {/* Message */}
-          {message && (
-            <div
-              style={{
-                padding: '12px 16px',
-                backgroundColor: message.type === 'success' ? '#F0FDF4' : '#FEF2F2',
-                borderRadius: '8px',
-                color: message.type === 'success' ? '#16A34A' : '#DC2626',
-                fontSize: '14px',
-              }}
-            >
-              {message.text}
-            </div>
-          )}
+          <footer className="muwi-backup-panel__footer">
+            <Button type="button" onClick={onClose} variant="primary" size="md">
+              Done
+            </Button>
+          </footer>
         </div>
+      </Modal>
 
-        {/* Footer */}
-        <div
-          style={{
-            padding: '16px 24px',
-            borderTop: '1px solid #E5E7EB',
-            display: 'flex',
-            justifyContent: 'flex-end',
-          }}
-        >
-          <button
-            onClick={onClose}
-            style={{
-              padding: '10px 20px',
-              backgroundColor: '#4A90A4',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: 500,
-              cursor: 'pointer',
-            }}
-          >
-            Done
-          </button>
-        </div>
-      </div>
-
-      {/* Confirm restore modal */}
-      {showConfirmRestore && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 110,
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: 'white',
-              borderRadius: '12px',
-              padding: '24px',
-              width: '400px',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px', marginBottom: '20px' }}>
-              <div
-                style={{
-                  padding: '10px',
-                  backgroundColor: '#FEF3C7',
-                  borderRadius: '8px',
-                  color: '#D97706',
-                }}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                  <line x1="12" y1="9" x2="12" y2="13" />
-                  <line x1="12" y1="17" x2="12.01" y2="17" />
-                </svg>
-              </div>
-              <div>
-                <h3 style={{ margin: '0 0 8px', fontSize: '16px', fontWeight: 600, color: '#1F2937' }}>
-                  Restore Backup?
-                </h3>
-                <p style={{ margin: 0, fontSize: '14px', color: '#6B7280' }}>
-                  This will replace all current data with the backup. This action cannot be undone.
-                </p>
-              </div>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
-              <button
-                onClick={() => setShowConfirmRestore(false)}
-                style={{
-                  padding: '10px 20px',
-                  border: '1px solid #E5E7EB',
-                  backgroundColor: 'white',
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                }}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleRestore}
-                style={{
-                  padding: '10px 20px',
-                  backgroundColor: '#DC2626',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  cursor: 'pointer',
-                }}
-              >
-                Restore
-              </button>
-            </div>
+      <Modal
+        isOpen={showConfirmRestore}
+        onClose={() => setShowConfirmRestore(false)}
+        title="Restore Backup?"
+        maxWidth={400}
+        className="muwi-backup-confirm-modal"
+      >
+        <div className="muwi-backup-confirm">
+          <p className="muwi-backup-confirm__text">
+            This will replace all current data with the backup. This action cannot be undone.
+          </p>
+          <div className="muwi-backup-confirm__actions">
+            <Button type="button" onClick={() => setShowConfirmRestore(false)} variant="secondary" size="md">
+              Cancel
+            </Button>
+            <Button type="button" onClick={handleRestore} variant="danger" size="md">
+              Restore
+            </Button>
           </div>
         </div>
-      )}
-    </div>
+      </Modal>
+    </>
   );
 }

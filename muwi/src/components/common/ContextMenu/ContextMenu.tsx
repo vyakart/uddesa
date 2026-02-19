@@ -146,12 +146,13 @@ export function ContextMenu({ isOpen, x, y, items, onClose }: ContextMenuProps) 
     return null;
   }
 
-  const hasSubmenuOpen =
-    openSubmenuIndex !== null && hasSubmenu(items[openSubmenuIndex]);
-  const openSubmenuItems = hasSubmenuOpen ? items[openSubmenuIndex].submenu : [];
+  const openSubmenuParent = openSubmenuIndex !== null ? items[openSubmenuIndex] : null;
+  const openSubmenuItems =
+    openSubmenuParent && hasSubmenu(openSubmenuParent) ? openSubmenuParent.submenu : [];
+  const hasSubmenuOpen = openSubmenuItems.length > 0;
 
   const submenuTopRaw = hasSubmenuOpen
-    ? position.y + getMenuOffsetTop(items, openSubmenuIndex)
+    ? position.y + getMenuOffsetTop(items, openSubmenuIndex ?? 0)
     : position.y;
   const submenuHeight = measureMenuHeight(openSubmenuItems);
   const submenuTop = Math.min(
@@ -343,7 +344,7 @@ export function ContextMenu({ isOpen, x, y, items, onClose }: ContextMenuProps) 
             zIndex: 1101,
           }}
         >
-          {openSubmenuItems.map((submenuItem, index) => (
+          {openSubmenuItems.map((submenuItem: ContextMenuItem, index: number) => (
             isSeparator(submenuItem) ? (
               <div key={submenuItem.id} role="separator" className="muwi-context-menu__separator" />
             ) : (

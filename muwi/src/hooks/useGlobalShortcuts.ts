@@ -5,8 +5,11 @@ export function useGlobalShortcuts() {
   const closeDiary = useAppStore((state) => state.closeDiary);
   const openSettings = useAppStore((state) => state.openSettings);
   const closeSettings = useAppStore((state) => state.closeSettings);
+  const openCommandPalette = useAppStore((state) => state.openCommandPalette);
+  const closeCommandPalette = useAppStore((state) => state.closeCommandPalette);
   const currentView = useAppStore((state) => state.currentView);
   const isSettingsOpen = useAppStore((state) => state.isSettingsOpen);
+  const isCommandPaletteOpen = useAppStore((state) => state.isCommandPaletteOpen);
 
   useKeyboardShortcuts([
     // Go back to shelf
@@ -27,11 +30,22 @@ export function useGlobalShortcuts() {
         }
       },
     },
+    // Open command palette
+    {
+      ...SHORTCUT_KEYS.COMMAND_PALETTE,
+      action: () => {
+        if (!isCommandPaletteOpen) {
+          openCommandPalette();
+        }
+      },
+    },
     // Close modals/go back with Escape
     {
       ...SHORTCUT_KEYS.ESCAPE,
       action: () => {
-        if (isSettingsOpen) {
+        if (isCommandPaletteOpen) {
+          closeCommandPalette();
+        } else if (isSettingsOpen) {
           closeSettings();
         } else if (currentView === 'diary') {
           closeDiary();

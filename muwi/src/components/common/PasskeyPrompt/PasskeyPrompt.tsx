@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { Modal } from '../Modal';
+import { Button } from '../Button';
 
 export interface PasskeyPromptProps {
   isOpen: boolean;
@@ -52,13 +53,19 @@ export function PasskeyPrompt({
   const activeError = error || localError;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={title} initialFocusRef={inputRef}>
-      <form onSubmit={(event) => void handleSubmit(event)} style={{ display: 'grid', gap: 12 }}>
-        <p style={{ margin: 0, fontSize: 14, color: '#4f4f4f' }}>{description}</p>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={title}
+      initialFocusRef={inputRef}
+      className="muwi-passkey-modal"
+    >
+      <form onSubmit={(event) => void handleSubmit(event)} className="muwi-passkey-form">
+        <p className="muwi-passkey-description">{description}</p>
 
-        <label htmlFor="passkey-input" style={{ display: 'grid', gap: 6 }}>
-          <span style={{ fontWeight: 600 }}>Passkey</span>
-          <div style={{ display: 'flex', gap: 8 }}>
+        <label htmlFor="passkey-input" className="muwi-field">
+          <span className="muwi-field__label">Passkey</span>
+          <div className="muwi-passkey-row">
             <input
               ref={inputRef}
               id="passkey-input"
@@ -71,56 +78,44 @@ export function PasskeyPrompt({
                   setLocalError(null);
                 }
               }}
-              style={{
-                flex: 1,
-                border: '1px solid #d8d8d8',
-                borderRadius: 8,
-                padding: '0.55rem 0.7rem',
-                fontSize: 14,
-              }}
+              className="muwi-form-control muwi-passkey-input"
             />
-            <button
+            <Button
               type="button"
               aria-label={isPasskeyVisible ? 'Hide passkey' : 'Show passkey'}
               onClick={() => setIsPasskeyVisible((visible) => !visible)}
+              variant="secondary"
+              size="md"
             >
               {isPasskeyVisible ? 'Hide' : 'Show'}
-            </button>
+            </Button>
           </div>
         </label>
 
-        <div style={{ display: 'grid', gap: 8 }}>
-          <button type="button" onClick={() => setIsHintVisible((visible) => !visible)}>
+        <div className="muwi-passkey-hint-area">
+          <Button type="button" onClick={() => setIsHintVisible((visible) => !visible)} variant="ghost" size="md">
             {isHintVisible ? 'Hide hint' : 'Show hint'}
-          </button>
+          </Button>
           {isHintVisible ? (
-            <p
-              role="status"
-              style={{
-                margin: 0,
-                padding: '0.55rem 0.7rem',
-                borderRadius: 8,
-                backgroundColor: '#f7f7f7',
-                fontSize: 13,
-                color: '#525252',
-              }}
-            >
+            <p role="status" className="muwi-passkey-hint">
               {hint?.trim() ? hint : 'No hint is set for this passkey.'}
             </p>
           ) : null}
         </div>
 
         {activeError ? (
-          <p role="alert" style={{ margin: 0, fontSize: 13, color: '#b42318' }}>
+          <p role="alert" className="muwi-passkey-error">
             {activeError}
           </p>
         ) : null}
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 4 }}>
-          <button type="button" onClick={onClose}>
+        <div className="muwi-passkey-actions">
+          <Button type="button" onClick={onClose} variant="secondary" size="md">
             {cancelLabel}
-          </button>
-          <button type="submit">{submitLabel}</button>
+          </Button>
+          <Button type="submit" variant="primary" size="md">
+            {submitLabel}
+          </Button>
         </div>
       </form>
     </Modal>

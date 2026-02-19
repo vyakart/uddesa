@@ -83,6 +83,21 @@ describe('appStore', () => {
     expect(useAppStore.getState().isSettingsOpen).toBe(true);
     state.closeSettings();
     expect(useAppStore.getState().isSettingsOpen).toBe(false);
+
+    state.openCommandPalette();
+    expect(useAppStore.getState().isCommandPaletteOpen).toBe(true);
+    expect(useAppStore.getState().commandPaletteQuery).toBe('');
+
+    state.updateCommandPaletteQuery('draft');
+    expect(useAppStore.getState().commandPaletteQuery).toBe('draft');
+    expect(useAppStore.getState().commandPaletteHighlightedIndex).toBe(0);
+
+    state.setCommandPaletteHighlightedIndex(2);
+    expect(useAppStore.getState().commandPaletteHighlightedIndex).toBe(2);
+
+    state.executeCommand('settings:open');
+    expect(useAppStore.getState().recentCommands).toEqual(['settings:open']);
+    expect(useAppStore.getState().isCommandPaletteOpen).toBe(false);
   });
 
   it('manages loading, errors, lock state, and reset', () => {
@@ -115,6 +130,10 @@ describe('appStore', () => {
     });
     expect(resetState.contextMenu).toBeNull();
     expect(resetState.isSettingsOpen).toBe(false);
+    expect(resetState.isCommandPaletteOpen).toBe(false);
+    expect(resetState.commandPaletteQuery).toBe('');
+    expect(resetState.commandPaletteHighlightedIndex).toBe(0);
+    expect(resetState.recentCommands).toEqual([]);
     expect(resetState.isAppLocked).toBe(false);
 
     nowSpy.mockRestore();

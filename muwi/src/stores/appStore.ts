@@ -48,6 +48,13 @@ export interface AppState {
 
   // Modal state
   isSettingsOpen: boolean;
+  lastOpenedDiary: DiaryType | null;
+
+  // Command palette state
+  isCommandPaletteOpen: boolean;
+  commandPaletteQuery: string;
+  commandPaletteHighlightedIndex: number;
+  recentCommands: string[];
 
   // Lock state
   isAppLocked: boolean;
@@ -71,11 +78,19 @@ export interface AppState {
   closeContextMenu: () => void;
   openSettings: () => void;
   closeSettings: () => void;
+  clearLastOpenedDiary: () => void;
+  openCommandPalette: () => void;
+  closeCommandPalette: () => void;
+  updateCommandPaletteQuery: (query: string) => void;
+  setCommandPaletteHighlightedIndex: (index: number) => void;
+  executeCommand: (commandId: string) => void;
   lockApp: () => void;
   unlockApp: () => void;
   updateLastActivity: () => void;
   reset: () => void;
 }
+
+let returnHighlightTimeout: ReturnType<typeof setTimeout> | null = null;
 
 const initialRightPanelState: RightPanelState = {
   isOpen: false,
@@ -93,13 +108,18 @@ const initialState = {
   rightPanel: initialRightPanelState,
   contextMenu: null,
   isSettingsOpen: false,
+  lastOpenedDiary: null,
+  isCommandPaletteOpen: false,
+  commandPaletteQuery: '',
+  commandPaletteHighlightedIndex: 0,
+  recentCommands: [],
   isAppLocked: false,
   lastActivity: Date.now(),
 };
 
 export const useAppStore = create<AppState>()(
   devtools(
-    (set) => ({
+    (set, get) => ({
       ...initialState,
 
       setCurrentView: (view) => set({ currentView: view }, false, 'setCurrentView'),
@@ -112,12 +132,23 @@ export const useAppStore = create<AppState>()(
             activeItemId: itemId || null,
             isSidebarOpen: true,
             rightPanel: initialRightPanelState,
+            lastOpenedDiary: null,
+            isCommandPaletteOpen: false,
+            commandPaletteQuery: '',
+            commandPaletteHighlightedIndex: 0,
           },
           false,
           'openDiary'
         ),
 
-      closeDiary: () =>
+      closeDiary: () => {
+        const diaryToHighlight = get().activeDiary;
+
+        if (returnHighlightTimeout) {
+          clearTimeout(returnHighlightTimeout);
+          returnHighlightTimeout = null;
+        }
+
         set(
           {
             currentView: 'shelf',
@@ -125,10 +156,22 @@ export const useAppStore = create<AppState>()(
             activeItemId: null,
             isSidebarOpen: false,
             rightPanel: initialRightPanelState,
+            lastOpenedDiary: diaryToHighlight,
+            isCommandPaletteOpen: false,
+            commandPaletteQuery: '',
+            commandPaletteHighlightedIndex: 0,
           },
           false,
           'closeDiary'
-        ),
+        );
+
+        if (diaryToHighlight) {
+          returnHighlightTimeout = setTimeout(() => {
+            set({ lastOpenedDiary: null }, false, 'clearLastOpenedDiary:auto');
+            returnHighlightTimeout = null;
+          }, 2000);
+        }
+      },
 
       setActiveItem: (id) => set({ activeItemId: id }, false, 'setActiveItem'),
 
@@ -225,13 +268,77 @@ export const useAppStore = create<AppState>()(
 
       closeSettings: () => set({ isSettingsOpen: false }, false, 'closeSettings'),
 
+      clearLastOpenedDiary: () => {
+        if (returnHighlightTimeout) {
+          clearTimeout(returnHighlightTimeout);
+          returnHighlightTimeout = null;
+        }
+        set({ lastOpenedDiary: null }, false, 'clearLastOpenedDiary');
+      },
+
+      openCommandPalette: () =>
+        set(
+          {
+            isCommandPaletteOpen: true,
+            commandPaletteQuery: '',
+            commandPaletteHighlightedIndex: 0,
+          },
+          false,
+          'openCommandPalette'
+        ),
+
+      closeCommandPalette: () =>
+        set(
+          {
+            isCommandPaletteOpen: false,
+            commandPaletteQuery: '',
+            commandPaletteHighlightedIndex: 0,
+          },
+          false,
+          'closeCommandPalette'
+        ),
+
+      updateCommandPaletteQuery: (query) =>
+        set(
+          {
+            commandPaletteQuery: query,
+            commandPaletteHighlightedIndex: 0,
+          },
+          false,
+          'updateCommandPaletteQuery'
+        ),
+
+      setCommandPaletteHighlightedIndex: (index) =>
+        set({ commandPaletteHighlightedIndex: index }, false, 'setCommandPaletteHighlightedIndex'),
+
+      executeCommand: (commandId) =>
+        set(
+          (state) => {
+            const withoutCommand = state.recentCommands.filter((id) => id !== commandId);
+            return {
+              recentCommands: [commandId, ...withoutCommand].slice(0, 10),
+              isCommandPaletteOpen: false,
+              commandPaletteQuery: '',
+              commandPaletteHighlightedIndex: 0,
+            };
+          },
+          false,
+          'executeCommand'
+        ),
+
       lockApp: () => set({ isAppLocked: true }, false, 'lockApp'),
 
       unlockApp: () => set({ isAppLocked: false }, false, 'unlockApp'),
 
       updateLastActivity: () => set({ lastActivity: Date.now() }, false, 'updateLastActivity'),
 
-      reset: () => set(initialState, false, 'reset'),
+      reset: () => {
+        if (returnHighlightTimeout) {
+          clearTimeout(returnHighlightTimeout);
+          returnHighlightTimeout = null;
+        }
+        set(initialState, false, 'reset');
+      },
     }),
     { name: 'app-store' }
   )
@@ -247,3 +354,5 @@ export const selectIsSidebarOpen = (state: AppState) => state.isSidebarOpen;
 export const selectRightPanel = (state: AppState) => state.rightPanel;
 export const selectContextMenu = (state: AppState) => state.contextMenu;
 export const selectIsAppLocked = (state: AppState) => state.isAppLocked;
+export const selectLastOpenedDiary = (state: AppState) => state.lastOpenedDiary;
+export const selectIsCommandPaletteOpen = (state: AppState) => state.isCommandPaletteOpen;
