@@ -2,13 +2,19 @@ import { fireEvent, render, screen } from '@/test';
 import type { DiaryEntry } from '@/types';
 import { EntryNavigation } from './EntryNavigation';
 
-function makeEntry(date: string, content: string, wordCount: number): DiaryEntry {
+function makeEntry(
+  date: string,
+  content: string,
+  wordCount: number,
+  mood?: string
+): DiaryEntry {
   const now = new Date('2026-02-06T09:00:00.000Z');
   return {
     id: crypto.randomUUID(),
     date,
     content,
     wordCount,
+    mood,
     isLocked: false,
     createdAt: now,
     modifiedAt: now,
@@ -16,11 +22,14 @@ function makeEntry(date: string, content: string, wordCount: number): DiaryEntry
 }
 
 describe('EntryNavigation', () => {
-  it('lists entries with preview and word count and navigates on click', () => {
+  it('groups entries by month and retains optional mood indicators', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-02-06T12:00:00.000Z'));
     const onDateChange = vi.fn();
     const entries = [
-      makeEntry('2026-02-06', '<p>Today was productive and calm.</p>', 5),
-      makeEntry('2026-02-05', '', 0),
+      makeEntry('2026-02-06', '<p>Today was productive and calm.</p>', 5, 'happy'),
+      makeEntry('2026-02-03', '<p>An early-February checkpoint.</p>', 3),
+      makeEntry('2026-01-29', '<p>Late-January review notes.</p>', 4, 'sad'),
     ];
 
     render(
@@ -31,52 +40,51 @@ describe('EntryNavigation', () => {
       />
     );
 
+    expect(screen.getByText('February 2026')).toBeInTheDocument();
+    expect(screen.getByText('January 2026')).toBeInTheDocument();
     expect(screen.getByText('Feb 6, 2026')).toBeInTheDocument();
-    expect(screen.getByText('5 words')).toBeInTheDocument();
-    expect(screen.getByText('Empty entry')).toBeInTheDocument();
+    expect(screen.getByText('Today was productive and calm.')).toBeInTheDocument();
+    expect(screen.getByText('Today')).toBeInTheDocument();
+    expect(screen.getByTitle('Mood: happy')).toBeInTheDocument();
+    expect(screen.getByTitle('Mood: sad')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: /Feb 5, 2026/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Jan 29, 2026/i }));
     const selected = onDateChange.mock.calls[0][0] as Date;
-    expect(selected.getDate()).toBe(5);
-  });
-
-  it('supports previous, next, and today navigation actions', () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date('2026-02-10T08:00:00.000Z'));
-    const onDateChange = vi.fn();
-
-    render(
-      <EntryNavigation
-        entries={[]}
-        currentDate={new Date('2026-02-06T12:00:00.000Z')}
-        onDateChange={onDateChange}
-      />
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'Previous day' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Next day' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Today' }));
-
-    expect((onDateChange.mock.calls[0][0] as Date).getDate()).toBe(5);
-    expect((onDateChange.mock.calls[1][0] as Date).getDate()).toBe(7);
-    expect((onDateChange.mock.calls[2][0] as Date).toISOString().slice(0, 10)).toBe('2026-02-10');
+    expect(selected.getDate()).toBe(29);
 
     vi.useRealTimers();
   });
 
-  it('renders collapsed state and supports expanding', () => {
-    const onToggleCollapse = vi.fn();
+  it('shows empty-state guidance when there are no entries', () => {
     render(
       <EntryNavigation
         entries={[]}
         currentDate={new Date('2026-02-06T12:00:00.000Z')}
         onDateChange={vi.fn()}
-        isCollapsed
-        onToggleCollapse={onToggleCollapse}
       />
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Expand navigation' }));
-    expect(onToggleCollapse).toHaveBeenCalledTimes(1);
+    expect(screen.getByText('No entries yet. Start writing today!')).toBeInTheDocument();
+  });
+
+  it('marks the selected entry as active', () => {
+    const entries = [
+      makeEntry('2026-02-06', '<p>Today entry</p>', 2),
+      makeEntry('2026-02-05', '<p>Yesterday entry</p>', 2),
+    ];
+    const onDateChange = vi.fn();
+    render(
+      <EntryNavigation
+        entries={entries}
+        currentDate={new Date('2026-02-06T12:00:00.000Z')}
+        onDateChange={onDateChange}
+      />
+    );
+
+    const selectedButton = screen.getByRole('button', { name: /Feb 6, 2026/i });
+    const otherButton = screen.getByRole('button', { name: /Feb 5, 2026/i });
+
+    expect(selectedButton).toHaveAttribute('data-active', 'true');
+    expect(otherButton).toHaveAttribute('data-active', 'false');
   });
 });

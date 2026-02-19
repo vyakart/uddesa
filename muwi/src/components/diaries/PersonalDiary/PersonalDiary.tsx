@@ -73,6 +73,10 @@ export function PersonalDiary() {
     loadEntry(candidate);
   }, [entries, currentEntry, loadEntry]);
 
+  const handleGoToToday = useCallback(() => {
+    loadEntry(new Date());
+  }, [loadEntry]);
+
   const handleLockChange = useCallback(
     (isLocked: boolean) => {
       if (!currentEntry) {
@@ -140,6 +144,21 @@ export function PersonalDiary() {
       currentDate={currentDate}
       onDateChange={handleDateChange}
     />
+  );
+  const sidebarHeader = <p className="muwi-personal-nav__label">ENTRIES</p>;
+  const sidebarFooter = (
+    <Button
+      type="button"
+      onClick={handleGoToToday}
+      variant="secondary"
+      size="md"
+      fullWidth
+      className="muwi-personal-nav__today-action"
+      disabled={isBusy || Boolean(error)}
+      data-testid="personal-diary-today-action"
+    >
+      Today
+    </Button>
   );
 
   const status = isBusy
@@ -214,6 +233,8 @@ export function PersonalDiary() {
     <DiaryLayout
       diaryType="personal-diary"
       sidebar={sidebar}
+      sidebarHeader={sidebarHeader}
+      sidebarFooter={sidebarFooter}
       toolbar={toolbar}
       canvas={canvas}
       status={status}

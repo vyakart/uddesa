@@ -1817,9 +1817,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 7.9.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Sidebar entries grouped by month/year headers
-  - [ ] Optional mood indicator support retained
-  - [ ] Bottom action is `Today`
+  - [x] Sidebar entries grouped by month/year headers
+  - [x] Optional mood indicator support retained
+  - [x] Bottom action is `Today`
 
 #### Task 7.9.3: Apply Warm Canvas + Typographic Constraints
 - **Description**: Personal Diary canvas must feel journal-like and constrained

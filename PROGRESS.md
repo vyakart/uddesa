@@ -9,7 +9,7 @@ Last updated: February 19, 2026
 - Latest full coverage snapshot: lines `90.82%`, statements `90.22%`, functions `86.44%`, branches `80.07%`.
 - Recent focus has been adding reliable tests module by module.
 - Blackboard coverage moved from almost none to strong coverage.
-- Current execution stage: Phase `7.9.2` (Personal Diary date-grouped sidebar + Today action).
+- Current execution stage: Phase `7.9.3` (Personal Diary warm canvas + typographic constraints).
 
 ## 2) Completed tasks so far (brief)
 
@@ -87,6 +87,7 @@ Last updated: February 19, 2026
 | Task wave 65 | Completed `7.8.3` Blackboard canvas token alignment by forcing tokenized dark canvas rendering independent of app theme, applying Blackboard token defaults for drawing/text colors, and moving grid rendering to token-colored wrapper styling keyed to viewport/grid settings | Blackboard-targeted verification: `vitest run src/components/diaries/blackboard` (`14` tests passing) + targeted eslint on `ExcalidrawWrapper` component/test updates |
 | Task wave 66 | Completed `7.8.4` Blackboard status + empty-state pass by locking status copy to `Zoom: {n}%` on the left slot and adding first-use blank-canvas guidance (diary icon, headline/body, action CTA) directly in the canvas lane | Blackboard-targeted verification: `vitest run src/components/diaries/blackboard` (`15` tests passing) + targeted eslint on updated Blackboard container/tests |
 | Task wave 67 | Completed `7.9.1` Personal Diary shell migration by moving Personal Diary rendering onto explicit `DiaryLayout` slots (sidebar/toolbar/canvas/status), preserving existing entry CRUD and keyboard shortcut behavior, and adding slot assertions in Personal Diary tests | Personal Diary-targeted verification: `vitest src/components/diaries/PersonalDiary/PersonalDiary.test.tsx src/components/diaries/PersonalDiary/EntryNavigation.test.tsx src/components/diaries/PersonalDiary/DiaryEntry.test.tsx` (`9` tests passing) + targeted eslint on updated Personal Diary files |
+| Task wave 68 | Completed `7.9.2` Personal Diary sidebar alignment by replacing the flat list with month/year grouped sections, retaining optional mood-dot indicators per entry, and moving the `Today` action into the shell sidebar footer while preserving `loadEntry(new Date())` create-or-open behavior | Personal Diary-targeted verification: `vitest src/components/diaries/PersonalDiary` (`14` tests passing) + targeted eslint on updated Personal Diary files |
 
 ## 3) Blackboard testing progress
 
@@ -126,6 +127,6 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Execute `7.9.2`-`7.9.3`: implement Personal Diary date-grouped sidebar and warm constrained canvas/toolbar visuals.
+1. Execute `7.9.3`: apply Personal Diary warm canvas + constrained toolbar visuals (while honoring remaining `7.1.3` no-hardcoded-color dependency).
 2. Move into `7.10` Drafts UI migration after Personal Diary stabilization.
 3. Continue through `7.10` Drafts UI migration after Blackboard + Personal Diary stabilization.

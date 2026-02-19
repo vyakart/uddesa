@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@/test';
 import { format } from 'date-fns';
+import { useAppStore } from '@/stores/appStore';
 import { usePersonalDiaryStore } from '@/stores/personalDiaryStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import type { DiaryEntry } from '@/types';
@@ -31,6 +32,8 @@ function makeEntry(): DiaryEntry {
 describe('PersonalDiary', () => {
   beforeEach(() => {
     const baseState = usePersonalDiaryStore.getInitialState();
+    useAppStore.setState(useAppStore.getInitialState(), true);
+    useAppStore.setState({ isSidebarOpen: true }, false);
     usePersonalDiaryStore.setState(baseState, true);
     useSettingsStore.setState(useSettingsStore.getInitialState(), true);
   });
@@ -59,6 +62,7 @@ describe('PersonalDiary', () => {
 
     expect(screen.getByTestId('entry-navigation')).toBeInTheDocument();
     expect(screen.getByTestId('personal-diary-toolbar')).toHaveTextContent('New Entry');
+    expect(screen.getByTestId('personal-diary-today-action')).toHaveTextContent('Today');
     expect(screen.getByTestId('diary-entry-view')).toHaveTextContent('entry-today');
     expect(screen.getByText('1 entry')).toBeInTheDocument();
     expect(screen.getByText('Unlocked')).toBeInTheDocument();
@@ -128,5 +132,35 @@ describe('PersonalDiary', () => {
     expect(format(loadEntry.mock.calls[0][0] as Date, 'yyyy-MM-dd')).toBe('2026-02-08');
     expect(format(loadEntry.mock.calls[1][0] as Date, 'yyyy-MM-dd')).toBe('2026-02-05');
     expect(format(loadEntry.mock.calls[2][0] as Date, 'yyyy-MM-dd')).toBe('2026-02-07');
+  });
+
+  it('uses the bottom Today action to load or create today entry', async () => {
+    const expectedDate = format(new Date(), 'yyyy-MM-dd');
+
+    const entry = makeEntry();
+    const loadEntries = vi.fn().mockResolvedValue(undefined);
+    const loadEntry = vi.fn().mockImplementation(async () => {
+      usePersonalDiaryStore.setState({ currentEntry: entry, entries: [entry] });
+    });
+
+    usePersonalDiaryStore.setState({
+      loadEntries,
+      loadEntry,
+      updateEntry: vi.fn().mockResolvedValue(undefined),
+      entries: [entry],
+      currentEntry: entry,
+    });
+
+    render(<PersonalDiary />);
+
+    await waitFor(() => {
+      expect(loadEntry).toHaveBeenCalledTimes(1);
+    });
+
+    loadEntry.mockClear();
+    fireEvent.click(screen.getByTestId('personal-diary-today-action'));
+
+    expect(loadEntry).toHaveBeenCalledTimes(1);
+    expect(format(loadEntry.mock.calls[0][0] as Date, 'yyyy-MM-dd')).toBe(expectedDate);
   });
 });
