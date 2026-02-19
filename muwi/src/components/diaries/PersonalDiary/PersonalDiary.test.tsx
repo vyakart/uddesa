@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@/test';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { useAppStore } from '@/stores/appStore';
 import { usePersonalDiaryStore } from '@/stores/personalDiaryStore';
 import { useSettingsStore } from '@/stores/settingsStore';
@@ -64,11 +64,59 @@ describe('PersonalDiary', () => {
     expect(screen.getByTestId('personal-diary-toolbar')).toHaveTextContent('New Entry');
     expect(screen.getByTestId('personal-diary-today-action')).toHaveTextContent('Today');
     expect(screen.getByTestId('diary-entry-view')).toHaveTextContent('entry-today');
-    expect(screen.getByText('1 entry')).toBeInTheDocument();
-    expect(screen.getByText('Unlocked')).toBeInTheDocument();
+    expect(
+      screen.getAllByText(format(parseISO(entry.date), useSettingsStore.getState().personalDiary.dateFormat))
+    ).toHaveLength(2);
+    expect(screen.getByText('1 word · 1 min read')).toBeInTheDocument();
   });
 
-  it('applies paper background settings to container', async () => {
+  it('renders a first-use empty state when no entry is selected', async () => {
+    const loadEntries = vi.fn().mockResolvedValue(undefined);
+    const loadEntry = vi.fn().mockResolvedValue(undefined);
+
+    usePersonalDiaryStore.setState({
+      loadEntries,
+      loadEntry,
+      updateEntry: vi.fn().mockResolvedValue(undefined),
+      entries: [],
+      currentEntry: null,
+    });
+
+    render(<PersonalDiary />);
+
+    await waitFor(() => {
+      expect(loadEntries).toHaveBeenCalledTimes(1);
+      expect(loadEntry).toHaveBeenCalledTimes(1);
+    });
+
+    expect(screen.getByText("Create an entry to capture today's thoughts.")).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: "Create today's entry" })).toBeInTheDocument();
+    expect(screen.getByText('0 words · 0 min read')).toBeInTheDocument();
+  });
+
+  it('applies warm canvas token by default and supports custom paper color overrides', async () => {
+    usePersonalDiaryStore.setState({
+      entries: [makeEntry()],
+      currentEntry: makeEntry(),
+      loadEntries: vi.fn().mockResolvedValue(undefined),
+      loadEntry: vi.fn().mockResolvedValue(undefined),
+      updateEntry: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const initialRender = render(<PersonalDiary />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('personal-diary-container')).toBeInTheDocument();
+    });
+
+    const defaultStyle = screen.getByTestId('personal-diary-container').getAttribute('style');
+    expect(defaultStyle).toContain('var(--color-bg-canvas-warm)');
+    initialRender.unmount();
+
+    usePersonalDiaryStore.setState(usePersonalDiaryStore.getInitialState(), true);
+    useAppStore.setState(useAppStore.getInitialState(), true);
+    useAppStore.setState({ isSidebarOpen: true }, false);
+
     usePersonalDiaryStore.setState({
       entries: [makeEntry()],
       currentEntry: makeEntry(),
@@ -92,8 +140,7 @@ describe('PersonalDiary', () => {
     });
 
     const containerStyle = screen.getByTestId('personal-diary-container').getAttribute('style');
-    expect(containerStyle).toContain('radial-gradient');
-    expect(containerStyle).toContain('rgb(254, 254, 254)');
+    expect(containerStyle).toContain('#fefefe');
   });
 
   it('handles Ctrl+N new entry creation and PageUp/PageDown navigation shortcuts', async () => {

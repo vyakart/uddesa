@@ -309,25 +309,25 @@ describe('DraftList', () => {
 
     const newDraftButton = screen.getByRole('button', { name: 'New Draft' });
     fireEvent.mouseEnter(newDraftButton);
-    expect(newDraftButton).toHaveStyle({ backgroundColor: '#3D7A8C' });
+    expect(newDraftButton).toHaveStyle({ backgroundColor: 'var(--color-accent-hover)' });
     fireEvent.mouseLeave(newDraftButton);
-    expect(newDraftButton).toHaveStyle({ backgroundColor: '#4A90A4' });
+    expect(newDraftButton).toHaveStyle({ backgroundColor: 'var(--color-accent-default)' });
 
     const unselectedHeading = screen.getByRole('heading', { name: 'Gamma' });
     const unselectedCard = unselectedHeading.parentElement?.parentElement;
     if (!unselectedCard) throw new Error('Expected unselected draft card');
     fireEvent.mouseEnter(unselectedCard);
-    expect(unselectedCard).toHaveStyle({ backgroundColor: '#F3F4F6' });
+    expect(unselectedCard).toHaveStyle({ backgroundColor: 'var(--color-bg-tertiary)' });
     fireEvent.mouseLeave(unselectedCard);
-    expect(unselectedCard).not.toHaveStyle({ backgroundColor: '#F3F4F6' });
+    expect(unselectedCard).not.toHaveStyle({ backgroundColor: 'var(--color-bg-tertiary)' });
 
     const selectedHeading = screen.getByRole('heading', { name: 'Alpha' });
     const selectedCard = selectedHeading.parentElement?.parentElement;
     if (!selectedCard) throw new Error('Expected selected draft card');
     fireEvent.mouseEnter(selectedCard);
-    expect(selectedCard).toHaveStyle({ backgroundColor: '#EFF6FF' });
+    expect(selectedCard).toHaveStyle({ backgroundColor: 'var(--color-accent-subtle)' });
     fireEvent.mouseLeave(selectedCard);
-    expect(selectedCard).toHaveStyle({ backgroundColor: '#EFF6FF' });
+    expect(selectedCard).toHaveStyle({ backgroundColor: 'var(--color-accent-subtle)' });
 
     vi.useRealTimers();
   });
@@ -366,9 +366,9 @@ describe('DraftList', () => {
     fireEvent.contextMenu(screen.getByRole('heading', { name: 'Toggle Draft' }));
     const deleteButton = screen.getByRole('button', { name: 'Delete' });
     fireEvent.mouseEnter(deleteButton);
-    expect(deleteButton).toHaveStyle({ backgroundColor: '#FEE2E2' });
+    expect(deleteButton).toHaveStyle({ backgroundColor: 'var(--color-error-subtle)' });
     fireEvent.mouseLeave(deleteButton);
-    expect(deleteButton).not.toHaveStyle({ backgroundColor: '#FEE2E2' });
+    expect(deleteButton).not.toHaveStyle({ backgroundColor: 'var(--color-error-subtle)' });
     fireEvent.click(deleteButton);
     await waitFor(() => {
       expect(deleteDraft).not.toHaveBeenCalled();

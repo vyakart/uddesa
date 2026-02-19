@@ -9,7 +9,7 @@ Last updated: February 19, 2026
 - Latest full coverage snapshot: lines `90.82%`, statements `90.22%`, functions `86.44%`, branches `80.07%`.
 - Recent focus has been adding reliable tests module by module.
 - Blackboard coverage moved from almost none to strong coverage.
-- Current execution stage: Phase `7.9.3` (Personal Diary warm canvas + typographic constraints).
+- Current execution stage: Phase `7.1.3` cleanup stream (repo-wide hard-coded theme color removal).
 
 ## 2) Completed tasks so far (brief)
 
@@ -88,6 +88,9 @@ Last updated: February 19, 2026
 | Task wave 66 | Completed `7.8.4` Blackboard status + empty-state pass by locking status copy to `Zoom: {n}%` on the left slot and adding first-use blank-canvas guidance (diary icon, headline/body, action CTA) directly in the canvas lane | Blackboard-targeted verification: `vitest run src/components/diaries/blackboard` (`15` tests passing) + targeted eslint on updated Blackboard container/tests |
 | Task wave 67 | Completed `7.9.1` Personal Diary shell migration by moving Personal Diary rendering onto explicit `DiaryLayout` slots (sidebar/toolbar/canvas/status), preserving existing entry CRUD and keyboard shortcut behavior, and adding slot assertions in Personal Diary tests | Personal Diary-targeted verification: `vitest src/components/diaries/PersonalDiary/PersonalDiary.test.tsx src/components/diaries/PersonalDiary/EntryNavigation.test.tsx src/components/diaries/PersonalDiary/DiaryEntry.test.tsx` (`9` tests passing) + targeted eslint on updated Personal Diary files |
 | Task wave 68 | Completed `7.9.2` Personal Diary sidebar alignment by replacing the flat list with month/year grouped sections, retaining optional mood-dot indicators per entry, and moving the `Today` action into the shell sidebar footer while preserving `loadEntry(new Date())` create-or-open behavior | Personal Diary-targeted verification: `vitest src/components/diaries/PersonalDiary` (`14` tests passing) + targeted eslint on updated Personal Diary files |
+| Task wave 69 | Completed `7.9.3` Personal Diary warm-canvas and typography pass by defaulting diary canvas rendering to `--color-bg-canvas-warm` token path, setting editor line height to relaxed token scale, and constraining the formatting toolbar to `Undo`/`Redo` + `B`/`I`/`U` with font display; applied a strict token gate for all touched Personal Diary surfaces while deferring full repo-wide `7.1.3` cleanup | Personal Diary-targeted verification: `vitest src/components/diaries/PersonalDiary` (`14` tests passing) + targeted eslint on updated Personal Diary files |
+| Task wave 70 | Completed `7.9.4` Personal Diary status strip + empty-state slice by switching status slots to formatted date + word/read-time metrics, adding a first-use empty-state CTA when no current entry exists, and running a strict token-gating cleanup pass on `DatePicker.tsx`; then started the broader `7.1.3` cleanup stream by removing Blackboard container hard-coded colors into tokenized shell classes | Targeted verification: `vitest src/components/diaries/PersonalDiary/PersonalDiary.test.tsx src/components/diaries/PersonalDiary/DatePicker.test.tsx src/components/diaries/blackboard/Blackboard.test.tsx` (`13` tests passing) + targeted eslint on updated component files |
+| Task wave 71 | Continued dedicated `7.1.3` cleanup stream on top offenders by tokenizing theme colors in `Academic`, `BibliographyManager`, `TableOfContents`, `SectionEditor`, and `DraftList` (plus aligned DraftList test expectations), eliminating hard-coded color literals in that tranche | Tranche verification: `vitest src/components/diaries/academic src/components/diaries/long-drafts src/components/diaries/drafts/DraftList.test.tsx` (`58` tests passing), full suite `vitest --run` (`78` files, `336` tests passing), full lint `eslint .` (still blocked by pre-existing `ContextMenu` and `ToastProvider` lint errors) |
 
 ## 3) Blackboard testing progress
 
@@ -127,6 +130,6 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Execute `7.9.3`: apply Personal Diary warm canvas + constrained toolbar visuals (while honoring remaining `7.1.3` no-hardcoded-color dependency).
-2. Move into `7.10` Drafts UI migration after Personal Diary stabilization.
-3. Continue through `7.10` Drafts UI migration after Blackboard + Personal Diary stabilization.
+1. Continue `7.1.3` cleanup on next highest offenders (`AcademicSectionEditor`, `LongDrafts`, `TemplateSelector`, `FootnoteManager`, `CitationPicker`).
+2. Resolve pre-existing repo lint blockers in `muwi/src/components/common/ContextMenu/ContextMenu.tsx` and `muwi/src/components/common/Toast/ToastProvider.tsx` so full `eslint .` is clean.
+3. Move into `7.10` Drafts UI migration once the next cleanup tranche is stable and lint-clean.

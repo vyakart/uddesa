@@ -96,26 +96,9 @@ export function DatePicker({
     // Header with day names
     const dayNames = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
     const headerRow = (
-      <div
-        key="header"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(7, 1fr)',
-          gap: '2px',
-          marginBottom: '4px',
-        }}
-      >
+      <div key="header" className="muwi-personal-date-picker__weekdays">
         {dayNames.map((name) => (
-          <div
-            key={name}
-            style={{
-              textAlign: 'center',
-              fontSize: '0.75rem',
-              fontWeight: 500,
-              color: '#888888',
-              padding: '4px',
-            }}
-          >
+          <div key={name} className="muwi-personal-date-picker__weekday">
             {name}
           </div>
         ))}
@@ -132,25 +115,13 @@ export function DatePicker({
         days.push(
           <button
             key={day.toISOString()}
+            type="button"
             onClick={() => handleDateSelect(currentDay)}
-            style={{
-              padding: '6px',
-              border: 'none',
-              borderRadius: '4px',
-              backgroundColor: isSelected
-                ? '#4A90A4'
-                : isCurrentDay
-                ? '#E8F4F8'
-                : 'transparent',
-              color: isSelected
-                ? '#FFFFFF'
-                : isCurrentMonth
-                ? '#1A1A1A'
-                : '#CCCCCC',
-              cursor: 'pointer',
-              fontSize: '0.875rem',
-              fontWeight: isCurrentDay ? 600 : 400,
-            }}
+            className="muwi-personal-date-picker__day"
+            data-selected={isSelected ? 'true' : 'false'}
+            data-outside-month={isCurrentMonth ? 'false' : 'true'}
+            data-today={isCurrentDay ? 'true' : 'false'}
+            aria-pressed={isSelected}
           >
             {format(day, 'd')}
           </button>
@@ -158,14 +129,7 @@ export function DatePicker({
         day = addDays(day, 1);
       }
       rows.push(
-        <div
-          key={day.toISOString()}
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(7, 1fr)',
-            gap: '2px',
-          }}
-        >
+        <div key={day.toISOString()} className="muwi-personal-date-picker__week">
           {days}
         </div>
       );
@@ -181,22 +145,12 @@ export function DatePicker({
   };
 
   return (
-    <div ref={containerRef} style={{ position: 'relative', display: 'inline-block' }}>
+    <div ref={containerRef} className="muwi-personal-date-picker">
       {/* Date Display Button */}
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          padding: '8px 12px',
-          border: '1px solid #E0E0E0',
-          borderRadius: '8px',
-          backgroundColor: '#FFFFFF',
-          cursor: 'pointer',
-          fontSize: '1rem',
-          color: '#1A1A1A',
-        }}
+        className="muwi-personal-date-picker__trigger"
         aria-label="Select date"
         aria-haspopup="dialog"
         aria-expanded={isOpen}
@@ -210,7 +164,7 @@ export function DatePicker({
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          style={{ color: '#666666' }}
+          className="muwi-personal-date-picker__trigger-icon"
         >
           <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
           <line x1="16" y1="2" x2="16" y2="6" />
@@ -225,64 +179,25 @@ export function DatePicker({
         <div
           role="dialog"
           aria-label="Date picker"
-          style={{
-            position: 'absolute',
-            top: '100%',
-            left: 0,
-            marginTop: '4px',
-            padding: '12px',
-            backgroundColor: '#FFFFFF',
-            border: '1px solid #E0E0E0',
-            borderRadius: '12px',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-            zIndex: 100,
-            minWidth: '280px',
-          }}
+          className="muwi-personal-date-picker__dialog"
         >
           {/* Month Navigation */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: '12px',
-            }}
-          >
+          <div className="muwi-personal-date-picker__month-nav">
             <button
+              type="button"
               onClick={handlePrevMonth}
-              style={{
-                padding: '4px 8px',
-                border: 'none',
-                borderRadius: '4px',
-                backgroundColor: 'transparent',
-                cursor: 'pointer',
-                fontSize: '1.25rem',
-                color: '#666666',
-              }}
+              className="muwi-personal-date-picker__month-button"
               aria-label="Previous month"
             >
               &lt;
             </button>
-            <span
-              style={{
-                fontWeight: 600,
-                fontSize: '1rem',
-                color: '#1A1A1A',
-              }}
-            >
+            <span className="muwi-personal-date-picker__month-label">
               {format(viewMonth, 'MMMM yyyy')}
             </span>
             <button
+              type="button"
               onClick={handleNextMonth}
-              style={{
-                padding: '4px 8px',
-                border: 'none',
-                borderRadius: '4px',
-                backgroundColor: 'transparent',
-                cursor: 'pointer',
-                fontSize: '1.25rem',
-                color: '#666666',
-              }}
+              className="muwi-personal-date-picker__month-button"
               aria-label="Next month"
             >
               &gt;
@@ -290,23 +205,13 @@ export function DatePicker({
           </div>
 
           {/* Calendar Grid */}
-          {renderCalendar()}
+          <div className="muwi-personal-date-picker__calendar">{renderCalendar()}</div>
 
           {/* Today Button */}
           <button
+            type="button"
             onClick={handleToday}
-            style={{
-              width: '100%',
-              marginTop: '12px',
-              padding: '8px',
-              border: '1px solid #4A90A4',
-              borderRadius: '6px',
-              backgroundColor: 'transparent',
-              color: '#4A90A4',
-              cursor: 'pointer',
-              fontWeight: 500,
-              fontSize: '0.875rem',
-            }}
+            className="muwi-personal-date-picker__today"
           >
             Today
           </button>

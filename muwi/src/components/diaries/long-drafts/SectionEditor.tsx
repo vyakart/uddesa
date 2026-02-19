@@ -22,10 +22,10 @@ interface SectionEditorProps {
 }
 
 const STATUS_OPTIONS = [
-  { value: 'draft', label: 'Draft', color: '#9CA3AF' },
-  { value: 'in-progress', label: 'In Progress', color: '#F59E0B' },
-  { value: 'review', label: 'Review', color: '#3B82F6' },
-  { value: 'complete', label: 'Complete', color: '#10B981' },
+  { value: 'draft', label: 'Draft', color: 'var(--color-text-tertiary)' },
+  { value: 'in-progress', label: 'In Progress', color: 'var(--color-status-in-progress)' },
+  { value: 'review', label: 'Review', color: 'var(--color-status-review)' },
+  { value: 'complete', label: 'Complete', color: 'var(--color-status-complete)' },
 ];
 
 function countWords(text: string): number {
@@ -89,7 +89,7 @@ export function SectionEditor({
           font-family: 'Crimson Pro', 'Georgia', serif;
           font-size: 1.125rem;
           line-height: 1.85;
-          color: #1A1A1A;
+          color: var(--color-text-on-canvas);
         `,
       },
     },
@@ -327,8 +327,8 @@ export function SectionEditor({
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#9CA3AF',
-          backgroundColor: '#F9FAFB',
+          color: 'var(--color-text-tertiary)',
+          backgroundColor: 'var(--color-bg-secondary)',
         }}
       >
         <svg
@@ -357,7 +357,7 @@ export function SectionEditor({
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
-          backgroundColor: '#FFFEF9',
+          backgroundColor: 'var(--color-bg-canvas-warm)',
         }}
       >
         <div
@@ -389,7 +389,7 @@ export function SectionEditor({
                 fontSize: '32px',
                 fontWeight: 600,
                 fontFamily: "'Crimson Pro', 'Georgia', serif",
-                color: '#1F2937',
+                color: 'var(--color-text-primary)',
                 border: 'none',
                 outline: 'none',
                 backgroundColor: 'transparent',
@@ -413,13 +413,13 @@ export function SectionEditor({
         <div
           style={{
             padding: '12px 24px',
-            borderTop: '1px solid #E5E7EB',
-            backgroundColor: '#FFFFFF',
+            borderTop: '1px solid var(--color-border-default)',
+            backgroundColor: 'var(--color-bg-primary)',
             display: 'flex',
             justifyContent: 'center',
             gap: '24px',
             fontSize: '13px',
-            color: '#9CA3AF',
+            color: 'var(--color-text-tertiary)',
           }}
         >
           <span>{wordCount} words</span>
@@ -436,15 +436,15 @@ export function SectionEditor({
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'var(--color-bg-primary)',
       }}
     >
       {/* Header with title, status, and meta info */}
       <div
         style={{
           padding: '20px 32px 16px',
-          borderBottom: '1px solid #E5E7EB',
-          backgroundColor: '#FFFFFF',
+          borderBottom: '1px solid var(--color-border-default)',
+          backgroundColor: 'var(--color-bg-primary)',
         }}
       >
         {/* Title input */}
@@ -459,7 +459,7 @@ export function SectionEditor({
             fontSize: '26px',
             fontWeight: 600,
             fontFamily: "'Crimson Pro', 'Georgia', serif",
-            color: '#1F2937',
+            color: 'var(--color-text-primary)',
             border: 'none',
             outline: 'none',
             backgroundColor: 'transparent',
@@ -490,8 +490,8 @@ export function SectionEditor({
                 fontSize: '12px',
                 fontWeight: 500,
                 color: currentStatus.color,
-                backgroundColor: `${currentStatus.color}15`,
-                border: `1px solid ${currentStatus.color}30`,
+                backgroundColor: `color-mix(in srgb, ${currentStatus.color} 16%, transparent)`,
+                border: `1px solid color-mix(in srgb, ${currentStatus.color} 34%, transparent)`,
                 borderRadius: '12px',
                 cursor: section.isLocked ? 'not-allowed' : 'pointer',
               }}
@@ -526,10 +526,10 @@ export function SectionEditor({
                   top: '100%',
                   left: 0,
                   marginTop: '4px',
-                  backgroundColor: 'white',
-                  border: '1px solid #E5E7EB',
+                  backgroundColor: 'var(--color-bg-primary)',
+                  border: '1px solid var(--color-border-default)',
                   borderRadius: '8px',
-                  boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
+                  boxShadow: 'var(--shadow-md)',
                   zIndex: 50,
                   minWidth: '140px',
                   overflow: 'hidden',
@@ -545,14 +545,14 @@ export function SectionEditor({
                       fontSize: '12px',
                       textAlign: 'left',
                       border: 'none',
-                      backgroundColor: section.status === status.value ? '#F3F4F6' : 'transparent',
+                      backgroundColor: section.status === status.value ? 'var(--color-bg-tertiary)' : 'transparent',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       gap: '8px',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#F3F4F6';
+                      e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)';
                     }}
                     onMouseLeave={(e) => {
                       if (section.status !== status.value) {
@@ -575,13 +575,13 @@ export function SectionEditor({
             )}
           </div>
 
-          <span style={{ fontSize: '13px', color: '#6B7280' }}>{wordCount} words</span>
+          <span style={{ fontSize: '13px', color: 'var(--color-text-secondary)' }}>{wordCount} words</span>
 
-          <span style={{ fontSize: '13px', color: '#9CA3AF' }}>
+          <span style={{ fontSize: '13px', color: 'var(--color-text-tertiary)' }}>
             {section.footnotes?.length || 0} footnotes
           </span>
 
-          <span style={{ fontSize: '13px', color: '#9CA3AF' }}>
+          <span style={{ fontSize: '13px', color: 'var(--color-text-tertiary)' }}>
             Last edited {format(new Date(section.modifiedAt), 'MMM d, yyyy')} at{' '}
             {format(new Date(section.modifiedAt), 'h:mm a')}
           </span>
@@ -596,8 +596,8 @@ export function SectionEditor({
               gap: '4px',
               padding: '4px 8px',
               fontSize: '12px',
-              color: showFootnotes ? '#4A90A4' : '#6B7280',
-              backgroundColor: showFootnotes ? '#EFF6FF' : 'transparent',
+              color: showFootnotes ? 'var(--color-accent-default)' : 'var(--color-text-secondary)',
+              backgroundColor: showFootnotes ? 'var(--color-accent-subtle)' : 'transparent',
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
@@ -619,8 +619,8 @@ export function SectionEditor({
               gap: '4px',
               padding: '4px 8px',
               fontSize: '12px',
-              color: showNotes ? '#4A90A4' : '#6B7280',
-              backgroundColor: showNotes ? '#EFF6FF' : 'transparent',
+              color: showNotes ? 'var(--color-accent-default)' : 'var(--color-text-secondary)',
+              backgroundColor: showNotes ? 'var(--color-accent-subtle)' : 'transparent',
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
@@ -641,7 +641,7 @@ export function SectionEditor({
                 alignItems: 'center',
                 gap: '4px',
                 fontSize: '13px',
-                color: '#9CA3AF',
+                color: 'var(--color-text-tertiary)',
               }}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -661,7 +661,7 @@ export function SectionEditor({
           style={{
             flex: 1,
             overflow: 'auto',
-            backgroundColor: '#FFFEF9',
+            backgroundColor: 'var(--color-bg-canvas-warm)',
           }}
         >
           <div
@@ -685,8 +685,8 @@ export function SectionEditor({
           <div
             style={{
               width: '280px',
-              borderLeft: '1px solid #E5E7EB',
-              backgroundColor: '#FEFCE8',
+              borderLeft: '1px solid var(--color-border-default)',
+              backgroundColor: 'var(--color-warning-subtle)',
               display: 'flex',
               flexDirection: 'column',
             }}
@@ -694,13 +694,13 @@ export function SectionEditor({
             <div
               style={{
                 padding: '12px 16px',
-                borderBottom: '1px solid #E5E7EB',
+                borderBottom: '1px solid var(--color-border-default)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
               }}
             >
-              <span style={{ fontSize: '13px', fontWeight: 600, color: '#854D0E' }}>
+              <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-warning)' }}>
                 Author Notes
               </span>
               <button
@@ -714,7 +714,7 @@ export function SectionEditor({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#854D0E',
+                  color: 'var(--color-warning)',
                 }}
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -736,7 +736,7 @@ export function SectionEditor({
                 fontFamily: 'Inter, system-ui, sans-serif',
                 fontSize: '13px',
                 lineHeight: 1.6,
-                color: '#713F12',
+                color: 'var(--color-warning)',
                 backgroundColor: 'transparent',
               }}
             />
@@ -748,8 +748,8 @@ export function SectionEditor({
           <div
             style={{
               width: '320px',
-              borderLeft: '1px solid #E5E7EB',
-              backgroundColor: '#FFFFFF',
+              borderLeft: '1px solid var(--color-border-default)',
+              backgroundColor: 'var(--color-bg-primary)',
               display: 'flex',
               flexDirection: 'column',
             }}
@@ -778,8 +778,8 @@ export function SectionEditor({
         <div
           style={{
             padding: '10px 24px',
-            borderTop: '1px solid #E5E7EB',
-            backgroundColor: '#FFFFFF',
+            borderTop: '1px solid var(--color-border-default)',
+            backgroundColor: 'var(--color-bg-primary)',
             display: 'flex',
             gap: '4px',
             flexWrap: 'wrap',
@@ -952,8 +952,8 @@ function ToolbarButton({
         padding: '8px 12px',
         border: 'none',
         borderRadius: '6px',
-        backgroundColor: isActive ? '#E0F2FE' : 'transparent',
-        color: disabled ? '#D1D5DB' : isActive ? '#0284C7' : '#4B5563',
+        backgroundColor: isActive ? 'var(--color-accent-subtle)' : 'transparent',
+        color: disabled ? 'var(--color-text-tertiary)' : isActive ? 'var(--color-accent-default)' : 'var(--color-text-secondary)',
         cursor: disabled ? 'not-allowed' : 'pointer',
         fontSize: '14px',
         fontWeight: isActive ? 600 : 400,
@@ -965,7 +965,7 @@ function ToolbarButton({
       }}
       onMouseEnter={(e) => {
         if (!disabled && !isActive) {
-          e.currentTarget.style.backgroundColor = '#F3F4F6';
+          e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)';
         }
       }}
       onMouseLeave={(e) => {
@@ -985,7 +985,7 @@ function ToolbarDivider() {
       style={{
         width: '1px',
         height: '24px',
-        backgroundColor: '#E5E7EB',
+        backgroundColor: 'var(--color-border-default)',
         margin: '0 8px',
         alignSelf: 'center',
       }}

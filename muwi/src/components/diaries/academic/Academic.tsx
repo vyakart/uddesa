@@ -156,11 +156,11 @@ export function Academic() {
             alignItems: 'center',
             gap: '6px',
             padding: '6px 12px',
-            backgroundColor: 'white',
-            border: '1px solid #E5E7EB',
+            backgroundColor: 'var(--color-bg-primary)',
+            border: '1px solid var(--color-border-default)',
             borderRadius: '6px',
             fontSize: '13px',
-            color: '#374151',
+            color: 'var(--color-text-primary)',
             cursor: 'pointer',
             maxWidth: '200px',
           }}
@@ -186,10 +186,10 @@ export function Academic() {
               top: '100%',
               left: 0,
               marginTop: '4px',
-              backgroundColor: 'white',
-              border: '1px solid #E5E7EB',
+              backgroundColor: 'var(--color-bg-primary)',
+              border: '1px solid var(--color-border-default)',
               borderRadius: '8px',
-              boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
+              boxShadow: 'var(--shadow-md)',
               zIndex: 50,
               minWidth: '200px',
               maxHeight: '300px',
@@ -208,16 +208,16 @@ export function Academic() {
                   padding: '10px 12px',
                   textAlign: 'left',
                   border: 'none',
-                  backgroundColor: paper.id === currentPaperId ? '#F3F4F6' : 'transparent',
+                  backgroundColor: paper.id === currentPaperId ? 'var(--color-bg-tertiary)' : 'transparent',
                   cursor: 'pointer',
                   fontSize: '13px',
-                  color: '#374151',
+                  color: 'var(--color-text-primary)',
                 }}
               >
                 {paper.title}
               </button>
             ))}
-            <div style={{ borderTop: '1px solid #E5E7EB', padding: '8px' }}>
+            <div style={{ borderTop: '1px solid var(--color-border-default)', padding: '8px' }}>
               <button
                 onClick={() => {
                   setShowPaperList(false);
@@ -226,8 +226,8 @@ export function Academic() {
                 style={{
                   width: '100%',
                   padding: '8px 12px',
-                  backgroundColor: '#4A90A4',
-                  color: 'white',
+                  backgroundColor: 'var(--color-accent-default)',
+                  color: 'var(--color-text-inverse)',
                   border: 'none',
                   borderRadius: '6px',
                   fontSize: '13px',
@@ -242,7 +242,7 @@ export function Academic() {
       </div>
 
       {/* Word/character count */}
-      <span style={{ fontSize: '13px', color: '#6B7280' }}>
+      <span style={{ fontSize: '13px', color: 'var(--color-text-secondary)' }}>
         {totalWordCount} words · {totalCharacterCount} chars
       </span>
 
@@ -257,11 +257,11 @@ export function Academic() {
             alignItems: 'center',
             gap: '4px',
             padding: '6px 12px',
-            backgroundColor: 'white',
-            border: '1px solid #E5E7EB',
+            backgroundColor: 'var(--color-bg-primary)',
+            border: '1px solid var(--color-border-default)',
             borderRadius: '6px',
             fontSize: '12px',
-            color: '#6B7280',
+            color: 'var(--color-text-secondary)',
             cursor: 'pointer',
           }}
         >
@@ -278,10 +278,10 @@ export function Academic() {
               top: '100%',
               right: 0,
               marginTop: '4px',
-              backgroundColor: 'white',
-              border: '1px solid #E5E7EB',
+              backgroundColor: 'var(--color-bg-primary)',
+              border: '1px solid var(--color-border-default)',
               borderRadius: '8px',
-              boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
+              boxShadow: 'var(--shadow-md)',
               zIndex: 50,
               minWidth: '120px',
             }}
@@ -298,7 +298,7 @@ export function Academic() {
                   padding: '8px 12px',
                   textAlign: 'left',
                   border: 'none',
-                  backgroundColor: style === citationStyle ? '#F3F4F6' : 'transparent',
+                  backgroundColor: style === citationStyle ? 'var(--color-bg-tertiary)' : 'transparent',
                   cursor: 'pointer',
                   fontSize: '12px',
                 }}
@@ -316,11 +316,11 @@ export function Academic() {
         title="Toggle Table of Contents"
         style={{
           padding: '6px 10px',
-          backgroundColor: isTOCVisible ? '#EFF6FF' : 'transparent',
-          border: '1px solid #E5E7EB',
+          backgroundColor: isTOCVisible ? 'var(--color-accent-subtle)' : 'transparent',
+          border: '1px solid var(--color-border-default)',
           borderRadius: '6px',
           cursor: 'pointer',
-          color: isTOCVisible ? '#4A90A4' : '#6B7280',
+          color: isTOCVisible ? 'var(--color-accent-default)' : 'var(--color-text-secondary)',
         }}
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -336,11 +336,11 @@ export function Academic() {
         title="Toggle Bibliography Panel"
         style={{
           padding: '6px 10px',
-          backgroundColor: isBibliographyPanelVisible ? '#EFF6FF' : 'transparent',
-          border: '1px solid #E5E7EB',
+          backgroundColor: isBibliographyPanelVisible ? 'var(--color-accent-subtle)' : 'transparent',
+          border: '1px solid var(--color-border-default)',
           borderRadius: '6px',
           cursor: 'pointer',
-          color: isBibliographyPanelVisible ? '#4A90A4' : '#6B7280',
+          color: isBibliographyPanelVisible ? 'var(--color-accent-default)' : 'var(--color-text-secondary)',
         }}
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -363,13 +363,13 @@ export function Academic() {
             justifyContent: 'center',
           }}
         >
-          <div style={{ textAlign: 'center', color: '#6B7280' }}>
+          <div style={{ textAlign: 'center', color: 'var(--color-text-secondary)' }}>
             <div
               style={{
                 width: '32px',
                 height: '32px',
-                border: '3px solid #E5E7EB',
-                borderTopColor: '#4A90A4',
+                border: '3px solid var(--color-border-default)',
+                borderTopColor: 'var(--color-accent-default)',
                 borderRadius: '50%',
                 margin: '0 auto 12px',
                 animation: 'spin 1s linear infinite',
@@ -395,14 +395,14 @@ export function Academic() {
             justifyContent: 'center',
           }}
         >
-          <div style={{ textAlign: 'center', color: '#DC2626' }}>
+          <div style={{ textAlign: 'center', color: 'var(--color-error)' }}>
             <p style={{ marginBottom: '16px' }}>{error}</p>
             <button
               onClick={loadPapers}
               style={{
                 padding: '8px 16px',
-                backgroundColor: '#4A90A4',
-                color: 'white',
+                backgroundColor: 'var(--color-accent-default)',
+                color: 'var(--color-text-inverse)',
                 border: 'none',
                 borderRadius: '6px',
                 cursor: 'pointer',
@@ -427,7 +427,7 @@ export function Academic() {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#6B7280',
+            color: 'var(--color-text-secondary)',
           }}
         >
           <svg
@@ -450,8 +450,8 @@ export function Academic() {
             onClick={() => setShowTemplateSelector(true)}
             style={{
               padding: '12px 24px',
-              backgroundColor: '#4A90A4',
-              color: 'white',
+              backgroundColor: 'var(--color-accent-default)',
+              color: 'var(--color-text-inverse)',
               border: 'none',
               borderRadius: '8px',
               fontSize: '15px',
@@ -484,8 +484,8 @@ export function Academic() {
           <div
             style={{
               width: '260px',
-              borderRight: '1px solid #E5E7EB',
-              backgroundColor: '#F9FAFB',
+              borderRight: '1px solid var(--color-border-default)',
+              backgroundColor: 'var(--color-bg-secondary)',
               display: 'flex',
               flexDirection: 'column',
             }}
@@ -493,21 +493,21 @@ export function Academic() {
             <div
               style={{
                 padding: '16px',
-                borderBottom: '1px solid #E5E7EB',
+                borderBottom: '1px solid var(--color-border-default)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
               }}
             >
-              <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#374151' }}>
+              <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: 'var(--color-text-primary)' }}>
                 Sections
               </h3>
               <button
                 onClick={handleAddSection}
                 style={{
                   padding: '4px 8px',
-                  backgroundColor: '#4A90A4',
-                  color: 'white',
+                  backgroundColor: 'var(--color-accent-default)',
+                  color: 'var(--color-text-inverse)',
                   border: 'none',
                   borderRadius: '4px',
                   fontSize: '12px',
@@ -524,7 +524,7 @@ export function Academic() {
                   style={{
                     padding: '16px',
                     textAlign: 'center',
-                    color: '#9CA3AF',
+                    color: 'var(--color-text-tertiary)',
                     fontSize: '13px',
                   }}
                 >
@@ -555,7 +555,7 @@ export function Academic() {
           <div
             style={{
               width: '560px',
-              borderLeft: '1px solid #E5E7EB',
+              borderLeft: '1px solid var(--color-border-default)',
             }}
           >
             <ReferenceLibraryPanel onClose={toggleBibliographyPanel} />
@@ -591,7 +591,7 @@ function SectionList({ nodes, currentSectionId, onSelect, onDelete }: SectionLis
               padding: '8px 12px',
               paddingLeft: `${12 + node.depth * 16}px`,
               borderRadius: '6px',
-              backgroundColor: currentSectionId === node.section.id ? '#EFF6FF' : 'transparent',
+              backgroundColor: currentSectionId === node.section.id ? 'var(--color-accent-subtle)' : 'transparent',
               cursor: 'pointer',
               marginBottom: '2px',
             }}
@@ -602,7 +602,7 @@ function SectionList({ nodes, currentSectionId, onSelect, onDelete }: SectionLis
                 flex: 1,
                 fontSize: '13px',
                 fontWeight: currentSectionId === node.section.id ? 600 : 400,
-                color: currentSectionId === node.section.id ? '#4A90A4' : '#374151',
+                color: currentSectionId === node.section.id ? 'var(--color-accent-default)' : 'var(--color-text-primary)',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
@@ -610,7 +610,7 @@ function SectionList({ nodes, currentSectionId, onSelect, onDelete }: SectionLis
             >
               {node.section.title || 'Untitled'}
             </span>
-            <span style={{ fontSize: '11px', color: '#9CA3AF', marginLeft: '8px' }}>
+            <span style={{ fontSize: '11px', color: 'var(--color-text-tertiary)', marginLeft: '8px' }}>
               {node.section.wordCount}w
             </span>
             <button
@@ -623,17 +623,17 @@ function SectionList({ nodes, currentSectionId, onSelect, onDelete }: SectionLis
                 border: 'none',
                 backgroundColor: 'transparent',
                 cursor: 'pointer',
-                color: '#9CA3AF',
+                color: 'var(--color-text-tertiary)',
                 marginLeft: '4px',
                 opacity: 0.5,
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.opacity = '1';
-                e.currentTarget.style.color = '#DC2626';
+                e.currentTarget.style.color = 'var(--color-error)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.opacity = '0.5';
-                e.currentTarget.style.color = '#9CA3AF';
+                e.currentTarget.style.color = 'var(--color-text-tertiary)';
               }}
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

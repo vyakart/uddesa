@@ -11,8 +11,11 @@ const mockEditor = {
   setEditable: vi.fn(),
   chain: vi.fn(() => ({
     focus: vi.fn().mockReturnThis(),
+    undo: vi.fn().mockReturnThis(),
+    redo: vi.fn().mockReturnThis(),
     toggleBold: vi.fn().mockReturnThis(),
     toggleItalic: vi.fn().mockReturnThis(),
+    toggleUnderline: vi.fn().mockReturnThis(),
     toggleStrike: vi.fn().mockReturnThis(),
     toggleHeading: vi.fn().mockReturnThis(),
     toggleBulletList: vi.fn().mockReturnThis(),
@@ -101,6 +104,14 @@ describe('DiaryEntry', () => {
     expect(screen.getByTestId('diary-entry-paper').getAttribute('style')).toContain(
       'repeating-linear-gradient'
     );
+    expect(screen.getByRole('toolbar', { name: 'Personal diary toolbar' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Undo' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Redo' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Bold (Ctrl+B)' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Italic (Ctrl+I)' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Underline (Ctrl+U)' })).toBeInTheDocument();
+    expect(screen.getByText('Font: Crimson Pro')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Strikethrough' })).not.toBeInTheDocument();
   });
 
   it('auto-saves content changes with debounce and updates word count', () => {

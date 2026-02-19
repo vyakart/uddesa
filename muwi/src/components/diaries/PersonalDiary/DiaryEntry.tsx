@@ -1,18 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
+import { EditorContent, useEditor } from '@tiptap/react';
 import Placeholder from '@tiptap/extension-placeholder';
+import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import { format, parseISO } from 'date-fns';
-import { DatePicker } from './DatePicker';
-import { PasskeyPrompt } from '@/components/common';
-import { useEditorShortcuts, useContentLocking } from '@/hooks';
+import { Button, PasskeyPrompt } from '@/components/common';
+import { useContentLocking, useEditorShortcuts } from '@/hooks';
 import { useAppStore } from '@/stores/appStore';
 import { useSettingsStore } from '@/stores/settingsStore';
-import type {
-  DiaryEntry as DiaryEntryType,
-  PersonalDiarySettings,
-} from '@/types/diary';
+import { DatePicker } from './DatePicker';
+import type { DiaryEntry as DiaryEntryType, PersonalDiarySettings } from '@/types/diary';
 
 // Helper to safely convert entry.date to Date object (handles both string and Date)
 function toDate(date: string | Date): Date {
@@ -42,12 +39,20 @@ function stripHtml(content: string): string {
 function getTextureOverlay(texture: string): string | undefined {
   switch (texture) {
     case 'paper-cream':
-      return 'radial-gradient(circle at 10% 12%, rgba(0, 0, 0, 0.04) 0 1px, transparent 1px)';
+      return 'radial-gradient(circle at 10% 12%, color-mix(in srgb, var(--color-text-primary) 8%, transparent) 0 1px, transparent 1px)';
     case 'paper-white':
-      return 'radial-gradient(circle at 82% 80%, rgba(0, 0, 0, 0.03) 0 1px, transparent 1px)';
+      return 'radial-gradient(circle at 82% 80%, color-mix(in srgb, var(--color-text-primary) 6%, transparent) 0 1px, transparent 1px)';
     default:
       return undefined;
   }
+}
+
+function resolvePaperBaseColor(settings: PersonalDiarySettings): string {
+  const normalized = settings.paperColor.trim().toLowerCase();
+  if (normalized === '#fffef9' || normalized === '#fffdf8') {
+    return 'var(--color-bg-canvas-warm)';
+  }
+  return settings.paperColor;
 }
 
 function getEditorBackground(settings: PersonalDiarySettings): string {
@@ -55,7 +60,7 @@ function getEditorBackground(settings: PersonalDiarySettings): string {
 
   if (settings.showLines) {
     layers.push(
-      'repeating-linear-gradient(to bottom, transparent 0 31px, rgba(74, 144, 164, 0.18) 31px 32px)'
+      'repeating-linear-gradient(to bottom, transparent 0 calc((var(--leading-relaxed) * 1rem) - 1px), color-mix(in srgb, var(--color-border-on-canvas) 70%, transparent) calc((var(--leading-relaxed) * 1rem) - 1px) calc(var(--leading-relaxed) * 1rem))'
     );
   }
 
@@ -64,8 +69,35 @@ function getEditorBackground(settings: PersonalDiarySettings): string {
     layers.push(textureOverlay);
   }
 
-  layers.push(settings.paperColor);
+  layers.push(resolvePaperBaseColor(settings));
   return layers.join(', ');
+}
+
+interface PersonalToolbarButtonProps {
+  onClick: () => void;
+  title: string;
+  children: React.ReactNode;
+  isActive?: boolean;
+}
+
+function PersonalToolbarButton({
+  onClick,
+  title,
+  children,
+  isActive = false,
+}: PersonalToolbarButtonProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={title}
+      className="muwi-personal-entry__toolbar-button"
+      data-active={isActive ? 'true' : 'false'}
+      aria-label={title}
+    >
+      {children}
+    </button>
+  );
 }
 
 export function DiaryEntry({
@@ -108,14 +140,8 @@ export function DiaryEntry({
     editable: !entry?.isLocked,
     editorProps: {
       attributes: {
-        class: 'tiptap',
-        style: `
-          min-height: 300px;
-          outline: none;
-          font-size: 1.125rem;
-          line-height: 1.8;
-          color: #1A1A1A;
-        `,
+        class: 'tiptap muwi-personal-entry-editor',
+        style: 'min-height: 300px;',
       },
     },
     onUpdate: ({ editor }) => {
@@ -157,15 +183,7 @@ export function DiaryEntry({
 
   if (!entry) {
     return (
-      <div
-        style={{
-          flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: '#888888',
-        }}
-      >
+      <div className="muwi-personal-entry__empty">
         <p>Select or create an entry to start writing</p>
       </div>
     );
@@ -206,187 +224,91 @@ export function DiaryEntry({
   };
 
   return (
-    <div
-      style={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-      }}
-    >
+    <div className="muwi-personal-entry">
       {/* Header with date picker */}
-      <div
-        style={{
-          padding: '16px 24px',
-          borderBottom: '1px solid #E0E0E0',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          backgroundColor: '#FFFFFF',
-        }}
-      >
+      <div className="muwi-personal-entry__header">
         <DatePicker
           selectedDate={toDate(entry.date)}
           onDateChange={onDateChange}
           dateFormat={settings.dateFormat}
         />
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '16px',
-          }}
-        >
-          <span
-            style={{
-              fontSize: '0.875rem',
-              color: '#888888',
-            }}
-          >
-            {wordCount} words
-          </span>
-          <span
-            style={{
-              fontSize: '0.75rem',
-              color: '#AAAAAA',
-            }}
-          >
+        <div className="muwi-personal-entry__meta">
+          <span className="muwi-personal-entry__meta-text">{wordCount} words</span>
+          <span className="muwi-personal-entry__meta-text is-subtle">
             Last edited: {format(entry.modifiedAt, 'h:mm a')}
           </span>
-          {entry.isLocked ? (
-            <span style={{ fontSize: '0.75rem', color: '#6B7280', fontWeight: 600 }}>Locked</span>
-          ) : null}
-          <button
+          {entry.isLocked ? <span className="muwi-personal-entry__lock-state">Locked</span> : null}
+          <Button
             type="button"
             onClick={() => void handleLockToggle()}
-            style={{
-              padding: '0.3rem 0.6rem',
-              border: '1px solid #DADADA',
-              borderRadius: 6,
-              backgroundColor: '#FFFFFF',
-              cursor: 'pointer',
-              fontSize: '0.75rem',
-              color: '#4A4A4A',
-            }}
+            variant="secondary"
+            size="sm"
+            className="muwi-personal-entry__lock-toggle"
           >
             {entry.isLocked ? 'Unlock' : 'Lock'}
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Editor Area */}
       <div
+        className="muwi-personal-entry__paper"
         style={{
-          flex: 1,
-          overflow: 'auto',
           background: getEditorBackground(settings),
           backgroundSize: settings.paperTexture ? '140px 140px' : undefined,
         }}
         data-testid="diary-entry-paper"
       >
         <div
-          style={{
-            maxWidth: '800px',
-            margin: '0 auto',
-            padding: '24px 40px',
-            fontFamily: settings.font,
-          }}
+          className="muwi-personal-entry__content"
+          style={{ fontFamily: settings.font }}
           data-testid="diary-entry-content"
         >
-          <EditorContent
-            editor={editor}
-            style={{
-              minHeight: '100%',
-            }}
-          />
+          <EditorContent editor={editor} className="muwi-personal-entry__editor-content" />
         </div>
       </div>
 
       {/* Formatting Toolbar */}
-      {editor && !entry.isLocked && (
-        <div
-          style={{
-            padding: '8px 16px',
-            borderTop: '1px solid #E0E0E0',
-            backgroundColor: '#FFFFFF',
-            display: 'flex',
-            gap: '4px',
-          }}
-        >
-          <ToolbarButton
+      {editor && !entry.isLocked ? (
+        <div className="muwi-personal-entry__toolbar" role="toolbar" aria-label="Personal diary toolbar">
+          <PersonalToolbarButton
+            onClick={() => editor.chain().focus().undo().run()}
+            title="Undo"
+          >
+            Undo
+          </PersonalToolbarButton>
+          <PersonalToolbarButton
+            onClick={() => editor.chain().focus().redo().run()}
+            title="Redo"
+          >
+            Redo
+          </PersonalToolbarButton>
+          <span className="muwi-personal-entry__toolbar-separator" role="separator" aria-hidden="true" />
+          <PersonalToolbarButton
             onClick={() => editor.chain().focus().toggleBold().run()}
             isActive={editor.isActive('bold')}
             title="Bold (Ctrl+B)"
           >
             <strong>B</strong>
-          </ToolbarButton>
-          <ToolbarButton
+          </PersonalToolbarButton>
+          <PersonalToolbarButton
             onClick={() => editor.chain().focus().toggleItalic().run()}
             isActive={editor.isActive('italic')}
             title="Italic (Ctrl+I)"
           >
             <em>I</em>
-          </ToolbarButton>
-          <ToolbarButton
+          </PersonalToolbarButton>
+          <PersonalToolbarButton
             onClick={() => editor.chain().focus().toggleUnderline().run()}
             isActive={editor.isActive('underline')}
             title="Underline (Ctrl+U)"
           >
             <span style={{ textDecoration: 'underline' }}>U</span>
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleStrike().run()}
-            isActive={editor.isActive('strike')}
-            title="Strikethrough"
-          >
-            <s>S</s>
-          </ToolbarButton>
-          <div style={{ width: '1px', backgroundColor: '#E0E0E0', margin: '0 8px' }} />
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-            isActive={editor.isActive('heading', { level: 1 })}
-            title="Heading 1 (Ctrl+1)"
-          >
-            H1
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-            isActive={editor.isActive('heading', { level: 2 })}
-            title="Heading 2 (Ctrl+2)"
-          >
-            H2
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-            isActive={editor.isActive('heading', { level: 3 })}
-            title="Heading 3 (Ctrl+3)"
-          >
-            H3
-          </ToolbarButton>
-          <div style={{ width: '1px', backgroundColor: '#E0E0E0', margin: '0 8px' }} />
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleBulletList().run()}
-            isActive={editor.isActive('bulletList')}
-            title="Bullet List"
-          >
-            &bull;
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleOrderedList().run()}
-            isActive={editor.isActive('orderedList')}
-            title="Numbered List"
-          >
-            1.
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleBlockquote().run()}
-            isActive={editor.isActive('blockquote')}
-            title="Quote"
-          >
-            &ldquo;
-          </ToolbarButton>
+          </PersonalToolbarButton>
+          <span className="muwi-personal-entry__toolbar-separator" role="separator" aria-hidden="true" />
+          <span className="muwi-personal-entry__font-display">Font: {settings.font}</span>
         </div>
-      )}
+      ) : null}
 
       <PasskeyPrompt
         isOpen={showUnlockPrompt}
@@ -399,38 +321,5 @@ export function DiaryEntry({
         submitLabel="Unlock"
       />
     </div>
-  );
-}
-
-// Toolbar button component
-function ToolbarButton({
-  onClick,
-  isActive,
-  title,
-  children,
-}: {
-  onClick: () => void;
-  isActive: boolean;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      title={title}
-      style={{
-        padding: '6px 10px',
-        border: 'none',
-        borderRadius: '4px',
-        backgroundColor: isActive ? '#E8F4F8' : 'transparent',
-        color: isActive ? '#4A90A4' : '#666666',
-        cursor: 'pointer',
-        fontSize: '0.875rem',
-        fontWeight: isActive ? 600 : 400,
-        minWidth: '32px',
-      }}
-    >
-      {children}
-    </button>
   );
 }

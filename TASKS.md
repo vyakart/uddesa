@@ -1826,17 +1826,17 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 7.1.3, 7.9.1
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] Canvas uses warm background token
-  - [ ] Line height defaults to relaxed setting
-  - [ ] Toolbar limited to Undo/Redo + B/I/U + font display
+  - [x] Canvas uses warm background token
+  - [x] Line height defaults to relaxed setting
+  - [x] Toolbar limited to Undo/Redo + B/I/U + font display
 
 #### Task 7.9.4: Add Personal Diary Status Bar + Empty State
 - **Description**: Add date and reading metrics in status strip
 - **Dependencies**: 7.9.2, 7.9.3
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] Left side shows formatted entry date
-  - [ ] Right side shows word count + read time
+  - [x] Left side shows formatted entry date
+  - [x] Right side shows word count + read time
 
 ### 7.10 Drafts UI Migration
 

@@ -636,7 +636,7 @@
   width: var(--size-toggle-thumb);
   height: var(--size-toggle-thumb);
   border-radius: var(--radius-full);
-  background: #fff;
+  background: var(--color-bg-primary);
   box-shadow: var(--shadow-sm);
   transition: transform var(--duration-normal) var(--ease-default);
 }
@@ -1533,6 +1533,98 @@
   margin-top: var(--space-1);
 }
 
+.muwi-blackboard-canvas__message {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-tertiary);
+  padding: var(--space-6);
+  text-align: center;
+}
+
+.muwi-blackboard-canvas__message.is-error {
+  flex-direction: column;
+  gap: var(--space-4);
+  color: var(--color-error);
+}
+
+.muwi-blackboard-canvas__message.is-error p {
+  margin: 0;
+}
+
+.muwi-blackboard-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.muwi-blackboard-panel__label {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+.muwi-blackboard-panel__title {
+  margin: var(--space-1-5) 0 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.muwi-blackboard-panel__meta {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.muwi-blackboard-panel__hint {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: var(--leading-normal);
+  color: var(--color-text-tertiary);
+}
+
+.muwi-blackboard-panel__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+}
+
+.muwi-blackboard-panel__item {
+  width: 100%;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-primary);
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  transition: var(--transition-colors), var(--transition-shadow);
+}
+
+.muwi-blackboard-panel__item:hover {
+  background: var(--color-hover-overlay);
+}
+
+.muwi-blackboard-panel__item:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.muwi-blackboard-font-menu {
+  position: fixed;
+  z-index: var(--z-tooltip);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-elevated);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-1-5);
+}
+
 .muwi-scratchpad-toolbar {
   width: 100%;
   min-width: 0;
@@ -2400,6 +2492,369 @@
 
 .muwi-personal-nav__today-action {
   justify-content: center;
+}
+
+.muwi-personal-toolbar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.muwi-personal-toolbar__date {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.muwi-personal-canvas {
+  --muwi-personal-canvas-color: var(--color-bg-canvas-warm);
+
+  height: 100%;
+  display: flex;
+  overflow: hidden;
+  background-color: var(--muwi-personal-canvas-color);
+}
+
+.muwi-personal-canvas__state {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  color: var(--color-text-tertiary);
+  padding: var(--space-6);
+  text-align: center;
+}
+
+.muwi-personal-canvas__title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.muwi-personal-canvas__text {
+  margin: 0;
+  font-size: var(--font-size-md);
+  color: var(--color-text-secondary);
+}
+
+.muwi-personal-canvas__action {
+  margin-top: var(--space-1);
+}
+
+.muwi-personal-canvas__state.is-error {
+  gap: var(--space-4);
+  color: var(--color-error);
+}
+
+.muwi-personal-canvas__state.is-error p {
+  margin: 0;
+}
+
+.muwi-personal-canvas__state.is-empty {
+  color: var(--color-text-secondary);
+}
+
+.muwi-personal-entry {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.muwi-personal-entry__empty {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-tertiary);
+}
+
+.muwi-personal-entry__header {
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--color-border-default);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  background-color: var(--color-bg-primary);
+}
+
+.muwi-personal-date-picker {
+  position: relative;
+  display: inline-block;
+}
+
+.muwi-personal-date-picker__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-lg);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-normal);
+  transition: var(--transition-colors), var(--transition-shadow);
+}
+
+.muwi-personal-date-picker__trigger:hover {
+  background: var(--color-hover-overlay);
+}
+
+.muwi-personal-date-picker__trigger:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.muwi-personal-date-picker__trigger-icon {
+  color: var(--color-text-secondary);
+}
+
+.muwi-personal-date-picker__dialog {
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  left: 0;
+  min-width: 17.5rem;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-xl);
+  background: var(--color-bg-elevated);
+  box-shadow: var(--shadow-md);
+  z-index: var(--z-dropdown);
+}
+
+.muwi-personal-date-picker__month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.muwi-personal-date-picker__month-button {
+  min-width: var(--size-button-sm);
+  height: var(--size-button-sm);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: var(--content-font-size-h3);
+  line-height: 1;
+  transition: var(--transition-colors), var(--transition-shadow);
+}
+
+.muwi-personal-date-picker__month-button:hover {
+  background: var(--color-hover-overlay);
+  color: var(--color-text-primary);
+}
+
+.muwi-personal-date-picker__month-button:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.muwi-personal-date-picker__month-label {
+  font-size: var(--font-size-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.muwi-personal-date-picker__calendar {
+  display: grid;
+  gap: var(--space-0-5);
+}
+
+.muwi-personal-date-picker__weekdays,
+.muwi-personal-date-picker__week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--space-0-5);
+}
+
+.muwi-personal-date-picker__weekday {
+  padding: var(--space-1);
+  text-align: center;
+  font-size: var(--font-size-xs);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-tertiary);
+}
+
+.muwi-personal-date-picker__day {
+  min-height: var(--size-button-md);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-md);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-normal);
+  transition: var(--transition-colors), var(--transition-shadow);
+}
+
+.muwi-personal-date-picker__day:hover {
+  background: var(--color-hover-overlay);
+}
+
+.muwi-personal-date-picker__day:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.muwi-personal-date-picker__day[data-outside-month='true'] {
+  color: var(--color-text-tertiary);
+}
+
+.muwi-personal-date-picker__day[data-today='true'] {
+  background: var(--color-accent-subtle);
+  color: var(--color-accent-text);
+  font-weight: var(--weight-semibold);
+}
+
+.muwi-personal-date-picker__day[data-selected='true'] {
+  background: var(--color-accent-default);
+  color: var(--color-text-inverse);
+}
+
+.muwi-personal-date-picker__day[data-selected='true']:hover {
+  background: var(--color-accent-hover);
+}
+
+.muwi-personal-date-picker__today {
+  width: 100%;
+  margin-top: var(--space-3);
+  min-height: var(--size-button-md);
+  border: 1px solid var(--color-accent-default);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-accent-default);
+  font-size: var(--font-size-sm);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-normal);
+  transition: var(--transition-colors), var(--transition-shadow);
+}
+
+.muwi-personal-date-picker__today:hover {
+  background: var(--color-accent-subtle);
+}
+
+.muwi-personal-date-picker__today:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.muwi-personal-entry__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.muwi-personal-entry__meta-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.muwi-personal-entry__meta-text.is-subtle {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.muwi-personal-entry__lock-state {
+  font-size: var(--font-size-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-secondary);
+}
+
+.muwi-personal-entry__lock-toggle {
+  white-space: nowrap;
+}
+
+.muwi-personal-entry__paper {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.muwi-personal-entry__content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-10);
+}
+
+.muwi-personal-entry-editor {
+  outline: none;
+  min-height: 300px;
+  font-size: var(--content-font-size-body);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-on-canvas);
+}
+
+.muwi-personal-entry__editor-content {
+  min-height: 100%;
+}
+
+.muwi-personal-entry__toolbar {
+  padding: var(--space-2) var(--space-4);
+  border-top: 1px solid var(--color-border-default);
+  background-color: var(--color-bg-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.muwi-personal-entry__toolbar-button {
+  min-width: var(--size-button-sm);
+  height: var(--size-button-sm);
+  padding: var(--space-1) var(--space-2);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  transition: var(--transition-colors), var(--transition-shadow);
+}
+
+.muwi-personal-entry__toolbar-button:hover {
+  background: var(--color-hover-overlay);
+  color: var(--color-text-primary);
+}
+
+.muwi-personal-entry__toolbar-button:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.muwi-personal-entry__toolbar-button[data-active='true'] {
+  background: var(--color-accent-subtle);
+  color: var(--color-accent-default);
+}
+
+.muwi-personal-entry__toolbar-separator {
+  width: 1px;
+  height: 16px;
+  background: var(--color-border-subtle);
+  margin: 0 var(--space-1);
+}
+
+.muwi-personal-entry__font-display {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
 }
 
 @keyframes muwi-modal-backdrop-in {

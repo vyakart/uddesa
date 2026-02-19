@@ -127,38 +127,26 @@ export function Blackboard() {
   }, []);
 
   const rightPanel = (
-    <div data-testid="blackboard-right-panel" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+    <div data-testid="blackboard-right-panel" className="muwi-blackboard-panel">
       <div>
-        <p style={{ margin: 0, fontSize: '12px', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-          Blackboard
-        </p>
-        <h3 style={{ margin: '6px 0 0', fontSize: '16px', color: '#111827' }}>{canvas?.name ?? 'Untitled Canvas'}</h3>
+        <p className="muwi-blackboard-panel__label">Blackboard</p>
+        <h3 className="muwi-blackboard-panel__title">{canvas?.name ?? 'Untitled Canvas'}</h3>
       </div>
-      <p style={{ margin: 0, fontSize: '13px', color: '#4b5563' }}>
+      <p className="muwi-blackboard-panel__meta">
         {index.length} heading{index.length === 1 ? '' : 's'} indexed.
       </p>
       {index.length === 0 ? (
-        <p style={{ margin: 0, fontSize: '13px', color: '#6b7280', lineHeight: 1.5 }}>
+        <p className="muwi-blackboard-panel__hint">
           Add text starting with #, ##, or ### on the canvas to build quick navigation links.
         </p>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        <div className="muwi-blackboard-panel__list">
           {index.map((entry) => (
             <button
               key={entry.id}
               type="button"
               onClick={() => handleNavigateToElement(entry.elementId, entry.position)}
-              style={{
-                width: '100%',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                backgroundColor: '#ffffff',
-                padding: '8px 10px',
-                textAlign: 'left',
-                cursor: 'pointer',
-                fontSize: '13px',
-                color: '#111827',
-              }}
+              className="muwi-blackboard-panel__item"
               title={entry.title}
             >
               {entry.title}
@@ -185,45 +173,17 @@ export function Blackboard() {
   ) : null;
 
   const loadingCanvas = (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100%',
-        color: '#888888',
-      }}
-    >
+    <div className="muwi-blackboard-canvas__message">
       Loading blackboard...
     </div>
   );
 
   const errorCanvas = (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100%',
-        color: '#F44336',
-        gap: '16px',
-      }}
-    >
+    <div className="muwi-blackboard-canvas__message is-error">
       <p>Error: {error}</p>
-      <button
-        onClick={() => window.location.reload()}
-        style={{
-          padding: '8px 16px',
-          border: '1px solid #F44336',
-          borderRadius: '6px',
-          backgroundColor: 'transparent',
-          color: '#F44336',
-          cursor: 'pointer',
-        }}
-      >
+      <Button type="button" onClick={() => window.location.reload()} variant="danger" size="sm">
         Reload
-      </button>
+      </Button>
     </div>
   );
 
@@ -255,17 +215,8 @@ export function Blackboard() {
       {fontMenuPosition ? (
         <div
           role="presentation"
-          style={{
-            position: 'fixed',
-            left: fontMenuPosition.x,
-            top: fontMenuPosition.y,
-            zIndex: 1200,
-            backgroundColor: '#ffffff',
-            border: '1px solid #d7d7d7',
-            borderRadius: 8,
-            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.16)',
-            padding: 6,
-          }}
+          className="muwi-blackboard-font-menu"
+          style={{ left: fontMenuPosition.x, top: fontMenuPosition.y }}
           onPointerDown={(event) => event.stopPropagation()}
         >
           <FontSelector

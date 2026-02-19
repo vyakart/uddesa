@@ -1,8 +1,9 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, type CSSProperties } from 'react';
 import { addDays, format, parseISO, subDays } from 'date-fns';
 import { Button, DiaryLayout } from '@/components/common';
 import { usePersonalDiaryStore } from '@/stores/personalDiaryStore';
 import { useSettingsStore } from '@/stores/settingsStore';
+import { defaultPersonalDiarySettings } from '@/types/diary';
 import { EntryNavigation } from './EntryNavigation';
 import { DiaryEntry } from './DiaryEntry';
 
@@ -12,6 +13,19 @@ function toDate(date: string | Date): Date {
     return date;
   }
   return parseISO(date);
+}
+
+function countWordsFromContent(content: string): number {
+  const plainText = content.replace(/<[^>]*>/g, ' ');
+  return plainText.trim().split(/\s+/).filter(Boolean).length;
+}
+
+function formatReadTime(words: number): string {
+  if (words <= 0) {
+    return '0 min read';
+  }
+  const minutes = Math.max(1, Math.ceil(words / 200));
+  return `${minutes} min read`;
 }
 
 export function PersonalDiary() {
@@ -25,11 +39,6 @@ export function PersonalDiary() {
   const updateEntry = usePersonalDiaryStore((state) => state.updateEntry);
   const updateEntryLock = usePersonalDiaryStore((state) => state.updateEntryLock);
   const diarySettings = useSettingsStore((state) => state.personalDiary);
-
-  const paperBackground =
-    diarySettings.paperTexture === 'paper-white'
-      ? 'radial-gradient(circle at 84% 80%, rgba(0, 0, 0, 0.02) 0 1px, transparent 1px)'
-      : 'radial-gradient(circle at 16% 14%, rgba(0, 0, 0, 0.03) 0 1px, transparent 1px)';
 
   // Initialize: load entries first, then load today's entry
   useEffect(() => {
@@ -116,16 +125,29 @@ export function PersonalDiary() {
 
   const isBusy = !isInitialized;
   const currentDate = currentEntry ? toDate(currentEntry.date) : new Date();
+  const defaultPaperColor = defaultPersonalDiarySettings.paperColor.toLowerCase();
+  const currentPaperColor = diarySettings.paperColor.trim().toLowerCase();
+  const canvasBaseColor =
+    currentPaperColor === defaultPaperColor
+      ? 'var(--color-bg-canvas-warm)'
+      : diarySettings.paperColor;
+  const canvasStyle = {
+    '--muwi-personal-canvas-color': canvasBaseColor,
+  } as CSSProperties;
   const selectedDateLabel = currentEntry
     ? format(currentDate, diarySettings.dateFormat)
     : 'No entry selected';
+  const wordCount = currentEntry ? (currentEntry.wordCount ?? countWordsFromContent(currentEntry.content)) : 0;
+  const wordCountLabel = `${wordCount} ${wordCount === 1 ? 'word' : 'words'}`;
+  const readTimeLabel = formatReadTime(wordCount);
+  const statusDateLabel = currentEntry ? format(currentDate, diarySettings.dateFormat) : 'No entry selected';
 
   const toolbar = (
     <div
-      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}
+      className="muwi-personal-toolbar"
       data-testid="personal-diary-toolbar"
     >
-      <span style={{ fontSize: '0.875rem', color: '#666666' }}>{selectedDateLabel}</span>
+      <span className="muwi-personal-toolbar__date">{selectedDateLabel}</span>
       <Button
         type="button"
         onClick={handleCreateNewEntry}
@@ -166,39 +188,37 @@ export function PersonalDiary() {
     : error
       ? { left: 'Personal diary unavailable', right: 'Reload to retry' }
       : {
-          left: `${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}`,
-          right: currentEntry?.isLocked ? 'Locked' : 'Unlocked',
+          left: statusDateLabel,
+          right: `${wordCountLabel} · ${readTimeLabel}`,
         };
 
   const loadingCanvas = (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100%',
-        color: '#888888',
-      }}
-    >
+    <div className="muwi-personal-canvas__state" role="status" aria-live="polite">
       Loading...
     </div>
   );
 
   const errorCanvas = (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100%',
-        color: '#F44336',
-        gap: '16px',
-      }}
-    >
+    <div className="muwi-personal-canvas__state is-error" role="alert">
       <p>Error: {error}</p>
       <Button type="button" onClick={() => window.location.reload()} variant="danger" size="sm">
         Reload
+      </Button>
+    </div>
+  );
+
+  const emptyCanvas = (
+    <div className="muwi-personal-canvas__state is-empty" role="status" aria-live="polite">
+      <p className="muwi-personal-canvas__title">No entry selected</p>
+      <p className="muwi-personal-canvas__text">Create an entry to capture today&apos;s thoughts.</p>
+      <Button
+        type="button"
+        onClick={handleGoToToday}
+        variant="primary"
+        size="md"
+        className="muwi-personal-canvas__action"
+      >
+        Create today&apos;s entry
       </Button>
     </div>
   );
@@ -207,15 +227,20 @@ export function PersonalDiary() {
     ? loadingCanvas
     : error
       ? errorCanvas
+      : !currentEntry
+        ? (
+            <div
+              className="muwi-personal-canvas"
+              style={canvasStyle}
+              data-testid="personal-diary-container"
+            >
+              {emptyCanvas}
+            </div>
+          )
       : (
           <div
-            style={{
-              display: 'flex',
-              height: '100%',
-              overflow: 'hidden',
-              background: `${paperBackground}, ${diarySettings.paperColor}`,
-              backgroundSize: '160px 160px',
-            }}
+            className="muwi-personal-canvas"
+            style={canvasStyle}
             data-testid="personal-diary-container"
           >
             <DiaryEntry

@@ -88,7 +88,7 @@ export function BibliographyManager({ onSelectEntry, onClose, hideHeader = false
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        backgroundColor: 'white',
+        backgroundColor: 'var(--color-bg-primary)',
       }}
     >
       {/* Header */}
@@ -96,13 +96,13 @@ export function BibliographyManager({ onSelectEntry, onClose, hideHeader = false
         <div
           style={{
             padding: '16px',
-            borderBottom: '1px solid #E5E7EB',
+            borderBottom: '1px solid var(--color-border-default)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
           }}
         >
-          <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1F2937' }}>
+          <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--color-text-primary)' }}>
             Reference Library
           </h2>
           {onClose && (
@@ -113,7 +113,7 @@ export function BibliographyManager({ onSelectEntry, onClose, hideHeader = false
                 border: 'none',
                 backgroundColor: 'transparent',
                 cursor: 'pointer',
-                color: '#6B7280',
+                color: 'var(--color-text-secondary)',
               }}
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -128,7 +128,7 @@ export function BibliographyManager({ onSelectEntry, onClose, hideHeader = false
       <div
         style={{
           padding: '12px 16px',
-          borderBottom: '1px solid #E5E7EB',
+          borderBottom: '1px solid var(--color-border-default)',
           display: 'flex',
           gap: '8px',
         }}
@@ -141,7 +141,7 @@ export function BibliographyManager({ onSelectEntry, onClose, hideHeader = false
           style={{
             flex: 1,
             padding: '8px 12px',
-            border: '1px solid #E5E7EB',
+            border: '1px solid var(--color-border-default)',
             borderRadius: '6px',
             fontSize: '14px',
           }}
@@ -150,8 +150,8 @@ export function BibliographyManager({ onSelectEntry, onClose, hideHeader = false
           onClick={() => setShowAddModal(true)}
           style={{
             padding: '8px 16px',
-            backgroundColor: '#4A90A4',
-            color: 'white',
+            backgroundColor: 'var(--color-accent-default)',
+            color: 'var(--color-text-inverse)',
             border: 'none',
             borderRadius: '6px',
             fontSize: '14px',
@@ -174,7 +174,7 @@ export function BibliographyManager({ onSelectEntry, onClose, hideHeader = false
         <div
           style={{
             padding: '8px 16px',
-            borderBottom: '1px solid #E5E7EB',
+            borderBottom: '1px solid var(--color-border-default)',
             display: 'flex',
             gap: '6px',
             overflowX: 'auto',
@@ -184,10 +184,10 @@ export function BibliographyManager({ onSelectEntry, onClose, hideHeader = false
             onClick={() => setSelectedTag(null)}
             style={{
               padding: '4px 10px',
-              border: selectedTag === null ? '1px solid #4A90A4' : '1px solid #E5E7EB',
+              border: selectedTag === null ? '1px solid var(--color-accent-default)' : '1px solid var(--color-border-default)',
               borderRadius: '999px',
-              backgroundColor: selectedTag === null ? '#EFF6FF' : 'white',
-              color: selectedTag === null ? '#4A90A4' : '#6B7280',
+              backgroundColor: selectedTag === null ? 'var(--color-accent-subtle)' : 'var(--color-bg-primary)',
+              color: selectedTag === null ? 'var(--color-accent-default)' : 'var(--color-text-secondary)',
               fontSize: '12px',
               cursor: 'pointer',
               whiteSpace: 'nowrap',
@@ -201,10 +201,10 @@ export function BibliographyManager({ onSelectEntry, onClose, hideHeader = false
               onClick={() => setSelectedTag(tag)}
               style={{
                 padding: '4px 10px',
-                border: selectedTag === tag ? '1px solid #4A90A4' : '1px solid #E5E7EB',
+                border: selectedTag === tag ? '1px solid var(--color-accent-default)' : '1px solid var(--color-border-default)',
                 borderRadius: '999px',
-                backgroundColor: selectedTag === tag ? '#EFF6FF' : 'white',
-                color: selectedTag === tag ? '#4A90A4' : '#6B7280',
+                backgroundColor: selectedTag === tag ? 'var(--color-accent-subtle)' : 'var(--color-bg-primary)',
+                color: selectedTag === tag ? 'var(--color-accent-default)' : 'var(--color-text-secondary)',
                 fontSize: '12px',
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
@@ -223,7 +223,7 @@ export function BibliographyManager({ onSelectEntry, onClose, hideHeader = false
             style={{
               padding: '32px 16px',
               textAlign: 'center',
-              color: '#9CA3AF',
+              color: 'var(--color-text-tertiary)',
               fontSize: '14px',
             }}
           >
@@ -336,7 +336,7 @@ const BibliographyEntryItem = memo(function BibliographyEntryItem({
     <div
       style={{
         padding: '12px 16px',
-        borderBottom: '1px solid #E5E7EB',
+        borderBottom: '1px solid var(--color-border-default)',
         cursor: onSelect ? 'pointer' : 'default',
       }}
       onClick={onSelect}
@@ -353,7 +353,7 @@ const BibliographyEntryItem = memo(function BibliographyEntryItem({
           <div
             style={{
               fontSize: '13px',
-              color: '#1F2937',
+              color: 'var(--color-text-primary)',
               lineHeight: 1.5,
             }}
             dangerouslySetInnerHTML={{ __html: formattedEntry }}
@@ -365,13 +365,13 @@ const BibliographyEntryItem = memo(function BibliographyEntryItem({
               flexWrap: 'wrap',
               marginTop: '6px',
               fontSize: '11px',
-              color: '#9CA3AF',
+              color: 'var(--color-text-tertiary)',
             }}
           >
             <span
               style={{
                 padding: '2px 6px',
-                backgroundColor: '#F3F4F6',
+                backgroundColor: 'var(--color-bg-tertiary)',
                 borderRadius: '4px',
               }}
             >
@@ -382,9 +382,9 @@ const BibliographyEntryItem = memo(function BibliographyEntryItem({
                 key={`${entry.id}-${tag}`}
                 style={{
                   padding: '2px 6px',
-                  backgroundColor: '#EFF6FF',
+                  backgroundColor: 'var(--color-accent-subtle)',
                   borderRadius: '999px',
-                  color: '#4A90A4',
+                  color: 'var(--color-accent-default)',
                 }}
               >
                 #{tag}
@@ -404,7 +404,7 @@ const BibliographyEntryItem = memo(function BibliographyEntryItem({
               border: 'none',
               backgroundColor: 'transparent',
               cursor: 'pointer',
-              color: '#6B7280',
+              color: 'var(--color-text-secondary)',
             }}
             title="Edit"
           >
@@ -423,7 +423,7 @@ const BibliographyEntryItem = memo(function BibliographyEntryItem({
               border: 'none',
               backgroundColor: 'transparent',
               cursor: 'pointer',
-              color: '#DC2626',
+              color: 'var(--color-error)',
             }}
             title="Delete"
           >
@@ -499,7 +499,7 @@ function AddReferenceModal({
       style={{
         position: 'fixed',
         inset: 0,
-        backgroundColor: 'rgba(0,0,0,0.5)',
+        backgroundColor: 'var(--color-bg-overlay)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -509,7 +509,7 @@ function AddReferenceModal({
     >
       <div
         style={{
-          backgroundColor: 'white',
+          backgroundColor: 'var(--color-bg-primary)',
           borderRadius: '12px',
           width: '500px',
           maxHeight: '80vh',
@@ -522,7 +522,7 @@ function AddReferenceModal({
         <div
           style={{
             padding: '16px 20px',
-            borderBottom: '1px solid #E5E7EB',
+            borderBottom: '1px solid var(--color-border-default)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -548,7 +548,7 @@ function AddReferenceModal({
         <div
           style={{
             display: 'flex',
-            borderBottom: '1px solid #E5E7EB',
+            borderBottom: '1px solid var(--color-border-default)',
           }}
         >
           {(['manual', 'doi', 'bibtex'] as const).map((m) => (
@@ -559,12 +559,12 @@ function AddReferenceModal({
                 flex: 1,
                 padding: '12px',
                 border: 'none',
-                backgroundColor: mode === m ? 'white' : '#F9FAFB',
-                borderBottom: mode === m ? '2px solid #4A90A4' : '2px solid transparent',
+                backgroundColor: mode === m ? 'var(--color-bg-primary)' : 'var(--color-bg-secondary)',
+                borderBottom: mode === m ? '2px solid var(--color-accent-default)' : '2px solid transparent',
                 cursor: 'pointer',
                 fontSize: '13px',
                 fontWeight: mode === m ? 600 : 400,
-                color: mode === m ? '#4A90A4' : '#6B7280',
+                color: mode === m ? 'var(--color-accent-default)' : 'var(--color-text-secondary)',
               }}
             >
               {m === 'manual' ? 'Manual Entry' : m === 'doi' ? 'From DOI' : 'BibTeX'}
@@ -578,8 +578,8 @@ function AddReferenceModal({
             <div
               style={{
                 padding: '12px',
-                backgroundColor: '#FEE2E2',
-                color: '#DC2626',
+                backgroundColor: 'var(--color-error-subtle)',
+                color: 'var(--color-error)',
                 borderRadius: '6px',
                 marginBottom: '16px',
                 fontSize: '13px',
@@ -601,7 +601,7 @@ function AddReferenceModal({
                   style={{
                     width: '100%',
                     padding: '8px 12px',
-                    border: '1px solid #E5E7EB',
+                    border: '1px solid var(--color-border-default)',
                     borderRadius: '6px',
                     fontSize: '14px',
                   }}
@@ -625,7 +625,7 @@ function AddReferenceModal({
                   style={{
                     width: '100%',
                     padding: '8px 12px',
-                    border: '1px solid #E5E7EB',
+                    border: '1px solid var(--color-border-default)',
                     borderRadius: '6px',
                     fontSize: '14px',
                   }}
@@ -644,7 +644,7 @@ function AddReferenceModal({
                   style={{
                     width: '100%',
                     padding: '8px 12px',
-                    border: '1px solid #E5E7EB',
+                    border: '1px solid var(--color-border-default)',
                     borderRadius: '6px',
                     fontSize: '14px',
                   }}
@@ -663,7 +663,7 @@ function AddReferenceModal({
                     style={{
                       width: '100%',
                       padding: '8px 12px',
-                      border: '1px solid #E5E7EB',
+                      border: '1px solid var(--color-border-default)',
                       borderRadius: '6px',
                       fontSize: '14px',
                     }}
@@ -680,7 +680,7 @@ function AddReferenceModal({
                     style={{
                       width: '100%',
                       padding: '8px 12px',
-                      border: '1px solid #E5E7EB',
+                      border: '1px solid var(--color-border-default)',
                       borderRadius: '6px',
                       fontSize: '14px',
                     }}
@@ -700,7 +700,7 @@ function AddReferenceModal({
                     style={{
                       width: '100%',
                       padding: '8px 12px',
-                      border: '1px solid #E5E7EB',
+                      border: '1px solid var(--color-border-default)',
                       borderRadius: '6px',
                       fontSize: '14px',
                     }}
@@ -717,7 +717,7 @@ function AddReferenceModal({
                     style={{
                       width: '100%',
                       padding: '8px 12px',
-                      border: '1px solid #E5E7EB',
+                      border: '1px solid var(--color-border-default)',
                       borderRadius: '6px',
                       fontSize: '14px',
                     }}
@@ -735,7 +735,7 @@ function AddReferenceModal({
                     style={{
                       width: '100%',
                       padding: '8px 12px',
-                      border: '1px solid #E5E7EB',
+                      border: '1px solid var(--color-border-default)',
                       borderRadius: '6px',
                       fontSize: '14px',
                     }}
@@ -755,7 +755,7 @@ function AddReferenceModal({
                   style={{
                     width: '100%',
                     padding: '8px 12px',
-                    border: '1px solid #E5E7EB',
+                    border: '1px solid var(--color-border-default)',
                     borderRadius: '6px',
                     fontSize: '14px',
                   }}
@@ -774,7 +774,7 @@ function AddReferenceModal({
                   style={{
                     width: '100%',
                     padding: '8px 12px',
-                    border: '1px solid #E5E7EB',
+                    border: '1px solid var(--color-border-default)',
                     borderRadius: '6px',
                     fontSize: '14px',
                   }}
@@ -796,12 +796,12 @@ function AddReferenceModal({
                 style={{
                   width: '100%',
                   padding: '8px 12px',
-                  border: '1px solid #E5E7EB',
+                  border: '1px solid var(--color-border-default)',
                   borderRadius: '6px',
                   fontSize: '14px',
                 }}
               />
-              <p style={{ fontSize: '12px', color: '#6B7280', marginTop: '8px' }}>
+              <p style={{ fontSize: '12px', color: 'var(--color-text-secondary)', marginTop: '8px' }}>
                 Enter a DOI to automatically fetch reference details
               </p>
             </div>
@@ -823,7 +823,7 @@ function AddReferenceModal({
                 style={{
                   width: '100%',
                   padding: '8px 12px',
-                  border: '1px solid #E5E7EB',
+                  border: '1px solid var(--color-border-default)',
                   borderRadius: '6px',
                   fontSize: '13px',
                   fontFamily: 'monospace',
@@ -839,7 +839,7 @@ function AddReferenceModal({
         <div
           style={{
             padding: '16px 20px',
-            borderTop: '1px solid #E5E7EB',
+            borderTop: '1px solid var(--color-border-default)',
             display: 'flex',
             justifyContent: 'flex-end',
             gap: '8px',
@@ -849,8 +849,8 @@ function AddReferenceModal({
             onClick={onClose}
             style={{
               padding: '8px 16px',
-              border: '1px solid #E5E7EB',
-              backgroundColor: 'white',
+              border: '1px solid var(--color-border-default)',
+              backgroundColor: 'var(--color-bg-primary)',
               borderRadius: '6px',
               fontSize: '14px',
               cursor: 'pointer',
@@ -872,8 +872,8 @@ function AddReferenceModal({
             }
             style={{
               padding: '8px 16px',
-              backgroundColor: '#4A90A4',
-              color: 'white',
+              backgroundColor: 'var(--color-accent-default)',
+              color: 'var(--color-text-inverse)',
               border: 'none',
               borderRadius: '6px',
               fontSize: '14px',
@@ -939,7 +939,7 @@ function EditReferenceModal({ entry, onClose, onSave }: EditReferenceModalProps)
       style={{
         position: 'fixed',
         inset: 0,
-        backgroundColor: 'rgba(0,0,0,0.5)',
+        backgroundColor: 'var(--color-bg-overlay)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -949,7 +949,7 @@ function EditReferenceModal({ entry, onClose, onSave }: EditReferenceModalProps)
     >
       <div
         style={{
-          backgroundColor: 'white',
+          backgroundColor: 'var(--color-bg-primary)',
           borderRadius: '12px',
           width: '500px',
           maxHeight: '80vh',
@@ -961,7 +961,7 @@ function EditReferenceModal({ entry, onClose, onSave }: EditReferenceModalProps)
         <div
           style={{
             padding: '16px 20px',
-            borderBottom: '1px solid #E5E7EB',
+            borderBottom: '1px solid var(--color-border-default)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -995,7 +995,7 @@ function EditReferenceModal({ entry, onClose, onSave }: EditReferenceModalProps)
                 style={{
                   width: '100%',
                   padding: '8px 12px',
-                  border: '1px solid #E5E7EB',
+                  border: '1px solid var(--color-border-default)',
                   borderRadius: '6px',
                   fontSize: '14px',
                 }}
@@ -1019,7 +1019,7 @@ function EditReferenceModal({ entry, onClose, onSave }: EditReferenceModalProps)
                 style={{
                   width: '100%',
                   padding: '8px 12px',
-                  border: '1px solid #E5E7EB',
+                  border: '1px solid var(--color-border-default)',
                   borderRadius: '6px',
                   fontSize: '14px',
                 }}
@@ -1037,7 +1037,7 @@ function EditReferenceModal({ entry, onClose, onSave }: EditReferenceModalProps)
                 style={{
                   width: '100%',
                   padding: '8px 12px',
-                  border: '1px solid #E5E7EB',
+                  border: '1px solid var(--color-border-default)',
                   borderRadius: '6px',
                   fontSize: '14px',
                 }}
@@ -1056,7 +1056,7 @@ function EditReferenceModal({ entry, onClose, onSave }: EditReferenceModalProps)
                   style={{
                     width: '100%',
                     padding: '8px 12px',
-                    border: '1px solid #E5E7EB',
+                    border: '1px solid var(--color-border-default)',
                     borderRadius: '6px',
                     fontSize: '14px',
                   }}
@@ -1073,7 +1073,7 @@ function EditReferenceModal({ entry, onClose, onSave }: EditReferenceModalProps)
                   style={{
                     width: '100%',
                     padding: '8px 12px',
-                    border: '1px solid #E5E7EB',
+                    border: '1px solid var(--color-border-default)',
                     borderRadius: '6px',
                     fontSize: '14px',
                   }}
@@ -1092,7 +1092,7 @@ function EditReferenceModal({ entry, onClose, onSave }: EditReferenceModalProps)
                 style={{
                   width: '100%',
                   padding: '8px 12px',
-                  border: '1px solid #E5E7EB',
+                  border: '1px solid var(--color-border-default)',
                   borderRadius: '6px',
                   fontSize: '14px',
                 }}
@@ -1110,7 +1110,7 @@ function EditReferenceModal({ entry, onClose, onSave }: EditReferenceModalProps)
                 style={{
                   width: '100%',
                   padding: '8px 12px',
-                  border: '1px solid #E5E7EB',
+                  border: '1px solid var(--color-border-default)',
                   borderRadius: '6px',
                   fontSize: '14px',
                 }}
@@ -1122,7 +1122,7 @@ function EditReferenceModal({ entry, onClose, onSave }: EditReferenceModalProps)
         <div
           style={{
             padding: '16px 20px',
-            borderTop: '1px solid #E5E7EB',
+            borderTop: '1px solid var(--color-border-default)',
             display: 'flex',
             justifyContent: 'flex-end',
             gap: '8px',
@@ -1132,8 +1132,8 @@ function EditReferenceModal({ entry, onClose, onSave }: EditReferenceModalProps)
             onClick={onClose}
             style={{
               padding: '8px 16px',
-              border: '1px solid #E5E7EB',
-              backgroundColor: 'white',
+              border: '1px solid var(--color-border-default)',
+              backgroundColor: 'var(--color-bg-primary)',
               borderRadius: '6px',
               fontSize: '14px',
               cursor: 'pointer',
@@ -1146,8 +1146,8 @@ function EditReferenceModal({ entry, onClose, onSave }: EditReferenceModalProps)
             disabled={isSaving}
             style={{
               padding: '8px 16px',
-              backgroundColor: '#4A90A4',
-              color: 'white',
+              backgroundColor: 'var(--color-accent-default)',
+              color: 'var(--color-text-inverse)',
               border: 'none',
               borderRadius: '6px',
               fontSize: '14px',

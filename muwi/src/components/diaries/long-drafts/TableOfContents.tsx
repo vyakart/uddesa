@@ -18,10 +18,10 @@ interface TableOfContentsProps {
 }
 
 const statusColors: Record<string, string> = {
-  draft: '#9CA3AF',
-  'in-progress': '#F59E0B',
-  review: '#3B82F6',
-  complete: '#10B981',
+  draft: 'var(--color-text-tertiary)',
+  'in-progress': 'var(--color-status-in-progress)',
+  review: 'var(--color-status-review)',
+  complete: 'var(--color-status-complete)',
 };
 
 // Helper to build section hierarchy
@@ -233,8 +233,8 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
         style={{
           width: '40px',
           height: '100%',
-          backgroundColor: '#F9FAFB',
-          borderRight: '1px solid #E5E7EB',
+          backgroundColor: 'var(--color-bg-secondary)',
+          borderRight: '1px solid var(--color-border-default)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -253,7 +253,7 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#6B7280',
+            color: 'var(--color-text-secondary)',
           }}
           title="Show table of contents"
         >
@@ -272,8 +272,8 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
       style={{
         width: '260px',
         height: '100%',
-        backgroundColor: '#F9FAFB',
-        borderRight: '1px solid #E5E7EB',
+        backgroundColor: 'var(--color-bg-secondary)',
+        borderRight: '1px solid var(--color-border-default)',
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
@@ -283,7 +283,7 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
       <div
         style={{
           padding: '16px',
-          borderBottom: '1px solid #E5E7EB',
+          borderBottom: '1px solid var(--color-border-default)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -293,7 +293,7 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
           style={{
             fontSize: '13px',
             fontWeight: 600,
-            color: '#374151',
+            color: 'var(--color-text-primary)',
             textTransform: 'uppercase',
             letterSpacing: '0.5px',
           }}
@@ -312,7 +312,7 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#6B7280',
+            color: 'var(--color-text-secondary)',
           }}
           title="Hide table of contents"
         >
@@ -323,14 +323,14 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
       </div>
 
       {/* Add Section button */}
-      <div style={{ padding: '12px 16px', borderBottom: '1px solid #E5E7EB' }}>
+      <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--color-border-default)' }}>
         <button
           onClick={() => onCreateSection(null)}
           style={{
             width: '100%',
             padding: '8px 12px',
-            backgroundColor: '#4A90A4',
-            color: 'white',
+            backgroundColor: 'var(--color-accent-default)',
+            color: 'var(--color-text-inverse)',
             border: 'none',
             borderRadius: '6px',
             fontSize: '13px',
@@ -343,10 +343,10 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
             transition: 'background-color 150ms ease',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#3D7A8C';
+            e.currentTarget.style.backgroundColor = 'var(--color-accent-hover)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = '#4A90A4';
+            e.currentTarget.style.backgroundColor = 'var(--color-accent-default)';
           }}
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -363,12 +363,12 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
             style={{
               padding: '24px 16px',
               textAlign: 'center',
-              color: '#9CA3AF',
+              color: 'var(--color-text-tertiary)',
               fontSize: '13px',
             }}
           >
             <p style={{ marginBottom: '8px' }}>No sections yet</p>
-            <p style={{ fontSize: '12px', color: '#D1D5DB' }}>
+            <p style={{ fontSize: '12px', color: 'var(--color-text-tertiary)' }}>
               Add a section to start writing
             </p>
           </div>
@@ -397,16 +397,16 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
       <div
         style={{
           padding: '12px 16px',
-          borderTop: '1px solid #E5E7EB',
+          borderTop: '1px solid var(--color-border-default)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
         }}
       >
-        <span style={{ fontSize: '12px', color: '#6B7280' }}>
+        <span style={{ fontSize: '12px', color: 'var(--color-text-secondary)' }}>
           {sectionHierarchy.length} section{sectionHierarchy.length !== 1 ? 's' : ''}
         </span>
-        <span style={{ fontSize: '12px', color: '#6B7280' }}>
+        <span style={{ fontSize: '12px', color: 'var(--color-text-secondary)' }}>
           {totalWordCount.toLocaleString()} words
         </span>
       </div>
@@ -419,10 +419,10 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
             position: 'fixed',
             top: contextMenu.y,
             left: contextMenu.x,
-            backgroundColor: 'white',
-            border: '1px solid #E5E7EB',
+            backgroundColor: 'var(--color-bg-primary)',
+            border: '1px solid var(--color-border-default)',
             borderRadius: '8px',
-            boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
+            boxShadow: 'var(--shadow-md)',
             zIndex: 100,
             minWidth: '160px',
             overflow: 'hidden',
@@ -445,7 +445,7 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
               width: '100%',
               padding: '10px 16px',
               fontSize: '13px',
-              color: '#374151',
+              color: 'var(--color-text-primary)',
               border: 'none',
               backgroundColor: 'transparent',
               cursor: 'pointer',
@@ -455,7 +455,7 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
               gap: '8px',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#F3F4F6';
+              e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent';
@@ -467,14 +467,14 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
             </svg>
             {contextSection?.isLocked ? 'Unlock' : 'Lock'}
           </button>
-          <div style={{ height: 1, backgroundColor: '#E5E7EB' }} />
+          <div style={{ height: 1, backgroundColor: 'var(--color-border-default)' }} />
           <button
             onClick={() => handleAddSubsection(contextMenu.sectionId)}
             style={{
               width: '100%',
               padding: '10px 16px',
               fontSize: '13px',
-              color: '#374151',
+              color: 'var(--color-text-primary)',
               border: 'none',
               backgroundColor: 'transparent',
               cursor: 'pointer',
@@ -484,7 +484,7 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
               gap: '8px',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#F3F4F6';
+              e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent';
@@ -501,7 +501,7 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
               width: '100%',
               padding: '10px 16px',
               fontSize: '13px',
-              color: '#DC2626',
+              color: 'var(--color-error)',
               border: 'none',
               backgroundColor: 'transparent',
               cursor: 'pointer',
@@ -511,7 +511,7 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
               gap: '8px',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#FEE2E2';
+              e.currentTarget.style.backgroundColor = 'var(--color-error-subtle)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent';
@@ -596,9 +596,9 @@ const TOCSectionItem = memo(function TOCSectionItem({
           padding: '8px 12px',
           paddingLeft: `${12 + indentation}px`,
           cursor: 'pointer',
-          backgroundColor: isSelected ? '#EFF6FF' : 'transparent',
-          borderLeft: isSelected ? '3px solid #4A90A4' : '3px solid transparent',
-          borderTop: isDropTarget ? '2px solid #4A90A4' : '2px solid transparent',
+          backgroundColor: isSelected ? 'var(--color-accent-subtle)' : 'transparent',
+          borderLeft: isSelected ? '3px solid var(--color-accent-default)' : '3px solid transparent',
+          borderTop: isDropTarget ? '2px solid var(--color-accent-default)' : '2px solid transparent',
           display: 'flex',
           alignItems: 'center',
           gap: '6px',
@@ -607,7 +607,7 @@ const TOCSectionItem = memo(function TOCSectionItem({
         }}
         onMouseEnter={(e) => {
           if (!isSelected) {
-            e.currentTarget.style.backgroundColor = '#F3F4F6';
+            e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)';
           }
         }}
         onMouseLeave={(e) => {
@@ -633,7 +633,7 @@ const TOCSectionItem = memo(function TOCSectionItem({
               alignItems: 'center',
               justifyContent: 'center',
               padding: 0,
-              color: '#9CA3AF',
+              color: 'var(--color-text-tertiary)',
             }}
           >
             <svg
@@ -673,7 +673,7 @@ const TOCSectionItem = memo(function TOCSectionItem({
             flex: 1,
             fontSize: '13px',
             fontWeight: depth === 0 ? 500 : 400,
-            color: '#374151',
+            color: 'var(--color-text-primary)',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -687,7 +687,7 @@ const TOCSectionItem = memo(function TOCSectionItem({
         <span
           style={{
             fontSize: '11px',
-            color: '#9CA3AF',
+            color: 'var(--color-text-tertiary)',
             flexShrink: 0,
           }}
         >
@@ -701,7 +701,7 @@ const TOCSectionItem = memo(function TOCSectionItem({
             height="12"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#9CA3AF"
+            stroke="var(--color-text-tertiary)"
             strokeWidth="2"
             style={{ flexShrink: 0 }}
           >
