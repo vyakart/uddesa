@@ -32,16 +32,18 @@ const { mockApi, excalidrawPropsRef, selectedElementIdsRef, sceneElementsRef } =
             gridModeEnabled: boolean;
             initialData: {
               elements: ExcalidrawElement[];
-              appState: {
-                viewBackgroundColor: string;
-                gridSize?: number;
-                scrollX: number;
-                scrollY: number;
-                zoom: { value: number };
-                currentItemFontFamily: number;
-              };
+            appState: {
+              viewBackgroundColor: string;
+              gridSize?: number;
+              scrollX: number;
+              scrollY: number;
+              zoom: { value: number };
+              currentItemFontFamily: number;
+              currentItemStrokeColor: string;
+              currentItemBackgroundColor: string;
             };
-          },
+          };
+        },
     },
     selectedElementIdsRef,
     sceneElementsRef,
@@ -112,7 +114,7 @@ describe('ExcalidrawWrapper', () => {
     sceneElementsRef.current = [];
   });
 
-  it('passes initial scene settings and updates Excalidraw app state from store settings', async () => {
+  it('applies blackboard token-driven canvas defaults and updates Excalidraw app state', async () => {
     const saveElements = vi.fn().mockResolvedValue(undefined);
     const updateViewport = vi.fn().mockResolvedValue(undefined);
 
@@ -140,21 +142,27 @@ describe('ExcalidrawWrapper', () => {
     });
 
     expect(screen.getByTestId('mock-excalidraw')).toBeInTheDocument();
-    expect(excalidrawPropsRef.current?.theme).toBe('dark');
-    expect(excalidrawPropsRef.current?.gridModeEnabled).toBe(true);
+    expect(excalidrawPropsRef.current?.theme).toBe('light');
+    expect(excalidrawPropsRef.current?.gridModeEnabled).toBe(false);
     expect(excalidrawPropsRef.current?.initialData.appState.gridSize).toBe(32);
-    expect(excalidrawPropsRef.current?.initialData.appState.viewBackgroundColor).toBe('#2D3436');
+    expect(excalidrawPropsRef.current?.initialData.appState.viewBackgroundColor).toBe('transparent');
     expect(excalidrawPropsRef.current?.initialData.appState.scrollX).toBe(15);
     expect(excalidrawPropsRef.current?.initialData.appState.scrollY).toBe(25);
     expect(excalidrawPropsRef.current?.initialData.appState.zoom).toEqual({ value: 1.2 });
     expect(excalidrawPropsRef.current?.initialData.appState.currentItemFontFamily).toBe(FONT_FAMILY.Helvetica);
+    expect(excalidrawPropsRef.current?.initialData.appState.currentItemStrokeColor).toBe('#F5F5F5');
+    expect(excalidrawPropsRef.current?.initialData.appState.currentItemBackgroundColor).toBe('transparent');
+    expect(screen.getByTestId('excalidraw-wrapper-root')).toHaveStyle({ backgroundColor: '#2D3436' });
+    expect(screen.getByTestId('excalidraw-wrapper-root').style.backgroundImage).toContain('rgba(255, 255, 255, 0.04)');
 
     await waitFor(() => {
       expect(mockApi.updateScene).toHaveBeenCalledWith({
         appState: {
-          viewBackgroundColor: '#2D3436',
+          viewBackgroundColor: 'transparent',
           gridSize: 32,
           currentItemFontFamily: FONT_FAMILY.Helvetica,
+          currentItemStrokeColor: '#F5F5F5',
+          currentItemBackgroundColor: 'transparent',
         },
       });
     });
@@ -174,6 +182,7 @@ describe('ExcalidrawWrapper', () => {
     });
 
     render(<ExcalidrawWrapper onElementsChange={onElementsChange} />);
+    expect(screen.getByTestId('excalidraw-wrapper-root')).toHaveStyle({ backgroundColor: '#2D3436' });
 
     const firstBatch = [makeTextElement('t-1', '# First', 0, 0)];
     const secondBatch = [makeTextElement('t-2', '## Second', 10, 10)];

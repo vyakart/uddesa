@@ -1790,8 +1790,8 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Effort**: S
 - **Files to Modify**: `muwi/src/components/diaries/blackboard/ExcalidrawWrapper.tsx`
 - **Acceptance Criteria**:
-  - [ ] Blackboard canvas always dark regardless of app theme
-  - [ ] Grid tone and text defaults follow Blackboard token set
+  - [x] Blackboard canvas always dark regardless of app theme
+  - [x] Grid tone and text defaults follow Blackboard token set
 
 #### Task 7.8.4: Add Blackboard Status Bar + Empty State
 - **Description**: Add zoom/info strip and first-use copy

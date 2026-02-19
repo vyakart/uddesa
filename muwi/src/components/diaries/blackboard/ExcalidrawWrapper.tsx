@@ -16,6 +16,20 @@ interface ExcalidrawWrapperProps {
   onNavigationHandled?: () => void;
 }
 
+interface BlackboardCanvasTokens {
+  canvas: string;
+  grid: string;
+  text: string;
+  strokeDefault: string;
+}
+
+const BLACKBOARD_TOKEN_FALLBACKS: BlackboardCanvasTokens = {
+  canvas: '#2D3436',
+  grid: 'rgba(255, 255, 255, 0.04)',
+  text: '#F0F0F0',
+  strokeDefault: 'rgba(255, 255, 255, 0.7)',
+};
+
 function resolveExcalidrawFontFamily(fontName: string | undefined): number {
   switch (fontName) {
     case 'Caveat':
@@ -28,6 +42,38 @@ function resolveExcalidrawFontFamily(fontName: string | undefined): number {
     default:
       return FONT_FAMILY.Helvetica;
   }
+}
+
+function resolveBlackboardToken(name: string, fallback: string): string {
+  if (typeof window === 'undefined') {
+    return fallback;
+  }
+
+  const value = window.getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return value || fallback;
+}
+
+function resolveBlackboardCanvasTokens(): BlackboardCanvasTokens {
+  return {
+    canvas: resolveBlackboardToken('--color-bb-canvas', BLACKBOARD_TOKEN_FALLBACKS.canvas),
+    grid: resolveBlackboardToken('--color-bb-canvas-grid', BLACKBOARD_TOKEN_FALLBACKS.grid),
+    text: resolveBlackboardToken('--color-bb-text', BLACKBOARD_TOKEN_FALLBACKS.text),
+    strokeDefault: resolveBlackboardToken('--color-bb-stroke-default', BLACKBOARD_TOKEN_FALLBACKS.strokeDefault),
+  };
+}
+
+function getZoomValue(appState: AppState | undefined): number {
+  if (!appState) {
+    return 1;
+  }
+  return typeof appState.zoom === 'number' ? appState.zoom : appState.zoom?.value ?? 1;
+}
+
+function normalizeGridOffset(offset: number, gridPitch: number): number {
+  if (gridPitch <= 0) {
+    return 0;
+  }
+  return ((offset % gridPitch) + gridPitch) % gridPitch;
 }
 
 export function ExcalidrawWrapper({
@@ -45,6 +91,14 @@ export function ExcalidrawWrapper({
   const saveElements = useBlackboardStore((state) => state.saveElements);
   const updateViewport = useBlackboardStore((state) => state.updateViewport);
   const selectedFontFamily = resolveExcalidrawFontFamily(canvas?.settings?.defaultFont);
+  const tokenColors = resolveBlackboardCanvasTokens();
+  const viewport = canvas?.viewportState ?? { panX: 0, panY: 0, zoom: 1 };
+  const defaultStrokeColor = canvas?.settings?.defaultStrokeColor ?? tokenColors.strokeDefault;
+  const isGridVisible = canvas?.settings?.showGrid ?? false;
+  const gridSize = canvas?.settings?.gridSize ?? 20;
+  const gridPitch = Math.max(8, gridSize * viewport.zoom);
+  const gridOffsetX = normalizeGridOffset(viewport.panX, gridPitch);
+  const gridOffsetY = normalizeGridOffset(viewport.panY, gridPitch);
 
   // Debounced save function
   const debouncedSave = useCallback(
@@ -55,7 +109,7 @@ export function ExcalidrawWrapper({
       saveTimeoutRef.current = setTimeout(() => {
         void saveElements(newElements);
         if (appState) {
-          const zoomValue = typeof appState.zoom === 'number' ? appState.zoom : appState.zoom?.value ?? 1;
+          const zoomValue = getZoomValue(appState);
           void updateViewport({
             panX: appState.scrollX ?? 0,
             panY: appState.scrollY ?? 0,
@@ -84,8 +138,10 @@ export function ExcalidrawWrapper({
   useEffect(() => {
     if (excalidrawAPI && canvas?.settings) {
       const appStateUpdate: Partial<AppState> = {
-        viewBackgroundColor: canvas.settings.backgroundColor,
+        viewBackgroundColor: 'transparent',
         currentItemFontFamily: selectedFontFamily as AppState['currentItemFontFamily'],
+        currentItemStrokeColor: defaultStrokeColor,
+        currentItemBackgroundColor: 'transparent',
       };
       if (canvas.settings.showGrid) {
         appStateUpdate.gridSize = canvas.settings.gridSize ?? 20;
@@ -113,7 +169,7 @@ export function ExcalidrawWrapper({
         void saveElements(updatedElements);
       }
     }
-  }, [canvas?.settings, excalidrawAPI, saveElements, selectedFontFamily]);
+  }, [canvas?.settings, defaultStrokeColor, excalidrawAPI, saveElements, selectedFontFamily]);
 
   // Cleanup
   useEffect(() => {
@@ -151,20 +207,27 @@ export function ExcalidrawWrapper({
     onNavigationHandled?.();
   }, [canvas?.viewportState.zoom, excalidrawAPI, navigationTarget, onNavigationHandled, updateViewport]);
 
-  const theme: 'dark' | 'light' =
-    canvas?.settings?.backgroundColor === '#2D3436' ||
-    canvas?.settings?.backgroundColor === '#1a1a2e'
-      ? 'dark'
-      : 'light';
-
   return (
-    <div ref={wrapperRef} data-testid="excalidraw-wrapper-root" style={{ width: '100%', height: '100%' }}>
+    <div
+      ref={wrapperRef}
+      data-testid="excalidraw-wrapper-root"
+      style={{
+        width: '100%',
+        height: '100%',
+        backgroundColor: tokenColors.canvas,
+        backgroundImage: isGridVisible
+          ? `linear-gradient(to right, ${tokenColors.grid} 1px, transparent 1px), linear-gradient(to bottom, ${tokenColors.grid} 1px, transparent 1px)`
+          : undefined,
+        backgroundSize: isGridVisible ? `${gridPitch}px ${gridPitch}px` : undefined,
+        backgroundPosition: isGridVisible ? `${gridOffsetX}px ${gridOffsetY}px` : undefined,
+      }}
+    >
       <Excalidraw
         excalidrawAPI={(api) => setExcalidrawAPI(api)}
         initialData={{
           elements: elements,
           appState: {
-            viewBackgroundColor: canvas?.settings?.backgroundColor || '#fdfbf7',
+            viewBackgroundColor: 'transparent',
             gridSize: canvas?.settings?.showGrid ? (canvas?.settings?.gridSize ?? 20) : undefined,
             scrollX: canvas?.viewportState?.panX ?? 0,
             scrollY: canvas?.viewportState?.panY ?? 0,
@@ -172,11 +235,13 @@ export function ExcalidrawWrapper({
               value: (canvas?.viewportState?.zoom ?? 1) as unknown as AppState['zoom']['value'],
             },
             currentItemFontFamily: selectedFontFamily as AppState['currentItemFontFamily'],
+            currentItemStrokeColor: defaultStrokeColor || tokenColors.text,
+            currentItemBackgroundColor: 'transparent',
           },
         }}
         onChange={handleChange}
-        theme={theme}
-        gridModeEnabled={canvas?.settings?.showGrid || false}
+        theme="light"
+        gridModeEnabled={false}
       />
     </div>
   );
