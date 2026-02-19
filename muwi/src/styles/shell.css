@@ -1341,6 +1341,459 @@
   gap: var(--space-2);
 }
 
+.muwi-scratchpad-toolbar {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.muwi-scratchpad-toolbar__controls {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.muwi-scratchpad-toolbar__page-indicator {
+  min-width: 6.75rem;
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.muwi-scratchpad-sidebar__label {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-tertiary);
+  letter-spacing: var(--tracking-wider);
+}
+
+.muwi-scratchpad-sidebar__new-page {
+  width: 100%;
+}
+
+.muwi-scratchpad-canvas {
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--space-6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-bg-canvas) 85%, var(--color-bg-secondary)),
+    var(--color-bg-canvas)
+  );
+}
+
+.muwi-scratchpad-state {
+  width: min(420px, 100%);
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: var(--space-2);
+  padding: var(--space-6);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-elevated);
+  box-shadow: var(--shadow-sm);
+}
+
+.muwi-scratchpad-state__title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.muwi-scratchpad-state__text {
+  margin: 0;
+  font-size: var(--font-size-md);
+  color: var(--color-text-secondary);
+}
+
+.muwi-scratchpad-stack {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.muwi-scratchpad-stack__item {
+  width: 100%;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-primary);
+  padding: var(--space-2);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-2);
+  text-align: left;
+  transition: var(--transition-colors), var(--transition-shadow), var(--transition-transform);
+}
+
+.muwi-scratchpad-stack__item:hover {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-xs);
+}
+
+.muwi-scratchpad-stack__item[data-active='true'] {
+  border-color: var(--color-accent-default);
+  background: var(--color-selected-bg);
+}
+
+.muwi-scratchpad-stack__item[data-has-content='false'] {
+  opacity: 0.72;
+}
+
+.muwi-scratchpad-stack__item:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.muwi-scratchpad-stack__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--muwi-page-dot, var(--color-cat-notes));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-text-primary) 14%, transparent);
+}
+
+.muwi-scratchpad-stack__label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+}
+
+.muwi-scratchpad-stack__meta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.muwi-scratchpad-stack__lock {
+  grid-column: 1 / -1;
+  justify-self: end;
+  font-size: var(--font-size-xs);
+  color: var(--color-locked);
+}
+
+.muwi-scratchpad-category-picker {
+  position: relative;
+  display: inline-flex;
+}
+
+.muwi-scratchpad-category-picker__trigger {
+  height: var(--size-button-sm);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  padding-inline: var(--space-2);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--weight-medium);
+  transition: var(--transition-colors), var(--transition-shadow);
+}
+
+.muwi-scratchpad-category-picker__trigger:hover:not(:disabled) {
+  background: var(--color-hover-overlay);
+  border-color: var(--color-border-strong);
+}
+
+.muwi-scratchpad-category-picker__trigger:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.muwi-scratchpad-category-picker__trigger:disabled {
+  opacity: 0.55;
+}
+
+.muwi-scratchpad-category-picker__swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid color-mix(in srgb, var(--color-text-primary) 12%, transparent);
+  background: var(--muwi-category-swatch, var(--color-cat-notes));
+}
+
+.muwi-scratchpad-category-picker__chevron {
+  color: var(--color-text-tertiary);
+  transition: var(--transition-transform);
+}
+
+.muwi-scratchpad-category-picker__chevron[data-open='true'] {
+  transform: rotate(180deg);
+}
+
+.muwi-scratchpad-category-picker__menu {
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  left: 0;
+  z-index: var(--z-dropdown);
+  min-width: 170px;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-elevated);
+  box-shadow: var(--shadow-dropdown);
+  padding: var(--space-1);
+  display: grid;
+  gap: var(--space-0-5);
+}
+
+.muwi-scratchpad-category-picker__option {
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-primary);
+  padding: var(--space-1-5) var(--space-2);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  text-align: left;
+  transition: var(--transition-colors), var(--transition-shadow);
+}
+
+.muwi-scratchpad-category-picker__option:hover {
+  background: var(--color-hover-overlay);
+}
+
+.muwi-scratchpad-category-picker__option[data-selected='true'] {
+  background: var(--color-selected-bg);
+  font-weight: var(--weight-medium);
+}
+
+.muwi-scratchpad-category-picker__option:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.muwi-scratchpad-category-picker__check {
+  margin-left: auto;
+  color: var(--color-accent-default);
+}
+
+.muwi-scratchpad-page {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.muwi-scratchpad-page__stack {
+  width: 408px;
+  height: 608px;
+  position: relative;
+}
+
+.muwi-scratchpad-page__shadow {
+  position: absolute;
+  width: 400px;
+  height: 600px;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--color-border-default) 90%, transparent);
+}
+
+.muwi-scratchpad-page__shadow.is-depth-1 {
+  inset: 4px 0 0 4px;
+  background: color-mix(in srgb, var(--color-bg-tertiary) 86%, var(--color-bg-primary));
+}
+
+.muwi-scratchpad-page__shadow.is-depth-2 {
+  inset: 2px 0 0 2px;
+  background: color-mix(in srgb, var(--color-bg-secondary) 88%, var(--color-bg-primary));
+}
+
+.muwi-scratchpad-page__canvas {
+  position: relative;
+  width: 400px;
+  height: 600px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-on-canvas);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  cursor: text;
+  background: color-mix(
+    in srgb,
+    var(--muwi-scratchpad-page-color, var(--color-cat-notes)) 86%,
+    var(--color-bg-primary)
+  );
+}
+
+.muwi-scratchpad-page__canvas[data-category='ideas'] {
+  --muwi-scratchpad-page-color: var(--color-cat-ideas);
+}
+
+.muwi-scratchpad-page__canvas[data-category='todos'] {
+  --muwi-scratchpad-page-color: var(--color-cat-todos);
+}
+
+.muwi-scratchpad-page__canvas[data-category='notes'] {
+  --muwi-scratchpad-page-color: var(--color-cat-notes);
+}
+
+.muwi-scratchpad-page__canvas[data-category='questions'] {
+  --muwi-scratchpad-page-color: var(--color-cat-questions);
+}
+
+.muwi-scratchpad-page__canvas[data-category='misc'] {
+  --muwi-scratchpad-page-color: var(--color-cat-misc);
+}
+
+.muwi-scratchpad-page__canvas[data-locked='true'] {
+  cursor: not-allowed;
+}
+
+.muwi-scratchpad-page__texture {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.28;
+  background-image: radial-gradient(
+    circle at 20% 20%,
+    color-mix(in srgb, var(--color-text-primary) 8%, transparent) 0 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
+}
+
+.muwi-scratchpad-page__empty {
+  position: absolute;
+  inset: 0;
+  padding: var(--space-6);
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: var(--space-2);
+  text-align: center;
+}
+
+.muwi-scratchpad-page__empty-icon {
+  color: var(--color-text-tertiary);
+}
+
+.muwi-scratchpad-page__empty-title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.muwi-scratchpad-page__empty-text {
+  margin: 0;
+  max-width: 32ch;
+  font-size: var(--font-size-md);
+  line-height: var(--leading-normal);
+  color: var(--color-text-secondary);
+}
+
+.muwi-scratchpad-page__empty-action {
+  margin-top: var(--space-1);
+}
+
+.muwi-scratchpad-page__locked-overlay {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--color-locked-bg) 85%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-locked);
+}
+
+.muwi-scratchpad-text-block {
+  position: absolute;
+  min-width: 40px;
+  max-width: calc(100% - 40px);
+  transition: var(--transition-shadow), var(--transition-opacity), var(--transition-transform);
+}
+
+.muwi-scratchpad-text-block[data-focused='true'] {
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-focus);
+}
+
+.muwi-scratchpad-text-block[data-dragging='true'] {
+  opacity: 0.78;
+  cursor: grabbing;
+}
+
+.muwi-scratchpad-text-block[data-locked='true'] {
+  cursor: not-allowed;
+}
+
+.muwi-scratchpad-text-block__drag-outline {
+  position: absolute;
+  inset: -4px;
+  border: 1px dashed color-mix(in srgb, var(--color-border-strong) 90%, transparent);
+  border-radius: var(--radius-sm);
+  opacity: 0;
+  pointer-events: none;
+  transition: var(--transition-opacity);
+}
+
+.muwi-scratchpad-text-block:hover .muwi-scratchpad-text-block__drag-outline {
+  opacity: 1;
+}
+
+.muwi-scratchpad-text-block[data-focused='true'] .muwi-scratchpad-text-block__drag-outline,
+.muwi-scratchpad-text-block[data-locked='true'] .muwi-scratchpad-text-block__drag-outline {
+  opacity: 0;
+}
+
+.muwi-scratchpad-text-block__lock-indicator {
+  position: absolute;
+  right: calc(-1 * var(--space-6));
+  top: var(--space-0-5);
+  color: var(--color-locked);
+}
+
+.muwi-scratchpad-text-block__lock-toggle {
+  position: absolute;
+  top: calc(-1 * var(--space-6));
+  right: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-tertiary);
+  padding: var(--space-0-5) var(--space-2);
+  font-size: var(--font-size-xs);
+  line-height: 1.2;
+  transition: var(--transition-colors), var(--transition-shadow);
+}
+
+.muwi-scratchpad-text-block__lock-toggle:hover {
+  background: var(--color-hover-overlay);
+  color: var(--color-text-primary);
+}
+
+.muwi-scratchpad-text-block__lock-toggle:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.muwi-scratchpad-text-block__content {
+  min-height: 1.5em;
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-2);
+  outline: none;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--color-text-on-canvas);
+}
+
+.muwi-scratchpad-text-block[data-locked='true'] .muwi-scratchpad-text-block__content {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
 .muwi-shelf {
   min-height: 100vh;
   padding: var(--space-12) var(--space-8) var(--space-6);

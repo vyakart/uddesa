@@ -60,7 +60,7 @@ describe('TextBlock', () => {
 
     fireEvent.focus(editable);
     await waitFor(() => {
-      expect(wrapper.className).toContain('ring-2');
+      expect(wrapper).toHaveAttribute('data-focused', 'true');
     });
   });
 
@@ -123,10 +123,10 @@ describe('TextBlock', () => {
       deleteTextBlock: vi.fn().mockResolvedValue(undefined),
     });
 
-    const { container } = render(<TextBlock block={makeBlock()} isPageLocked />);
+    render(<TextBlock block={makeBlock()} isPageLocked />);
     const editable = screen.getByText('Hello block');
     expect(editable).toHaveAttribute('contenteditable', 'false');
-    expect(container.querySelector('.text-gray-400')).toBeInTheDocument();
+    expect(screen.getByTestId('scratchpad-text-lock-indicator')).toBeInTheDocument();
   });
 
   it('locks and unlocks an individual text block with passkey prompt', async () => {

@@ -23,7 +23,7 @@ describe('PageStack', () => {
     useScratchpadStore.setState(useScratchpadStore.getInitialState(), true);
   });
 
-  it('renders page indicators, content shading, current highlight, and tooltip labels', () => {
+  it('renders page rows with content and active-state markers', () => {
     const pages = [
       makePage({ pageNumber: 1, textBlockIds: ['a'] }),
       makePage({ pageNumber: 2, textBlockIds: [] }),
@@ -40,9 +40,10 @@ describe('PageStack', () => {
     const buttons = screen.getAllByRole('button');
     expect(buttons).toHaveLength(3);
 
-    expect(buttons[0]).toHaveStyle({ opacity: '1' });
-    expect(buttons[1]).toHaveStyle({ opacity: '0.5' });
-    expect(buttons[1].className).toContain('border-gray-600');
+    expect(buttons[0]).toHaveAttribute('data-has-content', 'true');
+    expect(buttons[1]).toHaveAttribute('data-has-content', 'false');
+    expect(buttons[1]).toHaveAttribute('data-active', 'true');
+    expect(buttons[1]).toHaveAttribute('aria-current', 'page');
 
     expect(screen.getByText('Page 1')).toBeInTheDocument();
     expect(screen.getByText('Page 2')).toBeInTheDocument();
@@ -57,7 +58,7 @@ describe('PageStack', () => {
     });
 
     render(<PageStack />);
-    fireEvent.click(screen.getByTitle('Page 2'));
+    fireEvent.click(screen.getByRole('button', { name: /Page 2/i }));
 
     expect(useScratchpadStore.getState().currentPageIndex).toBe(1);
   });

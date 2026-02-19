@@ -35,6 +35,7 @@ function makePage(overrides: Partial<ScratchpadPageType> = {}): ScratchpadPageTy
 describe('Scratchpad', () => {
   beforeEach(() => {
     useAppStore.setState(useAppStore.getInitialState(), true);
+    useAppStore.setState({ isSidebarOpen: true });
     useSettingsStore.setState(useSettingsStore.getInitialState(), true);
     useScratchpadStore.setState(useScratchpadStore.getInitialState(), true);
   });
@@ -66,7 +67,9 @@ describe('Scratchpad', () => {
 
     expect(screen.getByTestId('scratchpad-page-stack')).toBeInTheDocument();
     expect(screen.getByTestId('scratchpad-category-picker')).toBeInTheDocument();
-    expect(screen.getByText('Page 1 of 2')).toBeInTheDocument();
+    expect(screen.getByText('PAGES')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '+ New Page' })).toBeInTheDocument();
+    expect(screen.getByText('Page 1 of 2 · Notes')).toBeInTheDocument();
   });
 
   it('handles keyboard shortcuts and new page button', async () => {
@@ -103,7 +106,7 @@ describe('Scratchpad', () => {
     expect(navigateToPage).not.toHaveBeenCalledWith(-1);
 
     fireEvent.keyDown(window, { key: 'n', ctrlKey: true });
-    fireEvent.click(screen.getByRole('button', { name: /^New$/i }));
+    fireEvent.click(screen.getByRole('button', { name: '+ New Page' }));
     expect(createPage).toHaveBeenCalledTimes(2);
 
     fireEvent.keyDown(window, { key: 'f', ctrlKey: true, shiftKey: true });

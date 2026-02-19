@@ -45,15 +45,7 @@ describe('ScratchpadPage', () => {
     useSettingsStore.setState(useSettingsStore.getInitialState(), true);
   });
 
-  it('uses settings page size/orientation and renders blocks with page depth effect', () => {
-    useSettingsStore.setState((state) => ({
-      scratchpad: {
-        ...state.scratchpad,
-        pageSize: { width: 500, height: 700 },
-        orientation: 'landscape',
-      },
-    }));
-
+  it('renders fixed 400x600 page canvas with category tint and depth shadows', () => {
     useScratchpadStore.setState({
       createTextBlock: vi.fn().mockResolvedValue(makeBlock('new-block')),
     });
@@ -65,11 +57,8 @@ describe('ScratchpadPage', () => {
       />
     );
 
-    expect(screen.getByTestId('scratchpad-page-canvas')).toHaveStyle({
-      width: '700px',
-      height: '500px',
-      backgroundColor: 'rgb(170, 187, 204)',
-    });
+    expect(screen.getByTestId('scratchpad-page-canvas')).toHaveAttribute('data-page-size', '400x600');
+    expect(screen.getByTestId('scratchpad-page-canvas')).toHaveAttribute('data-category', 'notes');
     expect(screen.getByTestId('scratchpad-page-shadow-1')).toBeInTheDocument();
     expect(screen.getByTestId('scratchpad-page-shadow-2')).toBeInTheDocument();
     expect(screen.getAllByTestId('text-block-mock')).toHaveLength(2);
@@ -98,5 +87,19 @@ describe('ScratchpadPage', () => {
 
     fireEvent.click(canvas, { clientX: 60, clientY: 95 });
     expect(createTextBlock).toHaveBeenCalledWith('page-1', { x: 50, y: 75 });
+  });
+
+  it('shows first-use empty-state action and creates a centered block from action button', () => {
+    const createTextBlock = vi.fn().mockResolvedValue(makeBlock('new-block'));
+    useScratchpadStore.setState({
+      createTextBlock,
+    });
+
+    render(<ScratchpadPage page={makePage()} blocks={[]} />);
+
+    expect(screen.getByText('Start this page')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Add first text block' }));
+
+    expect(createTextBlock).toHaveBeenCalledWith('page-1', { x: 100, y: 168 });
   });
 });

@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
-import { DiaryLayout, PasskeyPrompt } from '@/components/common';
+import { ChevronLeft, ChevronRight, Lock, RefreshCcw, Unlock } from 'lucide-react';
+import { Button, DiaryLayout, PasskeyPrompt } from '@/components/common';
 import { useContentLocking } from '@/hooks';
 import { useScratchpadStore } from '@/stores/scratchpadStore';
 import { useAppStore } from '@/stores/appStore';
@@ -8,6 +9,14 @@ import { ScratchpadPage } from './ScratchpadPage';
 import { PageStack } from './PageStack';
 import { CategoryPicker } from './CategoryPicker';
 import type { CategoryName } from '@/types/scratchpad';
+
+const SCRATCHPAD_CATEGORY_LABELS: Record<CategoryName, string> = {
+  ideas: 'Ideas',
+  todos: 'Todos',
+  notes: 'Notes',
+  questions: 'Questions',
+  misc: 'Misc',
+};
 
 export function Scratchpad() {
   const [isInitialized, setIsInitialized] = useState(false);
@@ -31,6 +40,12 @@ export function Scratchpad() {
 
   const currentPage = pages[currentPageIndex];
   const currentBlocks = currentPage ? (textBlocks.get(currentPage.id) || []) : [];
+  const pageCount = pages.length;
+  const currentPageNumber = currentPage ? currentPageIndex + 1 : 0;
+  const currentCategoryLabel = currentPage
+    ? SCRATCHPAD_CATEGORY_LABELS[currentPage.categoryName]
+    : 'No category';
+  const currentBlockCount = currentBlocks.length;
   const {
     lock,
     unlock,
@@ -146,9 +161,8 @@ export function Scratchpad() {
     }
   }, [currentPage, unlock, updatePageLock]);
 
-  // Toolbar content
   const toolbar = (
-    <div className="flex items-center gap-3">
+    <div className="muwi-scratchpad-toolbar">
       {currentPage && (
         <CategoryPicker
           currentCategory={currentPage.categoryName}
@@ -157,116 +171,143 @@ export function Scratchpad() {
           disabled={currentPage.isLocked}
         />
       )}
-      <button
-        onClick={handleCreatePage}
-        className="flex items-center gap-1 px-2 py-1 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded"
-        title="New page (Ctrl+N)"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-4 w-4"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+      <div className="muwi-scratchpad-toolbar__controls" role="group" aria-label="Page controls">
+        <Button
+          type="button"
+          onClick={() => navigateToPage(currentPageIndex - 1)}
+          variant="ghost"
+          size="sm"
+          iconOnly
+          aria-label="Previous page"
+          disabled={currentPageIndex <= 0}
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-        </svg>
-        New
-      </button>
-      {currentPage && (
-        <button
-          onClick={() => void handlePageLockToggle()}
-          className="flex items-center gap-1 px-2 py-1 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded"
-          title={currentPage.isLocked ? 'Unlock page' : 'Lock page'}
+          <ChevronLeft size={14} aria-hidden="true" />
+        </Button>
+        <span className="muwi-scratchpad-toolbar__page-indicator">
+          Page {currentPageNumber}/{pageCount}
+        </span>
+        <Button
+          type="button"
+          onClick={() => navigateToPage(currentPageIndex + 1)}
+          variant="ghost"
+          size="sm"
+          iconOnly
+          aria-label="Next page"
+          disabled={currentPageIndex >= pageCount - 1}
         >
-          {currentPage.isLocked ? 'Unlock Page' : 'Lock Page'}
-        </button>
-      )}
+          <ChevronRight size={14} aria-hidden="true" />
+        </Button>
+        <Button
+          type="button"
+          onClick={() => void findFreshPage()}
+          variant="secondary"
+          size="sm"
+          leadingIcon={<RefreshCcw size={14} />}
+        >
+          Fresh Page
+        </Button>
+        {currentPage ? (
+          <Button
+            type="button"
+            onClick={() => void handlePageLockToggle()}
+            variant="secondary"
+            size="sm"
+            leadingIcon={currentPage.isLocked ? <Unlock size={14} /> : <Lock size={14} />}
+            aria-label={currentPage.isLocked ? 'Unlock Page' : 'Lock Page'}
+          >
+            {currentPage.isLocked ? 'Unlock Page' : 'Lock Page'}
+          </Button>
+        ) : null}
+      </div>
     </div>
   );
 
-  // Show loading state during initialization
+  const sidebarHeader = <p className="muwi-scratchpad-sidebar__label">PAGES</p>;
+  const sidebarFooter = (
+    <Button
+      type="button"
+      onClick={handleCreatePage}
+      variant="primary"
+      size="md"
+      className="muwi-scratchpad-sidebar__new-page"
+    >
+      + New Page
+    </Button>
+  );
+
+  const status = {
+    left: `Page ${currentPageNumber} of ${pageCount} · ${currentCategoryLabel}`,
+    right: `${currentBlockCount} ${currentBlockCount === 1 ? 'block' : 'blocks'}${
+      currentPage?.isLocked ? ' · Locked' : ''
+    }`,
+  };
+
+  const loadingCanvas = (
+    <div className="muwi-scratchpad-state" role="status" aria-live="polite">
+      <p className="muwi-scratchpad-state__title">Loading scratchpad...</p>
+      <p className="muwi-scratchpad-state__text">Preparing your latest pages and notes.</p>
+    </div>
+  );
+
+  const errorCanvas = (
+    <div className="muwi-scratchpad-state" role="alert">
+      <p className="muwi-scratchpad-state__title">Scratchpad failed to load</p>
+      <p className="muwi-scratchpad-state__text">{error}</p>
+      <Button type="button" onClick={() => void loadPages()} variant="danger" size="md">
+        Retry
+      </Button>
+    </div>
+  );
+
+  const emptyCanvas = (
+    <div className="muwi-scratchpad-state" role="status">
+      <p className="muwi-scratchpad-state__title">No page selected</p>
+      <p className="muwi-scratchpad-state__text">Create a page to begin capturing ideas.</p>
+      <Button type="button" onClick={handleCreatePage} variant="primary" size="md">
+        + New Page
+      </Button>
+    </div>
+  );
+
   if (!isInitialized || isLoading) {
     return (
-      <DiaryLayout diaryType="scratchpad" toolbar={toolbar}>
-        <div className="flex items-center justify-center h-full text-gray-500">
-          Loading...
-        </div>
-      </DiaryLayout>
+      <DiaryLayout
+        diaryType="scratchpad"
+        sidebar={<PageStack />}
+        sidebarHeader={sidebarHeader}
+        sidebarFooter={sidebarFooter}
+        toolbar={toolbar}
+        canvas={<div className="muwi-scratchpad-canvas">{loadingCanvas}</div>}
+        status={status}
+      />
     );
   }
 
-  // Show error state
   if (error) {
     return (
-      <DiaryLayout diaryType="scratchpad" toolbar={toolbar}>
-        <div className="flex flex-col items-center justify-center h-full text-red-500 gap-4">
-          <p>Error: {error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 border border-red-500 rounded-md hover:bg-red-50"
-          >
-            Reload
-          </button>
-        </div>
-      </DiaryLayout>
+      <DiaryLayout
+        diaryType="scratchpad"
+        sidebar={<PageStack />}
+        sidebarHeader={sidebarHeader}
+        sidebarFooter={sidebarFooter}
+        toolbar={toolbar}
+        canvas={<div className="muwi-scratchpad-canvas">{errorCanvas}</div>}
+        status={status}
+      />
     );
   }
 
   return (
-    <DiaryLayout diaryType="scratchpad" toolbar={toolbar}>
-      <div style={{ display: 'flex', height: '100%', overflow: 'hidden', position: 'relative' }}>
-        {/* Main content area */}
-        <div
-          style={{
-            flex: 1,
-            overflow: 'auto',
-            backgroundColor: '#f5f5f5',
-            display: 'flex',
-            alignItems: 'flex-start',
-            justifyContent: 'center',
-          }}
-        >
-          {currentPage ? (
-            <ScratchpadPage page={currentPage} blocks={currentBlocks} />
-          ) : (
-            <div style={{ padding: '2rem', color: '#888' }}>No page found</div>
-          )}
-        </div>
-
-        {/* Page stack on the right */}
-        <div
-          style={{
-            width: '48px',
-            borderLeft: '1px solid #e0e0e0',
-            backgroundColor: 'white',
-            overflowY: 'auto',
-            flexShrink: 0,
-          }}
-        >
-          <PageStack />
-        </div>
-
-        {/* Page counter at bottom */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: '1rem',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            padding: '0.5rem 1rem',
-            backgroundColor: 'white',
-            borderRadius: '9999px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-            fontSize: '0.875rem',
-            color: '#666',
-            zIndex: 10,
-          }}
-        >
-          Page {currentPageIndex + 1} of {pages.length}
-        </div>
-      </div>
-
+    <>
+      <DiaryLayout
+        diaryType="scratchpad"
+        sidebar={<PageStack />}
+        sidebarHeader={sidebarHeader}
+        sidebarFooter={sidebarFooter}
+        toolbar={toolbar}
+        canvas={<div className="muwi-scratchpad-canvas">{currentPage ? <ScratchpadPage page={currentPage} blocks={currentBlocks} /> : emptyCanvas}</div>}
+        status={status}
+      />
       <PasskeyPrompt
         isOpen={showUnlockPrompt}
         onClose={() => setShowUnlockPrompt(false)}
@@ -277,6 +318,6 @@ export function Scratchpad() {
         error={lockingError}
         submitLabel="Unlock"
       />
-    </DiaryLayout>
+    </>
   );
 }

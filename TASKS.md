@@ -1729,17 +1729,17 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Effort**: M
 - **Files to Modify**: `muwi/src/components/diaries/scratchpad/Scratchpad.tsx`
 - **Acceptance Criteria**:
-  - [ ] Sidebar, toolbar, canvas, and status bar rendered via shared shell
-  - [ ] No legacy top-header layout remains
+  - [x] Sidebar, toolbar, canvas, and status bar rendered via shared shell
+  - [x] No legacy top-header layout remains
 
 #### Task 7.7.2: Implement Scratchpad Sidebar and Toolbar Specs
 - **Description**: Align pages list, category indicators, and page controls
 - **Dependencies**: 7.7.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Sidebar has `PAGES` label and category dots
-  - [ ] Bottom action shows `+ New Page`
-  - [ ] Toolbar contains only category + page controls
+  - [x] Sidebar has `PAGES` label and category dots
+  - [x] Bottom action shows `+ New Page`
+  - [x] Toolbar contains only category + page controls
 
 #### Task 7.7.3: Implement Fixed Page Canvas Visuals
 - **Description**: Match fixed page size and stack indicator behavior
@@ -1750,17 +1750,17 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/diaries/scratchpad/PageStack.tsx`
   - `muwi/src/components/diaries/scratchpad/TextBlock.tsx`
 - **Acceptance Criteria**:
-  - [ ] Page size 400x600 centered in canvas region
-  - [ ] Page background follows category tint tokens
-  - [ ] Text block hover/drag/lock visuals match spec
+  - [x] Page size 400x600 centered in canvas region
+  - [x] Page background follows category tint tokens
+  - [x] Text block hover/drag/lock visuals match spec
 
 #### Task 7.7.4: Add Scratchpad Status Bar + Empty State
 - **Description**: Add diary-specific status and first-use guidance
 - **Dependencies**: 7.7.2, 7.7.3
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] Status bar shows `Page {n} of {total} · {category}`
-  - [ ] Empty state matches icon/headline/body/action pattern
+  - [x] Status bar shows `Page {n} of {total} · {category}`
+  - [x] Empty state matches icon/headline/body/action pattern
 
 ### 7.8 Blackboard UI Migration
 

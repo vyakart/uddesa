@@ -9,7 +9,7 @@ Last updated: February 19, 2026
 - Latest full coverage snapshot: lines `90.82%`, statements `90.22%`, functions `86.44%`, branches `80.07%`.
 - Recent focus has been adding reliable tests module by module.
 - Blackboard coverage moved from almost none to strong coverage.
-- Current execution stage: Phase `7.7.1` (Scratchpad UI migration onto shared shell slots).
+- Current execution stage: Phase `7.8.1` (Blackboard UI migration onto shared shell slots).
 
 ## 2) Completed tasks so far (brief)
 
@@ -81,6 +81,7 @@ Last updated: February 19, 2026
 | Task wave 59 | Reconciled Phase `0` with live codebase (all remaining infra criteria now verified), fixed Electron dev runtime/startup issues (`vite-plugin-electron` startup flow, `ELECTRON_RUN_AS_NODE` inheritance, ESM `__dirname` pathing), and audited partial Phase `7` items: `7.1.5` verified complete while `7.1.3` remains open due hard-coded color literals in components | Runtime checks (`npm run dev`, `npm run electron:dev` with Electron launch path active), node-typecheck (`tsc -p tsconfig.node.json`), targeted lint (`eslint vite.config.ts electron/main.ts electron/preload.ts`), and task checklist updates in `TASKS.md` |
 | Task wave 60 | Completed `7.4.7` Settings modal refactor by rebuilding `SettingsPanel` into a fixed-size two-pane layout (`640x480` modal shell with `160px` nav rail), switching tab navigation to sidebar interaction styles, and migrating settings form controls/actions to shared `Button`/`FormControls` primitives while keeping behavior unchanged | Shelf/settings targeted verification: `vitest run src/components/shelf/SettingsPanel.test.tsx src/components/shelf/Shelf.test.tsx` (`9` tests passing) + targeted lint on updated shelf/settings files |
 | Task wave 61 | Completed Phase `7.4.8`-`7.6.6`: finalized shared tokenized component/panel cleanup, completed shelf rebuild (`7.5.1`-`7.5.8`), completed command palette delivery (`7.6.1`-`7.6.6`), and removed non-failing React `act(...)` warnings in fake-timer shelf tests | Targeted verification: `vitest run src/components/shelf/Shelf.test.tsx src/components/shelf/SettingsPanel.test.tsx src/components/common/CommandPalette/CommandPalette.test.tsx src/hooks/useGlobalShortcuts.test.tsx` (`23` tests passing, shelf warnings cleared) |
+| Task wave 62 | Completed Scratchpad UI migration `7.7.1`-`7.7.4` by moving Scratchpad onto explicit `DiaryLayout` shell slots (sidebar/toolbar/canvas/status), rebuilding sidebar page navigation with category dots + `+ New Page` footer action, implementing fixed `400x600` page canvas visuals with tokenized scratchpad styles, and adding first-use empty-state guidance and updated text-block lock/drag/focus treatments | Scratchpad-targeted verification: `vitest run src/components/diaries/scratchpad/Scratchpad.test.tsx src/components/diaries/scratchpad/ScratchpadPage.test.tsx src/components/diaries/scratchpad/PageStack.test.tsx src/components/diaries/scratchpad/CategoryPicker.test.tsx src/components/diaries/scratchpad/TextBlock.test.tsx` (`15` tests passing) + targeted lint on edited scratchpad files |
 
 ## 3) Blackboard testing progress
 
@@ -120,6 +121,6 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Execute `7.7.1`-`7.7.5`: migrate Scratchpad onto shell slots and align sidebar/toolbar/status/empty-state specs.
-2. Move into `7.8` Blackboard UI migration on shared shell layout.
-3. Start `7.9` Personal Diary UI migration after Scratchpad/Blackboard stabilization.
+1. Execute `7.8.1`-`7.8.4`: migrate Blackboard onto shell slots and align index/toolbar/status/empty-state specs.
+2. Move into `7.9` Personal Diary UI migration on shared shell layout.
+3. Continue through `7.10` Drafts UI migration after Blackboard + Personal Diary stabilization.

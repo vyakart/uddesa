@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
+import type { CSSProperties } from 'react';
+import { Check, ChevronDown } from 'lucide-react';
 import type { CategoryName } from '@/types/scratchpad';
 import { useSettingsStore } from '@/stores/settingsStore';
 
@@ -64,72 +66,50 @@ export function CategoryPicker({
   const categories = Object.entries(categoriesMap) as [CategoryName, string][];
 
   return (
-    <div ref={dropdownRef} className="relative inline-block">
-      {/* Current category button */}
+    <div ref={dropdownRef} className="muwi-scratchpad-category-picker">
       <button
+        type="button"
         onClick={() => !disabled && setIsOpen(!isOpen)}
         onKeyDown={handleKeyDown}
         disabled={disabled}
-        className={`
-          flex items-center gap-2 px-3 py-1.5 rounded-md
-          border border-gray-200 bg-white
-          text-sm font-medium text-gray-700
-          transition-colors
-          ${disabled
-            ? 'opacity-50 cursor-not-allowed'
-            : 'hover:bg-gray-50 hover:border-gray-300'
-          }
-        `}
+        aria-haspopup="menu"
+        aria-expanded={isOpen ? 'true' : 'false'}
+        className="muwi-scratchpad-category-picker__trigger"
       >
-        {/* Color swatch */}
         <span
-          className="w-4 h-4 rounded border border-gray-300"
-          style={{ backgroundColor: categoryColor }}
+          className="muwi-scratchpad-category-picker__swatch"
+          style={{ '--muwi-category-swatch': categoryColor } as CSSProperties}
+          aria-hidden="true"
         />
         <span>{categoryLabels[currentCategory]}</span>
-        {/* Dropdown arrow */}
-        <svg
-          className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
+        <ChevronDown
+          size={14}
+          aria-hidden="true"
+          className="muwi-scratchpad-category-picker__chevron"
+          data-open={isOpen ? 'true' : 'false'}
+        />
       </button>
 
-      {/* Dropdown menu */}
       {isOpen && (
-        <div className="
-          absolute top-full left-0 mt-1 z-50
-          bg-white border border-gray-200 rounded-md shadow-lg
-          min-w-[140px] py-1
-        ">
+        <div role="menu" aria-label="Category options" className="muwi-scratchpad-category-picker__menu">
           {categories.map(([category, color]) => (
             <button
               key={category}
+              type="button"
+              role="menuitemradio"
+              aria-checked={category === currentCategory}
               onClick={() => handleSelect(category)}
-              className={`
-                w-full flex items-center gap-2 px-3 py-2
-                text-sm text-left
-                hover:bg-gray-100 transition-colors
-                ${category === currentCategory ? 'bg-gray-50 font-medium' : ''}
-              `}
+              className="muwi-scratchpad-category-picker__option"
+              data-selected={category === currentCategory ? 'true' : 'false'}
             >
               <span
-                className="w-4 h-4 rounded border border-gray-300"
-                style={{ backgroundColor: color }}
+                className="muwi-scratchpad-category-picker__swatch"
+                style={{ '--muwi-category-swatch': color } as CSSProperties}
+                aria-hidden="true"
               />
               <span>{categoryLabels[category]}</span>
               {category === currentCategory && (
-                <svg
-                  className="w-4 h-4 ml-auto text-blue-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+                <Check size={14} aria-hidden="true" className="muwi-scratchpad-category-picker__check" />
               )}
             </button>
           ))}

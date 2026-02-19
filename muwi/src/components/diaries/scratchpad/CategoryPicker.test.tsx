@@ -18,14 +18,17 @@ describe('CategoryPicker', () => {
 
     const trigger = screen.getByRole('button', { name: /Ideas/i });
     expect(trigger).toBeInTheDocument();
-    expect(trigger.querySelector('span[style]')).toHaveStyle({ backgroundColor: 'rgb(17, 34, 51)' });
+    expect(trigger.querySelector('span[style]')).toHaveAttribute(
+      'style',
+      expect.stringContaining('--muwi-category-swatch: #112233')
+    );
 
     fireEvent.click(trigger);
-    expect(screen.getAllByRole('button', { name: /Ideas/i }).length).toBeGreaterThan(1);
-    expect(screen.getByRole('button', { name: /Todos/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Notes/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Questions/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Misc/i })).toBeInTheDocument();
+    expect(screen.getAllByRole('menuitemradio', { name: /Ideas/i }).length).toBeGreaterThan(0);
+    expect(screen.getByRole('menuitemradio', { name: /Todos/i })).toBeInTheDocument();
+    expect(screen.getByRole('menuitemradio', { name: /Notes/i })).toBeInTheDocument();
+    expect(screen.getByRole('menuitemradio', { name: /Questions/i })).toBeInTheDocument();
+    expect(screen.getByRole('menuitemradio', { name: /Misc/i })).toBeInTheDocument();
   });
 
   it('uses settings colors and reports selected category', () => {
@@ -49,8 +52,11 @@ describe('CategoryPicker', () => {
     );
 
     fireEvent.click(screen.getByRole('button', { name: /Ideas/i }));
-    const todosOption = screen.getByRole('button', { name: /Todos/i });
-    expect(todosOption.querySelector('span[style]')).toHaveStyle({ backgroundColor: 'rgb(1, 2, 3)' });
+    const todosOption = screen.getByRole('menuitemradio', { name: /Todos/i });
+    expect(todosOption.querySelector('span[style]')).toHaveAttribute(
+      'style',
+      expect.stringContaining('--muwi-category-swatch: #010203')
+    );
 
     fireEvent.click(todosOption);
     expect(onCategoryChange).toHaveBeenCalledWith('todos');
