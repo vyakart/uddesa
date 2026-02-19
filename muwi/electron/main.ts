@@ -1,8 +1,14 @@
-import { app, BrowserWindow, ipcMain, dialog } from 'electron';
+import electron from 'electron';
+import type { BrowserWindow as BrowserWindowType } from 'electron';
 import path from 'path';
 import fs from 'fs/promises';
+import { fileURLToPath } from 'url';
 
-let mainWindow: BrowserWindow | null = null;
+const { app, BrowserWindow, ipcMain, dialog } = electron;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+let mainWindow: BrowserWindowType | null = null;
 const AUTO_BACKUP_FILE_PATTERN = /^muwi-backup-(\d+)\.json$/;
 
 async function cleanupOldAutoBackups(location: string, maxBackups: number): Promise<void> {
@@ -42,7 +48,7 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
     },
     titleBarStyle: 'hiddenInset',
-    trafficLightPosition: { x: 16, y: 16 },
+    trafficLightPosition: { x: 12, y: 12 },
   });
 
   if (process.env.NODE_ENV === 'development' || process.env.VITE_DEV_SERVER_URL) {

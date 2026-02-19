@@ -1,6 +1,6 @@
 # MUWI Progress (Simple Status)
 
-Last updated: February 18, 2026
+Last updated: February 19, 2026
 
 ## 1) Where we are now
 
@@ -9,7 +9,7 @@ Last updated: February 18, 2026
 - Latest full coverage snapshot: lines `90.82%`, statements `90.22%`, functions `86.44%`, branches `80.07%`.
 - Recent focus has been adding reliable tests module by module.
 - Blackboard coverage moved from almost none to strong coverage.
-- Current execution stage: Phase `7.3.8` (post-shared-shell cleanup and module path normalization).
+- Current execution stage: Phase `7.4.8` (shared component inline-style cleanup and panel tokenization).
 
 ## 2) Completed tasks so far (brief)
 
@@ -78,6 +78,8 @@ Last updated: February 18, 2026
 | Task wave 56 | Completed Phase `7` foundation slice (`7.1.1`-`7.1.9`, `7.2.1`-`7.2.4`): created style architecture (`tokens`, `themes`, `fonts`, `reset`, `utilities`, `editor`), installed Geist font packages, wired global style import stack in `main.tsx`, added runtime theme application on `<html data-theme>`, and added theme/token tests | Targeted tests (`tokens`, `theme-switching`, `settingsStore`, `SettingsPanel`, `App`) + full run green: `vitest --run` (`73` files, `300` tests) + `eslint .` |
 | Task wave 57 | Completed `7.15.0` production build boundary fix by excluding `*.test.*` from app typecheck and resolving strict TypeScript build errors in `PasskeyPrompt`, `ExcalidrawWrapper`, and `crypto` so production build path is clean again | `npm run build` green (`tsc -b && vite build`) + existing test suite/lint still green |
 | Task wave 58 | Completed `7.2.5` + shared shell `7.3.1`-`7.3.7`: replaced legacy layout chrome hardcoded colors with tokenized shell styles, added `TitleBar`/`Sidebar`/`StatusBar`/`RightPanel`, refactored `DiaryLayout` to slot-based regions, extended app store with right-panel state and diary sidebar defaults, and added layout-level behavior tests | Targeted tests (`appStore`, `appRouter`, `DiaryLayout`, `NavigationHeader`) + full run + lint green: `vitest --run` (`74` files, `304` tests), `eslint .` |
+| Task wave 59 | Reconciled Phase `0` with live codebase (all remaining infra criteria now verified), fixed Electron dev runtime/startup issues (`vite-plugin-electron` startup flow, `ELECTRON_RUN_AS_NODE` inheritance, ESM `__dirname` pathing), and audited partial Phase `7` items: `7.1.5` verified complete while `7.1.3` remains open due hard-coded color literals in components | Runtime checks (`npm run dev`, `npm run electron:dev` with Electron launch path active), node-typecheck (`tsc -p tsconfig.node.json`), targeted lint (`eslint vite.config.ts electron/main.ts electron/preload.ts`), and task checklist updates in `TASKS.md` |
+| Task wave 60 | Completed `7.4.7` Settings modal refactor by rebuilding `SettingsPanel` into a fixed-size two-pane layout (`640x480` modal shell with `160px` nav rail), switching tab navigation to sidebar interaction styles, and migrating settings form controls/actions to shared `Button`/`FormControls` primitives while keeping behavior unchanged | Shelf/settings targeted verification: `vitest run src/components/shelf/SettingsPanel.test.tsx src/components/shelf/Shelf.test.tsx` (`9` tests passing) + targeted lint on updated shelf/settings files |
 
 ## 3) Blackboard testing progress
 
@@ -117,6 +119,6 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Execute `7.3.8`: normalize Personal Diary module pathing to a single canonical route.
-2. Start `7.4` shared UI primitive refresh (`Button`, `Input`, `Dropdown`, and overlay standardization) on top of the new shell.
-3. Keep full test/lint reruns after each vertical slice to catch regressions early.
+1. Execute `7.4.8`-`7.4.10`: remove remaining inline style literals from shared components and panel surfaces (Export/Backup/Passkey/ErrorBoundary/FontSelector).
+2. Move into `7.5` shelf rebuild (Lucide icon system, neutral card spec, metadata line, transition, regression tests).
+3. Build `7.6` command palette (store state, registry, palette UI, global shortcut wiring, fuzzy search + tests).

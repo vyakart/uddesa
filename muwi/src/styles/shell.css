@@ -709,6 +709,80 @@
   overflow: auto;
 }
 
+.muwi-settings-modal {
+  width: min(640px, 100%);
+  max-width: 640px !important;
+  height: min(480px, 90vh);
+}
+
+.muwi-settings-modal .muwi-modal__body {
+  padding: 0;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.muwi-settings {
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+}
+
+.muwi-settings__nav {
+  padding: var(--space-2);
+  background: var(--color-bg-secondary);
+  border-right: 1px solid var(--color-border-default);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  overflow: auto;
+}
+
+.muwi-settings__tab {
+  width: 100%;
+}
+
+.muwi-settings__content {
+  min-width: 0;
+  min-height: 0;
+  padding: var(--space-inset-spacious);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  overflow: auto;
+}
+
+.muwi-settings__color-input {
+  padding: var(--space-1);
+  cursor: pointer;
+}
+
+.muwi-settings__shortcut-copy p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.muwi-settings__shortcut-copy ul {
+  margin: var(--space-2) 0 0;
+  padding-left: 1.2rem;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: var(--leading-relaxed);
+}
+
+.muwi-settings__backup-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.muwi-settings__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
 @keyframes muwi-modal-backdrop-in {
   from {
     opacity: 0;

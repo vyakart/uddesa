@@ -4,7 +4,8 @@ import electron from 'vite-plugin-electron'
 import renderer from 'vite-plugin-electron-renderer'
 import path from 'path'
 
-const isElectron = process.env.ELECTRON === 'true'
+const isElectron =
+  process.env.ELECTRON === 'true' || process.env.npm_lifecycle_event?.startsWith('electron:') === true
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -28,7 +29,16 @@ export default defineConfig({
             {
               entry: 'electron/preload.ts',
               onstart(options) {
-                options.reload()
+                const hasElectronApp = Boolean(
+                  (process as NodeJS.Process & { electronApp?: unknown }).electronApp
+                )
+                if (hasElectronApp) {
+                  options.reload()
+                  return
+                }
+                const env = { ...process.env }
+                delete env.ELECTRON_RUN_AS_NODE
+                options.startup(['.', '--no-sandbox'], { env })
               },
             },
           ]),

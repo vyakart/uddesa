@@ -187,7 +187,13 @@ export function Shelf() {
         onClose={() => setContextMenuState(null)}
       />
 
-      <Modal isOpen={isSettingsOpen} onClose={closeSettings} title="Settings">
+      <Modal
+        isOpen={isSettingsOpen}
+        onClose={closeSettings}
+        title="Settings"
+        maxWidth={640}
+        className="muwi-settings-modal"
+      >
         <SettingsPanel />
       </Modal>
     </div>

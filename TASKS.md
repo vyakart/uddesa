@@ -32,10 +32,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: None
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] `npm create vite@latest muwi -- --template react-ts` executed
-  - [ ] Project runs with `npm run dev`
-  - [ ] TypeScript strict mode enabled
-  - [ ] ESLint and Prettier configured
+  - [x] `npm create vite@latest muwi -- --template react-ts` executed
+  - [x] Project runs with `npm run dev`
+  - [x] TypeScript strict mode enabled
+  - [x] ESLint and Prettier configured
 - **Commands**:
   ```bash
   npm create vite@latest muwi -- --template react-ts
@@ -50,9 +50,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.1.1
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] `@/` alias points to `src/`
-  - [ ] `@components/`, `@stores/`, `@hooks/`, `@utils/`, `@db/`, `@types/` aliases configured
-  - [ ] Aliases work in both TypeScript and Vite
+  - [x] `@/` alias points to `src/`
+  - [x] `@components/`, `@stores/`, `@hooks/`, `@utils/`, `@db/`, `@types/` aliases configured
+  - [x] Aliases work in both TypeScript and Vite
 - **Files to Modify**: `tsconfig.json`, `vite.config.ts`
 
 #### Task 0.1.3: Set Up Tailwind CSS
@@ -60,10 +60,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.1.1
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] Tailwind installed and configured
-  - [ ] Custom color palette from design doc added
+  - [x] Tailwind installed and configured
+  - [x] Custom color palette from design doc added
   - [x] Custom font stack configured
-  - [ ] Base styles applied
+  - [x] Base styles applied
 - **Design Tokens to Include**:
   ```css
   --bg-primary: #FAFAFA
@@ -77,9 +77,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.1.2
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] All directories from implementation doc exist
-  - [ ] Index files created for each module
-  - [ ] README.md placeholder in project root
+  - [x] All directories from implementation doc exist
+  - [x] Index files created for each module
+  - [x] README.md placeholder in project root
 - **Structure**:
   ```
   src/
@@ -102,10 +102,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.1.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Electron installed as dev dependency
-  - [ ] vite-plugin-electron configured
-  - [ ] App launches in Electron window
-  - [ ] Hot reload works in development
+  - [x] Electron installed as dev dependency
+  - [x] vite-plugin-electron configured
+  - [x] App launches in Electron window
+  - [x] Hot reload works in development
 - **Files to Create**: `electron/main.ts`, `electron/preload.ts`
 
 #### Task 0.2.2: Configure Electron Main Process
@@ -113,10 +113,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.2.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] BrowserWindow created with correct dimensions
-  - [ ] macOS traffic light positioning configured
-  - [ ] Dev tools open in development mode
-  - [ ] App quits properly on all platforms
+  - [x] BrowserWindow created with correct dimensions
+  - [x] macOS traffic light positioning configured
+  - [x] Dev tools open in development mode
+  - [x] App quits properly on all platforms
 - **Key Settings**:
   - Window: 1200x800, min 800x600
   - titleBarStyle: 'hiddenInset' (macOS)
@@ -127,10 +127,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 0.2.1
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] contextBridge exposes electronAPI
-  - [ ] File dialog methods exposed
-  - [ ] Platform detection exposed
-  - [ ] TypeScript declarations for window.electronAPI
+  - [x] contextBridge exposes electronAPI
+  - [x] File dialog methods exposed
+  - [x] Platform detection exposed
+  - [x] TypeScript declarations for window.electronAPI
 
 ### 0.3 Set Up Testing Infrastructure
 
@@ -1242,7 +1242,7 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Acceptance Criteria**:
   - [x] Geist packages installed (`@fontsource/geist-sans`, `@fontsource/geist-mono`)
   - [x] Existing content fonts retained (Inter, Crimson Pro, JetBrains Mono, Caveat)
-  - [ ] `font-display: swap` behavior retained
+  - [x] `font-display: swap` behavior retained
 
 #### Task 7.1.6: Wire Global Style Imports and Decompose `index.css`
 - **Description**: Move token/theme/font ownership out of `index.css`
@@ -1531,9 +1531,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/shelf/SettingsPanel.tsx`
   - `muwi/src/components/shelf/SettingsPanel.test.tsx`
 - **Acceptance Criteria**:
-  - [ ] 640x480 layout with 160px nav rail implemented
-  - [ ] Nav items follow sidebar item interaction model
-  - [ ] Existing settings controls remain functional
+  - [x] 640x480 layout with 160px nav rail implemented
+  - [x] Nav items follow sidebar item interaction model
+  - [x] Existing settings controls remain functional
 
 #### Task 7.4.8: Replace Inline Style Objects in Shared Components
 - **Description**: Move shared component styling to classes/tokenized CSS
