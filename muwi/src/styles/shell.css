@@ -1341,6 +1341,148 @@
   gap: var(--space-2);
 }
 
+.muwi-blackboard-toolbar {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+
+.muwi-blackboard-toolbar__group {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-shrink: 0;
+}
+
+.muwi-blackboard-toolbar__field {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.muwi-blackboard-toolbar__field-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.muwi-blackboard-toolbar__color {
+  width: 28px;
+  height: 26px;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  padding: 0;
+}
+
+.muwi-blackboard-toolbar__width {
+  width: 6.75rem;
+  height: 26px;
+  font-size: var(--font-size-sm);
+}
+
+.muwi-blackboard-toolbar__font .muwi-font-selector__label {
+  font-size: var(--font-size-xs);
+}
+
+.muwi-blackboard-toolbar__font .muwi-font-selector__select {
+  min-width: 7.5rem;
+}
+
+.muwi-blackboard-toolbar__zoom-readout {
+  min-width: 4rem;
+  justify-content: center;
+}
+
+.muwi-blackboard-index {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-primary);
+}
+
+.muwi-blackboard-index.is-collapsed {
+  min-height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border-style: dashed;
+}
+
+.muwi-blackboard-index__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.muwi-blackboard-index__label {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-tertiary);
+  letter-spacing: var(--tracking-wider);
+}
+
+.muwi-blackboard-index__body {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.muwi-blackboard-index__empty {
+  margin: 0;
+  padding: var(--space-3) var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+  line-height: var(--leading-normal);
+}
+
+.muwi-blackboard-index__list {
+  margin: 0;
+  padding: var(--space-1) 0;
+  list-style: none;
+}
+
+.muwi-blackboard-index__item {
+  width: 100%;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-text-secondary);
+  min-height: 32px;
+  text-align: left;
+  padding-block: var(--space-1);
+  padding-inline-end: var(--space-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: var(--transition-colors);
+}
+
+.muwi-blackboard-index__item:hover {
+  background: var(--color-hover-overlay);
+  color: var(--color-text-primary);
+}
+
+.muwi-blackboard-index__item:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.muwi-blackboard-index__footer {
+  border-top: 1px solid var(--color-border-subtle);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
 .muwi-scratchpad-toolbar {
   width: 100%;
   min-width: 0;

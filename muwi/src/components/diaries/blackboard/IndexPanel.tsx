@@ -18,7 +18,6 @@ export function IndexPanel({
     onNavigateToElement?.(entry.elementId, entry.position);
   };
 
-  // Get indentation based on heading level
   const getIndentation = (level: 1 | 2 | 3) => {
     switch (level) {
       case 1:
@@ -32,7 +31,6 @@ export function IndexPanel({
     }
   };
 
-  // Get font size based on heading level
   const getFontSize = (level: 1 | 2 | 3) => {
     switch (level) {
       case 1:
@@ -46,40 +44,17 @@ export function IndexPanel({
     }
   };
 
-  // Get font weight based on heading level
   const getFontWeight = (level: 1 | 2 | 3) => {
     return level === 1 ? 600 : 400;
   };
 
   if (isCollapsed) {
     return (
-      <div
-        style={{
-          width: '40px',
-          height: '100%',
-          backgroundColor: '#f5f5f5',
-          borderRight: '1px solid #e0e0e0',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          paddingTop: '12px',
-        }}
-      >
+      <div className="muwi-blackboard-index is-collapsed">
         <button
+          type="button"
           onClick={onToggleCollapse}
-          style={{
-            width: '28px',
-            height: '28px',
-            border: 'none',
-            borderRadius: '6px',
-            backgroundColor: 'transparent',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#666',
-            fontSize: '16px',
-          }}
+          className="muwi-sidebar-button"
           title="Expand index"
         >
           ≡
@@ -89,129 +64,51 @@ export function IndexPanel({
   }
 
   return (
-    <div
-      style={{
-        width: '220px',
-        height: '100%',
-        backgroundColor: '#f5f5f5',
-        borderRight: '1px solid #e0e0e0',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-      }}
-    >
-      {/* Header */}
-      <div
-        style={{
-          padding: '12px 16px',
-          borderBottom: '1px solid #e0e0e0',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <span
-          style={{
-            fontSize: '13px',
-            fontWeight: 600,
-            color: '#333',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-          }}
-        >
-          Index
-        </span>
+    <section className="muwi-blackboard-index" aria-label="Blackboard index">
+      <div className="muwi-blackboard-index__header">
+        <p className="muwi-blackboard-index__label">INDEX</p>
         <button
+          type="button"
           onClick={onToggleCollapse}
-          style={{
-            width: '24px',
-            height: '24px',
-            border: 'none',
-            borderRadius: '4px',
-            backgroundColor: 'transparent',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#666',
-            fontSize: '14px',
-          }}
+          className="muwi-sidebar-button"
           title="Collapse index"
         >
           ←
         </button>
       </div>
 
-      {/* Index items */}
-      <div
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          padding: '8px 0',
-        }}
-      >
+      <div className="muwi-blackboard-index__body">
         {index.length === 0 ? (
-          <div
-            style={{
-              padding: '16px',
-              color: '#888',
-              fontSize: '12px',
-              textAlign: 'center',
-            }}
-          >
-            <p style={{ marginBottom: '8px' }}>No headings found</p>
-            <p style={{ fontSize: '11px', color: '#aaa' }}>
-              Add text starting with #, ##, or ### to create headings
-            </p>
-          </div>
+          <p className="muwi-blackboard-index__empty">Add headings to build an index</p>
         ) : (
-          index.map((entry) => (
-            <button
-              key={entry.id}
-              onClick={() => handleItemClick(entry)}
-              style={{
-                width: '100%',
-                padding: '8px 16px',
-                paddingLeft: `${16 + getIndentation(entry.level)}px`,
-                border: 'none',
-                backgroundColor: 'transparent',
-                textAlign: 'left',
-                cursor: 'pointer',
-                fontSize: getFontSize(entry.level),
-                fontWeight: getFontWeight(entry.level),
-                color: '#333',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                transition: 'background-color 0.15s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#e8e8e8';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-              }}
-              title={entry.title}
-            >
-              {entry.title}
-            </button>
-          ))
+          <ul className="muwi-blackboard-index__list">
+            {index.map((entry) => (
+              <li key={entry.id}>
+                <button
+                  type="button"
+                  onClick={() => handleItemClick(entry)}
+                  className="muwi-blackboard-index__item"
+                  data-level={entry.level}
+                  style={{
+                    paddingInlineStart: `${12 + getIndentation(entry.level)}px`,
+                    fontSize: getFontSize(entry.level),
+                    fontWeight: getFontWeight(entry.level),
+                  }}
+                  title={entry.title}
+                >
+                  {entry.title}
+                </button>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
 
-      {/* Footer with count */}
       {index.length > 0 && (
-        <div
-          style={{
-            padding: '8px 16px',
-            borderTop: '1px solid #e0e0e0',
-            fontSize: '11px',
-            color: '#888',
-          }}
-        >
+        <div className="muwi-blackboard-index__footer">
           {index.length} heading{index.length !== 1 ? 's' : ''}
         </div>
       )}
-    </div>
+    </section>
   );
 }

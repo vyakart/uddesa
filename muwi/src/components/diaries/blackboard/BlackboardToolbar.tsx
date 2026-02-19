@@ -7,26 +7,48 @@ interface BlackboardToolbarProps {
   onToggleIndex: () => void;
 }
 
-type ToolName = 'select' | 'rectangle' | 'arrow' | 'text';
+type ToolName = 'selection' | 'freedraw' | 'line' | 'ellipse' | 'rectangle' | 'arrow' | 'text';
+
+const TOOL_OPTIONS: ReadonlyArray<{ id: ToolName; label: string }> = [
+  { id: 'selection', label: 'Select' },
+  { id: 'freedraw', label: 'Freehand' },
+  { id: 'line', label: 'Line' },
+  { id: 'ellipse', label: 'Circle' },
+  { id: 'rectangle', label: 'Rectangle' },
+  { id: 'arrow', label: 'Arrow' },
+  { id: 'text', label: 'Text' },
+];
+
+const STROKE_WIDTH_OPTIONS: ReadonlyArray<{ label: string; value: number }> = [
+  { label: 'Thin', value: 1 },
+  { label: 'Medium', value: 2 },
+  { label: 'Thick', value: 4 },
+];
+
+const MIN_ZOOM = 0.2;
+const MAX_ZOOM = 3;
+const ZOOM_STEP = 0.1;
+
+function clampZoom(value: number): number {
+  return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Number(value.toFixed(2))));
+}
 
 export function BlackboardToolbar({
   isIndexVisible,
   onToggleIndex,
 }: BlackboardToolbarProps) {
-  const [activeTool, setActiveTool] = useState<ToolName>('select');
+  const [activeTool, setActiveTool] = useState<ToolName>('selection');
   const canvas = useBlackboardStore((state) => state.canvas);
   const updateSettings = useBlackboardStore((state) => state.updateSettings);
+  const updateViewport = useBlackboardStore((state) => state.updateViewport);
   const setAppState = useBlackboardStore((state) => state.setAppState);
 
-  const handleToggleGrid = () => {
-    if (canvas) {
-      updateSettings({ showGrid: !canvas.settings.showGrid });
-    }
-  };
-
-  const handleBackgroundChange = (color: string) => {
-    updateSettings({ backgroundColor: color });
-  };
+  const viewport = canvas?.viewportState ?? { panX: 0, panY: 0, zoom: 1 };
+  const zoomPercent = Math.max(1, Math.round(viewport.zoom * 100));
+  const strokeColor = canvas?.settings?.defaultStrokeColor ?? '#000000';
+  const strokeWidth = canvas?.settings?.defaultStrokeWidth ?? STROKE_WIDTH_OPTIONS[1].value;
+  const availableFonts = canvas?.settings?.fonts ?? ['Inter', 'Caveat', 'JetBrains Mono', 'Crimson Pro'];
+  const selectedFont = canvas?.settings?.defaultFont ?? availableFonts[0] ?? 'Inter';
 
   const handleToolSelect = (tool: ToolName) => {
     setActiveTool(tool);
@@ -45,214 +67,146 @@ export function BlackboardToolbar({
     updateSettings({ defaultFont: font });
   };
 
-  const isGridEnabled = canvas?.settings?.showGrid ?? false;
-  const backgroundColor = canvas?.settings?.backgroundColor ?? '#fdfbf7';
-  const strokeColor = canvas?.settings?.defaultStrokeColor ?? '#000000';
-  const strokeWidth = canvas?.settings?.defaultStrokeWidth ?? 2;
-  const availableFonts = canvas?.settings?.fonts ?? ['Inter', 'Caveat', 'JetBrains Mono', 'Crimson Pro'];
-  const selectedFont = canvas?.settings?.defaultFont ?? availableFonts[0] ?? 'Inter';
+  const handleZoomTo = (zoomValue: number) => {
+    void updateViewport({
+      ...viewport,
+      zoom: clampZoom(zoomValue),
+    });
+  };
 
-  const backgroundOptions = [
-    { value: '#fdfbf7', label: 'Paper', isDark: false },
-    { value: '#ffffff', label: 'White', isDark: false },
-    { value: '#2D3436', label: 'Dark', isDark: true },
-    { value: '#1a1a2e', label: 'Navy', isDark: true },
-  ];
+  const handleZoomOut = () => {
+    handleZoomTo(viewport.zoom - ZOOM_STEP);
+  };
+
+  const handleZoomIn = () => {
+    handleZoomTo(viewport.zoom + ZOOM_STEP);
+  };
+
+  const handleResetZoom = () => {
+    handleZoomTo(1);
+  };
+
+  const handleFitAll = () => {
+    void updateViewport({
+      panX: 0,
+      panY: 0,
+      zoom: 1,
+    });
+  };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        padding: '0 8px',
-      }}
-    >
-      {/* Index toggle */}
+    <div className="muwi-blackboard-toolbar" role="toolbar" aria-label="Blackboard controls">
       <button
+        type="button"
         onClick={onToggleIndex}
-        style={{
-          height: '32px',
-          padding: '0 12px',
-          border: '1px solid #e0e0e0',
-          borderRadius: '6px',
-          backgroundColor: isIndexVisible ? '#e8e8e8' : '#ffffff',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          fontSize: '13px',
-          color: '#333',
-        }}
+        className="muwi-toolbar__button"
+        data-icon-only="false"
+        data-active={isIndexVisible ? 'true' : 'false'}
         title={isIndexVisible ? 'Hide index panel' : 'Show index panel'}
+        aria-label={isIndexVisible ? 'Hide index panel' : 'Show index panel'}
       >
-        <span style={{ fontSize: '14px' }}>≡</span>
-        Index
+        <span className="muwi-toolbar__label">Index</span>
       </button>
 
-      {/* Separator */}
-      <div
-        style={{
-          width: '1px',
-          height: '20px',
-          backgroundColor: '#e0e0e0',
-        }}
-      />
+      <div className="muwi-toolbar__separator" aria-hidden="true" />
 
-      {/* Tool selection */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-        {([
-          { id: 'select', label: 'Select' },
-          { id: 'rectangle', label: 'Rectangle' },
-          { id: 'arrow', label: 'Arrow' },
-          { id: 'text', label: 'Text' },
-        ] as const).map((tool) => (
+      <div className="muwi-blackboard-toolbar__group" role="group" aria-label="Tool select">
+        {TOOL_OPTIONS.map((tool) => (
           <button
             key={tool.id}
             type="button"
             aria-pressed={activeTool === tool.id}
             onClick={() => handleToolSelect(tool.id)}
-            style={{
-              height: '32px',
-              padding: '0 10px',
-              border: '1px solid #e0e0e0',
-              borderRadius: '6px',
-              backgroundColor: activeTool === tool.id ? '#e8e8e8' : '#ffffff',
-              cursor: 'pointer',
-              fontSize: '12px',
-              color: '#333',
-            }}
+            className="muwi-toolbar__button"
+            data-icon-only="false"
+            data-active={activeTool === tool.id ? 'true' : 'false'}
           >
-            {tool.label}
+            <span className="muwi-toolbar__label">{tool.label}</span>
           </button>
         ))}
       </div>
 
-      {/* Separator */}
-      <div
-        style={{
-          width: '1px',
-          height: '20px',
-          backgroundColor: '#e0e0e0',
-        }}
-      />
+      <div className="muwi-toolbar__separator" aria-hidden="true" />
 
-      {/* Stroke controls */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-        <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#666' }}>
-          Color
+      <div className="muwi-blackboard-toolbar__group" role="group" aria-label="Stroke controls">
+        <label className="muwi-blackboard-toolbar__field">
+          <span className="muwi-blackboard-toolbar__field-label">Color</span>
           <input
             type="color"
             aria-label="Stroke color"
             value={strokeColor}
             onChange={(event) => handleStrokeColorChange(event.target.value)}
-            style={{ width: '28px', height: '24px', border: 'none', background: 'transparent', padding: 0 }}
+            className="muwi-blackboard-toolbar__color"
           />
         </label>
-        <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#666' }}>
-          Width
+        <label className="muwi-blackboard-toolbar__field">
+          <span className="muwi-blackboard-toolbar__field-label">Width</span>
           <select
             aria-label="Stroke width"
             value={String(strokeWidth)}
             onChange={(event) => handleStrokeWidthChange(Number(event.target.value))}
-            style={{ height: '26px', border: '1px solid #d8d8d8', borderRadius: '4px', fontSize: '12px' }}
+            className="muwi-form-control muwi-blackboard-toolbar__width"
           >
-            <option value="1">1px</option>
-            <option value="2">2px</option>
-            <option value="3">3px</option>
-            <option value="4">4px</option>
-            <option value="5">5px</option>
+            {STROKE_WIDTH_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
         </label>
       </div>
 
-      {/* Separator */}
-      <div
-        style={{
-          width: '1px',
-          height: '20px',
-          backgroundColor: '#e0e0e0',
-        }}
-      />
+      <div className="muwi-toolbar__separator" aria-hidden="true" />
 
-      <FontSelector fonts={availableFonts} value={selectedFont} onChange={handleFontChange} />
+      <div className="muwi-blackboard-toolbar__group" role="group" aria-label="Font selector">
+        <FontSelector
+          fonts={availableFonts}
+          value={selectedFont}
+          onChange={handleFontChange}
+          className="muwi-blackboard-toolbar__font"
+        />
+      </div>
 
-      {/* Separator */}
-      <div
-        style={{
-          width: '1px',
-          height: '20px',
-          backgroundColor: '#e0e0e0',
-        }}
-      />
+      <div className="muwi-toolbar__separator" aria-hidden="true" />
 
-      {/* Grid toggle */}
-      <button
-        onClick={handleToggleGrid}
-        style={{
-          height: '32px',
-          padding: '0 12px',
-          border: '1px solid #e0e0e0',
-          borderRadius: '6px',
-          backgroundColor: isGridEnabled ? '#e8e8e8' : '#ffffff',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          fontSize: '13px',
-          color: '#333',
-        }}
-        title={isGridEnabled ? 'Hide grid' : 'Show grid'}
-      >
-        <span style={{ fontSize: '12px' }}>#</span>
-        Grid
-      </button>
-
-      {/* Separator */}
-      <div
-        style={{
-          width: '1px',
-          height: '20px',
-          backgroundColor: '#e0e0e0',
-        }}
-      />
-
-      {/* Background color selector */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '4px',
-        }}
-      >
-        <span
-          style={{
-            fontSize: '12px',
-            color: '#666',
-            marginRight: '4px',
-          }}
+      <div className="muwi-blackboard-toolbar__group" role="group" aria-label="Zoom controls">
+        <button
+          type="button"
+          className="muwi-toolbar__button"
+          aria-label="Zoom out"
+          title="Zoom out"
+          onClick={handleZoomOut}
         >
-          Background:
-        </span>
-        {backgroundOptions.map((option) => (
-          <button
-            key={option.value}
-            onClick={() => handleBackgroundChange(option.value)}
-            style={{
-              width: '24px',
-              height: '24px',
-              border:
-                backgroundColor === option.value
-                  ? '2px solid #4A90A4'
-                  : '1px solid #ccc',
-              borderRadius: '4px',
-              backgroundColor: option.value,
-              cursor: 'pointer',
-              padding: 0,
-            }}
-            title={option.label}
-          />
-        ))}
+          <span className="muwi-toolbar__label">−</span>
+        </button>
+        <button
+          type="button"
+          className="muwi-toolbar__button muwi-blackboard-toolbar__zoom-readout"
+          data-icon-only="false"
+          aria-label="Reset zoom to 100%"
+          title="Reset zoom to 100%"
+          onClick={handleResetZoom}
+        >
+          <span className="muwi-toolbar__label">{zoomPercent}%</span>
+        </button>
+        <button
+          type="button"
+          className="muwi-toolbar__button"
+          aria-label="Zoom in"
+          title="Zoom in"
+          onClick={handleZoomIn}
+        >
+          <span className="muwi-toolbar__label">+</span>
+        </button>
+        <button
+          type="button"
+          className="muwi-toolbar__button"
+          data-icon-only="false"
+          onClick={handleFitAll}
+          title="Fit all"
+        >
+          <span className="muwi-toolbar__label">Fit All</span>
+        </button>
       </div>
     </div>
   );

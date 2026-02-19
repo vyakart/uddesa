@@ -1781,8 +1781,8 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/diaries/blackboard/IndexPanel.tsx`
   - `muwi/src/components/diaries/blackboard/BlackboardToolbar.tsx`
 - **Acceptance Criteria**:
-  - [ ] Sidebar shows heading tree with empty guidance text
-  - [ ] Toolbar groups match tool/stroke/font/zoom model
+  - [x] Sidebar shows heading tree with empty guidance text
+  - [x] Toolbar groups match tool/stroke/font/zoom model
 
 #### Task 7.8.3: Apply Blackboard Canvas Theme Tokens
 - **Description**: Ensure blackboard canvas and grid visuals use dedicated tokens

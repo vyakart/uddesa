@@ -24,7 +24,7 @@ describe('IndexPanel', () => {
 
     render(<IndexPanel isCollapsed onToggleCollapse={onToggleCollapse} />);
 
-    expect(screen.queryByText('Index')).not.toBeInTheDocument();
+    expect(screen.queryByText('INDEX')).not.toBeInTheDocument();
     fireEvent.click(screen.getByTitle('Expand index'));
     expect(onToggleCollapse).toHaveBeenCalledTimes(1);
   });
@@ -35,8 +35,8 @@ describe('IndexPanel', () => {
 
     render(<IndexPanel isCollapsed={false} onToggleCollapse={onToggleCollapse} />);
 
-    expect(screen.getByText('Index')).toBeInTheDocument();
-    expect(screen.getByText('No headings found')).toBeInTheDocument();
+    expect(screen.getByText('INDEX')).toBeInTheDocument();
+    expect(screen.getByText('Add headings to build an index')).toBeInTheDocument();
     fireEvent.click(screen.getByTitle('Collapse index'));
     expect(onToggleCollapse).toHaveBeenCalledTimes(1);
   });
