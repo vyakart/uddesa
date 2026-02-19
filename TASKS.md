@@ -1770,8 +1770,8 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Effort**: M
 - **Files to Modify**: `muwi/src/components/diaries/blackboard/Blackboard.tsx`
 - **Acceptance Criteria**:
-  - [ ] Blackboard uses shell slots for sidebar/toolbar/canvas/status/right panel
-  - [ ] Existing Excalidraw integration remains functional
+  - [x] Blackboard uses shell slots for sidebar/toolbar/canvas/status/right panel
+  - [x] Existing Excalidraw integration remains functional
 
 #### Task 7.8.2: Implement Index Sidebar and Toolbar Groups
 - **Description**: Align Blackboard controls to design grouping

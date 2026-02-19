@@ -19,6 +19,8 @@ export function Blackboard() {
   const isLoading = useBlackboardStore((state) => state.isLoading);
   const error = useBlackboardStore((state) => state.error);
   const canvas = useBlackboardStore((state) => state.canvas);
+  const index = useBlackboardStore((state) => state.index);
+  const elements = useBlackboardStore((state) => state.elements);
   const loadCanvas = useBlackboardStore((state) => state.loadCanvas);
   const rebuildIndex = useBlackboardStore((state) => state.rebuildIndex);
   const updateSettings = useBlackboardStore((state) => state.updateSettings);
@@ -105,129 +107,172 @@ export function Blackboard() {
     };
   }, [fontMenuPosition]);
 
-  // Show loading state during initialization
-  if (!isInitialized || isLoading) {
-    return (
-      <DiaryLayout diaryType="blackboard">
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '100%',
-            color: '#888888',
-          }}
-        >
-          Loading...
-        </div>
-      </DiaryLayout>
-    );
-  }
+  const isBusy = !isInitialized || isLoading;
+  const zoomPercent = Math.max(1, Math.round((canvas?.viewportState.zoom ?? 1) * 100));
+  const status = isBusy
+    ? { left: 'Loading blackboard...', right: 'Syncing canvas state' }
+    : error
+      ? { left: 'Blackboard unavailable', right: 'Reload to retry' }
+      : {
+          left: `Zoom ${zoomPercent}%`,
+          right: `${index.length} heading${index.length === 1 ? '' : 's'} · ${elements.length} element${elements.length === 1 ? '' : 's'}`,
+        };
 
-  // Show error state
-  if (error) {
-    return (
-      <DiaryLayout diaryType="blackboard">
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '100%',
-            color: '#F44336',
-            gap: '16px',
-          }}
-        >
-          <p>Error: {error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            style={{
-              padding: '8px 16px',
-              border: '1px solid #F44336',
-              borderRadius: '6px',
-              backgroundColor: 'transparent',
-              color: '#F44336',
-              cursor: 'pointer',
-            }}
-          >
-            Reload
-          </button>
+  const rightPanel = (
+    <div data-testid="blackboard-right-panel" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <div>
+        <p style={{ margin: 0, fontSize: '12px', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+          Blackboard
+        </p>
+        <h3 style={{ margin: '6px 0 0', fontSize: '16px', color: '#111827' }}>{canvas?.name ?? 'Untitled Canvas'}</h3>
+      </div>
+      <p style={{ margin: 0, fontSize: '13px', color: '#4b5563' }}>
+        {index.length} heading{index.length === 1 ? '' : 's'} indexed.
+      </p>
+      {index.length === 0 ? (
+        <p style={{ margin: 0, fontSize: '13px', color: '#6b7280', lineHeight: 1.5 }}>
+          Add text starting with #, ##, or ### on the canvas to build quick navigation links.
+        </p>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          {index.map((entry) => (
+            <button
+              key={entry.id}
+              type="button"
+              onClick={() => handleNavigateToElement(entry.elementId, entry.position)}
+              style={{
+                width: '100%',
+                border: '1px solid #d1d5db',
+                borderRadius: '6px',
+                backgroundColor: '#ffffff',
+                padding: '8px 10px',
+                textAlign: 'left',
+                cursor: 'pointer',
+                fontSize: '13px',
+                color: '#111827',
+              }}
+              title={entry.title}
+            >
+              {entry.title}
+            </button>
+          ))}
         </div>
-      </DiaryLayout>
-    );
-  }
+      )}
+    </div>
+  );
+
+  const toolbar = (
+    <BlackboardToolbar
+      isIndexVisible={isIndexVisible}
+      onToggleIndex={handleToggleIndex}
+    />
+  );
+
+  const sidebar = isIndexVisible ? (
+    <IndexPanel
+      isCollapsed={isIndexCollapsed}
+      onToggleCollapse={handleToggleCollapse}
+      onNavigateToElement={handleNavigateToElement}
+    />
+  ) : null;
+
+  const loadingCanvas = (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100%',
+        color: '#888888',
+      }}
+    >
+      Loading blackboard...
+    </div>
+  );
+
+  const errorCanvas = (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100%',
+        color: '#F44336',
+        gap: '16px',
+      }}
+    >
+      <p>Error: {error}</p>
+      <button
+        onClick={() => window.location.reload()}
+        style={{
+          padding: '8px 16px',
+          border: '1px solid #F44336',
+          borderRadius: '6px',
+          backgroundColor: 'transparent',
+          color: '#F44336',
+          cursor: 'pointer',
+        }}
+      >
+        Reload
+      </button>
+    </div>
+  );
+
+  const canvasSlot = isBusy ? loadingCanvas : error ? errorCanvas : (
+    <div
+      data-testid="blackboard-canvas-container"
+      onContextMenuCapture={handleCanvasContextMenu}
+      style={{
+        width: '100%',
+        height: '100%',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      <ExcalidrawWrapper
+        onElementsChange={handleElementsChange}
+        navigationTarget={navigationTarget}
+        onNavigationHandled={() => setNavigationTarget(null)}
+      />
+      {fontMenuPosition ? (
+        <div
+          role="presentation"
+          style={{
+            position: 'fixed',
+            left: fontMenuPosition.x,
+            top: fontMenuPosition.y,
+            zIndex: 1200,
+            backgroundColor: '#ffffff',
+            border: '1px solid #d7d7d7',
+            borderRadius: 8,
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.16)',
+            padding: 6,
+          }}
+          onPointerDown={(event) => event.stopPropagation()}
+        >
+          <FontSelector
+            variant="context-menu"
+            fonts={canvas?.settings?.fonts ?? ['Inter', 'Caveat', 'JetBrains Mono', 'Crimson Pro']}
+            value={canvas?.settings?.defaultFont ?? 'Inter'}
+            onChange={(font) => {
+              void handleFontSelected(font);
+            }}
+          />
+        </div>
+      ) : null}
+    </div>
+  );
 
   return (
     <DiaryLayout
       diaryType="blackboard"
-      toolbar={
-        <BlackboardToolbar
-          isIndexVisible={isIndexVisible}
-          onToggleIndex={handleToggleIndex}
-        />
-      }
-    >
-      <div
-        style={{
-          display: 'flex',
-          height: '100%',
-          overflow: 'hidden',
-        }}
-      >
-        {/* Index Panel */}
-        {isIndexVisible && (
-          <IndexPanel
-            isCollapsed={isIndexCollapsed}
-            onToggleCollapse={handleToggleCollapse}
-            onNavigateToElement={handleNavigateToElement}
-          />
-        )}
-
-        {/* Excalidraw Canvas */}
-        <div
-          data-testid="blackboard-canvas-container"
-          onContextMenuCapture={handleCanvasContextMenu}
-          style={{
-            flex: 1,
-            height: '100%',
-            position: 'relative',
-            overflow: 'hidden',
-          }}
-        >
-          <ExcalidrawWrapper
-            onElementsChange={handleElementsChange}
-            navigationTarget={navigationTarget}
-            onNavigationHandled={() => setNavigationTarget(null)}
-          />
-          {fontMenuPosition ? (
-            <div
-              role="presentation"
-              style={{
-                position: 'fixed',
-                left: fontMenuPosition.x,
-                top: fontMenuPosition.y,
-                zIndex: 1200,
-                backgroundColor: '#ffffff',
-                border: '1px solid #d7d7d7',
-                borderRadius: 8,
-                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.16)',
-                padding: 6,
-              }}
-              onPointerDown={(event) => event.stopPropagation()}
-            >
-              <FontSelector
-                variant="context-menu"
-                fonts={canvas?.settings?.fonts ?? ['Inter', 'Caveat', 'JetBrains Mono', 'Crimson Pro']}
-                value={canvas?.settings?.defaultFont ?? 'Inter'}
-                onChange={(font) => {
-                  void handleFontSelected(font);
-                }}
-              />
-            </div>
-          ) : null}
-        </div>
-      </div>
-    </DiaryLayout>
+      sidebar={sidebar}
+      toolbar={toolbar}
+      canvas={canvasSlot}
+      status={status}
+      rightPanel={rightPanel}
+      rightPanelTitle="Index"
+    />
   );
 }

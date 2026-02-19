@@ -15,12 +15,42 @@ const wrapperPropsRef = {
 };
 
 vi.mock('@/components/common', () => ({
-  DiaryLayout: ({ children, toolbar }: { children: ReactNode; toolbar?: ReactNode }) => (
-    <div data-testid="blackboard-layout">
-      <div data-testid="blackboard-layout-toolbar">{toolbar}</div>
-      <div data-testid="blackboard-layout-content">{children}</div>
-    </div>
-  ),
+  DiaryLayout: ({
+    children,
+    sidebar,
+    toolbar,
+    canvas,
+    status,
+    rightPanel,
+  }: {
+    children?: ReactNode;
+    sidebar?: ReactNode;
+    toolbar?: ReactNode;
+    canvas?: ReactNode;
+    status?: ReactNode | { left?: ReactNode; right?: ReactNode };
+    rightPanel?: ReactNode;
+  }) => {
+    const statusSlots =
+      typeof status === 'object' &&
+      status !== null &&
+      !Array.isArray(status) &&
+      ('left' in status || 'right' in status)
+        ? status
+        : { left: status, right: null };
+
+    return (
+      <div data-testid="blackboard-layout">
+        <div data-testid="blackboard-layout-sidebar">{sidebar}</div>
+        <div data-testid="blackboard-layout-toolbar">{toolbar}</div>
+        <div data-testid="blackboard-layout-canvas">{canvas ?? children}</div>
+        <div data-testid="blackboard-layout-status">
+          <span>{statusSlots.left}</span>
+          <span>{statusSlots.right}</span>
+        </div>
+        <div data-testid="blackboard-layout-right-panel">{rightPanel}</div>
+      </div>
+    );
+  },
   FontSelector: ({
     fonts,
     value,
@@ -139,6 +169,19 @@ describe('Blackboard', () => {
         createdAt: new Date('2026-02-11T00:00:00.000Z'),
         modifiedAt: new Date('2026-02-11T00:00:00.000Z'),
       },
+      elements: [
+        { id: 'el-1', type: 'text', x: 0, y: 0, text: '# Heading 1' },
+        { id: 'el-2', type: 'rectangle', x: 10, y: 10 },
+      ] as never,
+      index: [
+        {
+          id: 'idx-1',
+          elementId: 'el-1',
+          title: 'Heading 1',
+          level: 1,
+          position: { x: 0, y: 0 },
+        },
+      ],
       loadCanvas,
       rebuildIndex,
       updateSettings: vi.fn().mockResolvedValue(undefined),
@@ -146,12 +189,16 @@ describe('Blackboard', () => {
 
     render(<Blackboard />);
 
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
+    expect(screen.getByTestId('blackboard-layout-canvas')).toHaveTextContent('Loading blackboard...');
 
     await waitFor(() => {
       expect(loadCanvas).toHaveBeenCalledTimes(1);
       expect(screen.getByTestId('blackboard-toolbar')).toBeInTheDocument();
     });
+
+    expect(screen.getByTestId('blackboard-layout-status')).toHaveTextContent('Zoom 100%');
+    expect(screen.getByTestId('blackboard-layout-status')).toHaveTextContent('1 heading · 2 elements');
+    expect(screen.getByTestId('blackboard-layout-right-panel')).toHaveTextContent('1 heading indexed.');
 
     fireEvent.click(screen.getByTestId('excalidraw-wrapper'));
     expect(rebuildIndex).toHaveBeenCalledTimes(1);
@@ -189,6 +236,7 @@ describe('Blackboard', () => {
     });
 
     expect(screen.getByRole('button', { name: 'Reload' })).toBeInTheDocument();
+    expect(screen.getByTestId('blackboard-layout-status')).toHaveTextContent('Blackboard unavailable');
   });
 
   it('opens font context menu on right click and updates selected font', async () => {
