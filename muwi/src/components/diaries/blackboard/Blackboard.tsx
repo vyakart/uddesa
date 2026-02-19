@@ -1,5 +1,6 @@
-import { useEffect, useState, useCallback, type MouseEvent } from 'react';
-import { DiaryLayout, FontSelector } from '@/components/common';
+import { useEffect, useState, useCallback, useRef, type MouseEvent } from 'react';
+import { Presentation } from 'lucide-react';
+import { Button, DiaryLayout, FontSelector } from '@/components/common';
 import { useBlackboardStore } from '@/stores/blackboardStore';
 import { ExcalidrawWrapper } from './ExcalidrawWrapper';
 import { IndexPanel } from './IndexPanel';
@@ -15,6 +16,7 @@ export function Blackboard() {
     requestedAt: number;
   } | null>(null);
   const [fontMenuPosition, setFontMenuPosition] = useState<{ x: number; y: number } | null>(null);
+  const canvasContainerRef = useRef<HTMLDivElement>(null);
 
   const isLoading = useBlackboardStore((state) => state.isLoading);
   const error = useBlackboardStore((state) => state.error);
@@ -108,15 +110,21 @@ export function Blackboard() {
   }, [fontMenuPosition]);
 
   const isBusy = !isInitialized || isLoading;
+  const elementCount = elements.filter((element) => (element as { isDeleted?: boolean }).isDeleted !== true).length;
+  const isEmptyCanvas = !isBusy && !error && elementCount === 0;
   const zoomPercent = Math.max(1, Math.round((canvas?.viewportState.zoom ?? 1) * 100));
   const status = isBusy
     ? { left: 'Loading blackboard...', right: 'Syncing canvas state' }
     : error
       ? { left: 'Blackboard unavailable', right: 'Reload to retry' }
       : {
-          left: `Zoom ${zoomPercent}%`,
-          right: `${index.length} heading${index.length === 1 ? '' : 's'} · ${elements.length} element${elements.length === 1 ? '' : 's'}`,
+          left: `Zoom: ${zoomPercent}%`,
+          right: `${index.length} heading${index.length === 1 ? '' : 's'} · ${elementCount} element${elementCount === 1 ? '' : 's'}`,
         };
+
+  const handleEmptyStateAction = useCallback(() => {
+    canvasContainerRef.current?.focus();
+  }, []);
 
   const rightPanel = (
     <div data-testid="blackboard-right-panel" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -223,18 +231,27 @@ export function Blackboard() {
     <div
       data-testid="blackboard-canvas-container"
       onContextMenuCapture={handleCanvasContextMenu}
-      style={{
-        width: '100%',
-        height: '100%',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
+      className="muwi-blackboard-canvas"
+      ref={canvasContainerRef}
+      tabIndex={-1}
     >
       <ExcalidrawWrapper
         onElementsChange={handleElementsChange}
         navigationTarget={navigationTarget}
         onNavigationHandled={() => setNavigationTarget(null)}
       />
+      {isEmptyCanvas ? (
+        <div className="muwi-blackboard-state" role="status" aria-live="polite">
+          <span className="muwi-blackboard-state__icon" aria-hidden="true">
+            <Presentation size={20} />
+          </span>
+          <p className="muwi-blackboard-state__title">Blank canvas</p>
+          <p className="muwi-blackboard-state__text">Think visually — sketch, connect, map</p>
+          <Button type="button" onClick={handleEmptyStateAction} variant="primary" size="sm" className="muwi-blackboard-state__action">
+            Click anywhere to start
+          </Button>
+        </div>
+      ) : null}
       {fontMenuPosition ? (
         <div
           role="presentation"

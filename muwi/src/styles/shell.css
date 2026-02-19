@@ -1483,6 +1483,56 @@
   color: var(--color-text-tertiary);
 }
 
+.muwi-blackboard-canvas {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.muwi-blackboard-state {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  width: min(360px, calc(100% - var(--space-6)));
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  text-align: center;
+  padding: var(--space-4);
+  border: 1px solid color-mix(in srgb, var(--color-bb-text) 20%, transparent);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--color-bb-canvas) 78%, black);
+  box-shadow: var(--shadow-md);
+}
+
+.muwi-blackboard-state__icon {
+  color: var(--color-bb-accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.muwi-blackboard-state__title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--weight-medium);
+  color: var(--color-bb-text);
+}
+
+.muwi-blackboard-state__text {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: color-mix(in srgb, var(--color-bb-text) 72%, transparent);
+  line-height: var(--leading-normal);
+}
+
+.muwi-blackboard-state__action {
+  margin-top: var(--space-1);
+}
+
 .muwi-scratchpad-toolbar {
   width: 100%;
   min-width: 0;

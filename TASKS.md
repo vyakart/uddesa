@@ -1798,8 +1798,8 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 7.8.2, 7.8.3
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] Status bar left shows zoom percentage
-  - [ ] Empty state matches diary icon + guidance action
+  - [x] Status bar left shows zoom percentage
+  - [x] Empty state matches diary icon + guidance action
 
 ### 7.9 Personal Diary UI Migration
 

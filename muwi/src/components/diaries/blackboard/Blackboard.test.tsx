@@ -68,6 +68,19 @@ vi.mock('@/components/common', () => ({
       ))}
     </div>
   ),
+  Button: ({
+    children,
+    onClick,
+    className,
+  }: {
+    children: ReactNode;
+    onClick?: () => void;
+    className?: string;
+  }) => (
+    <button type="button" onClick={onClick} className={className}>
+      {children}
+    </button>
+  ),
 }));
 
 vi.mock('./ExcalidrawWrapper', () => ({
@@ -196,7 +209,7 @@ describe('Blackboard', () => {
       expect(screen.getByTestId('blackboard-toolbar')).toBeInTheDocument();
     });
 
-    expect(screen.getByTestId('blackboard-layout-status')).toHaveTextContent('Zoom 100%');
+    expect(screen.getByTestId('blackboard-layout-status')).toHaveTextContent('Zoom: 100%');
     expect(screen.getByTestId('blackboard-layout-status')).toHaveTextContent('1 heading · 2 elements');
     expect(screen.getByTestId('blackboard-layout-right-panel')).toHaveTextContent('1 heading indexed.');
 
@@ -282,5 +295,51 @@ describe('Blackboard', () => {
     await waitFor(() => {
       expect(updateSettings).toHaveBeenCalledWith({ defaultFont: 'Caveat' });
     });
+  });
+
+  it('shows empty-state guidance with action and keeps zoom status visible', async () => {
+    const loadCanvas = vi.fn().mockResolvedValue(undefined);
+
+    useBlackboardStore.setState({
+      isLoading: false,
+      error: null,
+      canvas: {
+        id: 'canvas-empty',
+        name: 'Empty Canvas',
+        elementIds: [],
+        viewportState: { panX: 0, panY: 0, zoom: 1 },
+        index: [],
+        settings: {
+          backgroundColor: '#2D3436',
+          showGrid: true,
+          gridSize: 20,
+          defaultStrokeColor: '#F5F5F5',
+          defaultStrokeWidth: 2,
+          fonts: ['Inter', 'Caveat'],
+          defaultFont: 'Inter',
+        },
+        createdAt: new Date('2026-02-11T00:00:00.000Z'),
+        modifiedAt: new Date('2026-02-11T00:00:00.000Z'),
+      },
+      elements: [],
+      index: [],
+      loadCanvas,
+      rebuildIndex: vi.fn(),
+      updateSettings: vi.fn().mockResolvedValue(undefined),
+    });
+
+    render(<Blackboard />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Blank canvas')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText('Think visually — sketch, connect, map')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Click anywhere to start' })).toBeInTheDocument();
+    expect(screen.getByTestId('blackboard-layout-status')).toHaveTextContent('Zoom: 100%');
+
+    const canvasContainer = screen.getByTestId('blackboard-canvas-container');
+    fireEvent.click(screen.getByRole('button', { name: 'Click anywhere to start' }));
+    expect(canvasContainer).toHaveFocus();
   });
 });

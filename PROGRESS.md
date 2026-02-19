@@ -9,7 +9,7 @@ Last updated: February 19, 2026
 - Latest full coverage snapshot: lines `90.82%`, statements `90.22%`, functions `86.44%`, branches `80.07%`.
 - Recent focus has been adding reliable tests module by module.
 - Blackboard coverage moved from almost none to strong coverage.
-- Current execution stage: Phase `7.8.4` (Blackboard status bar + empty state refinement).
+- Current execution stage: Phase `7.9.1` (Personal Diary migration onto shared shell slots).
 
 ## 2) Completed tasks so far (brief)
 
@@ -85,6 +85,7 @@ Last updated: February 19, 2026
 | Task wave 63 | Completed `7.8.1` Blackboard shell migration by moving Blackboard container rendering onto explicit `DiaryLayout` slots (sidebar/toolbar/canvas/status/right-panel), preserving index/canvas behaviors, and adding slot-aware component tests that keep Excalidraw integration checks intact | Blackboard-targeted verification: `vitest run src/components/diaries/blackboard/Blackboard.test.tsx` (`3` tests passing) + targeted lint on updated Blackboard files |
 | Task wave 64 | Completed `7.8.2` Blackboard index/toolbar alignment by rebuilding the index sidebar with explicit heading-tree guidance copy and implementing toolbar groups for tools, stroke controls, font selector, and zoom controls per the design-system model | Blackboard-targeted verification: `vitest run src/components/diaries/blackboard` (`14` tests passing) + targeted eslint on updated blackboard component tests/files |
 | Task wave 65 | Completed `7.8.3` Blackboard canvas token alignment by forcing tokenized dark canvas rendering independent of app theme, applying Blackboard token defaults for drawing/text colors, and moving grid rendering to token-colored wrapper styling keyed to viewport/grid settings | Blackboard-targeted verification: `vitest run src/components/diaries/blackboard` (`14` tests passing) + targeted eslint on `ExcalidrawWrapper` component/test updates |
+| Task wave 66 | Completed `7.8.4` Blackboard status + empty-state pass by locking status copy to `Zoom: {n}%` on the left slot and adding first-use blank-canvas guidance (diary icon, headline/body, action CTA) directly in the canvas lane | Blackboard-targeted verification: `vitest run src/components/diaries/blackboard` (`15` tests passing) + targeted eslint on updated Blackboard container/tests |
 
 ## 3) Blackboard testing progress
 
@@ -124,6 +125,6 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Execute `7.8.4`: finalize Blackboard status bar and first-use empty-state guidance.
-2. Move into `7.9` Personal Diary UI migration on shared shell layout.
+1. Execute `7.9.1`-`7.9.3`: migrate Personal Diary onto shell slots and align sidebar/canvas visuals.
+2. Move into `7.10` Drafts UI migration after Personal Diary stabilization.
 3. Continue through `7.10` Drafts UI migration after Blackboard + Personal Diary stabilization.
