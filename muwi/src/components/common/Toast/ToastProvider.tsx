@@ -1,34 +1,12 @@
 import {
-  createContext,
   useCallback,
-  useContext,
   useMemo,
   useState,
   type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { Toast, type ToastVariant } from './Toast';
-
-export interface ToastInput {
-  message: string;
-  title?: string;
-  variant?: ToastVariant;
-  duration?: number;
-  icon?: ReactNode;
-}
-
-interface ToastRecord extends ToastInput {
-  id: string;
-}
-
-interface ToastContextValue {
-  toasts: ToastRecord[];
-  showToast: (toast: ToastInput) => string;
-  dismissToast: (id: string) => void;
-  clearToasts: () => void;
-}
-
-const ToastContext = createContext<ToastContextValue | null>(null);
+import { Toast } from './Toast';
+import { ToastContext, type ToastContextValue, type ToastInput, type ToastRecord } from './ToastContext';
 
 function createToastId(): string {
   return `toast-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -87,12 +65,4 @@ export function ToastProvider({ children }: ToastProviderProps) {
       )}
     </ToastContext.Provider>
   );
-}
-
-export function useToast(): ToastContextValue {
-  const context = useContext(ToastContext);
-  if (!context) {
-    throw new Error('useToast must be used within a ToastProvider');
-  }
-  return context;
 }

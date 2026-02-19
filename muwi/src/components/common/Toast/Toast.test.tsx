@@ -1,7 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { act, fireEvent, render, screen } from '@/test';
-import { ToastProvider, useToast } from './ToastProvider';
+import { ToastProvider } from './ToastProvider';
+import { useToast } from './useToast';
 
 function Harness() {
   const { showToast } = useToast();

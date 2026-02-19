@@ -90,10 +90,17 @@ function getMenuOffsetTop(items: ContextMenuItem[], index: number): number {
   return offset + 4;
 }
 
-export function ContextMenu({ isOpen, x, y, items, onClose }: ContextMenuProps) {
+interface OpenContextMenuProps {
+  x: number;
+  y: number;
+  items: ContextMenuItem[];
+  onClose: () => void;
+}
+
+function OpenContextMenu({ x, y, items, onClose }: OpenContextMenuProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const returnFocusRef = useRef<HTMLElement | null>(null);
-  const [activeIndex, setActiveIndex] = useState(-1);
+  const [activeIndex, setActiveIndex] = useState(() => firstSelectableIndex(items));
   const [openSubmenuIndex, setOpenSubmenuIndex] = useState<number | null>(null);
   const [submenuActiveIndex, setSubmenuActiveIndex] = useState(-1);
 
@@ -104,17 +111,8 @@ export function ContextMenu({ isOpen, x, y, items, onClose }: ContextMenuProps) 
   );
 
   useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
     returnFocusRef.current =
       document.activeElement instanceof HTMLElement ? document.activeElement : null;
-
-    const firstIndex = firstSelectableIndex(items);
-    setActiveIndex(firstIndex);
-    setOpenSubmenuIndex(null);
-    setSubmenuActiveIndex(-1);
 
     const focusTimer = window.requestAnimationFrame(() => {
       rootRef.current?.focus();
@@ -140,11 +138,7 @@ export function ContextMenu({ isOpen, x, y, items, onClose }: ContextMenuProps) 
       }
       returnFocusRef.current = null;
     };
-  }, [isOpen, items, onClose]);
-
-  if (!isOpen || items.length === 0) {
-    return null;
-  }
+  }, [onClose]);
 
   const openSubmenuParent = openSubmenuIndex !== null ? items[openSubmenuIndex] : null;
   const openSubmenuItems =
@@ -390,4 +384,12 @@ export function ContextMenu({ isOpen, x, y, items, onClose }: ContextMenuProps) 
       ) : null}
     </div>
   );
+}
+
+export function ContextMenu({ isOpen, x, y, items, onClose }: ContextMenuProps) {
+  if (!isOpen || items.length === 0) {
+    return null;
+  }
+
+  return <OpenContextMenu x={x} y={y} items={items} onClose={onClose} />;
 }
