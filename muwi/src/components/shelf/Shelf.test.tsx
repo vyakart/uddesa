@@ -111,15 +111,15 @@ describe('Shelf', () => {
     expect(themeSelect.value).toBe('dark');
   });
 
-  it('navigates to diary after transition delay on card click', () => {
+  it('navigates to diary after transition delay on card click', async () => {
     vi.useFakeTimers();
     render(<Shelf />);
     fireEvent.click(screen.getByRole('button', { name: 'Open Drafts' }));
 
     expect(useAppStore.getState().currentView).toBe('shelf');
 
-    act(() => {
-      vi.advanceTimersByTime(230);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(230);
     });
 
     const app = useAppStore.getState();
@@ -143,7 +143,7 @@ describe('Shelf', () => {
     expect(app.activeDiary).toBe('scratchpad');
   });
 
-  it('highlights last opened diary for two seconds after returning to shelf', () => {
+  it('highlights last opened diary for two seconds after returning to shelf', async () => {
     vi.useFakeTimers();
     useAppStore.setState({ currentView: 'diary', activeDiary: 'drafts' });
 
@@ -157,8 +157,8 @@ describe('Shelf', () => {
 
     expect(screen.getByRole('button', { name: 'Open Drafts' })).toHaveAttribute('data-selected', 'true');
 
-    act(() => {
-      vi.advanceTimersByTime(2100);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(2100);
     });
 
     expect(useAppStore.getState().lastOpenedDiary).toBeNull();

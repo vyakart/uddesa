@@ -1540,8 +1540,8 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 7.4.1 through 7.4.7
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Shared components do not rely on literal inline color/spacing values
-  - [ ] Styling is token-driven and easy to audit
+  - [x] Shared components do not rely on literal inline color/spacing values
+  - [x] Styling is token-driven and easy to audit
 
 #### Task 7.4.9: Refactor Export/Backup Panels to Tokenized Surfaces
 - **Description**: Migrate highly styled panel components to design-system tokens
@@ -1552,9 +1552,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/common/BackupPanel/BackupPanel.tsx`
   - related tests in both folders
 - **Acceptance Criteria**:
-  - [ ] No hard-coded color literals remain in these panels
-  - [ ] Layout/controls use shared button/input patterns where applicable
-  - [ ] Existing export/backup behavior and tests remain intact
+  - [x] No hard-coded color literals remain in these panels
+  - [x] Layout/controls use shared button/input patterns where applicable
+  - [x] Existing export/backup behavior and tests remain intact
 
 #### Task 7.4.10: Refactor Passkey/ErrorBoundary/FontSelector Visuals
 - **Description**: Tokenize remaining shared utility components with heavy inline styling
@@ -1565,9 +1565,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/common/ErrorBoundary/ErrorBoundary.tsx`
   - `muwi/src/components/common/FontSelector/FontSelector.tsx`
 - **Acceptance Criteria**:
-  - [ ] Components use shared tokens and focus treatments
-  - [ ] Accessibility roles and labels preserved or improved
-  - [ ] Existing tests updated and passing
+  - [x] Components use shared tokens and focus treatments
+  - [x] Accessibility roles and labels preserved or improved
+  - [x] Existing tests updated and passing
 
 ### 7.5 Shelf (Homepage) Rebuild
 
@@ -1579,9 +1579,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/package.json`
   - `muwi/src/components/shelf/DiaryCard.tsx`
 - **Acceptance Criteria**:
-  - [ ] `lucide-react` installed
-  - [ ] All 6 diary types mapped to spec icons
-  - [ ] Icon sizing for shelf cards uses 24px
+  - [x] `lucide-react` installed
+  - [x] All 6 diary types mapped to spec icons
+  - [x] Icon sizing for shelf cards uses 24px
 
 #### Task 7.5.2: Normalize Diary Card Structure
 - **Description**: Rebuild card layout to title/description/meta hierarchy
@@ -1591,9 +1591,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/shelf/DiaryCard.tsx`
   - `muwi/src/components/shelf/DiaryCard.test.tsx`
 - **Acceptance Criteria**:
-  - [ ] Card visual treatment matches border/radius/shadow specs
-  - [ ] No diary-specific card background colors
-  - [ ] Hover/active/selected states match transition spec
+  - [x] Card visual treatment matches border/radius/shadow specs
+  - [x] No diary-specific card background colors
+  - [x] Hover/active/selected states match transition spec
 
 #### Task 7.5.3: Add Metadata Line from Real Counts + Relative Time
 - **Description**: Populate card metadata line with meaningful values
@@ -1603,9 +1603,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/shelf/DiaryCard.tsx`
   - `muwi/src/components/shelf/Shelf.tsx`
 - **Acceptance Criteria**:
-  - [ ] Metadata format: `{count} {unit} · {relative_time}`
-  - [ ] Empty diary shows `No entries yet` style copy
-  - [ ] Relative time uses `date-fns` distance formatting
+  - [x] Metadata format: `{count} {unit} · {relative_time}`
+  - [x] Empty diary shows `No entries yet` style copy
+  - [x] Relative time uses `date-fns` distance formatting
 
 #### Task 7.5.4: Rebuild Shelf Header and Grid Layout
 - **Description**: Align shelf structure to MUWI v2 layout rules
@@ -1613,10 +1613,10 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Effort**: M
 - **Files to Modify**: `muwi/src/components/shelf/Shelf.tsx`
 - **Acceptance Criteria**:
-  - [ ] Header shows `MUWI` without subtitle
-  - [ ] Grid max width = 960px
-  - [ ] Grid columns: 4 (>=1024), 3 (>=768), 2 (<768)
-  - [ ] Padding and spacing use token aliases
+  - [x] Header shows `MUWI` without subtitle
+  - [x] Grid max width = 960px
+  - [x] Grid columns: 4 (>=1024), 3 (>=768), 2 (<768)
+  - [x] Padding and spacing use token aliases
 
 #### Task 7.5.5: Add Bottom Command Palette Hint
 - **Description**: Add subtle bottom hint for keyboard discovery
@@ -1624,17 +1624,17 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Effort**: S
 - **Files to Modify**: `muwi/src/components/shelf/Shelf.tsx`
 - **Acceptance Criteria**:
-  - [ ] Hint text appears at bottom area on shelf
-  - [ ] Styling uses tertiary text token and xs size
+  - [x] Hint text appears at bottom area on shelf
+  - [x] Styling uses tertiary text token and xs size
 
 #### Task 7.5.6: Implement Shelf -> Diary Transition
 - **Description**: Add non-jarring navigation animation sequence
 - **Dependencies**: 7.5.4, 7.3.5
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Card highlight + fade out + diary fade in sequence implemented
-  - [ ] Transition total remains under ~300ms
-  - [ ] No blank screen during transition
+  - [x] Card highlight + fade out + diary fade in sequence implemented
+  - [x] Transition total remains under ~300ms
+  - [x] No blank screen during transition
 
 #### Task 7.5.7: Add Return Highlight for Last Opened Diary
 - **Description**: Improve user orientation when returning to shelf
@@ -1644,8 +1644,8 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/stores/appStore.ts`
   - `muwi/src/components/shelf/Shelf.tsx`
 - **Acceptance Criteria**:
-  - [ ] Last-opened diary card has selected state for ~2 seconds after return
-  - [ ] State clears automatically and does not persist incorrectly
+  - [x] Last-opened diary card has selected state for ~2 seconds after return
+  - [x] State clears automatically and does not persist incorrectly
 
 #### Task 7.5.8: Add Shelf Regression Tests
 - **Description**: Lock shelf behavior before diary migrations
@@ -1655,7 +1655,7 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/shelf/Shelf.test.tsx`
   - `muwi/src/components/shelf/DiaryCard.test.tsx`
 - **Acceptance Criteria**:
-  - [ ] Tests cover icon rendering, metadata, layout mode, and selected return state
+  - [x] Tests cover icon rendering, metadata, layout mode, and selected return state
 
 ### 7.6 Command Palette
 
@@ -1665,8 +1665,8 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Effort**: S
 - **Files to Modify**: `muwi/src/stores/appStore.ts`
 - **Acceptance Criteria**:
-  - [ ] Store tracks open state, query, highlighted index, recent commands
-  - [ ] Actions exist for open/close/update/execute
+  - [x] Store tracks open state, query, highlighted index, recent commands
+  - [x] Actions exist for open/close/update/execute
 
 #### Task 7.6.2: Create Command Registry
 - **Description**: Build declarative command definition list
@@ -1674,9 +1674,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Effort**: M
 - **Files to Create**: `muwi/src/utils/commands.ts`
 - **Acceptance Criteria**:
-  - [ ] Commands grouped by Navigation/Actions/Settings
-  - [ ] Supports scope filtering by current diary/context
-  - [ ] Includes starter command set from spec
+  - [x] Commands grouped by Navigation/Actions/Settings
+  - [x] Supports scope filtering by current diary/context
+  - [x] Includes starter command set from spec
 
 #### Task 7.6.3: Build Command Palette Component
 - **Description**: Implement modal/combobox UI with tokenized styling
@@ -1686,9 +1686,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/common/CommandPalette/CommandPalette.tsx`
   - `muwi/src/components/common/CommandPalette/index.ts`
 - **Acceptance Criteria**:
-  - [ ] Palette position/size/background/shadow match spec
-  - [ ] Input and results list implement combobox/listbox roles
-  - [ ] Keyboard controls (`↑↓`, `Enter`, `Esc`) work
+  - [x] Palette position/size/background/shadow match spec
+  - [x] Input and results list implement combobox/listbox roles
+  - [x] Keyboard controls (`↑↓`, `Enter`, `Esc`) work
 
 #### Task 7.6.4: Wire Global Shortcut and App Mount Point
 - **Description**: Open palette from anywhere using keyboard shortcut
@@ -1698,17 +1698,17 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/hooks/useGlobalShortcuts.ts`
   - `muwi/src/App.tsx`
 - **Acceptance Criteria**:
-  - [ ] `Cmd+K` / `Ctrl+K` opens palette globally
-  - [ ] Palette closes on outside click and on command execution
+  - [x] `Cmd+K` / `Ctrl+K` opens palette globally
+  - [x] Palette closes on outside click and on command execution
 
 #### Task 7.6.5: Implement Fuzzy Search + Recents
 - **Description**: Improve command discovery and reuse
 - **Dependencies**: 7.6.3
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Query performs fuzzy matching on command labels/aliases
-  - [ ] Empty query shows up to 3 recent commands
-  - [ ] Context-aware commands appear first when in diary
+  - [x] Query performs fuzzy matching on command labels/aliases
+  - [x] Empty query shows up to 3 recent commands
+  - [x] Context-aware commands appear first when in diary
 
 #### Task 7.6.6: Add Command Palette Tests
 - **Description**: Protect keyboard-first behavior
@@ -1718,8 +1718,8 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/common/CommandPalette/CommandPalette.test.tsx`
   - `muwi/src/hooks/useGlobalShortcuts.test.tsx`
 - **Acceptance Criteria**:
-  - [ ] Tests cover open/close/search/navigation/execute
-  - [ ] Tests cover context-aware command ordering
+  - [x] Tests cover open/close/search/navigation/execute
+  - [x] Tests cover context-aware command ordering
 
 ### 7.7 Scratchpad UI Migration
 
