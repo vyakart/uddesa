@@ -1935,17 +1935,17 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Effort**: M
 - **Files to Modify**: `muwi/src/components/diaries/academic/Academic.tsx`
 - **Acceptance Criteria**:
-  - [ ] Sidebar, toolbar, canvas, status bar, and right panel integrated
-  - [ ] Existing citation/reference logic preserved
+  - [x] Sidebar, toolbar, canvas, status bar, and right panel integrated
+  - [x] Existing citation/reference logic preserved
 
 #### Task 7.12.2: Refactor Academic Sidebar Structure
 - **Description**: Implement structure template and bibliography shortcut model
 - **Dependencies**: 7.12.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Sidebar shows section template structure
-  - [ ] Bibliography shortcut visible and actionable
-  - [ ] New section/new paper actions available
+  - [x] Sidebar shows section template structure
+  - [x] Bibliography shortcut visible and actionable
+  - [x] New section/new paper actions available
 
 #### Task 7.12.3: Align Academic Toolbar Groups and Controls
 - **Description**: Apply full academic toolbar grouping from spec
@@ -1953,8 +1953,8 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Effort**: M
 - **Files to Modify**: `muwi/src/components/diaries/academic/AcademicSectionEditor.tsx`
 - **Acceptance Criteria**:
-  - [ ] Includes line spacing, citation, cross-reference, and table actions
-  - [ ] Group separators and active states match tokenized toolbar
+  - [x] Includes line spacing, citation, cross-reference, and table actions
+  - [x] Group separators and active states match tokenized toolbar
 
 #### Task 7.12.4: Implement Academic Right Panel Workflows
 - **Description**: Move bibliography/reference flows into right panel
@@ -1965,18 +1965,18 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/diaries/academic/ReferenceLibraryPanel.tsx`
   - `muwi/src/components/diaries/academic/CitationPicker.tsx`
 - **Acceptance Criteria**:
-  - [ ] Bibliography manager opens in right panel
-  - [ ] Reference library opens in right panel
-  - [ ] Citation style selector is available in panel context
+  - [x] Bibliography manager opens in right panel
+  - [x] Reference library opens in right panel
+  - [x] Citation style selector is available in panel context
 
 #### Task 7.12.5: Apply Academic Canvas + Status Specs
 - **Description**: Implement academic page simulation and metrics strip
 - **Dependencies**: 7.12.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Page margins/header/footer zones visually represented
-  - [ ] Default line spacing is double-spaced
-  - [ ] Status bar shows citation style, page size, word/char metrics
+  - [x] Page margins/header/footer zones visually represented
+  - [x] Default line spacing is double-spaced
+  - [x] Status bar shows citation style, page size, word/char metrics
 
 ### 7.13 Accessibility and Keyboard Compliance
 

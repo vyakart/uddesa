@@ -1,5 +1,10 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { DiaryLayout } from '@/components/common/DiaryLayout';
+import { Toolbar, type ToolbarItem } from '@/components/common';
+import {
+  useAppStore,
+  selectRightPanel,
+} from '@/stores/appStore';
 import {
   useAcademicStore,
   selectPapers,
@@ -9,14 +14,13 @@ import {
   selectAcademicCurrentSection,
   selectAcademicIsLoading,
   selectAcademicError,
-  selectAcademicIsTOCVisible,
-  selectIsBibliographyPanelVisible,
   selectCitationStyle,
   selectCurrentPaperWordCount,
   type AcademicSectionNode,
 } from '@/stores/academicStore';
-import type { CitationStyle, PaperCreationOptions } from '@/types/academic';
+import type { AcademicSection, CitationStyle, PaperCreationOptions } from '@/types/academic';
 import { AcademicSectionEditor } from './AcademicSectionEditor';
+import { BibliographyManager } from './BibliographyManager';
 import { ReferenceLibraryPanel } from './ReferenceLibraryPanel';
 import { TemplateSelector } from './TemplateSelector';
 
@@ -28,8 +32,31 @@ const CITATION_STYLE_LABELS: Record<CitationStyle, string> = {
   ieee: 'IEEE',
 };
 
+const PAGE_SIZE_LABELS: Record<'a4' | 'letter', string> = {
+  a4: 'A4',
+  letter: 'Letter',
+};
+
+const STRUCTURE_TEMPLATE = [
+  { id: 'abstract', label: 'Abstract', aliases: ['abstract'] },
+  { id: 'introduction', label: 'Introduction', aliases: ['introduction'] },
+  { id: 'methods', label: 'Methods', aliases: ['methods', 'methodology'] },
+  { id: 'results', label: 'Results', aliases: ['results', 'findings'] },
+  { id: 'discussion', label: 'Discussion', aliases: ['discussion'] },
+  { id: 'conclusion', label: 'Conclusion', aliases: ['conclusion'] },
+];
+
 function stripHtml(content: string): string {
   return content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function normalizeTitle(title: string): string {
+  return title.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+}
+
+function findTemplateMatch(section: AcademicSection, aliases: string[]): boolean {
+  const normalized = normalizeTitle(section.title);
+  return aliases.some((alias) => normalized.includes(alias));
 }
 
 export function Academic() {
@@ -40,14 +67,12 @@ export function Academic() {
   const currentSection = useAcademicStore(selectAcademicCurrentSection);
   const isLoading = useAcademicStore(selectAcademicIsLoading);
   const error = useAcademicStore(selectAcademicError);
-  const isTOCVisible = useAcademicStore(selectAcademicIsTOCVisible);
-  const isBibliographyPanelVisible = useAcademicStore(selectIsBibliographyPanelVisible);
   const citationStyle = useAcademicStore(selectCitationStyle);
   const totalWordCount = useAcademicStore(selectCurrentPaperWordCount);
-  const totalCharacterCount = currentSections.reduce(
-    (total, section) => total + stripHtml(section.content).length,
-    0
-  );
+
+  const rightPanelState = useAppStore(selectRightPanel);
+  const openRightPanel = useAppStore((state) => state.openRightPanel);
+  const closeRightPanel = useAppStore((state) => state.closeRightPanel);
 
   const loadPapers = useAcademicStore((state) => state.loadPapers);
   const loadBibliographyEntries = useAcademicStore((state) => state.loadBibliographyEntries);
@@ -57,26 +82,36 @@ export function Academic() {
   const updateSection = useAcademicStore((state) => state.updateSection);
   const deleteSection = useAcademicStore((state) => state.deleteSection);
   const setCurrentSection = useAcademicStore((state) => state.setCurrentSection);
-  const toggleTOC = useAcademicStore((state) => state.toggleTOC);
-  const toggleBibliographyPanel = useAcademicStore((state) => state.toggleBibliographyPanel);
   const setCitationStyle = useAcademicStore((state) => state.setCitationStyle);
   const getSectionHierarchy = useAcademicStore((state) => state.getSectionHierarchy);
 
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
-  const [showPaperList, setShowPaperList] = useState(false);
-  const [showStyleMenu, setShowStyleMenu] = useState(false);
 
-  // Load data on mount
   useEffect(() => {
     loadPapers();
     loadBibliographyEntries();
   }, [loadPapers, loadBibliographyEntries]);
 
-  // Keyboard shortcuts
+  const handleTogglePanel = useCallback(
+    (panelType: 'bibliography' | 'reference-library') => {
+      if (
+        rightPanelState.isOpen &&
+        rightPanelState.panelType === panelType &&
+        rightPanelState.context?.source === 'academic'
+      ) {
+        closeRightPanel();
+        return;
+      }
+
+      openRightPanel(panelType, { source: 'academic' });
+    },
+    [rightPanelState.isOpen, rightPanelState.panelType, rightPanelState.context, closeRightPanel, openRightPanel]
+  );
+
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const isMod = e.metaKey || e.ctrlKey;
-      const target = e.target;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const isMod = event.metaKey || event.ctrlKey;
+      const target = event.target;
       const isEditable =
         target instanceof HTMLElement &&
         (target.tagName === 'INPUT' ||
@@ -84,18 +119,25 @@ export function Academic() {
           target.isContentEditable ||
           target.closest('.ProseMirror') instanceof HTMLElement);
 
-      if (isMod && e.key === 'n') {
-        e.preventDefault();
+      if (isMod && !event.shiftKey && event.key.toLowerCase() === 'n') {
+        event.preventDefault();
         setShowTemplateSelector(true);
       }
-      if (isMod && e.key === 'b' && !isEditable) {
-        e.preventDefault();
-        toggleBibliographyPanel();
+
+      if (isMod && event.shiftKey && event.key.toLowerCase() === 'n' && currentPaperId) {
+        event.preventDefault();
+        void createSection(currentPaperId);
+      }
+
+      if (isMod && event.key.toLowerCase() === 'b' && !isEditable) {
+        event.preventDefault();
+        handleTogglePanel('bibliography');
       }
     };
+
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [toggleBibliographyPanel]);
+  }, [currentPaperId, createSection, handleTogglePanel]);
 
   const handleCreatePaper = useCallback(
     async (title: string, template: string | null, options?: PaperCreationOptions) => {
@@ -142,436 +184,298 @@ export function Academic() {
     [deleteSection]
   );
 
+  const totalCharacterCount = useMemo(
+    () => currentSections.reduce((total, section) => total + stripHtml(section.content).length, 0),
+    [currentSections]
+  );
+
   const sectionHierarchy = currentPaperId ? getSectionHierarchy(currentPaperId) : [];
+  const structureRows = STRUCTURE_TEMPLATE.map((templateRow) => {
+    const matchedSection = currentSections.find((section) => findTemplateMatch(section, templateRow.aliases));
+    return {
+      ...templateRow,
+      section: matchedSection ?? null,
+    };
+  });
 
-  // Toolbar component
+  const isAcademicPanelOpen = rightPanelState.isOpen && rightPanelState.context?.source === 'academic';
+  const activeAcademicPanel = isAcademicPanelOpen ? rightPanelState.panelType : null;
+  const isBibliographyPanelActive = activeAcademicPanel === 'bibliography';
+  const isReferenceLibraryPanelActive = activeAcademicPanel === 'reference-library';
+
+  const toolbarItems: ToolbarItem[] = [
+    {
+      id: 'new-paper',
+      label: 'New Paper',
+      onClick: () => setShowTemplateSelector(true),
+      tooltip: 'Create a new paper (Ctrl+N)',
+      showLabel: true,
+    },
+    {
+      id: 'new-section',
+      label: 'New Section',
+      onClick: () => {
+        void handleAddSection();
+      },
+      disabled: !currentPaperId,
+      tooltip: 'Add a section (Ctrl+Shift+N)',
+      showLabel: true,
+    },
+    { type: 'separator', id: 'academic-sep-1' },
+    {
+      id: 'bibliography-panel',
+      label: 'Bibliography',
+      onClick: () => handleTogglePanel('bibliography'),
+      tooltip: 'Toggle bibliography panel',
+      toggle: true,
+      isActive: isBibliographyPanelActive,
+      showLabel: true,
+    },
+    {
+      id: 'reference-library-panel',
+      label: 'Reference Library',
+      onClick: () => handleTogglePanel('reference-library'),
+      tooltip: 'Toggle reference library panel',
+      toggle: true,
+      isActive: isReferenceLibraryPanelActive,
+      showLabel: true,
+    },
+  ];
+
   const toolbar = (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%' }}>
-      {/* Paper selector */}
-      <div style={{ position: 'relative' }}>
-        <button
-          onClick={() => setShowPaperList(!showPaperList)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            padding: '6px 12px',
-            backgroundColor: 'var(--color-bg-primary)',
-            border: '1px solid var(--color-border-default)',
-            borderRadius: '6px',
-            fontSize: '13px',
-            color: 'var(--color-text-primary)',
-            cursor: 'pointer',
-            maxWidth: '200px',
-          }}
-        >
-          <span
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {currentPaper?.title || 'Select Paper'}
-          </span>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M6 9l6 6 6-6" />
-          </svg>
-        </button>
-
-        {showPaperList && (
-          <div
-            style={{
-              position: 'absolute',
-              top: '100%',
-              left: 0,
-              marginTop: '4px',
-              backgroundColor: 'var(--color-bg-primary)',
-              border: '1px solid var(--color-border-default)',
-              borderRadius: '8px',
-              boxShadow: 'var(--shadow-md)',
-              zIndex: 50,
-              minWidth: '200px',
-              maxHeight: '300px',
-              overflow: 'auto',
-            }}
-          >
-            {papers.map((paper) => (
-              <button
-                key={paper.id}
-                onClick={() => {
-                  setCurrentPaper(paper.id);
-                  setShowPaperList(false);
-                }}
-                style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  textAlign: 'left',
-                  border: 'none',
-                  backgroundColor: paper.id === currentPaperId ? 'var(--color-bg-tertiary)' : 'transparent',
-                  cursor: 'pointer',
-                  fontSize: '13px',
-                  color: 'var(--color-text-primary)',
-                }}
-              >
-                {paper.title}
-              </button>
-            ))}
-            <div style={{ borderTop: '1px solid var(--color-border-default)', padding: '8px' }}>
-              <button
-                onClick={() => {
-                  setShowPaperList(false);
-                  setShowTemplateSelector(true);
-                }}
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  backgroundColor: 'var(--color-accent-default)',
-                  color: 'var(--color-text-inverse)',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontSize: '13px',
-                  cursor: 'pointer',
-                }}
-              >
-                + New Paper
-              </button>
-            </div>
-          </div>
-        )}
+    <div className="muwi-academic-toolbar">
+      <div className="muwi-academic-toolbar__group">
+        <Toolbar items={toolbarItems} ariaLabel="Academic actions" />
       </div>
-
-      {/* Word/character count */}
-      <span style={{ fontSize: '13px', color: 'var(--color-text-secondary)' }}>
-        {totalWordCount} words · {totalCharacterCount} chars
-      </span>
-
-      <div style={{ flex: 1 }} />
-
-      {/* Citation style selector */}
-      <div style={{ position: 'relative' }}>
-        <button
-          onClick={() => setShowStyleMenu(!showStyleMenu)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px',
-            padding: '6px 12px',
-            backgroundColor: 'var(--color-bg-primary)',
-            border: '1px solid var(--color-border-default)',
-            borderRadius: '6px',
-            fontSize: '12px',
-            color: 'var(--color-text-secondary)',
-            cursor: 'pointer',
-          }}
-        >
-          {CITATION_STYLE_LABELS[citationStyle]}
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M6 9l6 6 6-6" />
-          </svg>
-        </button>
-
-        {showStyleMenu && (
-          <div
-            style={{
-              position: 'absolute',
-              top: '100%',
-              right: 0,
-              marginTop: '4px',
-              backgroundColor: 'var(--color-bg-primary)',
-              border: '1px solid var(--color-border-default)',
-              borderRadius: '8px',
-              boxShadow: 'var(--shadow-md)',
-              zIndex: 50,
-              minWidth: '120px',
-            }}
-          >
-            {(Object.keys(CITATION_STYLE_LABELS) as CitationStyle[]).map((style) => (
-              <button
-                key={style}
-                onClick={() => {
-                  setCitationStyle(style);
-                  setShowStyleMenu(false);
-                }}
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  textAlign: 'left',
-                  border: 'none',
-                  backgroundColor: style === citationStyle ? 'var(--color-bg-tertiary)' : 'transparent',
-                  cursor: 'pointer',
-                  fontSize: '12px',
-                }}
-              >
-                {CITATION_STYLE_LABELS[style]}
-              </button>
-            ))}
-          </div>
-        )}
+      <div className="muwi-academic-toolbar__meta" aria-hidden="true">
+        <span>{currentPaper ? currentPaper.title : 'No paper selected'}</span>
+        <span>
+          {totalWordCount.toLocaleString()} words · {totalCharacterCount.toLocaleString()} chars
+        </span>
       </div>
+    </div>
+  );
 
-      {/* TOC toggle */}
+  const sidebarHeader = (
+    <div className="muwi-academic-sidebar__paper-select">
+      <label htmlFor="academic-paper-select" className="muwi-academic-sidebar__label">Paper</label>
+      <div className="muwi-select-wrap">
+        <select
+          id="academic-paper-select"
+          value={currentPaperId ?? ''}
+          onChange={(event) => setCurrentPaper(event.target.value || null)}
+          className="muwi-form-control muwi-select"
+          aria-label="Select paper"
+        >
+          <option value="">Select paper</option>
+          {papers.map((paper) => (
+            <option key={paper.id} value={paper.id}>
+              {paper.title}
+            </option>
+          ))}
+        </select>
+        <span className="muwi-select__chevron" aria-hidden="true">
+          ▾
+        </span>
+      </div>
+    </div>
+  );
+
+  const sidebar = (
+    <div className="muwi-academic-sidebar">
+      <section className="muwi-academic-sidebar__section">
+        <div className="muwi-academic-sidebar__heading">STRUCTURE</div>
+        <div className="muwi-academic-structure-list">
+          {structureRows.map((row) => {
+            const isActive = currentSection?.id === row.section?.id;
+            return (
+              <button
+                key={row.id}
+                type="button"
+                onClick={() => {
+                  if (row.section) {
+                    setCurrentSection(row.section.id);
+                    return;
+                  }
+
+                  if (currentPaperId) {
+                    void createSection(currentPaperId, row.label);
+                  }
+                }}
+                className={`muwi-sidebar-item muwi-academic-structure-list__item${isActive ? ' is-active' : ''}`}
+                disabled={!currentPaperId}
+                aria-label={row.section ? `Open ${row.label}` : `Add ${row.label}`}
+              >
+                <span className="muwi-academic-structure-list__status" data-complete={row.section ? 'true' : 'false'} />
+                <span className="muwi-sidebar-item__label">{row.label}</span>
+                <span className="muwi-academic-structure-list__tag">{row.section ? 'Ready' : 'Add'}</span>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="muwi-academic-sidebar__section">
+        <button
+          type="button"
+          onClick={() => handleTogglePanel('bibliography')}
+          className={`muwi-sidebar-item${isBibliographyPanelActive ? ' is-active' : ''}`}
+          aria-label="Open bibliography panel"
+        >
+          <span aria-hidden="true">📚</span>
+          <span className="muwi-sidebar-item__label">BIBLIOGRAPHY</span>
+        </button>
+      </section>
+
+      <section className="muwi-academic-sidebar__section muwi-academic-sidebar__section--fill">
+        <div className="muwi-academic-sidebar__heading">CURRENT SECTIONS</div>
+        {sectionHierarchy.length === 0 ? (
+          <div className="muwi-academic-sidebar__empty">No sections yet</div>
+        ) : (
+          <SectionList
+            nodes={sectionHierarchy}
+            currentSectionId={currentSection?.id || null}
+            onSelect={setCurrentSection}
+            onDelete={handleDeleteSection}
+          />
+        )}
+      </section>
+    </div>
+  );
+
+  const sidebarFooter = (
+    <div className="muwi-academic-sidebar__actions">
       <button
-        onClick={toggleTOC}
-        title="Toggle Table of Contents"
-        style={{
-          padding: '6px 10px',
-          backgroundColor: isTOCVisible ? 'var(--color-accent-subtle)' : 'transparent',
-          border: '1px solid var(--color-border-default)',
-          borderRadius: '6px',
-          cursor: 'pointer',
-          color: isTOCVisible ? 'var(--color-accent-default)' : 'var(--color-text-secondary)',
+        type="button"
+        onClick={() => {
+          void handleAddSection();
         }}
+        className="muwi-button"
+        data-size="sm"
+        data-variant="secondary"
+        disabled={!currentPaperId}
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <line x1="3" y1="6" x2="21" y2="6" />
-          <line x1="3" y1="12" x2="21" y2="12" />
-          <line x1="3" y1="18" x2="21" y2="18" />
-        </svg>
+        + New Section
       </button>
-
-      {/* Bibliography toggle */}
       <button
-        onClick={toggleBibliographyPanel}
-        title="Toggle Bibliography Panel"
-        style={{
-          padding: '6px 10px',
-          backgroundColor: isBibliographyPanelVisible ? 'var(--color-accent-subtle)' : 'transparent',
-          border: '1px solid var(--color-border-default)',
-          borderRadius: '6px',
-          cursor: 'pointer',
-          color: isBibliographyPanelVisible ? 'var(--color-accent-default)' : 'var(--color-text-secondary)',
-        }}
+        type="button"
+        onClick={() => setShowTemplateSelector(true)}
+        className="muwi-button"
+        data-size="sm"
+        data-variant="primary"
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
-          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
-        </svg>
+        + New Paper
       </button>
     </div>
   );
 
-  // Loading state
+  let canvas = null;
+
   if (isLoading) {
-    return (
-      <DiaryLayout diaryType="academic" toolbar={toolbar}>
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
+    canvas = (
+      <div className="muwi-academic-state" data-tone="neutral">
+        <div className="muwi-academic-state__spinner" aria-hidden="true" />
+        <p>Loading papers...</p>
+      </div>
+    );
+  } else if (error) {
+    canvas = (
+      <div className="muwi-academic-state" data-tone="error">
+        <p>{error}</p>
+        <button type="button" className="muwi-button" data-size="sm" data-variant="secondary" onClick={() => loadPapers()}>
+          Retry
+        </button>
+      </div>
+    );
+  } else if (papers.length === 0) {
+    canvas = (
+      <div className="muwi-academic-state" data-tone="neutral">
+        <p>No papers yet</p>
+        <span>Choose a template to get started.</span>
+        <button
+          type="button"
+          onClick={() => setShowTemplateSelector(true)}
+          className="muwi-button"
+          data-size="md"
+          data-variant="primary"
         >
-          <div style={{ textAlign: 'center', color: 'var(--color-text-secondary)' }}>
-            <div
-              style={{
-                width: '32px',
-                height: '32px',
-                border: '3px solid var(--color-border-default)',
-                borderTopColor: 'var(--color-accent-default)',
-                borderRadius: '50%',
-                margin: '0 auto 12px',
-                animation: 'spin 1s linear infinite',
-              }}
-            />
-            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-            Loading...
-          </div>
-        </div>
-      </DiaryLayout>
+          Create Paper
+        </button>
+      </div>
+    );
+  } else {
+    canvas = (
+      <AcademicSectionEditor
+        key={currentSection?.id ?? 'empty-academic-section'}
+        section={currentSection}
+        onTitleChange={handleTitleChange}
+        onContentChange={handleContentChange}
+        onOpenBibliographyPanel={() => handleTogglePanel('bibliography')}
+        onOpenReferenceLibraryPanel={() => handleTogglePanel('reference-library')}
+      />
     );
   }
 
-  // Error state
-  if (error) {
-    return (
-      <DiaryLayout diaryType="academic" toolbar={toolbar}>
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <div style={{ textAlign: 'center', color: 'var(--color-error)' }}>
-            <p style={{ marginBottom: '16px' }}>{error}</p>
-            <button
-              onClick={loadPapers}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: 'var(--color-accent-default)',
-                color: 'var(--color-text-inverse)',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-              }}
+  const rightPanelContent =
+    activeAcademicPanel === 'bibliography' || activeAcademicPanel === 'reference-library' ? (
+      <div className="muwi-academic-panel">
+        <div className="muwi-academic-panel__controls">
+          <label htmlFor="academic-panel-citation-style">Citation style</label>
+          <div className="muwi-select-wrap">
+            <select
+              id="academic-panel-citation-style"
+              value={citationStyle}
+              className="muwi-form-control muwi-select"
+              onChange={(event) => setCitationStyle(event.target.value as CitationStyle)}
             >
-              Retry
-            </button>
+              {(Object.keys(CITATION_STYLE_LABELS) as CitationStyle[]).map((style) => (
+                <option key={style} value={style}>
+                  {CITATION_STYLE_LABELS[style]}
+                </option>
+              ))}
+            </select>
+            <span className="muwi-select__chevron" aria-hidden="true">
+              ▾
+            </span>
           </div>
         </div>
-      </DiaryLayout>
-    );
-  }
 
-  // Empty state
-  if (papers.length === 0) {
-    return (
-      <DiaryLayout diaryType="academic" toolbar={toolbar}>
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'var(--color-text-secondary)',
-          }}
-        >
-          <svg
-            width="64"
-            height="64"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            style={{ marginBottom: '16px', opacity: 0.5 }}
-          >
-            <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-            <path d="M6 12v5c3 3 9 3 12 0v-5" />
-          </svg>
-          <p style={{ fontSize: '18px', marginBottom: '8px' }}>No academic papers yet</p>
-          <p style={{ fontSize: '14px', marginBottom: '24px' }}>
-            Create your first paper to get started
-          </p>
-          <button
-            onClick={() => setShowTemplateSelector(true)}
-            style={{
-              padding: '12px 24px',
-              backgroundColor: 'var(--color-accent-default)',
-              color: 'var(--color-text-inverse)',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '15px',
-              fontWeight: 500,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-            New Academic Paper
-          </button>
+        <div className="muwi-academic-panel__content">
+          {activeAcademicPanel === 'bibliography' ? (
+            <BibliographyManager hideHeader />
+          ) : (
+            <ReferenceLibraryPanel hideHeader compact />
+          )}
         </div>
+      </div>
+    ) : null;
 
-        {showTemplateSelector && (
-          <TemplateSelector onSelect={handleCreatePaper} onClose={() => setShowTemplateSelector(false)} />
-        )}
-      </DiaryLayout>
-    );
-  }
+  const pageSizeLabel = PAGE_SIZE_LABELS[currentPaper?.settings.pageSize ?? 'a4'];
 
   return (
-    <DiaryLayout diaryType="academic" toolbar={toolbar}>
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-        {/* Table of Contents */}
-        {isTOCVisible && (
-          <div
-            style={{
-              width: '260px',
-              borderRight: '1px solid var(--color-border-default)',
-              backgroundColor: 'var(--color-bg-secondary)',
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            <div
-              style={{
-                padding: '16px',
-                borderBottom: '1px solid var(--color-border-default)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: 'var(--color-text-primary)' }}>
-                Sections
-              </h3>
-              <button
-                onClick={handleAddSection}
-                style={{
-                  padding: '4px 8px',
-                  backgroundColor: 'var(--color-accent-default)',
-                  color: 'var(--color-text-inverse)',
-                  border: 'none',
-                  borderRadius: '4px',
-                  fontSize: '12px',
-                  cursor: 'pointer',
-                }}
-              >
-                + Add
-              </button>
-            </div>
-
-            <div style={{ flex: 1, overflow: 'auto', padding: '8px' }}>
-              {sectionHierarchy.length === 0 ? (
-                <div
-                  style={{
-                    padding: '16px',
-                    textAlign: 'center',
-                    color: 'var(--color-text-tertiary)',
-                    fontSize: '13px',
-                  }}
-                >
-                  No sections yet
-                </div>
-              ) : (
-                <SectionList
-                  nodes={sectionHierarchy}
-                  currentSectionId={currentSection?.id || null}
-                  onSelect={setCurrentSection}
-                  onDelete={handleDeleteSection}
-                />
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Main editor */}
-        <AcademicSectionEditor
-          key={currentSection?.id ?? 'empty-academic-section'}
-          section={currentSection}
-          onTitleChange={handleTitleChange}
-          onContentChange={handleContentChange}
-        />
-
-        {/* Reference library panel */}
-        {isBibliographyPanelVisible && (
-          <div
-            style={{
-              width: '560px',
-              borderLeft: '1px solid var(--color-border-default)',
-            }}
-          >
-            <ReferenceLibraryPanel onClose={toggleBibliographyPanel} />
-          </div>
-        )}
-      </div>
-
-      {/* Template selector modal */}
-      {showTemplateSelector && (
-        <TemplateSelector onSelect={handleCreatePaper} onClose={() => setShowTemplateSelector(false)} />
-      )}
-    </DiaryLayout>
+    <DiaryLayout
+      diaryType="academic"
+      sidebar={sidebar}
+      sidebarHeader={sidebarHeader}
+      sidebarFooter={sidebarFooter}
+      toolbar={toolbar}
+      canvas={
+        <>
+          {canvas}
+          {showTemplateSelector ? (
+            <TemplateSelector onSelect={handleCreatePaper} onClose={() => setShowTemplateSelector(false)} />
+          ) : null}
+        </>
+      }
+      status={{
+        left: `${CITATION_STYLE_LABELS[citationStyle]} · ${pageSizeLabel}`,
+        right: `${totalWordCount.toLocaleString()} words · ${totalCharacterCount.toLocaleString()} chars`,
+      }}
+      rightPanel={rightPanelContent}
+    />
   );
 }
 
-// Section list component for TOC
 interface SectionListProps {
   nodes: AcademicSectionNode[];
   currentSectionId: string | null;
@@ -582,75 +486,46 @@ interface SectionListProps {
 function SectionList({ nodes, currentSectionId, onSelect, onDelete }: SectionListProps) {
   return (
     <div>
-      {nodes.map((node) => (
-        <div key={node.section.id}>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              padding: '8px 12px',
-              paddingLeft: `${12 + node.depth * 16}px`,
-              borderRadius: '6px',
-              backgroundColor: currentSectionId === node.section.id ? 'var(--color-accent-subtle)' : 'transparent',
-              cursor: 'pointer',
-              marginBottom: '2px',
-            }}
-            onClick={() => onSelect(node.section.id)}
-          >
-            <span
-              style={{
-                flex: 1,
-                fontSize: '13px',
-                fontWeight: currentSectionId === node.section.id ? 600 : 400,
-                color: currentSectionId === node.section.id ? 'var(--color-accent-default)' : 'var(--color-text-primary)',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}
+      {nodes.map((node) => {
+        const isActive = currentSectionId === node.section.id;
+        return (
+          <div key={node.section.id}>
+            <div
+              className={`muwi-sidebar-item muwi-academic-section-item${isActive ? ' is-active' : ''}`}
+              style={{ paddingLeft: `${12 + node.depth * 14}px` }}
             >
-              {node.section.title || 'Untitled'}
-            </span>
-            <span style={{ fontSize: '11px', color: 'var(--color-text-tertiary)', marginLeft: '8px' }}>
-              {node.section.wordCount}w
-            </span>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete(node.section.id);
-              }}
-              style={{
-                padding: '2px',
-                border: 'none',
-                backgroundColor: 'transparent',
-                cursor: 'pointer',
-                color: 'var(--color-text-tertiary)',
-                marginLeft: '4px',
-                opacity: 0.5,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.opacity = '1';
-                e.currentTarget.style.color = 'var(--color-error)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.opacity = '0.5';
-                e.currentTarget.style.color = 'var(--color-text-tertiary)';
-              }}
-            >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M18 6L6 18M6 6l12 12" />
-              </svg>
-            </button>
+              <button
+                type="button"
+                onClick={() => onSelect(node.section.id)}
+                className="muwi-academic-section-item__main"
+                aria-label={`Open ${node.section.title || 'Untitled section'}`}
+              >
+                <span className="muwi-sidebar-item__label">{node.section.title || 'Untitled'}</span>
+                <span className="muwi-academic-section-item__count">{node.section.wordCount}w</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  onDelete(node.section.id);
+                }}
+                className="muwi-academic-section-item__delete"
+                aria-label={`Delete ${node.section.title || 'Untitled section'}`}
+                title="Delete section"
+              >
+                ×
+              </button>
+            </div>
+            {node.children.length > 0 ? (
+              <SectionList
+                nodes={node.children}
+                currentSectionId={currentSectionId}
+                onSelect={onSelect}
+                onDelete={onDelete}
+              />
+            ) : null}
           </div>
-          {node.children.length > 0 && (
-            <SectionList
-              nodes={node.children}
-              currentSectionId={currentSectionId}
-              onSelect={onSelect}
-              onDelete={onDelete}
-            />
-          )}
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

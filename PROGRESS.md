@@ -1,6 +1,6 @@
 # MUWI Progress (Simple Status)
 
-Last updated: February 19, 2026
+Last updated: February 20, 2026
 
 ## 1) Where we are now
 
@@ -9,7 +9,7 @@ Last updated: February 19, 2026
 - Latest full coverage snapshot: lines `90.82%`, statements `90.22%`, functions `86.44%`, branches `80.07%`.
 - Recent focus has been adding reliable tests module by module.
 - Blackboard coverage moved from almost none to strong coverage.
-- Current execution stage: Phase `7.1.3` cleanup stream (repo-wide hard-coded theme color removal).
+- Current execution stage: Phase `7.12` completion (Academic UI Migration finished; moving to accessibility pass).
 
 ## 2) Completed tasks so far (brief)
 
@@ -95,6 +95,7 @@ Last updated: February 19, 2026
 | Task wave 73 | Completed the following `7.1.3` cleanup tranche by tokenizing hard-coded colors in `ReferenceLibraryPanel`, `DraftEditor`, `FocusMode`, `StatusBadge`, and `Drafts`, and aligned style assertions in related tests to tokenized values | Verification: targeted tranche tests (`24` tests passing) + full lint `eslint .` passing |
 | Task wave 74 | Completed a follow-up `7.1.3` pass on remaining component offenders by tokenizing fallback/legacy literals in `ExcalidrawWrapper`, `BlackboardToolbar`, and `DiaryEntry`, then aligned `ExcalidrawWrapper` style assertions with tokenized output | Verification: targeted blackboard/personal tests (`11` tests passing) + full lint `eslint .` passing |
 | Task wave 75 | Cleaned remaining test-only color literals in `ExcalidrawWrapper.test.tsx`, `Blackboard.test.tsx`, `CategoryPicker.test.tsx`, and `BlackboardToolbar.test.tsx` by replacing hard-coded hex usage with token/string constants and non-literal fixtures | Verification: targeted tests (`14` tests passing) + full lint `eslint .` passing |
+| Task wave 76 | Completed `7.12.1`-`7.12.5` Academic UI migration by moving Academic onto full shell slots, refactoring sidebar to structure template + bibliography shortcut + new section/paper actions, aligning editor toolbar groups with line spacing/citation/cross-reference/table actions, migrating bibliography/reference workflows into app right-panel context with panel citation-style selector, and applying page-simulation canvas + status-strip specs | Verification: academic targeted tests (`13` tests passing): `vitest src/components/diaries/academic/Academic.test.tsx src/components/diaries/academic/AcademicSectionEditor.test.tsx src/components/diaries/academic/ReferenceLibraryPanel.test.tsx` + targeted lint on changed academic files passing |
 
 ## 3) Blackboard testing progress
 
@@ -134,6 +135,6 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Start `7.10` Drafts UI migration (`7.10.1`-`7.10.4`) now that component/test token cleanup tranche is complete and lint is clean.
-2. Re-run full suite + coverage snapshot after Drafts migration to refresh baseline metrics.
-3. Continue residual test-only literal cleanup in non-target files (`PersonalDiary.test.tsx`, `Scratchpad*.test.tsx`) as a follow-up hardening pass.
+1. Start `7.13` accessibility/keyboard compliance pass now that diary migrations through `7.12` are complete.
+2. Re-run full suite + coverage snapshot after `7.13` to refresh baseline metrics.
+3. Continue any residual token hygiene/test literal cleanup discovered during accessibility sweep.

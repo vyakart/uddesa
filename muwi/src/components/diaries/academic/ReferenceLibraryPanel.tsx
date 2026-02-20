@@ -11,6 +11,8 @@ import { BibliographyManager } from './BibliographyManager';
 
 interface ReferenceLibraryPanelProps {
   onClose?: () => void;
+  hideHeader?: boolean;
+  compact?: boolean;
 }
 
 const VALID_ENTRY_TYPES = new Set<BibliographyEntryType>([
@@ -97,6 +99,7 @@ function extractImportRecords(payload: unknown): unknown[] {
   ) {
     return (payload as { references: unknown[] }).references;
   }
+
   throw new Error('Invalid import format. Expected an array or { references: [] }.');
 }
 
@@ -113,7 +116,7 @@ function readFileText(file: File): Promise<string> {
   });
 }
 
-export function ReferenceLibraryPanel({ onClose }: ReferenceLibraryPanelProps) {
+export function ReferenceLibraryPanel({ onClose, hideHeader = false, compact = false }: ReferenceLibraryPanelProps) {
   const entries = useAcademicStore(selectBibliographyEntries);
   const papers = useAcademicStore(selectPapers);
   const currentPaperId = useAcademicStore(selectCurrentPaperId);
@@ -169,6 +172,7 @@ export function ReferenceLibraryPanel({ onClose }: ReferenceLibraryPanelProps) {
 
       setIsImporting(true);
       setStatusMessage(null);
+
       try {
         const content = await readFileText(file);
         const parsed = JSON.parse(content) as unknown;
@@ -178,6 +182,7 @@ export function ReferenceLibraryPanel({ onClose }: ReferenceLibraryPanelProps) {
         for (const record of records) {
           const normalized = normalizeImportedReference(record);
           if (!normalized) continue;
+
           await addBibliographyEntry(normalized);
           importedCount += 1;
         }
@@ -188,9 +193,7 @@ export function ReferenceLibraryPanel({ onClose }: ReferenceLibraryPanelProps) {
             : 'No valid references found in import file.'
         );
       } catch (error) {
-        setStatusMessage(
-          error instanceof Error ? error.message : 'Failed to import references.'
-        );
+        setStatusMessage(error instanceof Error ? error.message : 'Failed to import references.');
       } finally {
         setIsImporting(false);
         event.target.value = '';
@@ -225,39 +228,41 @@ export function ReferenceLibraryPanel({ onClose }: ReferenceLibraryPanelProps) {
         backgroundColor: 'var(--color-bg-primary)',
       }}
     >
-      <div
-        style={{
-          padding: '12px 16px',
-          borderBottom: '1px solid var(--color-border-default)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '8px',
-        }}
-      >
-        <div>
-          <div style={{ fontSize: '15px', fontWeight: 600, color: 'var(--color-text-primary)' }}>Reference Library</div>
-          <div style={{ fontSize: '12px', color: 'var(--color-text-secondary)' }}>
-            Global references shared across papers
+      {!hideHeader ? (
+        <div
+          style={{
+            padding: '12px 16px',
+            borderBottom: '1px solid var(--color-border-default)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '8px',
+          }}
+        >
+          <div>
+            <div style={{ fontSize: '15px', fontWeight: 600, color: 'var(--color-text-primary)' }}>Reference Library</div>
+            <div style={{ fontSize: '12px', color: 'var(--color-text-secondary)' }}>
+              Global references shared across papers
+            </div>
           </div>
+          {onClose ? (
+            <button
+              onClick={onClose}
+              style={{
+                border: 'none',
+                backgroundColor: 'transparent',
+                cursor: 'pointer',
+                color: 'var(--color-text-secondary)',
+                fontSize: '18px',
+                lineHeight: 1,
+              }}
+              aria-label="Close reference library"
+            >
+              ×
+            </button>
+          ) : null}
         </div>
-        {onClose && (
-          <button
-            onClick={onClose}
-            style={{
-              border: 'none',
-              backgroundColor: 'transparent',
-              cursor: 'pointer',
-              color: 'var(--color-text-secondary)',
-              fontSize: '18px',
-              lineHeight: 1,
-            }}
-            aria-label="Close reference library"
-          >
-            ×
-          </button>
-        )}
-      </div>
+      ) : null}
 
       <div
         style={{
@@ -304,7 +309,7 @@ export function ReferenceLibraryPanel({ onClose }: ReferenceLibraryPanelProps) {
         />
       </div>
 
-      {statusMessage && (
+      {statusMessage ? (
         <div
           style={{
             padding: '8px 16px',
@@ -316,22 +321,39 @@ export function ReferenceLibraryPanel({ onClose }: ReferenceLibraryPanelProps) {
         >
           {statusMessage}
         </div>
-      )}
+      ) : null}
 
-      <div style={{ flex: 1, display: 'flex', minHeight: 0 }}>
-        <div style={{ flex: 1, minWidth: 0, borderRight: '1px solid var(--color-border-default)' }}>
-          <BibliographyManager hideHeader onSelectEntry={(entry) => setSelectedEntryId(entry.id)} />
-        </div>
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          minHeight: 0,
+          flexDirection: compact ? 'column' : 'row',
+        }}
+      >
         <div
           style={{
-            width: '220px',
+            flex: 1,
+            minWidth: 0,
+            borderRight: compact ? 'none' : '1px solid var(--color-border-default)',
+            borderBottom: compact ? '1px solid var(--color-border-default)' : 'none',
+          }}
+        >
+          <BibliographyManager hideHeader onSelectEntry={(entry) => setSelectedEntryId(entry.id)} />
+        </div>
+
+        <div
+          style={{
+            width: compact ? '100%' : '220px',
             padding: '12px',
             overflowY: 'auto',
+            maxHeight: compact ? '200px' : undefined,
           }}
         >
           <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: '10px' }}>
             Link To Papers
           </div>
+
           {!selectedEntry ? (
             <div style={{ fontSize: '12px', color: 'var(--color-text-secondary)' }}>
               Select a reference to link it to one or more papers.
@@ -369,11 +391,12 @@ export function ReferenceLibraryPanel({ onClose }: ReferenceLibraryPanelProps) {
                     </label>
                   );
                 })}
-                {papers.length === 0 && (
+
+                {papers.length === 0 ? (
                   <div style={{ fontSize: '12px', color: 'var(--color-text-secondary)' }}>
                     No papers available.
                   </div>
-                )}
+                ) : null}
               </div>
             </>
           )}

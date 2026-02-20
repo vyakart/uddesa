@@ -1,14 +1,36 @@
 import type { ReactNode } from 'react';
 import { act, fireEvent, render, screen, waitFor } from '@/test';
 import { useAcademicStore } from '@/stores/academicStore';
+import { useAppStore } from '@/stores/appStore';
 import type { AcademicPaper, AcademicSection } from '@/types/academic';
 import { Academic } from './Academic';
 
 vi.mock('@/components/common/DiaryLayout', () => ({
-  DiaryLayout: ({ children, toolbar }: { children: ReactNode; toolbar?: ReactNode }) => (
+  DiaryLayout: ({
+    toolbar,
+    sidebar,
+    sidebarHeader,
+    sidebarFooter,
+    canvas,
+    rightPanel,
+    status,
+  }: {
+    toolbar?: ReactNode;
+    sidebar?: ReactNode;
+    sidebarHeader?: ReactNode;
+    sidebarFooter?: ReactNode;
+    canvas?: ReactNode;
+    rightPanel?: ReactNode;
+    status?: ReactNode | { left?: ReactNode; right?: ReactNode };
+  }) => (
     <div data-testid="academic-layout">
       <div data-testid="academic-toolbar">{toolbar}</div>
-      <div data-testid="academic-content">{children}</div>
+      <div data-testid="academic-sidebar-header">{sidebarHeader}</div>
+      <div data-testid="academic-sidebar">{sidebar}</div>
+      <div data-testid="academic-sidebar-footer">{sidebarFooter}</div>
+      <div data-testid="academic-canvas">{canvas}</div>
+      <div data-testid="academic-right-panel">{rightPanel}</div>
+      <div data-testid="academic-status">{typeof status === 'object' ? `${String(status?.left)}|${String(status?.right)}` : status}</div>
     </div>
   ),
 }));
@@ -36,14 +58,11 @@ vi.mock('./AcademicSectionEditor', () => ({
 }));
 
 vi.mock('./ReferenceLibraryPanel', () => ({
-  ReferenceLibraryPanel: ({ onClose }: { onClose: () => void }) => (
-    <div data-testid="bibliography-panel">
-      Bibliography Panel
-      <button type="button" onClick={onClose}>
-        Close Bibliography
-      </button>
-    </div>
-  ),
+  ReferenceLibraryPanel: () => <div data-testid="reference-library-panel">Reference Library Panel</div>,
+}));
+
+vi.mock('./BibliographyManager', () => ({
+  BibliographyManager: () => <div data-testid="bibliography-panel">Bibliography Panel</div>,
 }));
 
 vi.mock('./TemplateSelector', () => ({
@@ -117,6 +136,7 @@ function makeSection(overrides: Partial<AcademicSection> = {}): AcademicSection 
 describe('Academic', () => {
   beforeEach(() => {
     useAcademicStore.setState(useAcademicStore.getInitialState(), true);
+    useAppStore.setState(useAppStore.getInitialState(), true);
   });
 
   it('renders loading state', () => {
@@ -129,8 +149,9 @@ describe('Academic', () => {
       loadPapers,
       loadBibliographyEntries,
     });
+
     render(<Academic />);
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
+    expect(screen.getByText('Loading papers...')).toBeInTheDocument();
   });
 
   it('renders error state and supports retry', async () => {
@@ -143,12 +164,10 @@ describe('Academic', () => {
       loadPapers,
       loadBibliographyEntries,
     });
+
     render(<Academic />);
 
-    await waitFor(() => {
-      expect(screen.getByText('Academic load failed')).toBeInTheDocument();
-    });
-
+    expect(screen.getByText('Academic load failed')).toBeInTheDocument();
     const callsBeforeRetry = loadPapers.mock.calls.length;
     fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
     expect(loadPapers.mock.calls.length).toBe(callsBeforeRetry + 1);
@@ -171,8 +190,8 @@ describe('Academic', () => {
 
     render(<Academic />);
 
-    expect(screen.getByText('No academic papers yet')).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: /New Academic Paper/i }));
+    expect(screen.getByText('No papers yet')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Create Paper' }));
     expect(screen.getByTestId('template-selector')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Confirm Template' }));
@@ -181,7 +200,7 @@ describe('Academic', () => {
     });
   });
 
-  it('renders main editor flow and handles toolbar/shortcut interactions', async () => {
+  it('renders main editor flow and handles toolbar/sidebar/panel interactions', async () => {
     const loadPapers = vi.fn().mockResolvedValue(undefined);
     const loadBibliographyEntries = vi.fn().mockResolvedValue(undefined);
     const createPaper = vi.fn().mockResolvedValue(makePaper({ id: 'new-paper' }));
@@ -190,8 +209,6 @@ describe('Academic', () => {
     const updateSection = vi.fn().mockResolvedValue(undefined);
     const deleteSection = vi.fn().mockResolvedValue(undefined);
     const setCurrentSection = vi.fn();
-    const toggleTOC = vi.fn();
-    const toggleBibliographyPanel = vi.fn();
     const setCitationStyle = vi.fn();
 
     const paperOne = makePaper({ id: 'paper-1', title: 'Paper One' });
@@ -205,8 +222,6 @@ describe('Academic', () => {
       sectionsMap: new Map([[paperOne.id, [section]], [paperTwo.id, []]]),
       isLoading: false,
       error: null,
-      isTOCVisible: true,
-      isBibliographyPanelVisible: true,
       citationStyle: 'apa7',
       loadPapers,
       loadBibliographyEntries,
@@ -216,18 +231,24 @@ describe('Academic', () => {
       updateSection,
       deleteSection,
       setCurrentSection,
-      toggleTOC,
-      toggleBibliographyPanel,
       setCitationStyle,
       getSectionHierarchy: vi.fn(() => [{ section, children: [], depth: 0 }]),
+    });
+
+    useAppStore.setState({
+      ...useAppStore.getState(),
+      rightPanel: {
+        isOpen: true,
+        panelType: 'bibliography',
+        context: { source: 'academic' },
+      },
     });
 
     render(<Academic />);
 
     expect(screen.getByTestId('academic-section-editor')).toHaveTextContent('Section: Intro');
     expect(screen.getByTestId('bibliography-panel')).toBeInTheDocument();
-    expect(screen.getByText(/42 words/)).toBeInTheDocument();
-    expect(screen.getByText(/5 chars/)).toBeInTheDocument();
+    expect(screen.getByTestId('academic-status')).toHaveTextContent('42 words · 5 chars');
 
     fireEvent.click(screen.getByRole('button', { name: 'Mock Title Update' }));
     expect(updateSection).toHaveBeenCalledWith(section.id, { title: 'Updated Academic Title' });
@@ -235,30 +256,31 @@ describe('Academic', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Mock Content Update' }));
     expect(updateSection).toHaveBeenCalledWith(section.id, { content: '<p>Updated content</p>' });
 
-    fireEvent.click(screen.getByRole('button', { name: /Paper One/i }));
-    fireEvent.click(screen.getByRole('button', { name: 'Paper Two' }));
+    fireEvent.change(screen.getByLabelText('Select paper'), {
+      target: { value: 'paper-2' },
+    });
     expect(setCurrentPaper).toHaveBeenCalledWith('paper-2');
 
-    fireEvent.click(screen.getByRole('button', { name: '+ Add' }));
+    fireEvent.click(screen.getByRole('button', { name: 'New Section' }));
     expect(createSection).toHaveBeenCalledWith('paper-1');
 
-    fireEvent.click(screen.getByRole('button', { name: 'APA 7th' }));
-    fireEvent.click(screen.getByRole('button', { name: 'MLA 9th' }));
+    fireEvent.change(screen.getByLabelText('Citation style'), { target: { value: 'mla9' } });
     expect(setCitationStyle).toHaveBeenCalledWith('mla9');
 
-    fireEvent.click(screen.getByTitle('Toggle Table of Contents'));
-    expect(toggleTOC).toHaveBeenCalledTimes(1);
-    fireEvent.click(screen.getByTitle('Toggle Bibliography Panel'));
-    expect(toggleBibliographyPanel).toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: 'Bibliography' }));
+    expect(useAppStore.getState().rightPanel.isOpen).toBe(false);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Reference Library' }));
+    expect(useAppStore.getState().rightPanel.panelType).toBe('reference-library');
 
     fireEvent.keyDown(window, { key: 'n', ctrlKey: true });
     expect(screen.getByTestId('template-selector')).toBeInTheDocument();
 
     fireEvent.keyDown(window, { key: 'b', ctrlKey: true });
-    expect(toggleBibliographyPanel).toHaveBeenCalled();
+    expect(useAppStore.getState().rightPanel.panelType).toBe('bibliography');
   });
 
-  it('handles template close/null-template and empty-section/delete-cancel paths', async () => {
+  it('handles template close/null-template and delete-cancel path', async () => {
     const loadPapers = vi.fn().mockResolvedValue(undefined);
     const loadBibliographyEntries = vi.fn().mockResolvedValue(undefined);
     const createPaper = vi.fn().mockResolvedValue(makePaper({ id: 'new-paper' }));
@@ -275,8 +297,6 @@ describe('Academic', () => {
       sectionsMap: new Map([[paperOne.id, [untitledSection]]]),
       isLoading: false,
       error: null,
-      isTOCVisible: true,
-      isBibliographyPanelVisible: false,
       citationStyle: 'apa7',
       loadPapers,
       loadBibliographyEntries,
@@ -286,8 +306,6 @@ describe('Academic', () => {
       updateSection: vi.fn().mockResolvedValue(undefined),
       deleteSection,
       setCurrentSection: vi.fn(),
-      toggleTOC: vi.fn(),
-      toggleBibliographyPanel: vi.fn(),
       setCitationStyle: vi.fn(),
       getSectionHierarchy: vi.fn(() => []),
     });
@@ -295,9 +313,9 @@ describe('Academic', () => {
     render(<Academic />);
     expect(screen.getByText('No sections yet')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: /Paper Empty Sections/i }));
     fireEvent.click(screen.getByRole('button', { name: '+ New Paper' }));
     expect(screen.getByTestId('template-selector')).toBeInTheDocument();
+
     fireEvent.click(screen.getByRole('button', { name: 'Close Template' }));
     expect(screen.queryByTestId('template-selector')).not.toBeInTheDocument();
 
@@ -313,13 +331,8 @@ describe('Academic', () => {
         getSectionHierarchy: vi.fn(() => [{ section: untitledSection, children: [], depth: 0 }]),
       });
     });
-    fireEvent.click(screen.getByTitle('Toggle Table of Contents'));
-    fireEvent.click(screen.getByTitle('Toggle Table of Contents'));
 
-    const deleteButton = screen.getByText('Untitled').parentElement?.querySelector('button');
-    expect(deleteButton).toBeTruthy();
-    fireEvent.click(deleteButton!);
-
+    fireEvent.click(screen.getByTitle('Delete section'));
     await waitFor(() => {
       expect(deleteSection).not.toHaveBeenCalled();
     });

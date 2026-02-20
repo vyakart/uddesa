@@ -17,6 +17,8 @@ interface AcademicSectionEditorProps {
   section: AcademicSection | null;
   onTitleChange: (title: string) => void;
   onContentChange: (content: string) => void;
+  onOpenBibliographyPanel?: () => void;
+  onOpenReferenceLibraryPanel?: () => void;
 }
 
 function countWords(text: string): number {
@@ -35,6 +37,14 @@ function getHighestNumber(content: string, pattern: RegExp): number {
     match = pattern.exec(content);
   }
   return max;
+}
+
+function marginMmToPx(mm: number | undefined): number {
+  if (!mm) {
+    return 64;
+  }
+
+  return Math.max(32, Math.round((mm / 25.4) * 96 * 0.72));
 }
 
 interface HeadingReference {
@@ -78,8 +88,13 @@ function getMarginPresetId(margins: AcademicSettings['margins'] | undefined): st
   return match?.id || 'normal';
 }
 
-const selectStyle: React.CSSProperties = {
-  border: '1px solid var(--color-border-strong)',
+const PAGE_WIDTH: Record<'a4' | 'letter', string> = {
+  a4: '860px',
+  letter: '890px',
+};
+
+const controlStyle: React.CSSProperties = {
+  border: '1px solid var(--color-border-default)',
   borderRadius: '6px',
   padding: '4px 8px',
   fontSize: '12px',
@@ -91,6 +106,8 @@ export function AcademicSectionEditor({
   section,
   onTitleChange,
   onContentChange,
+  onOpenBibliographyPanel,
+  onOpenReferenceLibraryPanel,
 }: AcademicSectionEditorProps) {
   const viewMode = useAcademicStore(selectAcademicViewMode);
   const currentPaper = useAcademicStore(selectCurrentPaper);
@@ -116,15 +133,18 @@ export function AcademicSectionEditor({
 
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const titleSaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const currentSettings = currentPaper?.settings;
   const lineSpacing = currentSettings?.lineSpacing ?? 2;
   const fontSize = currentSettings?.fontSize ?? 12;
   const marginPreset = getMarginPresetId(currentSettings?.margins);
   const fontFamily = (currentSettings?.fontFamily || 'Times New Roman').replace(/["']/g, '');
-  const editorContainerPadding = Math.max(
-    40,
-    Math.round((currentSettings?.margins?.left ?? 25.4) * 1.6)
-  );
+  const pageSize = currentSettings?.pageSize ?? 'a4';
+
+  const contentPaddingTop = marginMmToPx(currentSettings?.margins?.top);
+  const contentPaddingRight = marginMmToPx(currentSettings?.margins?.right);
+  const contentPaddingBottom = marginMmToPx(currentSettings?.margins?.bottom);
+  const contentPaddingLeft = marginMmToPx(currentSettings?.margins?.left);
 
   const editor = useEditor({
     extensions: [
@@ -142,7 +162,7 @@ export function AcademicSectionEditor({
     editorProps: {
       attributes: {
         style: `
-          min-height: 400px;
+          min-height: 420px;
           outline: none;
           font-family: '${fontFamily}', 'Times New Roman', 'Georgia', serif;
           font-size: ${fontSize}pt;
@@ -163,6 +183,7 @@ export function AcademicSectionEditor({
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
       }
+
       saveTimeoutRef.current = setTimeout(() => {
         onContentChange(html);
       }, 500);
@@ -173,11 +194,12 @@ export function AcademicSectionEditor({
 
   useEffect(() => {
     if (!editor) return;
+
     editor.setOptions({
       editorProps: {
         attributes: {
           style: `
-            min-height: 400px;
+            min-height: 420px;
             outline: none;
             font-family: '${fontFamily}', 'Times New Roman', 'Georgia', serif;
             font-size: ${fontSize}pt;
@@ -189,6 +211,13 @@ export function AcademicSectionEditor({
     });
   }, [editor, fontFamily, fontSize, lineSpacing]);
 
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+      if (titleSaveTimeoutRef.current) clearTimeout(titleSaveTimeoutRef.current);
+    };
+  }, []);
+
   const crossReferenceOptions = useMemo(() => {
     if (crossReferenceType === 'section') {
       return headingReferences.map((heading) => ({
@@ -196,6 +225,7 @@ export function AcademicSectionEditor({
         label: heading.label,
       }));
     }
+
     const count = crossReferenceType === 'figure' ? figureCount : tableCount;
     return Array.from({ length: count }, (_, index) => ({
       value: String(index + 1),
@@ -205,42 +235,33 @@ export function AcademicSectionEditor({
 
   const effectiveCrossReferenceTarget = useMemo(() => {
     if (crossReferenceOptions.length === 0) return '';
-    const hasSelection = crossReferenceOptions.some(
-      (option) => option.value === selectedCrossReference
-    );
+
+    const hasSelection = crossReferenceOptions.some((option) => option.value === selectedCrossReference);
     return hasSelection ? selectedCrossReference : crossReferenceOptions[0].value;
   }, [crossReferenceOptions, selectedCrossReference]);
 
-  // Cleanup timeouts
-  useEffect(() => {
-    return () => {
-      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-      if (titleSaveTimeoutRef.current) clearTimeout(titleSaveTimeoutRef.current);
-    };
-  }, []);
-
-  // Keyboard shortcut for citation picker
   const openCitationPicker = useCallback(() => {
-    // Get cursor position for positioning the picker
     if (editor) {
       const { view } = editor;
       const { from } = view.state.selection;
       const coords = view.coordsAtPos(from);
       setCitationPickerPosition({ x: coords.left, y: coords.bottom + 10 });
     }
+
     setShowCitationPicker(true);
   }, [editor]);
 
   useCitationShortcut(openCitationPicker);
 
   const handleTitleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newTitle = e.target.value;
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newTitle = event.target.value;
       setTitle(newTitle);
 
       if (titleSaveTimeoutRef.current) {
         clearTimeout(titleSaveTimeoutRef.current);
       }
+
       titleSaveTimeoutRef.current = setTimeout(() => {
         onTitleChange(newTitle);
       }, 500);
@@ -260,6 +281,7 @@ export function AcademicSectionEditor({
 
   const handleInsertFigure = useCallback(() => {
     if (!editor) return;
+
     const nextFigureNumber = figureCount + 1;
     editor
       .chain()
@@ -271,6 +293,7 @@ export function AcademicSectionEditor({
 
   const handleInsertTable = useCallback(() => {
     if (!editor) return;
+
     const nextTableNumber = tableCount + 1;
     editor
       .chain()
@@ -289,6 +312,7 @@ export function AcademicSectionEditor({
       const targetSection = crossReferenceOptions.find(
         (option) => option.value === effectiveCrossReferenceTarget
       );
+
       if (targetSection) {
         editor.chain().focus().insertContent(`see Section "${targetSection.label}"`).run();
       }
@@ -303,6 +327,7 @@ export function AcademicSectionEditor({
   const updateAcademicSettings = useCallback(
     (updates: Partial<AcademicSettings>) => {
       if (!currentPaper) return;
+
       void updatePaper(currentPaper.id, {
         settings: {
           ...currentPaper.settings,
@@ -315,310 +340,140 @@ export function AcademicSectionEditor({
 
   if (!section) {
     return (
-      <div
-        style={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'var(--color-text-tertiary)',
-          backgroundColor: 'var(--color-bg-secondary)',
-        }}
-      >
-        <svg
-          width="48"
-          height="48"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          style={{ marginBottom: '16px', opacity: 0.5 }}
-        >
+      <div className="muwi-academic-editor__empty">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
           <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
           <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
         </svg>
-        <p style={{ fontSize: '16px', margin: 0 }}>Select a section or create a new one</p>
+        <p>Select a section or create a new one</p>
       </div>
     );
   }
 
-  // Focus mode: simplified editor view
   if (isFocusMode) {
     return (
-      <div
-        style={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-          backgroundColor: 'var(--color-bg-primary)',
-        }}
-      >
-        <div
-          style={{
-            flex: 1,
-            overflow: 'auto',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <div
-            style={{
-              width: '100%',
-              maxWidth: '680px',
-              padding: '80px 48px',
-            }}
-          >
-            <input
-              type="text"
-              value={title}
-              onChange={handleTitleChange}
-              placeholder="Section Title"
-              style={{
-                width: '100%',
-                fontSize: '24px',
-                fontWeight: 700,
-                fontFamily: "'Times New Roman', 'Georgia', serif",
-                color: 'var(--color-text-primary)',
-                border: 'none',
-                outline: 'none',
-                backgroundColor: 'transparent',
-                padding: 0,
-                marginBottom: '32px',
-                textAlign: 'center',
-              }}
-            />
-            <EditorContent editor={editor} />
-          </div>
+      <div className="muwi-academic-editor muwi-academic-editor--focus">
+        <div className="muwi-academic-editor__focus-surface">
+          <input
+            type="text"
+            value={title}
+            onChange={handleTitleChange}
+            placeholder="Section Title"
+            className="muwi-academic-editor__focus-title"
+          />
+          <EditorContent editor={editor} />
         </div>
 
-        <div
-          style={{
-            padding: '12px 24px',
-            borderTop: '1px solid var(--color-border-default)',
-            backgroundColor: 'var(--color-bg-primary)',
-            display: 'flex',
-            justifyContent: 'center',
-            gap: '24px',
-            fontSize: '13px',
-            color: 'var(--color-text-tertiary)',
-          }}
-        >
+        <div className="muwi-academic-editor__focus-footer">
           <span>{wordCount} words</span>
         </div>
 
-        {showCitationPicker && (
+        {showCitationPicker ? (
           <CitationPicker
             onInsert={handleInsertCitation}
             onClose={() => setShowCitationPicker(false)}
             position={citationPickerPosition}
           />
-        )}
+        ) : null}
       </div>
     );
   }
 
   return (
-    <div
-      style={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-        backgroundColor: 'var(--color-bg-primary)',
-      }}
-    >
-      {/* Header with title */}
-      <div
-        style={{
-          padding: '20px 32px 16px',
-          borderBottom: '1px solid var(--color-border-default)',
-          backgroundColor: 'var(--color-bg-primary)',
-        }}
-      >
+    <div className="muwi-academic-editor">
+      <div className="muwi-academic-editor__header">
         <input
           type="text"
           value={title}
           onChange={handleTitleChange}
           placeholder="Section Title"
-          style={{
-            width: '100%',
-            fontSize: '22px',
-            fontWeight: 700,
-            fontFamily: "'Times New Roman', 'Georgia', serif",
-            color: 'var(--color-text-primary)',
-            border: 'none',
-            outline: 'none',
-            backgroundColor: 'transparent',
-            padding: 0,
-            marginBottom: '8px',
-          }}
+          className="muwi-academic-editor__title"
         />
 
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '16px',
-            flexWrap: 'wrap',
-            fontSize: '13px',
-            color: 'var(--color-text-secondary)',
-          }}
-        >
+        <div className="muwi-academic-editor__metrics">
           <span>{wordCount} words</span>
           <span>{figureCount} figures</span>
           <span>{tableCount} tables</span>
-          <span style={{ color: 'var(--color-text-tertiary)' }}>
-            Press{' '}
-            <kbd
-              style={{
-                padding: '2px 6px',
-                backgroundColor: 'var(--color-bg-tertiary)',
-                borderRadius: '4px',
-                fontSize: '11px',
-              }}
-            >
-              Ctrl+Shift+C
-            </kbd>{' '}
-            to insert citation
+          <span>
+            Press <kbd>Ctrl+Shift+C</kbd> to insert citation
           </span>
         </div>
-
-        <div
-          style={{
-            marginTop: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            flexWrap: 'wrap',
-          }}
-        >
-          <label
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              fontSize: '12px',
-              color: 'var(--color-text-secondary)',
-            }}
-          >
-            Line
-            <select
-              title="Line spacing"
-              value={lineSpacing}
-              disabled={!currentPaper}
-              onChange={(e) =>
-                updateAcademicSettings({
-                  lineSpacing: Number.parseFloat(e.target.value),
-                })
-              }
-              style={selectStyle}
-            >
-              <option value={1}>1.0</option>
-              <option value={1.5}>1.5</option>
-              <option value={2}>2.0</option>
-            </select>
-          </label>
-
-          <label
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              fontSize: '12px',
-              color: 'var(--color-text-secondary)',
-            }}
-          >
-            Font Size
-            <select
-              title="Font size"
-              value={fontSize}
-              disabled={!currentPaper}
-              onChange={(e) =>
-                updateAcademicSettings({
-                  fontSize: Number.parseInt(e.target.value, 10),
-                })
-              }
-              style={selectStyle}
-            >
-              <option value={10}>10pt</option>
-              <option value={11}>11pt</option>
-              <option value={12}>12pt</option>
-              <option value={14}>14pt</option>
-            </select>
-          </label>
-
-          <label
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              fontSize: '12px',
-              color: 'var(--color-text-secondary)',
-            }}
-          >
-            Margins
-            <select
-              title="Margins"
-              value={marginPreset}
-              disabled={!currentPaper}
-              onChange={(e) => {
-                const selected = MARGIN_PRESETS.find((preset) => preset.id === e.target.value);
-                if (!selected) return;
-                updateAcademicSettings({
-                  margins: {
-                    top: selected.value,
-                    right: selected.value,
-                    bottom: selected.value,
-                    left: selected.value,
-                  },
-                });
-              }}
-              style={selectStyle}
-            >
-              {MARGIN_PRESETS.map((preset) => (
-                <option key={preset.id} value={preset.id}>
-                  {preset.label}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
       </div>
 
-      {/* Main content area */}
-      <div
-        style={{
-          flex: 1,
-          overflow: 'auto',
-          backgroundColor: 'var(--color-bg-primary)',
-        }}
-      >
-        <div
-          style={{
-            maxWidth: '720px',
-            margin: '0 auto',
-            padding: `32px ${editorContainerPadding}px`,
-          }}
-        >
-          <EditorContent editor={editor} />
-        </div>
-      </div>
+      {editor ? (
+        <div className="muwi-academic-editor__toolbar" role="toolbar" aria-label="Academic formatting toolbar">
+          <div className="muwi-academic-editor__toolbar-controls">
+            <label>
+              Line
+              <select
+                title="Line spacing"
+                value={lineSpacing}
+                disabled={!currentPaper}
+                onChange={(event) =>
+                  updateAcademicSettings({
+                    lineSpacing: Number.parseFloat(event.target.value),
+                  })
+                }
+                style={controlStyle}
+              >
+                <option value={1}>1.0</option>
+                <option value={1.5}>1.5</option>
+                <option value={2}>2.0</option>
+              </select>
+            </label>
 
-      {/* Formatting toolbar */}
-      {editor && (
-        <div
-          style={{
-            padding: '10px 24px',
-            borderTop: '1px solid var(--color-border-default)',
-            backgroundColor: 'var(--color-bg-primary)',
-            display: 'flex',
-            gap: '4px',
-            flexWrap: 'wrap',
-          }}
-        >
+            <label>
+              Font
+              <select
+                title="Font size"
+                value={fontSize}
+                disabled={!currentPaper}
+                onChange={(event) =>
+                  updateAcademicSettings({
+                    fontSize: Number.parseInt(event.target.value, 10),
+                  })
+                }
+                style={controlStyle}
+              >
+                <option value={10}>10pt</option>
+                <option value={11}>11pt</option>
+                <option value={12}>12pt</option>
+                <option value={14}>14pt</option>
+              </select>
+            </label>
+
+            <label>
+              Margins
+              <select
+                title="Margins"
+                value={marginPreset}
+                disabled={!currentPaper}
+                onChange={(event) => {
+                  const selected = MARGIN_PRESETS.find((preset) => preset.id === event.target.value);
+                  if (!selected) return;
+
+                  updateAcademicSettings({
+                    margins: {
+                      top: selected.value,
+                      right: selected.value,
+                      bottom: selected.value,
+                      left: selected.value,
+                    },
+                  });
+                }}
+                style={controlStyle}
+              >
+                {MARGIN_PRESETS.map((preset) => (
+                  <option key={preset.id} value={preset.id}>
+                    {preset.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          <ToolbarDivider />
+
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleBold().run()}
             isActive={editor.isActive('bold')}
@@ -713,17 +568,12 @@ export function AcademicSectionEditor({
 
           <ToolbarDivider />
 
-          {/* Citation button */}
           <ToolbarButton
             onClick={openCitationPicker}
             isActive={false}
             title="Insert Citation (Ctrl+Shift+C)"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
-              <polyline points="16 17 21 12 16 7" />
-              <line x1="21" y1="12" x2="9" y2="12" />
-            </svg>
+            Cite
           </ToolbarButton>
           <ToolbarButton
             onClick={handleInsertFigure}
@@ -747,27 +597,32 @@ export function AcademicSectionEditor({
             X-Ref
           </ToolbarButton>
 
-          {showCrossReferencePanel && (
-            <div
-              data-testid="cross-reference-panel"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                marginLeft: '8px',
-                padding: '6px 8px',
-                border: '1px solid var(--color-border-default)',
-                borderRadius: '8px',
-                backgroundColor: 'var(--color-bg-secondary)',
-              }}
+          {onOpenBibliographyPanel ? (
+            <ToolbarButton
+              onClick={onOpenBibliographyPanel}
+              isActive={false}
+              title="Open Bibliography Panel"
             >
+              Biblio
+            </ToolbarButton>
+          ) : null}
+          {onOpenReferenceLibraryPanel ? (
+            <ToolbarButton
+              onClick={onOpenReferenceLibraryPanel}
+              isActive={false}
+              title="Open Reference Library Panel"
+            >
+              Library
+            </ToolbarButton>
+          ) : null}
+
+          {showCrossReferencePanel ? (
+            <div data-testid="cross-reference-panel" className="muwi-academic-editor__xref-panel">
               <select
                 aria-label="Cross-reference type"
                 value={crossReferenceType}
-                onChange={(e) =>
-                  setCrossReferenceType(e.target.value as 'section' | 'figure' | 'table')
-                }
-                style={selectStyle}
+                onChange={(event) => setCrossReferenceType(event.target.value as 'section' | 'figure' | 'table')}
+                style={controlStyle}
               >
                 <option value="section">Section</option>
                 <option value="figure">Figure</option>
@@ -779,8 +634,8 @@ export function AcademicSectionEditor({
                   <select
                     aria-label="Cross-reference target"
                     value={effectiveCrossReferenceTarget}
-                    onChange={(e) => setSelectedCrossReference(e.target.value)}
-                    style={selectStyle}
+                    onChange={(event) => setSelectedCrossReference(event.target.value)}
+                    style={controlStyle}
                   >
                     {crossReferenceOptions.map((option) => (
                       <option key={option.value} value={option.value}>
@@ -791,23 +646,18 @@ export function AcademicSectionEditor({
                   <button
                     type="button"
                     onClick={handleInsertCrossReference}
-                    style={{
-                      padding: '5px 10px',
-                      border: '1px solid var(--color-border-strong)',
-                      borderRadius: '6px',
-                      backgroundColor: 'var(--color-bg-primary)',
-                      fontSize: '12px',
-                      cursor: 'pointer',
-                    }}
+                    className="muwi-button"
+                    data-size="sm"
+                    data-variant="secondary"
                   >
                     Insert
                   </button>
                 </>
               ) : (
-                <span style={{ fontSize: '12px', color: 'var(--color-text-tertiary)' }}>No references yet</span>
+                <span>No references yet</span>
               )}
             </div>
-          )}
+          ) : null}
 
           <ToolbarDivider />
 
@@ -817,10 +667,7 @@ export function AcademicSectionEditor({
             title="Undo (Ctrl+Z)"
             disabled={!editor.can().undo()}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M3 7v6h6" />
-              <path d="M3 13a9 9 0 1 0 3-7.7L3 7" />
-            </svg>
+            Undo
           </ToolbarButton>
           <ToolbarButton
             onClick={() => editor.chain().focus().redo().run()}
@@ -828,38 +675,45 @@ export function AcademicSectionEditor({
             title="Redo (Ctrl+Shift+Z)"
             disabled={!editor.can().redo()}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 7v6h-6" />
-              <path d="M21 13a9 9 0 1 1-3-7.7L21 7" />
-            </svg>
+            Redo
           </ToolbarButton>
         </div>
-      )}
+      ) : null}
 
-      {/* Citation Picker */}
-      {showCitationPicker && (
+      <div className="muwi-academic-editor__canvas">
+        <div className="muwi-academic-editor__page-wrap">
+          <article className="muwi-academic-editor__page" style={{ maxWidth: PAGE_WIDTH[pageSize] }}>
+            <header className="muwi-academic-editor__zone">Header zone</header>
+
+            <div
+              className="muwi-academic-editor__page-content"
+              style={{
+                paddingTop: `${contentPaddingTop}px`,
+                paddingRight: `${contentPaddingRight}px`,
+                paddingBottom: `${contentPaddingBottom}px`,
+                paddingLeft: `${contentPaddingLeft}px`,
+              }}
+            >
+              <EditorContent editor={editor} />
+            </div>
+
+            <footer className="muwi-academic-editor__zone">Footer zone</footer>
+          </article>
+        </div>
+      </div>
+
+      {showCitationPicker ? (
         <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            backgroundColor: 'var(--color-bg-overlay)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 100,
-          }}
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
+          className="muwi-modal-backdrop"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
               setShowCitationPicker(false);
             }
           }}
         >
-          <CitationPicker
-            onInsert={handleInsertCitation}
-            onClose={() => setShowCitationPicker(false)}
-          />
+          <CitationPicker onInsert={handleInsertCitation} onClose={() => setShowCitationPicker(false)} />
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
@@ -877,52 +731,29 @@ function ToolbarButton({
   children: React.ReactNode;
   disabled?: boolean;
 }) {
+  const showLabel = typeof children === 'string';
+
   return (
     <button
+      type="button"
       onClick={onClick}
       title={title}
       disabled={disabled}
-      style={{
-        padding: '8px 12px',
-        border: 'none',
-        borderRadius: '6px',
-        backgroundColor: isActive ? 'var(--color-accent-subtle)' : 'transparent',
-        color: disabled ? 'var(--color-border-strong)' : isActive ? 'var(--color-accent-text)' : 'var(--color-text-secondary)',
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        fontSize: '14px',
-        fontWeight: isActive ? 600 : 400,
-        minWidth: '36px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        transition: 'all 150ms ease',
-      }}
-      onMouseEnter={(e) => {
-        if (!disabled && !isActive) {
-          e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)';
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!isActive) {
-          e.currentTarget.style.backgroundColor = 'transparent';
-        }
-      }}
+      className="muwi-toolbar__button"
+      data-active={isActive ? 'true' : 'false'}
+      data-icon-only={showLabel ? 'false' : 'true'}
     >
-      {children}
+      {showLabel ? (
+        <span className="muwi-toolbar__label">{children}</span>
+      ) : (
+        <span className="muwi-toolbar__icon" aria-hidden="true">
+          {children}
+        </span>
+      )}
     </button>
   );
 }
 
 function ToolbarDivider() {
-  return (
-    <div
-      style={{
-        width: '1px',
-        height: '24px',
-        backgroundColor: 'var(--color-border-default)',
-        margin: '0 8px',
-        alignSelf: 'center',
-      }}
-    />
-  );
+  return <div className="muwi-toolbar__separator" aria-hidden="true" />;
 }
