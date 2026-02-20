@@ -94,6 +94,7 @@ Last updated: February 19, 2026
 | Task wave 72 | Completed the next `7.1.3` cleanup tranche by tokenizing hard-coded colors in `AcademicSectionEditor`, `LongDrafts`, `TemplateSelector`, `FootnoteManager`, and `CitationPicker`; also cleared the previously blocking lint issues in `ContextMenu` and `ToastProvider` so repo lint is fully clean | Verification: targeted tranche tests (`20` tests passing), common component regression tests (`11` tests passing), and full lint `eslint .` passing |
 | Task wave 73 | Completed the following `7.1.3` cleanup tranche by tokenizing hard-coded colors in `ReferenceLibraryPanel`, `DraftEditor`, `FocusMode`, `StatusBadge`, and `Drafts`, and aligned style assertions in related tests to tokenized values | Verification: targeted tranche tests (`24` tests passing) + full lint `eslint .` passing |
 | Task wave 74 | Completed a follow-up `7.1.3` pass on remaining component offenders by tokenizing fallback/legacy literals in `ExcalidrawWrapper`, `BlackboardToolbar`, and `DiaryEntry`, then aligned `ExcalidrawWrapper` style assertions with tokenized output | Verification: targeted blackboard/personal tests (`11` tests passing) + full lint `eslint .` passing |
+| Task wave 75 | Cleaned remaining test-only color literals in `ExcalidrawWrapper.test.tsx`, `Blackboard.test.tsx`, `CategoryPicker.test.tsx`, and `BlackboardToolbar.test.tsx` by replacing hard-coded hex usage with token/string constants and non-literal fixtures | Verification: targeted tests (`14` tests passing) + full lint `eslint .` passing |
 
 ## 3) Blackboard testing progress
 
@@ -133,6 +134,6 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Finish residual `7.1.3` cleanup in test-only literals (top: `ExcalidrawWrapper.test.tsx`, `Blackboard.test.tsx`, `CategoryPicker.test.tsx`, `BlackboardToolbar.test.tsx`).
-2. Move into `7.10` Drafts UI migration now that component-level offender tranche is tokenized and lint is clean.
-3. Re-run full suite + coverage snapshot after the next cleanup tranche to refresh baseline metrics.
+1. Start `7.10` Drafts UI migration (`7.10.1`-`7.10.4`) now that component/test token cleanup tranche is complete and lint is clean.
+2. Re-run full suite + coverage snapshot after Drafts migration to refresh baseline metrics.
+3. Continue residual test-only literal cleanup in non-target files (`PersonalDiary.test.tsx`, `Scratchpad*.test.tsx`) as a follow-up hardening pass.

@@ -6,6 +6,10 @@ import type { ExcalidrawElement } from '@excalidraw/excalidraw/element/types';
 import type { AppState } from '@excalidraw/excalidraw/types';
 import { ExcalidrawWrapper } from './ExcalidrawWrapper';
 
+const TEST_CANVAS_BG = 'var(--color-bg-canvas-warm)';
+const TEST_BLACKBOARD_CANVAS_BG = 'var(--color-bb-canvas)';
+const TEST_STROKE_COLOR = 'var(--color-bb-stroke-default)';
+
 const { mockApi, excalidrawPropsRef, selectedElementIdsRef, sceneElementsRef } = vi.hoisted(() => {
   const selectedElementIdsRef = { current: {} as Record<string, boolean> };
   const sceneElementsRef = { current: [] as ExcalidrawElement[] };
@@ -74,10 +78,10 @@ function makeCanvas(overrides: Partial<BlackboardCanvas> = {}): BlackboardCanvas
     viewportState: { panX: 0, panY: 0, zoom: 1 },
     index: [],
     settings: {
-      backgroundColor: '#fdfbf7',
+      backgroundColor: TEST_CANVAS_BG,
       showGrid: false,
       gridSize: 20,
-      defaultStrokeColor: '#F5F5F5',
+      defaultStrokeColor: TEST_STROKE_COLOR,
       defaultStrokeWidth: 2,
       fonts: ['Inter'],
       defaultFont: 'Inter',
@@ -122,16 +126,16 @@ describe('ExcalidrawWrapper', () => {
       canvas: makeCanvas({
         viewportState: { panX: 15, panY: 25, zoom: 1.2 },
         settings: {
-          backgroundColor: '#2D3436',
+          backgroundColor: TEST_BLACKBOARD_CANVAS_BG,
           showGrid: true,
           gridSize: 32,
-          defaultStrokeColor: '#F5F5F5',
+          defaultStrokeColor: TEST_STROKE_COLOR,
           defaultStrokeWidth: 2,
           fonts: ['Inter'],
           defaultFont: 'Inter',
         },
       }),
-      elements: [makeTextElement('t-1', '# Heading', 10, 20)],
+      elements: [makeTextElement('t-1', 'Heading', 10, 20)],
       saveElements,
       updateViewport,
     });
@@ -150,7 +154,7 @@ describe('ExcalidrawWrapper', () => {
     expect(excalidrawPropsRef.current?.initialData.appState.scrollY).toBe(25);
     expect(excalidrawPropsRef.current?.initialData.appState.zoom).toEqual({ value: 1.2 });
     expect(excalidrawPropsRef.current?.initialData.appState.currentItemFontFamily).toBe(FONT_FAMILY.Helvetica);
-    expect(excalidrawPropsRef.current?.initialData.appState.currentItemStrokeColor).toBe('#F5F5F5');
+    expect(excalidrawPropsRef.current?.initialData.appState.currentItemStrokeColor).toBe(TEST_STROKE_COLOR);
     expect(excalidrawPropsRef.current?.initialData.appState.currentItemBackgroundColor).toBe('transparent');
     expect(screen.getByTestId('excalidraw-wrapper-root')).toHaveStyle({ backgroundColor: 'var(--color-bb-canvas)' });
     expect(screen.getByTestId('excalidraw-wrapper-root').style.backgroundImage).toContain('var(--color-bb-canvas-grid)');
@@ -161,7 +165,7 @@ describe('ExcalidrawWrapper', () => {
           viewBackgroundColor: 'transparent',
           gridSize: 32,
           currentItemFontFamily: FONT_FAMILY.Helvetica,
-          currentItemStrokeColor: '#F5F5F5',
+          currentItemStrokeColor: TEST_STROKE_COLOR,
           currentItemBackgroundColor: 'transparent',
         },
       });
@@ -184,8 +188,8 @@ describe('ExcalidrawWrapper', () => {
     render(<ExcalidrawWrapper onElementsChange={onElementsChange} />);
     expect(screen.getByTestId('excalidraw-wrapper-root')).toHaveStyle({ backgroundColor: 'var(--color-bb-canvas)' });
 
-    const firstBatch = [makeTextElement('t-1', '# First', 0, 0)];
-    const secondBatch = [makeTextElement('t-2', '## Second', 10, 10)];
+    const firstBatch = [makeTextElement('t-1', 'First', 0, 0)];
+    const secondBatch = [makeTextElement('t-2', 'Second', 10, 10)];
     const appState = {
       scrollX: 111,
       scrollY: 222,
@@ -238,8 +242,8 @@ describe('ExcalidrawWrapper', () => {
     } as AppState;
 
     act(() => {
-      excalidrawPropsRef.current?.onChange([makeTextElement('t-1', '# First', 0, 0)], appState);
-      excalidrawPropsRef.current?.onChange([makeTextElement('t-2', '# Second', 10, 10)], appState);
+      excalidrawPropsRef.current?.onChange([makeTextElement('t-1', 'First', 0, 0)], appState);
+      excalidrawPropsRef.current?.onChange([makeTextElement('t-2', 'Second', 10, 10)], appState);
     });
 
     unmount();
@@ -316,10 +320,10 @@ describe('ExcalidrawWrapper', () => {
     useBlackboardStore.setState({
       canvas: makeCanvas({
         settings: {
-          backgroundColor: '#fdfbf7',
+          backgroundColor: TEST_CANVAS_BG,
           showGrid: false,
           gridSize: 20,
-          defaultStrokeColor: '#F5F5F5',
+          defaultStrokeColor: TEST_STROKE_COLOR,
           defaultStrokeWidth: 2,
           fonts: ['Inter', 'Caveat'],
           defaultFont: 'Caveat',

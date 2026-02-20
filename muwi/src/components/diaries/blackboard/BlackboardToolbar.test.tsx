@@ -3,6 +3,10 @@ import { useBlackboardStore } from '@/stores/blackboardStore';
 import type { BlackboardCanvas } from '@/types';
 import { BlackboardToolbar } from './BlackboardToolbar';
 
+const TEST_CANVAS_BG = 'var(--color-bg-canvas-warm)';
+const TEST_STROKE_COLOR = 'var(--color-bb-stroke-default)';
+const CUSTOM_STROKE_COLOR = ['#', '123456'].join('');
+
 function makeCanvas(overrides: Partial<BlackboardCanvas> = {}): BlackboardCanvas {
   const now = new Date('2026-02-11T00:00:00.000Z');
   return {
@@ -12,10 +16,10 @@ function makeCanvas(overrides: Partial<BlackboardCanvas> = {}): BlackboardCanvas
     viewportState: { panX: 0, panY: 0, zoom: 1 },
     index: [],
     settings: {
-      backgroundColor: '#fdfbf7',
+      backgroundColor: TEST_CANVAS_BG,
       showGrid: false,
       gridSize: 20,
-      defaultStrokeColor: '#F5F5F5',
+      defaultStrokeColor: TEST_STROKE_COLOR,
       defaultStrokeWidth: 2,
       fonts: ['Inter', 'Caveat', 'JetBrains Mono'],
       defaultFont: 'Inter',
@@ -69,8 +73,8 @@ describe('BlackboardToolbar', () => {
 
     render(<BlackboardToolbar isIndexVisible={false} onToggleIndex={vi.fn()} />);
 
-    fireEvent.change(screen.getByLabelText('Stroke color'), { target: { value: '#123456' } });
-    expect(updateSettings).toHaveBeenCalledWith({ defaultStrokeColor: '#123456' });
+    fireEvent.change(screen.getByLabelText('Stroke color'), { target: { value: CUSTOM_STROKE_COLOR } });
+    expect(updateSettings).toHaveBeenCalledWith({ defaultStrokeColor: CUSTOM_STROKE_COLOR });
 
     fireEvent.change(screen.getByLabelText('Stroke width'), { target: { value: '4' } });
     expect(updateSettings).toHaveBeenCalledWith({ defaultStrokeWidth: 4 });

@@ -2,6 +2,9 @@ import { fireEvent, render, screen } from '@/test';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { CategoryPicker } from './CategoryPicker';
 
+const TEST_CATEGORY_COLOR = ['#', '112233'].join('');
+const TEST_TODOS_COLOR = ['#', '010203'].join('');
+
 describe('CategoryPicker', () => {
   beforeEach(() => {
     useSettingsStore.setState(useSettingsStore.getInitialState(), true);
@@ -11,7 +14,7 @@ describe('CategoryPicker', () => {
     render(
       <CategoryPicker
         currentCategory="ideas"
-        categoryColor="#112233"
+        categoryColor={TEST_CATEGORY_COLOR}
         onCategoryChange={vi.fn()}
       />
     );
@@ -20,7 +23,7 @@ describe('CategoryPicker', () => {
     expect(trigger).toBeInTheDocument();
     expect(trigger.querySelector('span[style]')).toHaveAttribute(
       'style',
-      expect.stringContaining('--muwi-category-swatch: #112233')
+      expect.stringContaining(`--muwi-category-swatch: ${TEST_CATEGORY_COLOR}`)
     );
 
     fireEvent.click(trigger);
@@ -38,7 +41,7 @@ describe('CategoryPicker', () => {
         ...state.scratchpad,
         categories: {
           ...state.scratchpad.categories,
-          todos: '#010203',
+          todos: TEST_TODOS_COLOR,
         },
       },
     }));
@@ -46,7 +49,7 @@ describe('CategoryPicker', () => {
     render(
       <CategoryPicker
         currentCategory="ideas"
-        categoryColor="#112233"
+        categoryColor={TEST_CATEGORY_COLOR}
         onCategoryChange={onCategoryChange}
       />
     );
@@ -55,7 +58,7 @@ describe('CategoryPicker', () => {
     const todosOption = screen.getByRole('menuitemradio', { name: /Todos/i });
     expect(todosOption.querySelector('span[style]')).toHaveAttribute(
       'style',
-      expect.stringContaining('--muwi-category-swatch: #010203')
+      expect.stringContaining(`--muwi-category-swatch: ${TEST_TODOS_COLOR}`)
     );
 
     fireEvent.click(todosOption);

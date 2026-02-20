@@ -3,6 +3,10 @@ import { fireEvent, render, screen, waitFor } from '@/test';
 import { useBlackboardStore } from '@/stores/blackboardStore';
 import { Blackboard } from './Blackboard';
 
+const TEST_CANVAS_BG = 'var(--color-bg-canvas-warm)';
+const TEST_BLACKBOARD_CANVAS_BG = 'var(--color-bb-canvas)';
+const TEST_STROKE_COLOR = 'var(--color-bb-stroke-default)';
+
 const wrapperPropsRef = {
   current: null as null | {
     onElementsChange?: () => void;
@@ -171,10 +175,10 @@ describe('Blackboard', () => {
         viewportState: { panX: 0, panY: 0, zoom: 1 },
         index: [],
         settings: {
-          backgroundColor: '#fdfbf7',
+          backgroundColor: TEST_CANVAS_BG,
           showGrid: false,
           gridSize: 20,
-          defaultStrokeColor: '#F5F5F5',
+          defaultStrokeColor: TEST_STROKE_COLOR,
           defaultStrokeWidth: 2,
           fonts: ['Inter', 'Caveat'],
           defaultFont: 'Inter',
@@ -266,10 +270,10 @@ describe('Blackboard', () => {
         viewportState: { panX: 0, panY: 0, zoom: 1 },
         index: [],
         settings: {
-          backgroundColor: '#fdfbf7',
+          backgroundColor: TEST_CANVAS_BG,
           showGrid: false,
           gridSize: 20,
-          defaultStrokeColor: '#F5F5F5',
+          defaultStrokeColor: TEST_STROKE_COLOR,
           defaultStrokeWidth: 2,
           fonts: ['Inter', 'Caveat'],
           defaultFont: 'Inter',
@@ -310,10 +314,10 @@ describe('Blackboard', () => {
         viewportState: { panX: 0, panY: 0, zoom: 1 },
         index: [],
         settings: {
-          backgroundColor: '#2D3436',
+          backgroundColor: TEST_BLACKBOARD_CANVAS_BG,
           showGrid: true,
           gridSize: 20,
-          defaultStrokeColor: '#F5F5F5',
+          defaultStrokeColor: TEST_STROKE_COLOR,
           defaultStrokeWidth: 2,
           fonts: ['Inter', 'Caveat'],
           defaultFont: 'Inter',
