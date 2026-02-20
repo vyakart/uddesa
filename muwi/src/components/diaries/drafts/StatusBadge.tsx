@@ -10,21 +10,21 @@ interface StatusBadgeProps {
 const statusConfig: Record<DraftStatus, { label: string; color: string; bgColor: string; borderColor: string }> = {
   'in-progress': {
     label: 'In Progress',
-    color: 'var(--color-warning)',
-    bgColor: 'var(--color-warning-subtle)',
-    borderColor: 'var(--color-warning)',
+    color: 'var(--color-status-in-progress)',
+    bgColor: 'color-mix(in srgb, var(--color-status-in-progress) 14%, transparent)',
+    borderColor: 'color-mix(in srgb, var(--color-status-in-progress) 32%, transparent)',
   },
   'review': {
     label: 'Review',
-    color: 'var(--color-info)',
-    bgColor: 'var(--color-info-subtle)',
-    borderColor: 'var(--color-info)',
+    color: 'var(--color-status-review)',
+    bgColor: 'color-mix(in srgb, var(--color-status-review) 14%, transparent)',
+    borderColor: 'color-mix(in srgb, var(--color-status-review) 32%, transparent)',
   },
   'complete': {
     label: 'Complete',
-    color: 'var(--color-success)',
-    bgColor: 'var(--color-success-subtle)',
-    borderColor: 'var(--color-success)',
+    color: 'var(--color-status-complete)',
+    bgColor: 'color-mix(in srgb, var(--color-status-complete) 14%, transparent)',
+    borderColor: 'color-mix(in srgb, var(--color-status-complete) 32%, transparent)',
   },
 };
 

@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen, waitFor } from '@/test';
 import type { Draft } from '@/types/drafts';
 import { useDraftsStore } from '@/stores/draftsStore';
+import { useAppStore } from '@/stores/appStore';
 import { Drafts } from './Drafts';
 
 vi.mock('./DraftEditor', () => ({
@@ -66,6 +67,8 @@ function seedStore(draft: Draft) {
 
 describe('Drafts', () => {
   beforeEach(() => {
+    useAppStore.setState(useAppStore.getInitialState(), true);
+    useAppStore.getState().openDiary('drafts');
     useDraftsStore.setState(useDraftsStore.getInitialState(), true);
   });
 
@@ -80,6 +83,7 @@ describe('Drafts', () => {
     });
 
     expect(screen.getByRole('button', { name: 'New Draft' })).toBeInTheDocument();
+    expect(screen.getByTestId('shared-sidebar-shell')).toBeInTheDocument();
     expect(screen.getByTestId('draft-editor-view')).toHaveTextContent('Draft Alpha');
   });
 
@@ -206,5 +210,28 @@ describe('Drafts', () => {
     });
     rerender(<Drafts />);
     expect(screen.getByText('2 drafts')).toBeInTheDocument();
+  });
+
+  it('shows empty-state CTA and status slots when no drafts exist', async () => {
+    const createDraft = vi.fn().mockResolvedValue(makeDraft({ title: 'Created from Empty' }));
+    useDraftsStore.setState({
+      ...useDraftsStore.getInitialState(),
+      drafts: [],
+      currentDraftId: null,
+      createDraft,
+      loadDrafts: vi.fn().mockResolvedValue(undefined),
+    });
+
+    render(<Drafts />);
+
+    expect(screen.getAllByText('No drafts yet').length).toBeGreaterThan(0);
+    expect(screen.getByText('Create your first draft to start writing.')).toBeInTheDocument();
+    expect(screen.getByText('Status: No draft selected')).toBeInTheDocument();
+    expect(screen.getByText('0 words · 0 min read')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Create your first draft' }));
+    await waitFor(() => {
+      expect(createDraft).toHaveBeenCalledTimes(1);
+    });
   });
 });

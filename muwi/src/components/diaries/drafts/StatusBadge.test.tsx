@@ -7,10 +7,8 @@ describe('StatusBadge', () => {
 
     const badge = screen.getByRole('button', { name: /Review/i });
     expect(badge).toBeInTheDocument();
-    expect(badge).toHaveStyle({
-      backgroundColor: 'var(--color-info-subtle)',
-      color: 'var(--color-info)',
-    });
+    expect(badge.getAttribute('style')).toContain('var(--color-status-review)');
+    expect(badge.getAttribute('style')).toContain('color-mix');
   });
 
   it('supports click handlers and disabled state', () => {

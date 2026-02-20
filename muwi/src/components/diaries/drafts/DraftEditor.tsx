@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { useEditor, EditorContent } from '@tiptap/react';
+import { useEditor, EditorContent, type Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
 import { format } from 'date-fns';
+import { Toolbar, type ToolbarItem } from '@/components/common';
 import type { Draft } from '@/types/drafts';
 import { useEditorShortcuts } from '@/hooks';
 import { StatusBadge } from './StatusBadge';
@@ -29,6 +30,163 @@ function getEditorBackground(): string {
     'repeating-linear-gradient(to bottom, transparent 0 1054px, color-mix(in srgb, var(--color-text-tertiary) 30%, transparent) 1054px 1056px)',
     'var(--color-bg-paper)',
   ].join(', ');
+}
+
+function buildToolbarItems(editor: Editor): ToolbarItem[] {
+  return [
+    {
+      id: 'bold',
+      label: 'Bold',
+      onClick: () => editor.chain().focus().toggleBold().run(),
+      icon: <strong>B</strong>,
+      tooltip: 'Bold (Ctrl+B)',
+      toggle: true,
+      isActive: editor.isActive('bold'),
+    },
+    {
+      id: 'italic',
+      label: 'Italic',
+      onClick: () => editor.chain().focus().toggleItalic().run(),
+      icon: <em>I</em>,
+      tooltip: 'Italic (Ctrl+I)',
+      toggle: true,
+      isActive: editor.isActive('italic'),
+    },
+    {
+      id: 'underline',
+      label: 'Underline',
+      onClick: () => editor.chain().focus().toggleUnderline().run(),
+      icon: <span style={{ textDecoration: 'underline' }}>U</span>,
+      tooltip: 'Underline (Ctrl+U)',
+      toggle: true,
+      isActive: editor.isActive('underline'),
+    },
+    {
+      id: 'strikethrough',
+      label: 'Strikethrough',
+      onClick: () => editor.chain().focus().toggleStrike().run(),
+      icon: <s>S</s>,
+      tooltip: 'Strikethrough',
+      toggle: true,
+      isActive: editor.isActive('strike'),
+    },
+    { id: 'sep-1', type: 'separator' },
+    {
+      id: 'heading-1',
+      label: 'Heading 1',
+      onClick: () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
+      icon: <span>H1</span>,
+      tooltip: 'Heading 1 (Ctrl+1)',
+      toggle: true,
+      isActive: editor.isActive('heading', { level: 1 }),
+    },
+    {
+      id: 'heading-2',
+      label: 'Heading 2',
+      onClick: () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
+      icon: <span>H2</span>,
+      tooltip: 'Heading 2 (Ctrl+2)',
+      toggle: true,
+      isActive: editor.isActive('heading', { level: 2 }),
+    },
+    {
+      id: 'heading-3',
+      label: 'Heading 3',
+      onClick: () => editor.chain().focus().toggleHeading({ level: 3 }).run(),
+      icon: <span>H3</span>,
+      tooltip: 'Heading 3 (Ctrl+3)',
+      toggle: true,
+      isActive: editor.isActive('heading', { level: 3 }),
+    },
+    { id: 'sep-2', type: 'separator' },
+    {
+      id: 'bullet-list',
+      label: 'Bullet List',
+      onClick: () => editor.chain().focus().toggleBulletList().run(),
+      icon: (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <circle cx="4" cy="6" r="2" />
+          <circle cx="4" cy="12" r="2" />
+          <circle cx="4" cy="18" r="2" />
+          <rect x="8" y="5" width="14" height="2" />
+          <rect x="8" y="11" width="14" height="2" />
+          <rect x="8" y="17" width="14" height="2" />
+        </svg>
+      ),
+      tooltip: 'Bullet List',
+      toggle: true,
+      isActive: editor.isActive('bulletList'),
+    },
+    {
+      id: 'ordered-list',
+      label: 'Numbered List',
+      onClick: () => editor.chain().focus().toggleOrderedList().run(),
+      icon: (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <text x="2" y="8" fontSize="8" fontFamily="sans-serif">1.</text>
+          <text x="2" y="14" fontSize="8" fontFamily="sans-serif">2.</text>
+          <text x="2" y="20" fontSize="8" fontFamily="sans-serif">3.</text>
+          <rect x="10" y="5" width="12" height="2" />
+          <rect x="10" y="11" width="12" height="2" />
+          <rect x="10" y="17" width="12" height="2" />
+        </svg>
+      ),
+      tooltip: 'Numbered List',
+      toggle: true,
+      isActive: editor.isActive('orderedList'),
+    },
+    {
+      id: 'blockquote',
+      label: 'Block Quote',
+      onClick: () => editor.chain().focus().toggleBlockquote().run(),
+      icon: (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M6 17h3l2-4V7H5v6h3l-2 4zm8 0h3l2-4V7h-6v6h3l-2 4z" />
+        </svg>
+      ),
+      tooltip: 'Block Quote',
+      toggle: true,
+      isActive: editor.isActive('blockquote'),
+    },
+    { id: 'sep-3', type: 'separator' },
+    {
+      id: 'horizontal-rule',
+      label: 'Horizontal Rule',
+      onClick: () => editor.chain().focus().setHorizontalRule().run(),
+      icon: (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <line x1="2" y1="12" x2="22" y2="12" />
+        </svg>
+      ),
+      tooltip: 'Horizontal Rule',
+    },
+    {
+      id: 'undo',
+      label: 'Undo',
+      onClick: () => editor.chain().focus().undo().run(),
+      icon: (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M3 7v6h6" />
+          <path d="M3 13a9 9 0 1 0 3-7.7L3 7" />
+        </svg>
+      ),
+      tooltip: 'Undo (Ctrl+Z)',
+      disabled: !editor.can().undo(),
+    },
+    {
+      id: 'redo',
+      label: 'Redo',
+      onClick: () => editor.chain().focus().redo().run(),
+      icon: (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M21 7v6h-6" />
+          <path d="M21 13a9 9 0 1 1-3-7.7L21 7" />
+        </svg>
+      ),
+      tooltip: 'Redo (Ctrl+Shift+Z)',
+      disabled: !editor.can().redo(),
+    },
+  ];
 }
 
 export function DraftEditor({
@@ -259,207 +417,13 @@ export function DraftEditor({
 
       {/* Formatting toolbar */}
       {editor && !draft.isLocked && (
-        <div
-          style={{
-            padding: '10px 24px',
-            borderTop: '1px solid var(--color-border-default)',
-            backgroundColor: 'var(--color-bg-primary)',
-            display: 'flex',
-            gap: '4px',
-            flexWrap: 'wrap',
-          }}
-        >
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleBold().run()}
-            isActive={editor.isActive('bold')}
-            title="Bold (Ctrl+B)"
-          >
-            <strong>B</strong>
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleItalic().run()}
-            isActive={editor.isActive('italic')}
-            title="Italic (Ctrl+I)"
-          >
-            <em>I</em>
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleUnderline().run()}
-            isActive={editor.isActive('underline')}
-            title="Underline (Ctrl+U)"
-          >
-            <span style={{ textDecoration: 'underline' }}>U</span>
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleStrike().run()}
-            isActive={editor.isActive('strike')}
-            title="Strikethrough"
-          >
-            <s>S</s>
-          </ToolbarButton>
-
-          <ToolbarDivider />
-
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-            isActive={editor.isActive('heading', { level: 1 })}
-            title="Heading 1 (Ctrl+1)"
-          >
-            H1
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-            isActive={editor.isActive('heading', { level: 2 })}
-            title="Heading 2 (Ctrl+2)"
-          >
-            H2
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-            isActive={editor.isActive('heading', { level: 3 })}
-            title="Heading 3 (Ctrl+3)"
-          >
-            H3
-          </ToolbarButton>
-
-          <ToolbarDivider />
-
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleBulletList().run()}
-            isActive={editor.isActive('bulletList')}
-            title="Bullet List"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <circle cx="4" cy="6" r="2" />
-              <circle cx="4" cy="12" r="2" />
-              <circle cx="4" cy="18" r="2" />
-              <rect x="8" y="5" width="14" height="2" />
-              <rect x="8" y="11" width="14" height="2" />
-              <rect x="8" y="17" width="14" height="2" />
-            </svg>
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleOrderedList().run()}
-            isActive={editor.isActive('orderedList')}
-            title="Numbered List"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <text x="2" y="8" fontSize="8" fontFamily="sans-serif">1.</text>
-              <text x="2" y="14" fontSize="8" fontFamily="sans-serif">2.</text>
-              <text x="2" y="20" fontSize="8" fontFamily="sans-serif">3.</text>
-              <rect x="10" y="5" width="12" height="2" />
-              <rect x="10" y="11" width="12" height="2" />
-              <rect x="10" y="17" width="12" height="2" />
-            </svg>
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleBlockquote().run()}
-            isActive={editor.isActive('blockquote')}
-            title="Block Quote"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M6 17h3l2-4V7H5v6h3l-2 4zm8 0h3l2-4V7h-6v6h3l-2 4z" />
-            </svg>
-          </ToolbarButton>
-
-          <ToolbarDivider />
-
-          <ToolbarButton
-            onClick={() => editor.chain().focus().setHorizontalRule().run()}
-            isActive={false}
-            title="Horizontal Rule"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="2" y1="12" x2="22" y2="12" />
-            </svg>
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().undo().run()}
-            isActive={false}
-            title="Undo (Ctrl+Z)"
-            disabled={!editor.can().undo()}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M3 7v6h6" />
-              <path d="M3 13a9 9 0 1 0 3-7.7L3 7" />
-            </svg>
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().redo().run()}
-            isActive={false}
-            title="Redo (Ctrl+Shift+Z)"
-            disabled={!editor.can().redo()}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 7v6h-6" />
-              <path d="M21 13a9 9 0 1 1-3-7.7L21 7" />
-            </svg>
-          </ToolbarButton>
+        <div className="muwi-draft-editor__toolbar">
+          <Toolbar
+            items={buildToolbarItems(editor)}
+            ariaLabel="Draft formatting toolbar"
+          />
         </div>
       )}
     </div>
-  );
-}
-
-function ToolbarButton({
-  onClick,
-  isActive,
-  title,
-  children,
-  disabled = false,
-}: {
-  onClick: () => void;
-  isActive: boolean;
-  title: string;
-  children: React.ReactNode;
-  disabled?: boolean;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      title={title}
-      disabled={disabled}
-      style={{
-        padding: '8px 12px',
-        border: 'none',
-        borderRadius: '6px',
-        backgroundColor: isActive ? 'var(--color-accent-subtle)' : 'transparent',
-        color: disabled ? 'var(--color-border-strong)' : isActive ? 'var(--color-accent-text)' : 'var(--color-text-secondary)',
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        fontSize: '14px',
-        fontWeight: isActive ? 600 : 400,
-        minWidth: '36px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        transition: 'all 150ms ease',
-      }}
-      onMouseEnter={(e) => {
-        if (!disabled && !isActive) {
-          e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)';
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!isActive) {
-          e.currentTarget.style.backgroundColor = 'transparent';
-        }
-      }}
-    >
-      {children}
-    </button>
-  );
-}
-
-function ToolbarDivider() {
-  return (
-    <div
-      style={{
-        width: '1px',
-        height: '24px',
-        backgroundColor: 'var(--color-border-default)',
-        margin: '0 8px',
-        alignSelf: 'center',
-      }}
-    />
   );
 }

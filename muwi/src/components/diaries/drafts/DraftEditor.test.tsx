@@ -95,6 +95,7 @@ describe('DraftEditor', () => {
 
     expect(screen.getByDisplayValue('Draft Title')).toHaveStyle({ fontSize: '28px' });
     expect(screen.getByTestId('editor-content')).toBeInTheDocument();
+    expect(screen.getByRole('toolbar', { name: 'Draft formatting toolbar' })).toBeInTheDocument();
     expect(screen.getByTitle('Bold (Ctrl+B)')).toBeInTheDocument();
     expect(screen.getByTestId('draft-editor-paper').getAttribute('style')).toContain(
       'repeating-linear-gradient'
@@ -166,7 +167,7 @@ describe('DraftEditor', () => {
     expect(onStatusCycle).toHaveBeenCalledTimes(1);
   });
 
-  it('executes formatting toolbar actions and hover handlers', () => {
+  it('executes formatting toolbar actions through the shared grouped toolbar model', () => {
     mockEditor.isActive.mockImplementation((name: string, attrs?: { level?: number }) => {
       if (name === 'bold') return true;
       if (name === 'heading' && attrs?.level === 1) return true;
@@ -212,12 +213,10 @@ describe('DraftEditor', () => {
     expect(chain.run).toHaveBeenCalled();
 
     const bold = screen.getByTitle('Bold (Ctrl+B)');
-    expect(bold).toHaveStyle({ backgroundColor: 'var(--color-accent-subtle)' });
+    expect(bold).toHaveAttribute('data-active', 'true');
     const italic = screen.getByTitle('Italic (Ctrl+I)');
-    fireEvent.mouseEnter(italic);
-    expect(italic).toHaveStyle({ backgroundColor: 'var(--color-bg-tertiary)' });
-    fireEvent.mouseLeave(italic);
-    expect(italic).not.toHaveStyle({ backgroundColor: 'var(--color-bg-tertiary)' });
+    expect(italic).toHaveAttribute('data-active', 'false');
+    expect(screen.getAllByRole('separator').length).toBeGreaterThan(0);
   });
 
   it('renders locked mode with disabled editing/status controls and hidden toolbar', () => {

@@ -213,20 +213,11 @@ export function DraftList({ onCreateNew }: DraftListProps) {
   }, [unlock, unlockPromptDraftId, updateDraft]);
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        width: '280px',
-        borderRight: '1px solid var(--color-border-default)',
-        backgroundColor: 'var(--color-bg-secondary)',
-      }}
-    >
+    <div className="muwi-drafts-list">
       {/* Header with New Draft button */}
       <div
         style={{
-          padding: '16px',
+          padding: '8px 0',
           borderBottom: '1px solid var(--color-border-default)',
         }}
       >
@@ -267,7 +258,7 @@ export function DraftList({ onCreateNew }: DraftListProps) {
         style={{
           display: 'flex',
           gap: '8px',
-          padding: '12px 16px',
+          padding: '12px 0',
           borderBottom: '1px solid var(--color-border-default)',
         }}
       >
@@ -417,12 +408,7 @@ export function DraftList({ onCreateNew }: DraftListProps) {
       </div>
 
       {/* Draft list */}
-      <div
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-        }}
-      >
+      <div className="muwi-drafts-list__scroll">
         {drafts.length === 0 ? (
           <div
             style={{
@@ -552,107 +538,56 @@ const DraftListItem = memo(function DraftListItem({
 }: DraftListItemProps) {
   return (
     <div
+      role="button"
+      tabIndex={0}
       onClick={onSelect}
       onContextMenu={onContextMenu}
-      style={{
-        padding: '12px 16px',
-        borderBottom: '1px solid var(--color-border-default)',
-        cursor: 'pointer',
-        backgroundColor: isSelected ? 'var(--color-accent-subtle)' : 'transparent',
-        borderLeft: isSelected ? '3px solid var(--color-accent-default)' : '3px solid transparent',
-        transition: 'background-color 150ms ease',
-      }}
-      onMouseEnter={(e) => {
-        if (!isSelected) {
-          e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)';
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onSelect();
         }
       }}
-      onMouseLeave={(e) => {
-        if (!isSelected) {
-          e.currentTarget.style.backgroundColor = 'transparent';
-        }
-      }}
+      className={['muwi-sidebar-item', 'muwi-drafts-list__item', isSelected ? 'is-active' : null]
+        .filter(Boolean)
+        .join(' ')}
     >
-      {/* Title and lock indicator */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          marginBottom: '4px',
-        }}
-      >
-        <h3
-          style={{
-            fontSize: '14px',
-            fontWeight: 600,
-            color: 'var(--color-text-primary)',
-            margin: 0,
-            flex: 1,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {draft.title || 'Untitled Draft'}
-        </h3>
-        {draft.isLocked && (
-          <svg
-            width="12"
-            height="12"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="var(--color-text-tertiary)"
-            strokeWidth="2"
-          >
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-            <path d="M7 11V7a5 5 0 0110 0v4" />
-          </svg>
-        )}
-      </div>
-
-      {/* Preview text */}
-      <p
-        style={{
-          fontSize: '12px',
-          color: 'var(--color-text-secondary)',
-          margin: '0 0 8px 0',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        {truncateText(draft.content, 60) || 'No content'}
-      </p>
-
-      {/* Meta row: status badge, word count, date */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-        }}
-      >
-        <div onClick={(e) => { e.stopPropagation(); onStatusClick(); }}>
-          <StatusBadge status={draft.status} onClick={onStatusClick} size="sm" />
+      <div className="muwi-drafts-list__item-content">
+        <div className="muwi-drafts-list__item-head">
+          <h3 className="muwi-drafts-list__item-title">
+            {draft.title || 'Untitled Draft'}
+          </h3>
+          {draft.isLocked && (
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="var(--color-text-tertiary)"
+              strokeWidth="2"
+            >
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0110 0v4" />
+            </svg>
+          )}
         </div>
-        <span
-          style={{
-            fontSize: '11px',
-            color: 'var(--color-text-tertiary)',
-          }}
-        >
-          {draft.wordCount} words
-        </span>
-        <span
-          style={{
-            fontSize: '11px',
-            color: 'var(--color-text-tertiary)',
-            marginLeft: 'auto',
-          }}
-        >
-          {formatDate(draft.modifiedAt)}
-        </span>
+
+        <p className="muwi-drafts-list__item-preview">
+          {truncateText(draft.content, 60) || 'No content'}
+        </p>
+
+        <div className="muwi-drafts-list__item-meta">
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              onStatusClick();
+            }}
+          >
+            <StatusBadge status={draft.status} onClick={onStatusClick} size="sm" />
+          </div>
+          <span className="muwi-drafts-list__item-word-count">{draft.wordCount} words</span>
+          <span className="muwi-drafts-list__item-date">{formatDate(draft.modifiedAt)}</span>
+        </div>
       </div>
     </div>
   );

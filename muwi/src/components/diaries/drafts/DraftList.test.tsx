@@ -40,7 +40,9 @@ describe('DraftList', () => {
 
     render(<DraftList onCreateNew={vi.fn()} />);
 
-    expect(screen.getByRole('heading', { name: 'My Draft' })).toBeInTheDocument();
+    const heading = screen.getByRole('heading', { name: 'My Draft' });
+    expect(heading).toBeInTheDocument();
+    expect(heading.closest('.muwi-drafts-list__item')).toHaveClass('muwi-sidebar-item');
     expect(screen.getByText('This is a draft preview')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'In Progress' })).toBeInTheDocument();
     expect(screen.getByText('42 words')).toBeInTheDocument();
@@ -69,8 +71,13 @@ describe('DraftList', () => {
 
     render(<DraftList onCreateNew={vi.fn()} />);
 
-    fireEvent.click(screen.getByRole('heading', { name: 'Selectable Draft' }));
+    const heading = screen.getByRole('heading', { name: 'Selectable Draft' });
+    fireEvent.click(heading);
     expect(setCurrentDraft).toHaveBeenCalledWith(draft.id);
+    const row = heading.closest('[role="button"]');
+    if (!row) throw new Error('Expected draft row');
+    fireEvent.keyDown(row, { key: 'Enter' });
+    expect(setCurrentDraft).toHaveBeenCalledTimes(2);
 
     fireEvent.click(screen.getByRole('button', { name: 'Modified' }));
     fireEvent.click(screen.getByRole('button', { name: 'Title' }));
@@ -231,7 +238,7 @@ describe('DraftList', () => {
     expect(screen.queryByRole('button', { name: 'Delete' })).not.toBeInTheDocument();
   });
 
-  it('supports sort branches, date formatting branches, and hover styling handlers', () => {
+  it('supports sort branches, date formatting branches, and shared sidebar row states', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-02-10T12:00:00.000Z'));
 
@@ -314,20 +321,16 @@ describe('DraftList', () => {
     expect(newDraftButton).toHaveStyle({ backgroundColor: 'var(--color-accent-default)' });
 
     const unselectedHeading = screen.getByRole('heading', { name: 'Gamma' });
-    const unselectedCard = unselectedHeading.parentElement?.parentElement;
+    const unselectedCard = unselectedHeading.closest('.muwi-drafts-list__item');
     if (!unselectedCard) throw new Error('Expected unselected draft card');
-    fireEvent.mouseEnter(unselectedCard);
-    expect(unselectedCard).toHaveStyle({ backgroundColor: 'var(--color-bg-tertiary)' });
-    fireEvent.mouseLeave(unselectedCard);
-    expect(unselectedCard).not.toHaveStyle({ backgroundColor: 'var(--color-bg-tertiary)' });
+    expect(unselectedCard).toHaveClass('muwi-sidebar-item');
+    expect(unselectedCard).not.toHaveClass('is-active');
 
     const selectedHeading = screen.getByRole('heading', { name: 'Alpha' });
-    const selectedCard = selectedHeading.parentElement?.parentElement;
+    const selectedCard = selectedHeading.closest('.muwi-drafts-list__item');
     if (!selectedCard) throw new Error('Expected selected draft card');
-    fireEvent.mouseEnter(selectedCard);
-    expect(selectedCard).toHaveStyle({ backgroundColor: 'var(--color-accent-subtle)' });
-    fireEvent.mouseLeave(selectedCard);
-    expect(selectedCard).toHaveStyle({ backgroundColor: 'var(--color-accent-subtle)' });
+    expect(selectedCard).toHaveClass('muwi-sidebar-item');
+    expect(selectedCard).toHaveClass('is-active');
 
     vi.useRealTimers();
   });
