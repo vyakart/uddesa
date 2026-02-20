@@ -1987,16 +1987,16 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Acceptance Criteria**:
   - [x] Global shortcuts (`Cmd/Ctrl+K`, `Cmd+,`, `Cmd+B`, `Cmd+1-6`, `Esc`) work
   - [x] Editor shortcuts remain functional in each diary
-  - [ ] Focus order follows visual order
+  - [x] Focus order follows visual order
 
 #### Task 7.13.2: ARIA and Semantic Roles Pass
 - **Description**: Add/fix semantic roles and labels per spec
 - **Dependencies**: 7.7 through 7.12
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Toolbar, sidebar, modal, command palette, status, and toast roles applied
-  - [ ] Decorative icons use `aria-hidden`
-  - [ ] Interactive icons have explicit labels
+  - [x] Toolbar, sidebar, modal, command palette, status, and toast roles applied
+  - [x] Decorative icons use `aria-hidden`
+  - [x] Interactive icons have explicit labels
 
 #### Task 7.13.3: Focus Ring and Focus Restoration Pass
 - **Description**: Standardize focus visibility and return behavior
@@ -2012,9 +2012,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 7.1.3, 7.7 through 7.12
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] Normal text meets 4.5:1 where required
-  - [ ] Large text and controls meet applicable ratios
-  - [ ] Status indicators combine text/icon with color
+  - [x] Normal text meets 4.5:1 where required
+  - [x] Large text and controls meet applicable ratios
+  - [x] Status indicators combine text/icon with color
 
 #### Task 7.13.5: Reduced Motion Compliance
 - **Description**: Ensure all transitions respect reduced-motion preference
@@ -2030,8 +2030,8 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Effort**: M
 - **Acceptance Criteria**:
   - [x] Automated checks (axe or equivalent) run in CI
-  - [ ] Manual keyboard-only audit complete
-  - [ ] Manual screen reader spot-check complete
+  - [x] Manual keyboard-only audit complete
+  - [x] Manual screen reader spot-check complete
 
 #### Task 7.13.7: Resolve Shortcut Conflicts and Document Final Map
 - **Description**: Eliminate collisions in shortcut assignments across global and diary scopes

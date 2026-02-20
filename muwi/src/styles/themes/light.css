@@ -24,7 +24,7 @@
   --color-border-on-canvas: #e8e8ea;
 
   /* Accent */
-  --color-accent-default: hsl(var(--color-accent-h), var(--color-accent-s), 45%);
+  --color-accent-default: hsl(var(--color-accent-h), var(--color-accent-s), 44%);
   --color-accent-hover: hsl(var(--color-accent-h), var(--color-accent-s), 38%);
   --color-accent-subtle: hsl(var(--color-accent-h), var(--color-accent-s), 95%);
   --color-accent-text: hsl(var(--color-accent-h), var(--color-accent-s), 35%);

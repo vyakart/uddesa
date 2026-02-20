@@ -7,22 +7,22 @@ interface StatusBadgeProps {
   disabled?: boolean;
 }
 
-const statusConfig: Record<DraftStatus, { label: string; color: string; bgColor: string; borderColor: string }> = {
+const statusConfig: Record<DraftStatus, { label: string; dotColor: string; bgColor: string; borderColor: string }> = {
   'in-progress': {
     label: 'In Progress',
-    color: 'var(--color-status-in-progress)',
+    dotColor: 'var(--color-status-in-progress)',
     bgColor: 'color-mix(in srgb, var(--color-status-in-progress) 14%, transparent)',
     borderColor: 'color-mix(in srgb, var(--color-status-in-progress) 32%, transparent)',
   },
   'review': {
     label: 'Review',
-    color: 'var(--color-status-review)',
+    dotColor: 'var(--color-status-review)',
     bgColor: 'color-mix(in srgb, var(--color-status-review) 14%, transparent)',
     borderColor: 'color-mix(in srgb, var(--color-status-review) 32%, transparent)',
   },
   'complete': {
     label: 'Complete',
-    color: 'var(--color-status-complete)',
+    dotColor: 'var(--color-status-complete)',
     bgColor: 'color-mix(in srgb, var(--color-status-complete) 14%, transparent)',
     borderColor: 'color-mix(in srgb, var(--color-status-complete) 32%, transparent)',
   },
@@ -55,7 +55,7 @@ export function StatusBadge({ status, onClick, size = 'md', disabled = false }: 
         padding: sizeStyles[size].padding,
         fontSize: sizeStyles[size].fontSize,
         fontWeight: 500,
-        color: config.color,
+        color: 'var(--color-text-primary)',
         backgroundColor: config.bgColor,
         border: `1px solid ${config.borderColor}`,
         borderRadius: '9999px',
@@ -79,7 +79,7 @@ export function StatusBadge({ status, onClick, size = 'md', disabled = false }: 
           width: size === 'sm' ? '6px' : '8px',
           height: size === 'sm' ? '6px' : '8px',
           borderRadius: '50%',
-          backgroundColor: config.color,
+          backgroundColor: config.dotColor,
         }}
       />
       {config.label}

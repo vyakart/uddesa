@@ -649,7 +649,7 @@ export function SectionEditor({
                 padding: '4px 10px',
                 fontSize: '12px',
                 fontWeight: 500,
-                color: currentStatus.color,
+                color: 'var(--color-text-primary)',
                 backgroundColor: `color-mix(in srgb, ${currentStatus.color} 16%, transparent)`,
                 border: `1px solid color-mix(in srgb, ${currentStatus.color} 34%, transparent)`,
                 borderRadius: '12px',
@@ -673,6 +673,7 @@ export function SectionEditor({
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
+                  aria-hidden="true"
                 >
                   <path d="M6 9l6 6 6-6" />
                 </svg>
@@ -860,11 +861,13 @@ export function SectionEditor({
                 justifyContent: 'space-between',
               }}
             >
-              <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-warning)' }}>
+              <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-text-primary)' }}>
                 Author Notes
               </span>
               <button
+                type="button"
                 onClick={() => setShowNotes(false)}
+                aria-label="Close author notes"
                 style={{
                   width: '20px',
                   height: '20px',
@@ -874,10 +877,18 @@ export function SectionEditor({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: 'var(--color-warning)',
+                  color: 'var(--color-text-secondary)',
                 }}
               >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  aria-hidden="true"
+                >
                   <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
               </button>
@@ -896,7 +907,7 @@ export function SectionEditor({
                 fontFamily: 'Inter, system-ui, sans-serif',
                 fontSize: '13px',
                 lineHeight: 1.6,
-                color: 'var(--color-warning)',
+                color: 'var(--color-text-primary)',
                 backgroundColor: 'transparent',
               }}
             />

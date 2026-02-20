@@ -3,15 +3,25 @@ import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+type ButtonAccessibilityProps =
+  | {
+      iconOnly: true;
+      'aria-label': string;
+      'aria-labelledby'?: string;
+    }
+  | {
+      iconOnly?: false;
+    };
+
+export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> &
+  ButtonAccessibilityProps & {
   variant?: ButtonVariant;
   size?: ButtonSize;
   active?: boolean;
   fullWidth?: boolean;
-  iconOnly?: boolean;
   leadingIcon?: ReactNode;
   trailingIcon?: ReactNode;
-}
+};
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   {

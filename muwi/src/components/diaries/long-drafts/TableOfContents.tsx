@@ -25,6 +25,13 @@ const statusColors: Record<string, string> = {
   complete: 'var(--color-status-complete)',
 };
 
+const statusLabels: Record<string, string> = {
+  draft: 'Draft',
+  'in-progress': 'In progress',
+  review: 'In review',
+  complete: 'Complete',
+};
+
 function buildSectionHierarchy(sections: Section[], parentId: string | null = null, depth: number = 0): SectionNode[] {
   return sections
     .filter((section) => section.parentId === parentId)
@@ -558,8 +565,12 @@ const TOCSectionItem = memo(function TOCSectionItem({
         <span
           className="muwi-longdrafts-toc__status-dot"
           style={{ backgroundColor: statusColors[section.status] || statusColors.draft }}
-          title={section.status}
+          title={statusLabels[section.status] || statusLabels.draft}
+          aria-hidden="true"
         />
+        <span className="muwi-visually-hidden">
+          Status: {statusLabels[section.status] || statusLabels.draft}
+        </span>
 
         <span className="muwi-longdrafts-toc__item-label" title={section.title}>
           {section.title || 'Untitled Section'}

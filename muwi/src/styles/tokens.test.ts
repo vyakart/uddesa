@@ -23,7 +23,7 @@ describe('design token stylesheets', () => {
 
     expect(lightCss).toContain("[data-theme='light']");
     expect(lightCss).toContain('--color-bg-primary: #ffffff;');
-    expect(lightCss).toContain('--color-accent-default: hsl(var(--color-accent-h), var(--color-accent-s), 45%);');
+    expect(lightCss).toContain('--color-accent-default: hsl(var(--color-accent-h), var(--color-accent-s), 44%);');
     expect(lightCss).toContain('--shadow-focus:');
 
     expect(darkCss).toContain("[data-theme='dark']");
