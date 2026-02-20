@@ -28,7 +28,7 @@ test('long drafts flow: create document, add sections, reorder sections', async 
   await expect
     .poll(async () => {
       return page
-        .locator('[data-testid="long-drafts-toc"] span[title]')
+        .locator('[data-testid="long-drafts-toc"] .muwi-longdrafts-toc__item-label')
         .evaluateAll((nodes) => nodes.slice(0, 2).map((node) => node.textContent?.trim() ?? ''));
     })
     .toEqual(['Untitled Section', 'First Section']);

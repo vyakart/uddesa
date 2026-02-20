@@ -2032,6 +2032,13 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - [x] Automated checks (axe or equivalent) run in CI
   - [x] Manual keyboard-only audit complete
   - [x] Manual screen reader spot-check complete
+- **VoiceOver/NVDA Human Spot-Check (5-10 min)**:
+  - Launch the app and confirm the main app region and current page/title are announced.
+  - Traverse top-level controls by keyboard (`Tab`/`Shift+Tab`) and verify each interactive element has a clear accessible name.
+  - Open and close command palette (`Cmd/Ctrl+K`, `Esc`) and verify focus returns to the invoking control.
+  - Switch diaries and confirm context changes are announced (title/heading changes and active navigation state).
+  - Trigger one non-blocking status update (save/toast) and confirm it is announced once without duplicate chatter.
+  - Use VoiceOver rotor/NVDA elements list to confirm there are no unlabeled buttons or duplicate landmark noise.
 
 #### Task 7.13.7: Resolve Shortcut Conflicts and Document Final Map
 - **Description**: Eliminate collisions in shortcut assignments across global and diary scopes
@@ -2053,16 +2060,16 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 7.3.5
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Behavior at `>=1200`, `960-1199`, `800-959`, `<800` matches spec
-  - [ ] Sidebar overlays canvas below 800px
+  - [x] Behavior at `>=1200`, `960-1199`, `800-959`, `<800` matches spec
+  - [x] Sidebar overlays canvas below 800px
 
 #### Task 7.14.2: Implement Shelf Grid Responsiveness
 - **Description**: Enforce 4/3/2 column shelf layout thresholds
 - **Dependencies**: 7.5.4
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] Shelf cards reflow without overlap or clipping
-  - [ ] Card minimum widths respect spec
+  - [x] Shelf cards reflow without overlap or clipping
+  - [x] Card minimum widths respect spec
 
 #### Task 7.14.3: Enforce Electron Minimum Window Size
 - **Description**: Ensure minimum app size matches design constraints
@@ -2070,16 +2077,16 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Effort**: S
 - **Files to Modify**: `muwi/electron/main.ts`
 - **Acceptance Criteria**:
-  - [ ] Minimum window set to 800x600
-  - [ ] UI remains usable at minimum size
+  - [x] Minimum window set to 800x600
+  - [x] UI remains usable at minimum size
 
 #### Task 7.14.4: Add Responsive Regression Tests
 - **Description**: Capture layout behavior across key widths
 - **Dependencies**: 7.14.1, 7.14.2
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] Test coverage for shelf and in-diary breakpoints
-  - [ ] No major layout regressions across width classes
+  - [x] Test coverage for shelf and in-diary breakpoints
+  - [x] No major layout regressions across width classes
 
 #### Task 7.14.5: Add E2E Resize Smoke Coverage
 - **Description**: Validate critical layout behaviors through browser-level resize tests
@@ -2088,8 +2095,8 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Files to Modify**:
   - `muwi/e2e/smoke.spec.ts`
 - **Acceptance Criteria**:
-  - [ ] E2E smoke covers at least desktop and narrow-width transitions
-  - [ ] Sidebar/right panel behavior at small widths is validated
+  - [x] E2E smoke covers at least desktop and narrow-width transitions
+  - [x] Sidebar/right panel behavior at small widths is validated
 
 ### 7.15 Performance and Refactor Stabilization
 

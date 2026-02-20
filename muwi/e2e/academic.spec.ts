@@ -4,17 +4,26 @@ test('academic flow: create paper, add reference, insert citation', async ({ pag
   await page.goto('/');
 
   await page.getByRole('button', { name: 'Open Academic Papers' }).click();
-  await expect(page.getByRole('button', { name: /New Academic Paper/i })).toBeVisible();
 
-  await page.getByRole('button', { name: /New Academic Paper/i }).click();
+  const createPaperButton = page.getByRole('button', { name: 'Create Paper' });
+  const newPaperButton = page.getByRole('button', { name: /New Paper/i }).first();
+
+  if (await createPaperButton.isVisible().catch(() => false)) {
+    await createPaperButton.click();
+  } else {
+    await expect(newPaperButton).toBeVisible();
+    await newPaperButton.click();
+  }
+
+  await expect(page.getByRole('heading', { name: 'New Academic Paper' })).toBeVisible();
   await page.getByPlaceholder('Enter paper title...').fill('Playwright Academic Paper');
   await page.getByRole('button', { name: /IMRAD/i }).click();
-  await page.getByRole('button', { name: 'Create Paper' }).click();
+  await page.getByRole('button', { name: 'Create Paper' }).last().click();
 
-  await expect(page.getByRole('button', { name: /Playwright Academic Paper/i })).toBeVisible();
-  await expect(page.getByText('Introduction').first()).toBeVisible();
+  await expect(page.locator('#academic-paper-select')).toContainText('Playwright Academic Paper');
+  await expect(page.locator('.ProseMirror')).toBeVisible();
 
-  await page.getByTitle('Toggle Bibliography Panel').click();
+  await page.getByRole('button', { name: 'Bibliography', exact: true }).click();
   await expect(page.getByText('Reference Library')).toBeVisible();
   await page.getByRole('button', { name: 'Add', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Add Reference' })).toBeVisible();

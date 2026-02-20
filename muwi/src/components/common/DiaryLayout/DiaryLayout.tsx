@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useAppStore, type DiaryType } from '@/stores/appStore';
 import { DIARY_INFO } from '@/components/shelf/DiaryCard';
 import { RightPanel } from '@/components/common/RightPanel';
@@ -30,6 +30,36 @@ const PANEL_TITLE_MAP: Record<string, string> = {
   backup: 'Backup',
   'document-settings': 'Document Settings',
 };
+
+const BREAKPOINT_OVERLAY = 800;
+const BREAKPOINT_COMPACT = 960;
+const BREAKPOINT_WIDE = 1200;
+
+type ShellBreakpoint = 'overlay' | 'compact' | 'standard' | 'wide';
+
+function resolveShellBreakpoint(width: number): ShellBreakpoint {
+  if (width < BREAKPOINT_OVERLAY) {
+    return 'overlay';
+  }
+
+  if (width < BREAKPOINT_COMPACT) {
+    return 'compact';
+  }
+
+  if (width < BREAKPOINT_WIDE) {
+    return 'standard';
+  }
+
+  return 'wide';
+}
+
+function getInitialShellBreakpoint(): ShellBreakpoint {
+  if (typeof window === 'undefined') {
+    return 'wide';
+  }
+
+  return resolveShellBreakpoint(window.innerWidth);
+}
 
 function isStatusSlots(
   status: DiaryLayoutProps['status']
@@ -69,15 +99,45 @@ export function DiaryLayout({
   const renderCanvas = canvas ?? children;
   const hasStatus = status !== undefined && status !== null;
   const statusSlots = isStatusSlots(status) ? status : { left: status };
+  const [shellBreakpoint, setShellBreakpoint] = useState<ShellBreakpoint>(getInitialShellBreakpoint);
+  const isSidebarOverlay = shellBreakpoint === 'overlay';
+  const shouldAutoCollapseSidebar = shellBreakpoint === 'compact';
   const computedRightPanelTitle =
     rightPanelTitle ??
     (rightPanelState.panelType ? PANEL_TITLE_MAP[rightPanelState.panelType] ?? rightPanelState.panelType : 'Panel');
+
+  useEffect(() => {
+    const handleResize = () => {
+      const nextBreakpoint = resolveShellBreakpoint(window.innerWidth);
+      setShellBreakpoint((current) => (current === nextBreakpoint ? current : nextBreakpoint));
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!shouldAutoCollapseSidebar || !rightPanelState.isOpen || !isSidebarOpen) {
+      return;
+    }
+
+    closeSidebar();
+  }, [shouldAutoCollapseSidebar, rightPanelState.isOpen, isSidebarOpen, closeSidebar]);
 
   return (
     <div className="muwi-diary-layout" data-diary-type={diaryType}>
       <TitleBar contextLabel={info.name} />
 
-      <div className="muwi-shell">
+      <div
+        className="muwi-shell"
+        data-shell-breakpoint={shellBreakpoint}
+        data-sidebar-overlay={isSidebarOverlay ? 'true' : 'false'}
+        data-testid="diary-shell"
+      >
         {hasSidebar ? (
           <Sidebar
             title={info.name}
@@ -89,6 +149,15 @@ export function DiaryLayout({
           >
             {sidebar}
           </Sidebar>
+        ) : null}
+        {hasSidebar && isSidebarOverlay && isSidebarOpen ? (
+          <button
+            type="button"
+            className="muwi-shell-sidebar-backdrop"
+            onClick={closeSidebar}
+            aria-label="Close sidebar overlay"
+            data-testid="sidebar-overlay-backdrop"
+          />
         ) : null}
 
         <section className="muwi-shell-center">
