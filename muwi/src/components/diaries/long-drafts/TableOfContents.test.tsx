@@ -93,6 +93,7 @@ describe('TableOfContents', () => {
     expect(screen.getByText('Contents')).toBeInTheDocument();
     expect(screen.getByText('2 sections')).toBeInTheDocument();
     expect(screen.getByText('400 words')).toBeInTheDocument();
+    expect(screen.getByTestId('toc-section-root-1')).toHaveClass('muwi-sidebar-item');
 
     fireEvent.click(screen.getByText('Methods'));
     expect(setCurrentSection).toHaveBeenCalledWith('root-2');
@@ -125,6 +126,31 @@ describe('TableOfContents', () => {
     });
 
     confirmSpy.mockRestore();
+  });
+
+  it('renders panel variant even when sidebar toc visibility is false', () => {
+    const section = makeSection({
+      id: 'panel-root',
+      title: 'Panel Root',
+      wordCount: 42,
+    });
+
+    useLongDraftsStore.setState({
+      currentLongDraftId: 'doc-1',
+      currentSectionId: section.id,
+      isTOCVisible: false,
+      sectionsMap: new Map([['doc-1', [section]]]),
+      setCurrentSection: vi.fn(),
+      toggleTOC: vi.fn(),
+      deleteSection: vi.fn().mockResolvedValue(undefined),
+      updateSection: vi.fn().mockResolvedValue(undefined),
+    });
+
+    render(<TableOfContents onCreateSection={vi.fn()} variant="panel" />);
+
+    expect(screen.getByTestId('long-drafts-toc')).toBeInTheDocument();
+    expect(screen.queryByTitle('Show table of contents')).not.toBeInTheDocument();
+    expect(screen.queryByTitle('Hide table of contents')).not.toBeInTheDocument();
   });
 
   it('handles empty document state and context-menu cancel/close paths', async () => {

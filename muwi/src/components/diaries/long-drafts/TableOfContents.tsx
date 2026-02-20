@@ -15,6 +15,7 @@ import type { Section } from '@/types/longDrafts';
 
 interface TableOfContentsProps {
   onCreateSection: (parentId?: string | null) => void;
+  variant?: 'sidebar' | 'panel';
 }
 
 const statusColors: Record<string, string> = {
@@ -24,12 +25,11 @@ const statusColors: Record<string, string> = {
   complete: 'var(--color-status-complete)',
 };
 
-// Helper to build section hierarchy
 function buildSectionHierarchy(sections: Section[], parentId: string | null = null, depth: number = 0): SectionNode[] {
   return sections
-    .filter(s => s.parentId === parentId)
+    .filter((section) => section.parentId === parentId)
     .sort((a, b) => a.order - b.order)
-    .map(section => ({
+    .map((section) => ({
       section,
       depth,
       children: buildSectionHierarchy(sections, section.id, depth + 1),
@@ -45,13 +45,13 @@ function flattenSectionHierarchy(nodes: SectionNode[]): string[] {
   return ids;
 }
 
-export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
+export function TableOfContents({ onCreateSection, variant = 'sidebar' }: TableOfContentsProps) {
+  const isPanel = variant === 'panel';
   const currentLongDraftId = useLongDraftsStore(selectCurrentLongDraftId);
   const currentSectionId = useLongDraftsStore(selectCurrentSectionId);
   const isTOCVisible = useLongDraftsStore(selectIsTOCVisible);
   const sectionsMap = useLongDraftsStore(selectSectionsMap);
 
-  // Memoize computed values to prevent infinite re-renders
   const sectionHierarchy = useMemo(() => {
     if (!currentLongDraftId) return [];
     const sections = sectionsMap.get(currentLongDraftId) ?? [];
@@ -61,7 +61,7 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
   const totalWordCount = useMemo(() => {
     if (!currentLongDraftId) return 0;
     const sections = sectionsMap.get(currentLongDraftId) ?? [];
-    return sections.reduce((total, s) => total + s.wordCount, 0);
+    return sections.reduce((total, section) => total + section.wordCount, 0);
   }, [sectionsMap, currentLongDraftId]);
 
   const setCurrentSection = useLongDraftsStore((state) => state.setCurrentSection);
@@ -79,11 +79,13 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
   const [unlockPromptSectionId, setUnlockPromptSectionId] = useState<string | null>(null);
   const [draggedSectionId, setDraggedSectionId] = useState<string | null>(null);
   const [dropTargetSectionId, setDropTargetSectionId] = useState<string | null>(null);
+
   const lockingTargetId = contextMenu?.sectionId ?? unlockPromptSectionId ?? '';
   const allSections = currentLongDraftId ? (sectionsMap.get(currentLongDraftId) ?? []) : [];
   const contextSection = contextMenu
     ? allSections.find((section) => section.id === contextMenu.sectionId) ?? null
     : null;
+
   const {
     lock,
     unlock,
@@ -120,7 +122,6 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
 
   const handleAddSubsection = useCallback((parentId: string) => {
     onCreateSection(parentId);
-    // Ensure parent is expanded
     setExpandedSections((prev) => new Set(prev).add(parentId));
     setContextMenu(null);
   }, [onCreateSection]);
@@ -160,7 +161,6 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
     }
   }, [unlock, unlockPromptSectionId, updateSection]);
 
-  // Close context menu on outside click
   const handleBackgroundClick = useCallback(() => {
     if (contextMenu) {
       setContextMenu(null);
@@ -194,6 +194,7 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
     const sections = sectionsMap.get(currentLongDraftId) ?? [];
     const draggedSection = sections.find((section) => section.id === draggedSectionId);
     const targetSection = sections.find((section) => section.id === targetSectionId);
+
     if (!draggedSection || !targetSection || draggedSection.parentId !== targetSection.parentId) {
       resetDragState();
       return;
@@ -204,6 +205,7 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
       .sort((a, b) => a.order - b.order);
     const draggedIndex = siblingSections.findIndex((section) => section.id === draggedSectionId);
     const targetIndex = siblingSections.findIndex((section) => section.id === targetSectionId);
+
     if (draggedIndex === -1 || targetIndex === -1 || draggedIndex === targetIndex) {
       resetDragState();
       return;
@@ -218,6 +220,7 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
       const nextOrder = siblingOrderMap.get(section.id);
       return nextOrder === undefined ? section : { ...section, order: nextOrder };
     });
+
     const allSectionIds = flattenSectionHierarchy(buildSectionHierarchy(normalizedSections));
 
     try {
@@ -227,35 +230,15 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
     }
   }, [currentLongDraftId, draggedSectionId, sectionsMap, reorderSections, resetDragState]);
 
-  if (!isTOCVisible) {
+  if (!isPanel && !isTOCVisible) {
     return (
-      <div
-        style={{
-          width: '40px',
-          height: '100%',
-          backgroundColor: 'var(--color-bg-secondary)',
-          borderRight: '1px solid var(--color-border-default)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          paddingTop: '12px',
-        }}
-      >
+      <div className="muwi-longdrafts-toc is-collapsed" data-testid="long-drafts-toc-collapsed">
         <button
+          type="button"
           onClick={toggleTOC}
-          style={{
-            width: '28px',
-            height: '28px',
-            border: 'none',
-            borderRadius: '6px',
-            backgroundColor: 'transparent',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'var(--color-text-secondary)',
-          }}
+          className="muwi-sidebar-button"
           title="Show table of contents"
+          aria-label="Show table of contents"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M4 6h16M4 12h16M4 18h7" />
@@ -269,108 +252,48 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
     <div
       data-testid="long-drafts-toc"
       onClick={handleBackgroundClick}
-      style={{
-        width: '260px',
-        height: '100%',
-        backgroundColor: 'var(--color-bg-secondary)',
-        borderRight: '1px solid var(--color-border-default)',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-      }}
+      className={[
+        'muwi-longdrafts-toc',
+        isPanel ? 'is-panel' : 'is-sidebar',
+      ].join(' ')}
     >
-      {/* Header */}
-      <div
-        style={{
-          padding: '16px',
-          borderBottom: '1px solid var(--color-border-default)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <span
-          style={{
-            fontSize: '13px',
-            fontWeight: 600,
-            color: 'var(--color-text-primary)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-          }}
-        >
-          Contents
-        </span>
-        <button
-          onClick={toggleTOC}
-          style={{
-            width: '24px',
-            height: '24px',
-            border: 'none',
-            borderRadius: '4px',
-            backgroundColor: 'transparent',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'var(--color-text-secondary)',
-          }}
-          title="Hide table of contents"
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-          </svg>
-        </button>
+      <div className="muwi-longdrafts-toc__header">
+        <span className="muwi-longdrafts-toc__title">Contents</span>
+
+        {!isPanel ? (
+          <button
+            type="button"
+            onClick={toggleTOC}
+            className="muwi-sidebar-button"
+            title="Hide table of contents"
+            aria-label="Hide table of contents"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+          </button>
+        ) : null}
       </div>
 
-      {/* Add Section button */}
-      <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--color-border-default)' }}>
+      <div className="muwi-longdrafts-toc__toolbar-row">
         <button
+          type="button"
           onClick={() => onCreateSection(null)}
-          style={{
-            width: '100%',
-            padding: '8px 12px',
-            backgroundColor: 'var(--color-accent-default)',
-            color: 'var(--color-text-inverse)',
-            border: 'none',
-            borderRadius: '6px',
-            fontSize: '13px',
-            fontWeight: 500,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '6px',
-            transition: 'background-color 150ms ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--color-accent-hover)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--color-accent-default)';
-          }}
+          className="muwi-button"
+          data-variant="primary"
+          data-size="sm"
+          style={{ width: '100%' }}
+          aria-label="Add Section"
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 5v14M5 12h14" />
-          </svg>
           Add Section
         </button>
       </div>
 
-      {/* Section tree */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
+      <div className="muwi-longdrafts-toc__tree">
         {sectionHierarchy.length === 0 ? (
-          <div
-            style={{
-              padding: '24px 16px',
-              textAlign: 'center',
-              color: 'var(--color-text-tertiary)',
-              fontSize: '13px',
-            }}
-          >
-            <p style={{ marginBottom: '8px' }}>No sections yet</p>
-            <p style={{ fontSize: '12px', color: 'var(--color-text-tertiary)' }}>
-              Add a section to start writing
-            </p>
+          <div className="muwi-longdrafts-toc__empty">
+            <p>No sections yet</p>
+            <p>Add a section to start writing</p>
           </div>
         ) : (
           sectionHierarchy.map((node) => (
@@ -393,26 +316,12 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
         )}
       </div>
 
-      {/* Footer with total word count */}
-      <div
-        style={{
-          padding: '12px 16px',
-          borderTop: '1px solid var(--color-border-default)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        <span style={{ fontSize: '12px', color: 'var(--color-text-secondary)' }}>
-          {sectionHierarchy.length} section{sectionHierarchy.length !== 1 ? 's' : ''}
-        </span>
-        <span style={{ fontSize: '12px', color: 'var(--color-text-secondary)' }}>
-          {totalWordCount.toLocaleString()} words
-        </span>
+      <div className="muwi-longdrafts-toc__footer">
+        <span>{sectionHierarchy.length} section{sectionHierarchy.length !== 1 ? 's' : ''}</span>
+        <span>{totalWordCount.toLocaleString()} words</span>
       </div>
 
-      {/* Context menu */}
-      {contextMenu && (
+      {contextMenu ? (
         <div
           onClick={(e) => e.stopPropagation()}
           style={{
@@ -523,7 +432,7 @@ export function TableOfContents({ onCreateSection }: TableOfContentsProps) {
             Delete Section
           </button>
         </div>
-      )}
+      ) : null}
 
       <PasskeyPrompt
         isOpen={unlockPromptSectionId !== null}
@@ -571,7 +480,7 @@ const TOCSectionItem = memo(function TOCSectionItem({
   const { section, children, depth } = node;
   const hasChildren = children.length > 0;
   const isExpanded = expandedSections.has(section.id);
-  const indentation = depth * 16;
+  const indentation = depth * 14;
   const isDragging = draggedSectionId === section.id;
   const isDropTarget = dropTargetSectionId === section.id && !isDragging;
 
@@ -579,8 +488,16 @@ const TOCSectionItem = memo(function TOCSectionItem({
     <div>
       <div
         data-testid={`toc-section-${section.id}`}
+        role="button"
+        tabIndex={0}
         draggable
         onClick={() => onSelect(section.id)}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            onSelect(section.id);
+          }
+        }}
         onContextMenu={(e) => onContextMenu(e, section.id)}
         onDragStart={() => onDragStart(section.id)}
         onDragOver={(e) => {
@@ -592,49 +509,35 @@ const TOCSectionItem = memo(function TOCSectionItem({
           void onDropOnSection(section.id);
         }}
         onDragEnd={onDragEnd}
-        style={{
-          padding: '8px 12px',
-          paddingLeft: `${12 + indentation}px`,
-          cursor: 'pointer',
-          backgroundColor: isSelected ? 'var(--color-accent-subtle)' : 'transparent',
-          borderLeft: isSelected ? '3px solid var(--color-accent-default)' : '3px solid transparent',
-          borderTop: isDropTarget ? '2px solid var(--color-accent-default)' : '2px solid transparent',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          opacity: isDragging ? 0.6 : 1,
-          transition: 'background-color 150ms ease',
-        }}
-        onMouseEnter={(e) => {
-          if (!isSelected) {
-            e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)';
-          }
-        }}
-        onMouseLeave={(e) => {
-          if (!isSelected) {
-            e.currentTarget.style.backgroundColor = 'transparent';
-          }
-        }}
+        className={[
+          'muwi-sidebar-item',
+          'muwi-longdrafts-toc__item',
+          isSelected ? 'is-active' : null,
+          isDropTarget ? 'is-drop-target' : null,
+          isDragging ? 'is-dragging' : null,
+        ]
+          .filter(Boolean)
+          .join(' ')}
+        style={{ paddingLeft: `${10 + indentation}px` }}
       >
-        {/* Expand/collapse button */}
+        <span className="muwi-longdrafts-toc__drag-handle" aria-hidden="true" title="Drag to reorder">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="8" cy="8" r="1.5" />
+            <circle cx="16" cy="8" r="1.5" />
+            <circle cx="8" cy="16" r="1.5" />
+            <circle cx="16" cy="16" r="1.5" />
+          </svg>
+        </span>
+
         {hasChildren ? (
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
               onToggleExpand(section.id);
             }}
-            style={{
-              width: '16px',
-              height: '16px',
-              border: 'none',
-              backgroundColor: 'transparent',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 0,
-              color: 'var(--color-text-tertiary)',
-            }}
+            className="muwi-longdrafts-toc__expand"
+            aria-label={isExpanded ? 'Collapse subsection' : 'Expand subsection'}
           >
             <svg
               width="10"
@@ -643,59 +546,28 @@ const TOCSectionItem = memo(function TOCSectionItem({
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
-              style={{
-                transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)',
-                transition: 'transform 150ms ease',
-              }}
+              style={{ transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
             >
               <path d="M9 18l6-6-6-6" />
             </svg>
           </button>
         ) : (
-          <div style={{ width: '16px' }} />
+          <span className="muwi-longdrafts-toc__expand-placeholder" aria-hidden="true" />
         )}
 
-        {/* Status indicator */}
-        <div
-          style={{
-            width: '6px',
-            height: '6px',
-            borderRadius: '50%',
-            backgroundColor: statusColors[section.status] || statusColors.draft,
-            flexShrink: 0,
-          }}
+        <span
+          className="muwi-longdrafts-toc__status-dot"
+          style={{ backgroundColor: statusColors[section.status] || statusColors.draft }}
           title={section.status}
         />
 
-        {/* Section title */}
-        <span
-          style={{
-            flex: 1,
-            fontSize: '13px',
-            fontWeight: depth === 0 ? 500 : 400,
-            color: 'var(--color-text-primary)',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
-          title={section.title}
-        >
+        <span className="muwi-longdrafts-toc__item-label" title={section.title}>
           {section.title || 'Untitled Section'}
         </span>
 
-        {/* Word count */}
-        <span
-          style={{
-            fontSize: '11px',
-            color: 'var(--color-text-tertiary)',
-            flexShrink: 0,
-          }}
-        >
-          {section.wordCount}
-        </span>
+        <span className="muwi-longdrafts-toc__item-count">{section.wordCount}</span>
 
-        {/* Lock indicator */}
-        {section.isLocked && (
+        {section.isLocked ? (
           <svg
             width="12"
             height="12"
@@ -708,11 +580,10 @@ const TOCSectionItem = memo(function TOCSectionItem({
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
             <path d="M7 11V7a5 5 0 0110 0v4" />
           </svg>
-        )}
+        ) : null}
       </div>
 
-      {/* Children */}
-      {hasChildren && isExpanded && (
+      {hasChildren && isExpanded ? (
         <div>
           {children.map((childNode) => (
             <TOCSectionItemWrapper
@@ -731,12 +602,11 @@ const TOCSectionItem = memo(function TOCSectionItem({
             />
           ))}
         </div>
-      )}
+      ) : null}
     </div>
   );
 });
 
-// Wrapper to get current selection state from store for child items
 function TOCSectionItemWrapper({
   node,
   expandedSections,
@@ -751,6 +621,7 @@ function TOCSectionItemWrapper({
   dropTargetSectionId,
 }: Omit<TOCSectionItemProps, 'isSelected'>) {
   const currentSectionId = useLongDraftsStore(selectCurrentSectionId);
+
   return (
     <TOCSectionItem
       node={node}

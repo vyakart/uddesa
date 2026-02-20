@@ -1,26 +1,56 @@
 import type { ReactNode } from 'react';
 import { act, fireEvent, render, screen, waitFor } from '@/test';
+import { useAppStore } from '@/stores/appStore';
 import { useLongDraftsStore } from '@/stores/longDraftsStore';
 import type { LongDraft, Section } from '@/types/longDrafts';
 import { LongDrafts } from './LongDrafts';
 
 vi.mock('@/components/common/DiaryLayout', () => ({
-  DiaryLayout: ({ children, toolbar }: { children: ReactNode; toolbar?: ReactNode }) => (
-    <div data-testid="long-drafts-layout">
-      <div data-testid="long-drafts-toolbar">{toolbar}</div>
-      <div data-testid="long-drafts-content">{children}</div>
-    </div>
-  ),
+  DiaryLayout: ({
+    toolbar,
+    sidebar,
+    canvas,
+    status,
+    rightPanel,
+  }: {
+    toolbar?: ReactNode;
+    sidebar?: ReactNode;
+    canvas?: ReactNode;
+    status?: ReactNode | { left?: ReactNode; right?: ReactNode };
+    rightPanel?: ReactNode;
+  }) => {
+    const statusSlots =
+      typeof status === 'object' && status !== null && !Array.isArray(status)
+        ? status
+        : { left: status };
+
+    return (
+      <div data-testid="long-drafts-layout">
+        <div data-testid="long-drafts-toolbar">{toolbar}</div>
+        {sidebar ? <div data-testid="long-drafts-sidebar">{sidebar}</div> : null}
+        <div data-testid="long-drafts-canvas">{canvas}</div>
+        <div data-testid="long-drafts-status-left">{statusSlots.left}</div>
+        <div data-testid="long-drafts-status-right">{statusSlots.right}</div>
+        {rightPanel ? <div data-testid="long-drafts-right-panel">{rightPanel}</div> : null}
+      </div>
+    );
+  },
 }));
 
 vi.mock('./TableOfContents', () => ({
-  TableOfContents: ({ onCreateSection }: { onCreateSection: (parentId?: string | null) => void }) => (
+  TableOfContents: ({
+    onCreateSection,
+    variant = 'sidebar',
+  }: {
+    onCreateSection: (parentId?: string | null) => void;
+    variant?: 'sidebar' | 'panel';
+  }) => (
     <button
       type="button"
-      data-testid="toc-panel"
+      data-testid={`toc-panel-${variant}`}
       onClick={() => onCreateSection(null)}
     >
-      TOC
+      TOC {variant}
     </button>
   ),
 }));
@@ -61,7 +91,6 @@ vi.mock('./FocusMode', () => ({
   FocusMode: ({ children }: { children: ReactNode }) => (
     <div data-testid="focus-mode-wrapper">{children}</div>
   ),
-  FocusModeToggle: () => <button type="button">Focus Toggle</button>,
 }));
 
 function makeLongDraft(overrides: Partial<LongDraft> = {}): LongDraft {
@@ -111,6 +140,7 @@ function makeSection(overrides: Partial<Section> = {}): Section {
 
 describe('LongDrafts', () => {
   beforeEach(() => {
+    useAppStore.setState(useAppStore.getInitialState(), true);
     useLongDraftsStore.setState(useLongDraftsStore.getInitialState(), true);
   });
 
@@ -124,6 +154,7 @@ describe('LongDrafts', () => {
 
     render(<LongDrafts />);
     expect(screen.getByText('Loading documents...')).toBeInTheDocument();
+    expect(screen.getByTestId('long-drafts-status-left')).toHaveTextContent('Loading Long Drafts...');
   });
 
   it('renders error state and retries loading', async () => {
@@ -159,7 +190,7 @@ describe('LongDrafts', () => {
 
     render(<LongDrafts />);
 
-    expect(screen.getByText('No documents yet')).toBeInTheDocument();
+    expect(screen.getByText('Start your first long draft')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /Create New Document/i }));
     await waitFor(() => {
       expect(createLongDraft).toHaveBeenCalledTimes(1);
@@ -171,6 +202,8 @@ describe('LongDrafts', () => {
     const createLongDraft = vi.fn().mockResolvedValue(makeLongDraft({ id: 'new-doc' }));
     const createSection = vi.fn().mockResolvedValue(makeSection({ id: 'new-section' }));
     const updateSection = vi.fn().mockResolvedValue(undefined);
+    const updateLongDraft = vi.fn().mockResolvedValue(undefined);
+    const toggleFocusMode = vi.fn();
     const setCurrentLongDraft = vi.fn();
     const deleteLongDraft = vi.fn().mockResolvedValue(undefined);
     const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
@@ -186,7 +219,15 @@ describe('LongDrafts', () => {
         totalWordCount: 100,
       },
     });
-    const docTwo = makeLongDraft({ id: 'doc-2', title: 'Document Two', metadata: { createdAt: new Date('2026-02-12T11:00:00.000Z'), modifiedAt: new Date('2026-02-12T11:00:00.000Z'), totalWordCount: 200 } });
+    const docTwo = makeLongDraft({
+      id: 'doc-2',
+      title: 'Document Two',
+      metadata: {
+        createdAt: new Date('2026-02-12T11:00:00.000Z'),
+        modifiedAt: new Date('2026-02-12T11:00:00.000Z'),
+        totalWordCount: 200,
+      },
+    });
     const section = makeSection({ id: 'section-1', longDraftId: docOne.id, title: 'Intro', wordCount: 42 });
 
     useLongDraftsStore.setState({
@@ -201,19 +242,23 @@ describe('LongDrafts', () => {
       createLongDraft,
       createSection,
       updateSection,
+      updateLongDraft,
+      toggleFocusMode,
       setCurrentLongDraft,
       deleteLongDraft,
     });
 
     render(<LongDrafts />);
 
-    expect(screen.getByTestId('toc-panel')).toBeInTheDocument();
+    expect(screen.getByTestId('toc-panel-sidebar')).toBeInTheDocument();
     expect(screen.getByTestId('section-editor')).toHaveTextContent('Section: Intro');
-    expect(screen.getByRole('button', { name: 'Focus Toggle' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Focus Mode' })).toBeInTheDocument();
     expect(screen.getByTestId('long-drafts-document-metadata')).toHaveTextContent('Updated Feb 12, 2026');
     expect(screen.getByTestId('long-drafts-document-metadata')).toHaveTextContent('Created Feb 12, 2026');
     expect(screen.getByTestId('long-drafts-document-metadata')).toHaveTextContent('Author Alex Writer');
     expect(screen.getByTestId('long-drafts-document-metadata')).toHaveTextContent('A Memoir');
+    expect(screen.getByTestId('long-drafts-status-left')).toHaveTextContent('Section: Intro');
+    expect(screen.getByTestId('long-drafts-status-right')).toHaveTextContent('42/42 words');
 
     fireEvent.click(screen.getByRole('button', { name: 'Mock Title Update' }));
     expect(updateSection).toHaveBeenCalledWith(section.id, { title: 'Updated Section Title' });
@@ -232,6 +277,20 @@ describe('LongDrafts', () => {
 
     fireEvent.keyDown(window, { key: 'N', ctrlKey: true, shiftKey: true });
     expect(createLongDraft).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(screen.getByRole('button', { name: 'TOC Panel' }));
+    expect(screen.getByTestId('long-drafts-right-panel')).toBeInTheDocument();
+    expect(screen.getByTestId('toc-panel-panel')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Settings' }));
+    expect(screen.getByText('Adjust metadata and workspace defaults for this document.')).toBeInTheDocument();
+    fireEvent.blur(screen.getByLabelText('Title'), { target: { value: 'Updated Doc' } });
+    await waitFor(() => {
+      expect(updateLongDraft).toHaveBeenCalledWith('doc-1', { title: 'Updated Doc' });
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Focus Mode' }));
+    expect(toggleFocusMode).toHaveBeenCalledTimes(1);
 
     fireEvent.click(screen.getByRole('button', { name: /Document One/i }));
     expect(screen.getByText('Documents')).toBeInTheDocument();
@@ -286,7 +345,7 @@ describe('LongDrafts', () => {
     });
     rerender(<LongDrafts />);
 
-    expect(screen.getByText('0 words')).toBeInTheDocument();
+    expect(screen.getByTestId('long-drafts-status-right')).toHaveTextContent('0/0 words');
 
     fireEvent.click(screen.getByRole('button', { name: 'Mock Title Update' }));
     fireEvent.click(screen.getByRole('button', { name: 'Mock Content Update' }));
@@ -314,7 +373,8 @@ describe('LongDrafts', () => {
     });
 
     render(<LongDrafts />);
-    expect(screen.queryByTestId('toc-panel')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('toc-panel-sidebar')).not.toBeInTheDocument();
     expect(screen.getByTestId('focus-mode-wrapper')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Exit Focus' })).toBeInTheDocument();
   });
 });

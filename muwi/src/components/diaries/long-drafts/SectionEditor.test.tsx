@@ -142,6 +142,7 @@ describe('SectionEditor', () => {
     expect(screen.getByDisplayValue('Introduction')).toBeInTheDocument();
     expect(screen.getByTestId('editor-content')).toBeInTheDocument();
     expect(screen.getByText('1 footnotes')).toBeInTheDocument();
+    expect(screen.getByRole('toolbar', { name: 'Section formatting toolbar' })).toBeInTheDocument();
 
     fireEvent.change(screen.getByPlaceholderText('Section Title'), {
       target: { value: 'Updated Title' },
@@ -305,6 +306,7 @@ describe('SectionEditor', () => {
     );
 
     expect(screen.queryByTitle('Bold (Ctrl+B)')).not.toBeInTheDocument();
+    expect(screen.queryByRole('toolbar', { name: 'Section formatting toolbar' })).not.toBeInTheDocument();
     expect(screen.getByPlaceholderText('Section Title')).toBeDisabled();
   });
 });
