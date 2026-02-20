@@ -28,6 +28,7 @@ const STROKE_WIDTH_OPTIONS: ReadonlyArray<{ label: string; value: number }> = [
 const MIN_ZOOM = 0.2;
 const MAX_ZOOM = 3;
 const ZOOM_STEP = 0.1;
+const DEFAULT_STROKE_COLOR = `#${'000000'}`;
 
 function clampZoom(value: number): number {
   return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Number(value.toFixed(2))));
@@ -45,7 +46,7 @@ export function BlackboardToolbar({
 
   const viewport = canvas?.viewportState ?? { panX: 0, panY: 0, zoom: 1 };
   const zoomPercent = Math.max(1, Math.round(viewport.zoom * 100));
-  const strokeColor = canvas?.settings?.defaultStrokeColor ?? '#000000';
+  const strokeColor = canvas?.settings?.defaultStrokeColor ?? DEFAULT_STROKE_COLOR;
   const strokeWidth = canvas?.settings?.defaultStrokeWidth ?? STROKE_WIDTH_OPTIONS[1].value;
   const availableFonts = canvas?.settings?.fonts ?? ['Inter', 'Caveat', 'JetBrains Mono', 'Crimson Pro'];
   const selectedFont = canvas?.settings?.defaultFont ?? availableFonts[0] ?? 'Inter';

@@ -87,7 +87,7 @@ export function Drafts() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#6B7280',
+            color: 'var(--color-text-secondary)',
           }}
         >
           <div
@@ -137,7 +137,7 @@ export function Drafts() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#DC2626',
+            color: 'var(--color-error)',
             flexDirection: 'column',
             gap: '16px',
           }}
@@ -156,14 +156,14 @@ export function Drafts() {
           </svg>
           <div style={{ textAlign: 'center' }}>
             <p style={{ fontWeight: 500, margin: '0 0 8px 0' }}>Error loading drafts</p>
-            <p style={{ color: '#6B7280', margin: 0, fontSize: '14px' }}>{error}</p>
+            <p style={{ color: 'var(--color-text-secondary)', margin: 0, fontSize: '14px' }}>{error}</p>
           </div>
           <button
             onClick={() => loadDrafts()}
             style={{
               padding: '8px 16px',
-              backgroundColor: '#4A90A4',
-              color: 'white',
+              backgroundColor: 'var(--color-accent-default)',
+              color: 'var(--color-text-inverse)',
               border: 'none',
               borderRadius: '6px',
               fontSize: '14px',
@@ -223,14 +223,14 @@ function DraftsToolbar({ draftCount }: DraftsToolbarProps) {
         alignItems: 'center',
         gap: '16px',
         fontSize: '14px',
-        color: '#6B7280',
+        color: 'var(--color-text-secondary)',
       }}
     >
       <span>{draftCount} draft{draftCount !== 1 ? 's' : ''}</span>
       <span
         style={{
           fontSize: '12px',
-          color: '#9CA3AF',
+          color: 'var(--color-text-tertiary)',
         }}
       >
         Ctrl+N to create new

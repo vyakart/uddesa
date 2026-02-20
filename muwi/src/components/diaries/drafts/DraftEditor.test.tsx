@@ -212,12 +212,12 @@ describe('DraftEditor', () => {
     expect(chain.run).toHaveBeenCalled();
 
     const bold = screen.getByTitle('Bold (Ctrl+B)');
-    expect(bold).toHaveStyle({ backgroundColor: '#E0F2FE' });
+    expect(bold).toHaveStyle({ backgroundColor: 'var(--color-accent-subtle)' });
     const italic = screen.getByTitle('Italic (Ctrl+I)');
     fireEvent.mouseEnter(italic);
-    expect(italic).toHaveStyle({ backgroundColor: '#F3F4F6' });
+    expect(italic).toHaveStyle({ backgroundColor: 'var(--color-bg-tertiary)' });
     fireEvent.mouseLeave(italic);
-    expect(italic).not.toHaveStyle({ backgroundColor: '#F3F4F6' });
+    expect(italic).not.toHaveStyle({ backgroundColor: 'var(--color-bg-tertiary)' });
   });
 
   it('renders locked mode with disabled editing/status controls and hidden toolbar', () => {

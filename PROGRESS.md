@@ -92,6 +92,8 @@ Last updated: February 19, 2026
 | Task wave 70 | Completed `7.9.4` Personal Diary status strip + empty-state slice by switching status slots to formatted date + word/read-time metrics, adding a first-use empty-state CTA when no current entry exists, and running a strict token-gating cleanup pass on `DatePicker.tsx`; then started the broader `7.1.3` cleanup stream by removing Blackboard container hard-coded colors into tokenized shell classes | Targeted verification: `vitest src/components/diaries/PersonalDiary/PersonalDiary.test.tsx src/components/diaries/PersonalDiary/DatePicker.test.tsx src/components/diaries/blackboard/Blackboard.test.tsx` (`13` tests passing) + targeted eslint on updated component files |
 | Task wave 71 | Continued dedicated `7.1.3` cleanup stream on top offenders by tokenizing theme colors in `Academic`, `BibliographyManager`, `TableOfContents`, `SectionEditor`, and `DraftList` (plus aligned DraftList test expectations), eliminating hard-coded color literals in that tranche | Tranche verification: `vitest src/components/diaries/academic src/components/diaries/long-drafts src/components/diaries/drafts/DraftList.test.tsx` (`58` tests passing), full suite `vitest --run` (`78` files, `336` tests passing), full lint `eslint .` (still blocked by pre-existing `ContextMenu` and `ToastProvider` lint errors) |
 | Task wave 72 | Completed the next `7.1.3` cleanup tranche by tokenizing hard-coded colors in `AcademicSectionEditor`, `LongDrafts`, `TemplateSelector`, `FootnoteManager`, and `CitationPicker`; also cleared the previously blocking lint issues in `ContextMenu` and `ToastProvider` so repo lint is fully clean | Verification: targeted tranche tests (`20` tests passing), common component regression tests (`11` tests passing), and full lint `eslint .` passing |
+| Task wave 73 | Completed the following `7.1.3` cleanup tranche by tokenizing hard-coded colors in `ReferenceLibraryPanel`, `DraftEditor`, `FocusMode`, `StatusBadge`, and `Drafts`, and aligned style assertions in related tests to tokenized values | Verification: targeted tranche tests (`24` tests passing) + full lint `eslint .` passing |
+| Task wave 74 | Completed a follow-up `7.1.3` pass on remaining component offenders by tokenizing fallback/legacy literals in `ExcalidrawWrapper`, `BlackboardToolbar`, and `DiaryEntry`, then aligned `ExcalidrawWrapper` style assertions with tokenized output | Verification: targeted blackboard/personal tests (`11` tests passing) + full lint `eslint .` passing |
 
 ## 3) Blackboard testing progress
 
@@ -131,6 +133,6 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Continue `7.1.3` cleanup on current highest offenders (`ReferenceLibraryPanel`, `DraftEditor`, `FocusMode`, `StatusBadge`, `Drafts`).
-2. Move into `7.10` Drafts UI migration once that offender tranche is tokenized and lint remains clean.
+1. Finish residual `7.1.3` cleanup in test-only literals (top: `ExcalidrawWrapper.test.tsx`, `Blackboard.test.tsx`, `CategoryPicker.test.tsx`, `BlackboardToolbar.test.tsx`).
+2. Move into `7.10` Drafts UI migration now that component-level offender tranche is tokenized and lint is clean.
 3. Re-run full suite + coverage snapshot after the next cleanup tranche to refresh baseline metrics.

@@ -222,13 +222,13 @@ export function ReferenceLibraryPanel({ onClose }: ReferenceLibraryPanelProps) {
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'var(--color-bg-primary)',
       }}
     >
       <div
         style={{
           padding: '12px 16px',
-          borderBottom: '1px solid #E5E7EB',
+          borderBottom: '1px solid var(--color-border-default)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -236,8 +236,8 @@ export function ReferenceLibraryPanel({ onClose }: ReferenceLibraryPanelProps) {
         }}
       >
         <div>
-          <div style={{ fontSize: '15px', fontWeight: 600, color: '#111827' }}>Reference Library</div>
-          <div style={{ fontSize: '12px', color: '#6B7280' }}>
+          <div style={{ fontSize: '15px', fontWeight: 600, color: 'var(--color-text-primary)' }}>Reference Library</div>
+          <div style={{ fontSize: '12px', color: 'var(--color-text-secondary)' }}>
             Global references shared across papers
           </div>
         </div>
@@ -248,7 +248,7 @@ export function ReferenceLibraryPanel({ onClose }: ReferenceLibraryPanelProps) {
               border: 'none',
               backgroundColor: 'transparent',
               cursor: 'pointer',
-              color: '#6B7280',
+              color: 'var(--color-text-secondary)',
               fontSize: '18px',
               lineHeight: 1,
             }}
@@ -262,7 +262,7 @@ export function ReferenceLibraryPanel({ onClose }: ReferenceLibraryPanelProps) {
       <div
         style={{
           padding: '8px 16px',
-          borderBottom: '1px solid #E5E7EB',
+          borderBottom: '1px solid var(--color-border-default)',
           display: 'flex',
           gap: '8px',
         }}
@@ -272,9 +272,9 @@ export function ReferenceLibraryPanel({ onClose }: ReferenceLibraryPanelProps) {
           disabled={isImporting}
           style={{
             padding: '6px 10px',
-            border: '1px solid #E5E7EB',
+            border: '1px solid var(--color-border-default)',
             borderRadius: '6px',
-            backgroundColor: '#FFFFFF',
+            backgroundColor: 'var(--color-bg-primary)',
             cursor: 'pointer',
             fontSize: '12px',
           }}
@@ -285,9 +285,9 @@ export function ReferenceLibraryPanel({ onClose }: ReferenceLibraryPanelProps) {
           onClick={handleExport}
           style={{
             padding: '6px 10px',
-            border: '1px solid #E5E7EB',
+            border: '1px solid var(--color-border-default)',
             borderRadius: '6px',
-            backgroundColor: '#FFFFFF',
+            backgroundColor: 'var(--color-bg-primary)',
             cursor: 'pointer',
             fontSize: '12px',
           }}
@@ -308,10 +308,10 @@ export function ReferenceLibraryPanel({ onClose }: ReferenceLibraryPanelProps) {
         <div
           style={{
             padding: '8px 16px',
-            borderBottom: '1px solid #E5E7EB',
+            borderBottom: '1px solid var(--color-border-default)',
             fontSize: '12px',
-            color: '#4B5563',
-            backgroundColor: '#F9FAFB',
+            color: 'var(--color-text-secondary)',
+            backgroundColor: 'var(--color-bg-secondary)',
           }}
         >
           {statusMessage}
@@ -319,7 +319,7 @@ export function ReferenceLibraryPanel({ onClose }: ReferenceLibraryPanelProps) {
       )}
 
       <div style={{ flex: 1, display: 'flex', minHeight: 0 }}>
-        <div style={{ flex: 1, minWidth: 0, borderRight: '1px solid #E5E7EB' }}>
+        <div style={{ flex: 1, minWidth: 0, borderRight: '1px solid var(--color-border-default)' }}>
           <BibliographyManager hideHeader onSelectEntry={(entry) => setSelectedEntryId(entry.id)} />
         </div>
         <div
@@ -329,16 +329,16 @@ export function ReferenceLibraryPanel({ onClose }: ReferenceLibraryPanelProps) {
             overflowY: 'auto',
           }}
         >
-          <div style={{ fontSize: '12px', fontWeight: 600, color: '#111827', marginBottom: '10px' }}>
+          <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: '10px' }}>
             Link To Papers
           </div>
           {!selectedEntry ? (
-            <div style={{ fontSize: '12px', color: '#6B7280' }}>
+            <div style={{ fontSize: '12px', color: 'var(--color-text-secondary)' }}>
               Select a reference to link it to one or more papers.
             </div>
           ) : (
             <>
-              <div style={{ fontSize: '12px', color: '#111827', marginBottom: '8px' }}>
+              <div style={{ fontSize: '12px', color: 'var(--color-text-primary)', marginBottom: '8px' }}>
                 {selectedEntry.title}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -352,7 +352,7 @@ export function ReferenceLibraryPanel({ onClose }: ReferenceLibraryPanelProps) {
                         alignItems: 'center',
                         gap: '6px',
                         fontSize: '12px',
-                        color: '#374151',
+                        color: 'var(--color-text-primary)',
                       }}
                     >
                       <input
@@ -370,7 +370,7 @@ export function ReferenceLibraryPanel({ onClose }: ReferenceLibraryPanelProps) {
                   );
                 })}
                 {papers.length === 0 && (
-                  <div style={{ fontSize: '12px', color: '#6B7280' }}>
+                  <div style={{ fontSize: '12px', color: 'var(--color-text-secondary)' }}>
                     No papers available.
                   </div>
                 )}

@@ -141,9 +141,9 @@ describe('FocusModeToggle', () => {
 
     const toggleButton = screen.getByRole('button', { name: /Focus Mode/i });
     fireEvent.mouseEnter(toggleButton);
-    expect(toggleButton).toHaveStyle({ backgroundColor: 'rgb(243, 244, 246)' });
+    expect(toggleButton).toHaveStyle({ backgroundColor: 'var(--color-bg-tertiary)' });
 
     fireEvent.mouseLeave(toggleButton);
-    expect(toggleButton).not.toHaveStyle({ backgroundColor: 'rgb(243, 244, 246)' });
+    expect(toggleButton).not.toHaveStyle({ backgroundColor: 'var(--color-bg-tertiary)' });
   });
 });

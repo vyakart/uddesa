@@ -26,8 +26,8 @@ function stripHtml(content: string): string {
 function getEditorBackground(): string {
   return [
     // Soft page breaks every ~1 page to preserve writing flow without hard pagination.
-    'repeating-linear-gradient(to bottom, transparent 0 1054px, rgba(148, 163, 184, 0.22) 1054px 1056px)',
-    '#FFFEF9',
+    'repeating-linear-gradient(to bottom, transparent 0 1054px, color-mix(in srgb, var(--color-text-tertiary) 30%, transparent) 1054px 1056px)',
+    'var(--color-bg-paper)',
   ].join(', ');
 }
 
@@ -63,7 +63,7 @@ export function DraftEditor({
           font-family: 'Crimson Pro', 'Georgia', serif;
           font-size: 1.125rem;
           line-height: 1.75;
-          color: #1A1A1A;
+          color: var(--color-text-primary);
         `,
       },
     },
@@ -118,8 +118,8 @@ export function DraftEditor({
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#9CA3AF',
-          backgroundColor: '#F9FAFB',
+          color: 'var(--color-text-tertiary)',
+          backgroundColor: 'var(--color-bg-secondary)',
         }}
       >
         <svg
@@ -146,15 +146,15 @@ export function DraftEditor({
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'var(--color-bg-primary)',
       }}
     >
       {/* Header with title, status, and meta info */}
       <div
         style={{
           padding: '20px 32px 16px',
-          borderBottom: '1px solid #E5E7EB',
-          backgroundColor: '#FFFFFF',
+          borderBottom: '1px solid var(--color-border-default)',
+          backgroundColor: 'var(--color-bg-primary)',
         }}
       >
         {/* Title input */}
@@ -169,7 +169,7 @@ export function DraftEditor({
             fontSize: '28px',
             fontWeight: 700,
             fontFamily: "'Crimson Pro', 'Georgia', serif",
-            color: '#1F2937',
+            color: 'var(--color-text-primary)',
             border: 'none',
             outline: 'none',
             backgroundColor: 'transparent',
@@ -196,7 +196,7 @@ export function DraftEditor({
           <span
             style={{
               fontSize: '13px',
-              color: '#6B7280',
+              color: 'var(--color-text-secondary)',
             }}
           >
             {wordCount} words
@@ -205,7 +205,7 @@ export function DraftEditor({
           <span
             style={{
               fontSize: '13px',
-              color: '#9CA3AF',
+              color: 'var(--color-text-tertiary)',
             }}
           >
             Last edited {format(new Date(draft.modifiedAt), 'MMM d, yyyy')} at {format(new Date(draft.modifiedAt), 'h:mm a')}
@@ -218,7 +218,7 @@ export function DraftEditor({
                 alignItems: 'center',
                 gap: '4px',
                 fontSize: '13px',
-                color: '#9CA3AF',
+                color: 'var(--color-text-tertiary)',
                 marginLeft: 'auto',
               }}
             >
@@ -262,8 +262,8 @@ export function DraftEditor({
         <div
           style={{
             padding: '10px 24px',
-            borderTop: '1px solid #E5E7EB',
-            backgroundColor: '#FFFFFF',
+            borderTop: '1px solid var(--color-border-default)',
+            backgroundColor: 'var(--color-bg-primary)',
             display: 'flex',
             gap: '4px',
             flexWrap: 'wrap',
@@ -423,8 +423,8 @@ function ToolbarButton({
         padding: '8px 12px',
         border: 'none',
         borderRadius: '6px',
-        backgroundColor: isActive ? '#E0F2FE' : 'transparent',
-        color: disabled ? '#D1D5DB' : isActive ? '#0284C7' : '#4B5563',
+        backgroundColor: isActive ? 'var(--color-accent-subtle)' : 'transparent',
+        color: disabled ? 'var(--color-border-strong)' : isActive ? 'var(--color-accent-text)' : 'var(--color-text-secondary)',
         cursor: disabled ? 'not-allowed' : 'pointer',
         fontSize: '14px',
         fontWeight: isActive ? 600 : 400,
@@ -436,7 +436,7 @@ function ToolbarButton({
       }}
       onMouseEnter={(e) => {
         if (!disabled && !isActive) {
-          e.currentTarget.style.backgroundColor = '#F3F4F6';
+          e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)';
         }
       }}
       onMouseLeave={(e) => {
@@ -456,7 +456,7 @@ function ToolbarDivider() {
       style={{
         width: '1px',
         height: '24px',
-        backgroundColor: '#E5E7EB',
+        backgroundColor: 'var(--color-border-default)',
         margin: '0 8px',
         alignSelf: 'center',
       }}

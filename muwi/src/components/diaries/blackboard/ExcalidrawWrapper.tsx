@@ -24,10 +24,10 @@ interface BlackboardCanvasTokens {
 }
 
 const BLACKBOARD_TOKEN_FALLBACKS: BlackboardCanvasTokens = {
-  canvas: '#2D3436',
-  grid: 'rgba(255, 255, 255, 0.04)',
-  text: '#F0F0F0',
-  strokeDefault: 'rgba(255, 255, 255, 0.7)',
+  canvas: 'var(--color-bb-canvas)',
+  grid: 'var(--color-bb-canvas-grid)',
+  text: 'var(--color-bb-text)',
+  strokeDefault: 'var(--color-bb-stroke-default)',
 };
 
 function resolveExcalidrawFontFamily(fontName: string | undefined): number {

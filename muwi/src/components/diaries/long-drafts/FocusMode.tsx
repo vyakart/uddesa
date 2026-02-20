@@ -128,7 +128,7 @@ export function FocusMode({ children }: FocusModeProps) {
         position: 'fixed',
         inset: 0,
         zIndex: 1000,
-        backgroundColor: '#FFFEF9',
+        backgroundColor: 'var(--color-bg-paper)',
         display: 'flex',
         flexDirection: 'column',
         opacity: isOverlayActive ? 1 : 0,
@@ -149,8 +149,8 @@ export function FocusMode({ children }: FocusModeProps) {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          backgroundColor: 'rgba(255, 254, 249, 0.95)',
-          borderBottom: '1px solid #E5E7EB',
+          backgroundColor: 'var(--color-bg-paper)',
+          borderBottom: '1px solid var(--color-border-default)',
           opacity: controlsVisible ? 1 : 0,
           transform: controlsVisible ? 'translateY(0)' : 'translateY(-100%)',
           transition: 'opacity 300ms ease, transform 300ms ease',
@@ -165,7 +165,7 @@ export function FocusMode({ children }: FocusModeProps) {
             height="18"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#6B7280"
+            stroke="var(--color-text-secondary)"
             strokeWidth="2"
           >
             <path d="M15 3h6v6M14 10l7-7M10 3H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-6" />
@@ -174,7 +174,7 @@ export function FocusMode({ children }: FocusModeProps) {
             style={{
               fontSize: '14px',
               fontWeight: 500,
-              color: '#374151',
+              color: 'var(--color-text-primary)',
             }}
           >
             {currentSection?.title || 'Untitled Section'}
@@ -190,18 +190,18 @@ export function FocusMode({ children }: FocusModeProps) {
             gap: '6px',
             padding: '6px 12px',
             fontSize: '13px',
-            color: '#6B7280',
-            backgroundColor: '#F3F4F6',
+            color: 'var(--color-text-secondary)',
+            backgroundColor: 'var(--color-bg-tertiary)',
             border: 'none',
             borderRadius: '6px',
             cursor: 'pointer',
             transition: 'all 150ms ease',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#E5E7EB';
+            e.currentTarget.style.backgroundColor = 'var(--color-border-default)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = '#F3F4F6';
+            e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)';
           }}
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -211,7 +211,7 @@ export function FocusMode({ children }: FocusModeProps) {
           <span
             style={{
               fontSize: '11px',
-              color: '#9CA3AF',
+              color: 'var(--color-text-tertiary)',
               marginLeft: '4px',
             }}
           >
@@ -232,8 +232,8 @@ export function FocusMode({ children }: FocusModeProps) {
           transform: 'translateX(-50%)',
           padding: '8px 16px',
           fontSize: '12px',
-          color: '#9CA3AF',
-          backgroundColor: 'rgba(255, 254, 249, 0.9)',
+          color: 'var(--color-text-tertiary)',
+          backgroundColor: 'var(--color-bg-paper)',
           borderRadius: '20px',
           opacity: controlsVisible ? 0 : 0.6,
           transition: 'opacity 300ms ease',
@@ -263,16 +263,16 @@ export function FocusModeToggle() {
         gap: '6px',
         padding: '6px 10px',
         fontSize: '12px',
-        color: isFocusMode ? '#4A90A4' : '#6B7280',
-        backgroundColor: isFocusMode ? '#EFF6FF' : 'transparent',
-        border: isFocusMode ? '1px solid #4A90A4' : '1px solid #E5E7EB',
+        color: isFocusMode ? 'var(--color-accent-default)' : 'var(--color-text-secondary)',
+        backgroundColor: isFocusMode ? 'var(--color-accent-subtle)' : 'transparent',
+        border: isFocusMode ? '1px solid var(--color-accent-default)' : '1px solid var(--color-border-default)',
         borderRadius: '6px',
         cursor: 'pointer',
         transition: 'all 150ms ease',
       }}
       onMouseEnter={(e) => {
         if (!isFocusMode) {
-          e.currentTarget.style.backgroundColor = '#F3F4F6';
+          e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)';
         }
       }}
       onMouseLeave={(e) => {

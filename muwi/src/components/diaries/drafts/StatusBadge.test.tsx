@@ -8,8 +8,8 @@ describe('StatusBadge', () => {
     const badge = screen.getByRole('button', { name: /Review/i });
     expect(badge).toBeInTheDocument();
     expect(badge).toHaveStyle({
-      backgroundColor: '#DBEAFE',
-      color: '#1D4ED8',
+      backgroundColor: 'var(--color-info-subtle)',
+      color: 'var(--color-info)',
     });
   });
 

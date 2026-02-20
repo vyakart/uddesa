@@ -47,9 +47,25 @@ function getTextureOverlay(texture: string): string | undefined {
   }
 }
 
+function normalizeHexWithoutPrefix(value: string): string {
+  const normalized = value.trim().toLowerCase().replace(/\s+/g, '');
+  if (!normalized.startsWith('#')) {
+    return normalized;
+  }
+
+  const hex = normalized.slice(1);
+  if (hex.length === 3) {
+    return hex
+      .split('')
+      .map((channel) => `${channel}${channel}`)
+      .join('');
+  }
+  return hex;
+}
+
 function resolvePaperBaseColor(settings: PersonalDiarySettings): string {
-  const normalized = settings.paperColor.trim().toLowerCase();
-  if (normalized === '#fffef9' || normalized === '#fffdf8') {
+  const normalized = normalizeHexWithoutPrefix(settings.paperColor);
+  if (normalized === 'fffef9' || normalized === 'fffdf8') {
     return 'var(--color-bg-canvas-warm)';
   }
   return settings.paperColor;

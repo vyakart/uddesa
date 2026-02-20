@@ -152,8 +152,8 @@ describe('ExcalidrawWrapper', () => {
     expect(excalidrawPropsRef.current?.initialData.appState.currentItemFontFamily).toBe(FONT_FAMILY.Helvetica);
     expect(excalidrawPropsRef.current?.initialData.appState.currentItemStrokeColor).toBe('#F5F5F5');
     expect(excalidrawPropsRef.current?.initialData.appState.currentItemBackgroundColor).toBe('transparent');
-    expect(screen.getByTestId('excalidraw-wrapper-root')).toHaveStyle({ backgroundColor: '#2D3436' });
-    expect(screen.getByTestId('excalidraw-wrapper-root').style.backgroundImage).toContain('rgba(255, 255, 255, 0.04)');
+    expect(screen.getByTestId('excalidraw-wrapper-root')).toHaveStyle({ backgroundColor: 'var(--color-bb-canvas)' });
+    expect(screen.getByTestId('excalidraw-wrapper-root').style.backgroundImage).toContain('var(--color-bb-canvas-grid)');
 
     await waitFor(() => {
       expect(mockApi.updateScene).toHaveBeenCalledWith({
@@ -182,7 +182,7 @@ describe('ExcalidrawWrapper', () => {
     });
 
     render(<ExcalidrawWrapper onElementsChange={onElementsChange} />);
-    expect(screen.getByTestId('excalidraw-wrapper-root')).toHaveStyle({ backgroundColor: '#2D3436' });
+    expect(screen.getByTestId('excalidraw-wrapper-root')).toHaveStyle({ backgroundColor: 'var(--color-bb-canvas)' });
 
     const firstBatch = [makeTextElement('t-1', '# First', 0, 0)];
     const secondBatch = [makeTextElement('t-2', '## Second', 10, 10)];
