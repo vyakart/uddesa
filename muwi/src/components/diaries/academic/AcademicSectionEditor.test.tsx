@@ -207,7 +207,9 @@ describe('AcademicSectionEditor', () => {
       />
     );
 
-    expect(screen.getByTitle('Bold (Ctrl+B)')).toHaveStyle({ backgroundColor: 'rgb(224, 242, 254)' });
+    expect(screen.getByTitle('Bold (Ctrl+B)')).toHaveStyle({
+      backgroundColor: 'var(--color-accent-subtle)',
+    });
     expect(screen.getByTitle('Undo (Ctrl+Z)')).toBeDisabled();
     expect(screen.getByTitle('Redo (Ctrl+Shift+Z)')).toBeDisabled();
 

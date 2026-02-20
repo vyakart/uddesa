@@ -126,7 +126,7 @@ export function LongDrafts() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#6B7280',
+            color: 'var(--color-text-secondary)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -166,7 +166,7 @@ export function LongDrafts() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#DC2626',
+            color: 'var(--color-error)',
             flexDirection: 'column',
             gap: '16px',
           }}
@@ -185,14 +185,14 @@ export function LongDrafts() {
           </svg>
           <div style={{ textAlign: 'center' }}>
             <p style={{ fontWeight: 500, margin: '0 0 8px 0' }}>Error loading documents</p>
-            <p style={{ color: '#6B7280', margin: 0, fontSize: '14px' }}>{error}</p>
+            <p style={{ color: 'var(--color-text-secondary)', margin: 0, fontSize: '14px' }}>{error}</p>
           </div>
           <button
             onClick={() => loadLongDrafts()}
             style={{
               padding: '8px 16px',
-              backgroundColor: '#4A90A4',
-              color: 'white',
+              backgroundColor: 'var(--color-accent-default)',
+              color: 'var(--color-text-inverse)',
               border: 'none',
               borderRadius: '6px',
               fontSize: '14px',
@@ -221,7 +221,7 @@ export function LongDrafts() {
             justifyContent: 'center',
             flexDirection: 'column',
             gap: '24px',
-            color: '#6B7280',
+            color: 'var(--color-text-secondary)',
           }}
         >
           <svg
@@ -237,7 +237,7 @@ export function LongDrafts() {
             <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
           </svg>
           <div style={{ textAlign: 'center' }}>
-            <h2 style={{ fontSize: '20px', fontWeight: 600, margin: '0 0 8px 0', color: '#374151' }}>
+            <h2 style={{ fontSize: '20px', fontWeight: 600, margin: '0 0 8px 0', color: 'var(--color-text-primary)' }}>
               No documents yet
             </h2>
             <p style={{ fontSize: '14px', margin: 0 }}>
@@ -251,8 +251,8 @@ export function LongDrafts() {
               alignItems: 'center',
               gap: '8px',
               padding: '12px 24px',
-              backgroundColor: '#4A90A4',
-              color: 'white',
+              backgroundColor: 'var(--color-accent-default)',
+              color: 'var(--color-text-inverse)',
               border: 'none',
               borderRadius: '8px',
               fontSize: '15px',
@@ -261,10 +261,10 @@ export function LongDrafts() {
               transition: 'background-color 150ms ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#3D7A8C';
+              e.currentTarget.style.backgroundColor = 'var(--color-accent-hover)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#4A90A4';
+              e.currentTarget.style.backgroundColor = 'var(--color-accent-default)';
             }}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -386,9 +386,9 @@ function LongDraftsToolbar({
             padding: '4px 12px',
             fontSize: '14px',
             fontWeight: 500,
-            color: '#374151',
+            color: 'var(--color-text-primary)',
             backgroundColor: 'transparent',
-            border: '1px solid #E5E7EB',
+            border: '1px solid var(--color-border-default)',
             borderRadius: '6px',
             cursor: 'pointer',
           }}
@@ -405,7 +405,7 @@ function LongDraftsToolbar({
       )}
 
       {/* Stats */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '13px', color: '#6B7280' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '13px', color: 'var(--color-text-secondary)' }}>
         <span>{documentCount} document{documentCount !== 1 ? 's' : ''}</span>
         <span>{sectionCount} section{sectionCount !== 1 ? 's' : ''}</span>
         <span>{wordCount.toLocaleString()} words</span>
@@ -419,7 +419,7 @@ function LongDraftsToolbar({
             alignItems: 'center',
             gap: '10px',
             fontSize: '12px',
-            color: '#9CA3AF',
+            color: 'var(--color-text-tertiary)',
             flexWrap: 'wrap',
           }}
         >
@@ -436,7 +436,7 @@ function LongDraftsToolbar({
       <FocusModeToggle />
 
       {/* Keyboard hint */}
-      <span style={{ fontSize: '12px', color: '#9CA3AF' }}>Ctrl+N new section</span>
+      <span style={{ fontSize: '12px', color: 'var(--color-text-tertiary)' }}>Ctrl+N new section</span>
     </div>
   );
 }
@@ -476,7 +476,7 @@ function DocumentSwitcher({ onClose, onCreateNew }: DocumentSwitcherProps) {
       style={{
         position: 'fixed',
         inset: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+        backgroundColor: 'var(--color-bg-overlay)',
         display: 'flex',
         alignItems: 'flex-start',
         justifyContent: 'center',
@@ -489,9 +489,9 @@ function DocumentSwitcher({ onClose, onCreateNew }: DocumentSwitcherProps) {
         style={{
           width: '400px',
           maxHeight: '500px',
-          backgroundColor: 'white',
+          backgroundColor: 'var(--color-bg-elevated)',
           borderRadius: '12px',
-          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+          boxShadow: 'var(--shadow-modal)',
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
@@ -501,13 +501,13 @@ function DocumentSwitcher({ onClose, onCreateNew }: DocumentSwitcherProps) {
         <div
           style={{
             padding: '16px 20px',
-            borderBottom: '1px solid #E5E7EB',
+            borderBottom: '1px solid var(--color-border-default)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
           }}
         >
-          <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#374151' }}>
+          <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--color-text-primary)' }}>
             Documents
           </h3>
           <button
@@ -521,7 +521,7 @@ function DocumentSwitcher({ onClose, onCreateNew }: DocumentSwitcherProps) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#6B7280',
+              color: 'var(--color-text-secondary)',
               borderRadius: '4px',
             }}
           >
@@ -542,16 +542,16 @@ function DocumentSwitcher({ onClose, onCreateNew }: DocumentSwitcherProps) {
                 onClick={() => handleSelect(doc.id)}
                 style={{
                   padding: '12px 20px',
-                  borderBottom: '1px solid #E5E7EB',
+                  borderBottom: '1px solid var(--color-border-default)',
                   cursor: 'pointer',
-                  backgroundColor: doc.id === currentDocumentId ? '#EFF6FF' : 'transparent',
+                  backgroundColor: doc.id === currentDocumentId ? 'var(--color-accent-subtle)' : 'transparent',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
                 }}
                 onMouseEnter={(e) => {
                   if (doc.id !== currentDocumentId) {
-                    e.currentTarget.style.backgroundColor = '#F9FAFB';
+                    e.currentTarget.style.backgroundColor = 'var(--color-bg-secondary)';
                   }
                 }}
                 onMouseLeave={(e) => {
@@ -561,10 +561,10 @@ function DocumentSwitcher({ onClose, onCreateNew }: DocumentSwitcherProps) {
                 }}
               >
                 <div>
-                  <div style={{ fontSize: '14px', fontWeight: 500, color: '#374151' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 500, color: 'var(--color-text-primary)' }}>
                     {doc.title}
                   </div>
-                  <div style={{ fontSize: '12px', color: '#9CA3AF', marginTop: '2px' }}>
+                  <div style={{ fontSize: '12px', color: 'var(--color-text-tertiary)', marginTop: '2px' }}>
                     {(doc.metadata?.totalWordCount ?? 0).toLocaleString()} words
                     {updatedDate ? ` • Updated ${updatedDate}` : ''}
                   </div>
@@ -580,7 +580,7 @@ function DocumentSwitcher({ onClose, onCreateNew }: DocumentSwitcherProps) {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: '#DC2626',
+                    color: 'var(--color-error)',
                     opacity: 0.5,
                     borderRadius: '4px',
                   }}
@@ -596,7 +596,7 @@ function DocumentSwitcher({ onClose, onCreateNew }: DocumentSwitcherProps) {
         </div>
 
         {/* Create new button */}
-        <div style={{ padding: '12px 20px', borderTop: '1px solid #E5E7EB' }}>
+        <div style={{ padding: '12px 20px', borderTop: '1px solid var(--color-border-default)' }}>
           <button
             onClick={() => {
               onCreateNew();
@@ -605,8 +605,8 @@ function DocumentSwitcher({ onClose, onCreateNew }: DocumentSwitcherProps) {
             style={{
               width: '100%',
               padding: '10px 16px',
-              backgroundColor: '#4A90A4',
-              color: 'white',
+              backgroundColor: 'var(--color-accent-default)',
+              color: 'var(--color-text-inverse)',
               border: 'none',
               borderRadius: '8px',
               fontSize: '14px',

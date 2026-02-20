@@ -79,12 +79,12 @@ function getMarginPresetId(margins: AcademicSettings['margins'] | undefined): st
 }
 
 const selectStyle: React.CSSProperties = {
-  border: '1px solid #D1D5DB',
+  border: '1px solid var(--color-border-strong)',
   borderRadius: '6px',
   padding: '4px 8px',
   fontSize: '12px',
-  backgroundColor: '#FFFFFF',
-  color: '#374151',
+  backgroundColor: 'var(--color-bg-primary)',
+  color: 'var(--color-text-primary)',
 };
 
 export function AcademicSectionEditor({
@@ -147,7 +147,7 @@ export function AcademicSectionEditor({
           font-family: '${fontFamily}', 'Times New Roman', 'Georgia', serif;
           font-size: ${fontSize}pt;
           line-height: ${lineSpacing};
-          color: #1A1A1A;
+          color: var(--color-text-primary);
         `,
       },
     },
@@ -182,7 +182,7 @@ export function AcademicSectionEditor({
             font-family: '${fontFamily}', 'Times New Roman', 'Georgia', serif;
             font-size: ${fontSize}pt;
             line-height: ${lineSpacing};
-            color: #1A1A1A;
+            color: var(--color-text-primary);
           `,
         },
       },
@@ -322,8 +322,8 @@ export function AcademicSectionEditor({
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#9CA3AF',
-          backgroundColor: '#F9FAFB',
+          color: 'var(--color-text-tertiary)',
+          backgroundColor: 'var(--color-bg-secondary)',
         }}
       >
         <svg
@@ -352,7 +352,7 @@ export function AcademicSectionEditor({
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: 'var(--color-bg-primary)',
         }}
       >
         <div
@@ -381,7 +381,7 @@ export function AcademicSectionEditor({
                 fontSize: '24px',
                 fontWeight: 700,
                 fontFamily: "'Times New Roman', 'Georgia', serif",
-                color: '#1F2937',
+                color: 'var(--color-text-primary)',
                 border: 'none',
                 outline: 'none',
                 backgroundColor: 'transparent',
@@ -397,13 +397,13 @@ export function AcademicSectionEditor({
         <div
           style={{
             padding: '12px 24px',
-            borderTop: '1px solid #E5E7EB',
-            backgroundColor: '#FFFFFF',
+            borderTop: '1px solid var(--color-border-default)',
+            backgroundColor: 'var(--color-bg-primary)',
             display: 'flex',
             justifyContent: 'center',
             gap: '24px',
             fontSize: '13px',
-            color: '#9CA3AF',
+            color: 'var(--color-text-tertiary)',
           }}
         >
           <span>{wordCount} words</span>
@@ -427,15 +427,15 @@ export function AcademicSectionEditor({
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'var(--color-bg-primary)',
       }}
     >
       {/* Header with title */}
       <div
         style={{
           padding: '20px 32px 16px',
-          borderBottom: '1px solid #E5E7EB',
-          backgroundColor: '#FFFFFF',
+          borderBottom: '1px solid var(--color-border-default)',
+          backgroundColor: 'var(--color-bg-primary)',
         }}
       >
         <input
@@ -448,7 +448,7 @@ export function AcademicSectionEditor({
             fontSize: '22px',
             fontWeight: 700,
             fontFamily: "'Times New Roman', 'Georgia', serif",
-            color: '#1F2937',
+            color: 'var(--color-text-primary)',
             border: 'none',
             outline: 'none',
             backgroundColor: 'transparent',
@@ -464,18 +464,18 @@ export function AcademicSectionEditor({
             gap: '16px',
             flexWrap: 'wrap',
             fontSize: '13px',
-            color: '#6B7280',
+            color: 'var(--color-text-secondary)',
           }}
         >
           <span>{wordCount} words</span>
           <span>{figureCount} figures</span>
           <span>{tableCount} tables</span>
-          <span style={{ color: '#9CA3AF' }}>
+          <span style={{ color: 'var(--color-text-tertiary)' }}>
             Press{' '}
             <kbd
               style={{
                 padding: '2px 6px',
-                backgroundColor: '#F3F4F6',
+                backgroundColor: 'var(--color-bg-tertiary)',
                 borderRadius: '4px',
                 fontSize: '11px',
               }}
@@ -501,7 +501,7 @@ export function AcademicSectionEditor({
               alignItems: 'center',
               gap: '6px',
               fontSize: '12px',
-              color: '#6B7280',
+              color: 'var(--color-text-secondary)',
             }}
           >
             Line
@@ -528,7 +528,7 @@ export function AcademicSectionEditor({
               alignItems: 'center',
               gap: '6px',
               fontSize: '12px',
-              color: '#6B7280',
+              color: 'var(--color-text-secondary)',
             }}
           >
             Font Size
@@ -556,7 +556,7 @@ export function AcademicSectionEditor({
               alignItems: 'center',
               gap: '6px',
               fontSize: '12px',
-              color: '#6B7280',
+              color: 'var(--color-text-secondary)',
             }}
           >
             Margins
@@ -593,7 +593,7 @@ export function AcademicSectionEditor({
         style={{
           flex: 1,
           overflow: 'auto',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: 'var(--color-bg-primary)',
         }}
       >
         <div
@@ -612,8 +612,8 @@ export function AcademicSectionEditor({
         <div
           style={{
             padding: '10px 24px',
-            borderTop: '1px solid #E5E7EB',
-            backgroundColor: '#FFFFFF',
+            borderTop: '1px solid var(--color-border-default)',
+            backgroundColor: 'var(--color-bg-primary)',
             display: 'flex',
             gap: '4px',
             flexWrap: 'wrap',
@@ -756,9 +756,9 @@ export function AcademicSectionEditor({
                 gap: '8px',
                 marginLeft: '8px',
                 padding: '6px 8px',
-                border: '1px solid #E5E7EB',
+                border: '1px solid var(--color-border-default)',
                 borderRadius: '8px',
-                backgroundColor: '#F9FAFB',
+                backgroundColor: 'var(--color-bg-secondary)',
               }}
             >
               <select
@@ -793,9 +793,9 @@ export function AcademicSectionEditor({
                     onClick={handleInsertCrossReference}
                     style={{
                       padding: '5px 10px',
-                      border: '1px solid #D1D5DB',
+                      border: '1px solid var(--color-border-strong)',
                       borderRadius: '6px',
-                      backgroundColor: '#FFFFFF',
+                      backgroundColor: 'var(--color-bg-primary)',
                       fontSize: '12px',
                       cursor: 'pointer',
                     }}
@@ -804,7 +804,7 @@ export function AcademicSectionEditor({
                   </button>
                 </>
               ) : (
-                <span style={{ fontSize: '12px', color: '#9CA3AF' }}>No references yet</span>
+                <span style={{ fontSize: '12px', color: 'var(--color-text-tertiary)' }}>No references yet</span>
               )}
             </div>
           )}
@@ -842,7 +842,7 @@ export function AcademicSectionEditor({
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundColor: 'rgba(0,0,0,0.3)',
+            backgroundColor: 'var(--color-bg-overlay)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -886,8 +886,8 @@ function ToolbarButton({
         padding: '8px 12px',
         border: 'none',
         borderRadius: '6px',
-        backgroundColor: isActive ? '#E0F2FE' : 'transparent',
-        color: disabled ? '#D1D5DB' : isActive ? '#0284C7' : '#4B5563',
+        backgroundColor: isActive ? 'var(--color-accent-subtle)' : 'transparent',
+        color: disabled ? 'var(--color-border-strong)' : isActive ? 'var(--color-accent-text)' : 'var(--color-text-secondary)',
         cursor: disabled ? 'not-allowed' : 'pointer',
         fontSize: '14px',
         fontWeight: isActive ? 600 : 400,
@@ -899,7 +899,7 @@ function ToolbarButton({
       }}
       onMouseEnter={(e) => {
         if (!disabled && !isActive) {
-          e.currentTarget.style.backgroundColor = '#F3F4F6';
+          e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)';
         }
       }}
       onMouseLeave={(e) => {
@@ -919,7 +919,7 @@ function ToolbarDivider() {
       style={{
         width: '1px',
         height: '24px',
-        backgroundColor: '#E5E7EB',
+        backgroundColor: 'var(--color-border-default)',
         margin: '0 8px',
         alignSelf: 'center',
       }}

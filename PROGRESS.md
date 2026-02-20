@@ -91,6 +91,7 @@ Last updated: February 19, 2026
 | Task wave 69 | Completed `7.9.3` Personal Diary warm-canvas and typography pass by defaulting diary canvas rendering to `--color-bg-canvas-warm` token path, setting editor line height to relaxed token scale, and constraining the formatting toolbar to `Undo`/`Redo` + `B`/`I`/`U` with font display; applied a strict token gate for all touched Personal Diary surfaces while deferring full repo-wide `7.1.3` cleanup | Personal Diary-targeted verification: `vitest src/components/diaries/PersonalDiary` (`14` tests passing) + targeted eslint on updated Personal Diary files |
 | Task wave 70 | Completed `7.9.4` Personal Diary status strip + empty-state slice by switching status slots to formatted date + word/read-time metrics, adding a first-use empty-state CTA when no current entry exists, and running a strict token-gating cleanup pass on `DatePicker.tsx`; then started the broader `7.1.3` cleanup stream by removing Blackboard container hard-coded colors into tokenized shell classes | Targeted verification: `vitest src/components/diaries/PersonalDiary/PersonalDiary.test.tsx src/components/diaries/PersonalDiary/DatePicker.test.tsx src/components/diaries/blackboard/Blackboard.test.tsx` (`13` tests passing) + targeted eslint on updated component files |
 | Task wave 71 | Continued dedicated `7.1.3` cleanup stream on top offenders by tokenizing theme colors in `Academic`, `BibliographyManager`, `TableOfContents`, `SectionEditor`, and `DraftList` (plus aligned DraftList test expectations), eliminating hard-coded color literals in that tranche | Tranche verification: `vitest src/components/diaries/academic src/components/diaries/long-drafts src/components/diaries/drafts/DraftList.test.tsx` (`58` tests passing), full suite `vitest --run` (`78` files, `336` tests passing), full lint `eslint .` (still blocked by pre-existing `ContextMenu` and `ToastProvider` lint errors) |
+| Task wave 72 | Completed the next `7.1.3` cleanup tranche by tokenizing hard-coded colors in `AcademicSectionEditor`, `LongDrafts`, `TemplateSelector`, `FootnoteManager`, and `CitationPicker`; also cleared the previously blocking lint issues in `ContextMenu` and `ToastProvider` so repo lint is fully clean | Verification: targeted tranche tests (`20` tests passing), common component regression tests (`11` tests passing), and full lint `eslint .` passing |
 
 ## 3) Blackboard testing progress
 
@@ -130,6 +131,6 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Continue `7.1.3` cleanup on next highest offenders (`AcademicSectionEditor`, `LongDrafts`, `TemplateSelector`, `FootnoteManager`, `CitationPicker`).
-2. Resolve pre-existing repo lint blockers in `muwi/src/components/common/ContextMenu/ContextMenu.tsx` and `muwi/src/components/common/Toast/ToastProvider.tsx` so full `eslint .` is clean.
-3. Move into `7.10` Drafts UI migration once the next cleanup tranche is stable and lint-clean.
+1. Continue `7.1.3` cleanup on current highest offenders (`ReferenceLibraryPanel`, `DraftEditor`, `FocusMode`, `StatusBadge`, `Drafts`).
+2. Move into `7.10` Drafts UI migration once that offender tranche is tokenized and lint remains clean.
+3. Re-run full suite + coverage snapshot after the next cleanup tranche to refresh baseline metrics.

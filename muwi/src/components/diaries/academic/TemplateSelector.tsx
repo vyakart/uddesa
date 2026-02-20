@@ -58,19 +58,19 @@ const TEMPLATES: Template[] = [
 const inputStyle: React.CSSProperties = {
   width: '100%',
   padding: '10px 12px',
-  border: '1px solid #E5E7EB',
+  border: '1px solid var(--color-border-default)',
   borderRadius: '8px',
   fontSize: '14px',
-  color: '#1F2937',
+  color: 'var(--color-text-primary)',
   outline: 'none',
-  backgroundColor: '#FFFFFF',
+  backgroundColor: 'var(--color-bg-primary)',
 };
 
 const sectionLabelStyle: React.CSSProperties = {
   display: 'block',
   fontSize: '13px',
   fontWeight: 600,
-  color: '#374151',
+  color: 'var(--color-text-primary)',
   marginBottom: '8px',
 };
 
@@ -140,7 +140,7 @@ export function TemplateSelector({ onSelect, onClose }: TemplateSelectorProps) {
       style={{
         position: 'fixed',
         inset: 0,
-        backgroundColor: 'rgba(0,0,0,0.5)',
+        backgroundColor: 'var(--color-bg-overlay)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -150,7 +150,7 @@ export function TemplateSelector({ onSelect, onClose }: TemplateSelectorProps) {
     >
       <div
         style={{
-          backgroundColor: 'white',
+          backgroundColor: 'var(--color-bg-elevated)',
           borderRadius: '12px',
           width: '760px',
           maxHeight: '86vh',
@@ -162,13 +162,13 @@ export function TemplateSelector({ onSelect, onClose }: TemplateSelectorProps) {
         <div
           style={{
             padding: '20px 24px',
-            borderBottom: '1px solid #E5E7EB',
+            borderBottom: '1px solid var(--color-border-default)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
           }}
         >
-          <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: '#1F2937' }}>
+          <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: 'var(--color-text-primary)' }}>
             New Academic Paper
           </h2>
           <button
@@ -178,7 +178,7 @@ export function TemplateSelector({ onSelect, onClose }: TemplateSelectorProps) {
               border: 'none',
               backgroundColor: 'transparent',
               cursor: 'pointer',
-              color: '#6B7280',
+              color: 'var(--color-text-secondary)',
             }}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -214,9 +214,9 @@ export function TemplateSelector({ onSelect, onClose }: TemplateSelectorProps) {
                   onClick={() => setSelectedTemplate(template.id)}
                   style={{
                     padding: '14px',
-                    border: `2px solid ${selectedTemplate === template.id ? '#4A90A4' : '#E5E7EB'}`,
+                    border: `2px solid ${selectedTemplate === template.id ? 'var(--color-accent-default)' : 'var(--color-border-default)'}`,
                     borderRadius: '12px',
-                    backgroundColor: selectedTemplate === template.id ? '#EFF6FF' : '#FFFFFF',
+                    backgroundColor: selectedTemplate === template.id ? 'var(--color-accent-subtle)' : 'var(--color-bg-primary)',
                     cursor: 'pointer',
                     textAlign: 'left',
                     transition: 'all 150ms ease',
@@ -227,19 +227,19 @@ export function TemplateSelector({ onSelect, onClose }: TemplateSelectorProps) {
                       style={{
                         padding: '8px',
                         borderRadius: '8px',
-                        backgroundColor: selectedTemplate === template.id ? '#DBEAFE' : '#F3F4F6',
-                        color: selectedTemplate === template.id ? '#4A90A4' : '#6B7280',
+                        backgroundColor: selectedTemplate === template.id ? 'var(--color-accent-subtle)' : 'var(--color-bg-tertiary)',
+                        color: selectedTemplate === template.id ? 'var(--color-accent-default)' : 'var(--color-text-secondary)',
                       }}
                     >
                       {template.icon}
                     </div>
                     <div>
-                      <div style={{ fontSize: '14px', fontWeight: 600, color: '#1F2937' }}>{template.name}</div>
-                      <div style={{ fontSize: '12px', color: '#6B7280', marginTop: '2px' }}>
+                      <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-text-primary)' }}>{template.name}</div>
+                      <div style={{ fontSize: '12px', color: 'var(--color-text-secondary)', marginTop: '2px' }}>
                         {template.description}
                       </div>
                       {template.sections.length > 0 && (
-                        <div style={{ marginTop: '6px', fontSize: '11px', color: '#9CA3AF' }}>
+                        <div style={{ marginTop: '6px', fontSize: '11px', color: 'var(--color-text-tertiary)' }}>
                           {template.sections.slice(0, 3).join(' / ')}
                           {template.sections.length > 3 && ` + ${template.sections.length - 3} more`}
                         </div>
@@ -285,7 +285,7 @@ export function TemplateSelector({ onSelect, onClose }: TemplateSelectorProps) {
               style={inputStyle}
             />
             {parsedKeywords.length > 0 && (
-              <div style={{ marginTop: '8px', fontSize: '12px', color: '#6B7280' }}>
+              <div style={{ marginTop: '8px', fontSize: '12px', color: 'var(--color-text-secondary)' }}>
                 {parsedKeywords.length} keyword{parsedKeywords.length === 1 ? '' : 's'} detected
               </div>
             )}
@@ -335,10 +335,10 @@ export function TemplateSelector({ onSelect, onClose }: TemplateSelectorProps) {
                       )
                     }
                     style={{
-                      border: '1px solid #E5E7EB',
+                      border: '1px solid var(--color-border-default)',
                       borderRadius: '8px',
-                      backgroundColor: '#FFFFFF',
-                      color: '#6B7280',
+                      backgroundColor: 'var(--color-bg-primary)',
+                      color: 'var(--color-text-secondary)',
                       padding: '10px 12px',
                       cursor: 'pointer',
                     }}
@@ -360,10 +360,10 @@ export function TemplateSelector({ onSelect, onClose }: TemplateSelectorProps) {
               }
               style={{
                 marginTop: '10px',
-                border: '1px solid #E5E7EB',
+                border: '1px solid var(--color-border-default)',
                 borderRadius: '8px',
-                backgroundColor: '#FFFFFF',
-                color: '#4A90A4',
+                backgroundColor: 'var(--color-bg-primary)',
+                color: 'var(--color-accent-default)',
                 padding: '8px 12px',
                 cursor: 'pointer',
                 fontSize: '13px',
@@ -377,7 +377,7 @@ export function TemplateSelector({ onSelect, onClose }: TemplateSelectorProps) {
         <div
           style={{
             padding: '16px 24px',
-            borderTop: '1px solid #E5E7EB',
+            borderTop: '1px solid var(--color-border-default)',
             display: 'flex',
             justifyContent: 'flex-end',
             gap: '12px',
@@ -387,8 +387,8 @@ export function TemplateSelector({ onSelect, onClose }: TemplateSelectorProps) {
             onClick={onClose}
             style={{
               padding: '10px 20px',
-              border: '1px solid #E5E7EB',
-              backgroundColor: '#FFFFFF',
+              border: '1px solid var(--color-border-default)',
+              backgroundColor: 'var(--color-bg-primary)',
               borderRadius: '8px',
               fontSize: '14px',
               cursor: 'pointer',
@@ -400,8 +400,8 @@ export function TemplateSelector({ onSelect, onClose }: TemplateSelectorProps) {
             onClick={handleCreate}
             style={{
               padding: '10px 24px',
-              backgroundColor: '#4A90A4',
-              color: '#FFFFFF',
+              backgroundColor: 'var(--color-accent-default)',
+              color: 'var(--color-text-inverse)',
               border: 'none',
               borderRadius: '8px',
               fontSize: '14px',

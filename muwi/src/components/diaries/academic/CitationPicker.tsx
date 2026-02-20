@@ -113,9 +113,9 @@ export function CitationPicker({ onInsert, onClose, position }: CitationPickerPr
         position: position ? 'fixed' : 'relative',
         top: position?.y,
         left: position?.x,
-        backgroundColor: 'white',
+        backgroundColor: 'var(--color-bg-elevated)',
         borderRadius: '8px',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+        boxShadow: 'var(--shadow-dropdown)',
         width: '400px',
         maxHeight: '400px',
         display: 'flex',
@@ -128,7 +128,7 @@ export function CitationPicker({ onInsert, onClose, position }: CitationPickerPr
       {!selectedEntry ? (
         <>
           {/* Search header */}
-          <div style={{ padding: '12px', borderBottom: '1px solid #E5E7EB' }}>
+          <div style={{ padding: '12px', borderBottom: '1px solid var(--color-border-default)' }}>
             <input
               ref={searchInputRef}
               type="text"
@@ -141,7 +141,7 @@ export function CitationPicker({ onInsert, onClose, position }: CitationPickerPr
               style={{
                 width: '100%',
                 padding: '8px 12px',
-                border: '1px solid #E5E7EB',
+                border: '1px solid var(--color-border-default)',
                 borderRadius: '6px',
                 fontSize: '14px',
                 outline: 'none',
@@ -156,7 +156,7 @@ export function CitationPicker({ onInsert, onClose, position }: CitationPickerPr
                 style={{
                   padding: '24px 16px',
                   textAlign: 'center',
-                  color: '#9CA3AF',
+                  color: 'var(--color-text-tertiary)',
                   fontSize: '13px',
                 }}
               >
@@ -171,8 +171,8 @@ export function CitationPicker({ onInsert, onClose, position }: CitationPickerPr
                   style={{
                     padding: '10px 12px',
                     cursor: 'pointer',
-                    backgroundColor: index === highlightedIndex ? '#F3F4F6' : 'transparent',
-                    borderBottom: '1px solid #F3F4F6',
+                    backgroundColor: index === highlightedIndex ? 'var(--color-bg-tertiary)' : 'transparent',
+                    borderBottom: '1px solid var(--color-bg-tertiary)',
                   }}
                   onMouseEnter={() => setHighlightedIndex(index)}
                 >
@@ -180,7 +180,7 @@ export function CitationPicker({ onInsert, onClose, position }: CitationPickerPr
                     style={{
                       fontSize: '13px',
                       fontWeight: 500,
-                      color: '#1F2937',
+                      color: 'var(--color-text-primary)',
                       marginBottom: '2px',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
@@ -192,7 +192,7 @@ export function CitationPicker({ onInsert, onClose, position }: CitationPickerPr
                   <div
                     style={{
                       fontSize: '12px',
-                      color: '#6B7280',
+                      color: 'var(--color-text-secondary)',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
@@ -211,27 +211,27 @@ export function CitationPicker({ onInsert, onClose, position }: CitationPickerPr
           <div
             style={{
               padding: '8px 12px',
-              borderTop: '1px solid #E5E7EB',
+              borderTop: '1px solid var(--color-border-default)',
               fontSize: '11px',
-              color: '#9CA3AF',
+              color: 'var(--color-text-tertiary)',
               display: 'flex',
               gap: '12px',
             }}
           >
             <span>
-              <kbd style={{ padding: '2px 4px', backgroundColor: '#F3F4F6', borderRadius: '3px' }}>
+              <kbd style={{ padding: '2px 4px', backgroundColor: 'var(--color-bg-tertiary)', borderRadius: '3px' }}>
                 ↑↓
               </kbd>{' '}
               Navigate
             </span>
             <span>
-              <kbd style={{ padding: '2px 4px', backgroundColor: '#F3F4F6', borderRadius: '3px' }}>
+              <kbd style={{ padding: '2px 4px', backgroundColor: 'var(--color-bg-tertiary)', borderRadius: '3px' }}>
                 Enter
               </kbd>{' '}
               Select
             </span>
             <span>
-              <kbd style={{ padding: '2px 4px', backgroundColor: '#F3F4F6', borderRadius: '3px' }}>
+              <kbd style={{ padding: '2px 4px', backgroundColor: 'var(--color-bg-tertiary)', borderRadius: '3px' }}>
                 Esc
               </kbd>{' '}
               Close
@@ -252,7 +252,7 @@ export function CitationPicker({ onInsert, onClose, position }: CitationPickerPr
                 border: 'none',
                 backgroundColor: 'transparent',
                 cursor: 'pointer',
-                color: '#6B7280',
+                color: 'var(--color-text-secondary)',
                 fontSize: '12px',
                 marginBottom: '12px',
               }}
@@ -268,13 +268,13 @@ export function CitationPicker({ onInsert, onClose, position }: CitationPickerPr
                 style={{
                   fontSize: '14px',
                   fontWeight: 500,
-                  color: '#1F2937',
+                  color: 'var(--color-text-primary)',
                   marginBottom: '4px',
                 }}
               >
                 {selectedEntry.title}
               </div>
-              <div style={{ fontSize: '13px', color: '#6B7280' }}>
+              <div style={{ fontSize: '13px', color: 'var(--color-text-secondary)' }}>
                 {selectedEntry.authors.join(', ')}
                 {selectedEntry.year && ` (${selectedEntry.year})`}
               </div>
@@ -286,7 +286,7 @@ export function CitationPicker({ onInsert, onClose, position }: CitationPickerPr
                   display: 'block',
                   fontSize: '12px',
                   fontWeight: 500,
-                  color: '#4B5563',
+                  color: 'var(--color-text-secondary)',
                   marginBottom: '4px',
                 }}
               >
@@ -300,7 +300,7 @@ export function CitationPicker({ onInsert, onClose, position }: CitationPickerPr
                 style={{
                   width: '100%',
                   padding: '8px 12px',
-                  border: '1px solid #E5E7EB',
+                  border: '1px solid var(--color-border-default)',
                   borderRadius: '6px',
                   fontSize: '14px',
                 }}
@@ -310,7 +310,7 @@ export function CitationPicker({ onInsert, onClose, position }: CitationPickerPr
             <div
               style={{
                 padding: '12px',
-                backgroundColor: '#F9FAFB',
+                backgroundColor: 'var(--color-bg-secondary)',
                 borderRadius: '6px',
                 marginBottom: '16px',
               }}
@@ -319,14 +319,14 @@ export function CitationPicker({ onInsert, onClose, position }: CitationPickerPr
                 style={{
                   fontSize: '11px',
                   fontWeight: 500,
-                  color: '#6B7280',
+                  color: 'var(--color-text-secondary)',
                   marginBottom: '4px',
                   textTransform: 'uppercase',
                 }}
               >
                 Preview
               </div>
-              <div style={{ fontSize: '14px', color: '#1F2937' }}>
+              <div style={{ fontSize: '14px', color: 'var(--color-text-primary)' }}>
                 {formatInTextCitation(selectedEntry, citationStyle, pageNumbers || undefined)}
               </div>
             </div>
@@ -336,8 +336,8 @@ export function CitationPicker({ onInsert, onClose, position }: CitationPickerPr
               style={{
                 width: '100%',
                 padding: '10px 16px',
-                backgroundColor: '#4A90A4',
-                color: 'white',
+                backgroundColor: 'var(--color-accent-default)',
+                color: 'var(--color-text-inverse)',
                 border: 'none',
                 borderRadius: '6px',
                 fontSize: '14px',

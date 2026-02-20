@@ -53,7 +53,7 @@ export function FootnoteManager({
         style={{
           padding: '24px 16px',
           textAlign: 'center',
-          color: '#9CA3AF',
+          color: 'var(--color-text-tertiary)',
         }}
       >
         <svg
@@ -75,9 +75,9 @@ export function FootnoteManager({
             style={{
               padding: '8px 16px',
               fontSize: '13px',
-              color: '#4A90A4',
-              backgroundColor: '#EFF6FF',
-              border: '1px solid #4A90A4',
+              color: 'var(--color-accent-default)',
+              backgroundColor: 'var(--color-accent-subtle)',
+              border: '1px solid var(--color-accent-default)',
               borderRadius: '6px',
               cursor: 'pointer',
             }}
@@ -95,13 +95,13 @@ export function FootnoteManager({
       <div
         style={{
           padding: '12px 16px',
-          borderBottom: '1px solid #E5E7EB',
+          borderBottom: '1px solid var(--color-border-default)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
         }}
       >
-        <span style={{ fontSize: '13px', fontWeight: 600, color: '#374151' }}>
+        <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-text-primary)' }}>
           Footnotes ({footnotes.length})
         </span>
         {!isLocked && (
@@ -113,7 +113,7 @@ export function FootnoteManager({
               gap: '4px',
               padding: '4px 8px',
               fontSize: '12px',
-              color: '#4A90A4',
+              color: 'var(--color-accent-default)',
               backgroundColor: 'transparent',
               border: 'none',
               borderRadius: '4px',
@@ -154,10 +154,10 @@ export function FootnoteManager({
             position: 'fixed',
             top: contextMenu.y,
             left: contextMenu.x,
-            backgroundColor: 'white',
-            border: '1px solid #E5E7EB',
+            backgroundColor: 'var(--color-bg-elevated)',
+            border: '1px solid var(--color-border-default)',
             borderRadius: '8px',
-            boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
+            boxShadow: 'var(--shadow-md)',
             zIndex: 100,
             minWidth: '140px',
             overflow: 'hidden',
@@ -172,7 +172,7 @@ export function FootnoteManager({
               width: '100%',
               padding: '10px 16px',
               fontSize: '13px',
-              color: '#374151',
+              color: 'var(--color-text-primary)',
               border: 'none',
               backgroundColor: 'transparent',
               cursor: 'pointer',
@@ -182,7 +182,7 @@ export function FootnoteManager({
               gap: '8px',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#F3F4F6';
+              e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent';
@@ -200,7 +200,7 @@ export function FootnoteManager({
                 width: '100%',
                 padding: '10px 16px',
                 fontSize: '13px',
-                color: '#DC2626',
+                color: 'var(--color-error)',
                 border: 'none',
                 backgroundColor: 'transparent',
                 cursor: 'pointer',
@@ -210,7 +210,7 @@ export function FootnoteManager({
                 gap: '8px',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#FEE2E2';
+                e.currentTarget.style.backgroundColor = 'var(--color-error-subtle)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.backgroundColor = 'transparent';
@@ -318,8 +318,8 @@ const FootnoteItem = memo(function FootnoteItem({
       onContextMenu={onContextMenu}
       style={{
         padding: '12px 16px',
-        borderBottom: '1px solid #E5E7EB',
-        backgroundColor: isHighlighted ? '#FEF3C7' : 'transparent',
+        borderBottom: '1px solid var(--color-border-default)',
+        backgroundColor: isHighlighted ? 'var(--color-warning-subtle)' : 'transparent',
         transition: 'background-color 300ms ease',
       }}
     >
@@ -342,8 +342,8 @@ const FootnoteItem = memo(function FootnoteItem({
             height: '24px',
             fontSize: '12px',
             fontWeight: 600,
-            color: '#4A90A4',
-            backgroundColor: '#EFF6FF',
+            color: 'var(--color-accent-default)',
+            backgroundColor: 'var(--color-accent-subtle)',
             borderRadius: '4px',
           }}
         >
@@ -359,7 +359,7 @@ const FootnoteItem = memo(function FootnoteItem({
             gap: '4px',
             padding: '2px 6px',
             fontSize: '11px',
-            color: '#6B7280',
+            color: 'var(--color-text-secondary)',
             backgroundColor: 'transparent',
             border: 'none',
             borderRadius: '4px',
@@ -385,7 +385,7 @@ const FootnoteItem = memo(function FootnoteItem({
               gap: '4px',
               padding: '2px 6px',
               fontSize: '11px',
-              color: '#6B7280',
+              color: 'var(--color-text-secondary)',
               backgroundColor: 'transparent',
               border: 'none',
               borderRadius: '4px',
@@ -415,9 +415,9 @@ const FootnoteItem = memo(function FootnoteItem({
             padding: '8px',
             fontSize: '13px',
             lineHeight: 1.5,
-            color: '#374151',
-            backgroundColor: '#FFFFFF',
-            border: '1px solid #4A90A4',
+            color: 'var(--color-text-primary)',
+            backgroundColor: 'var(--color-bg-primary)',
+            border: '1px solid var(--color-accent-default)',
             borderRadius: '6px',
             outline: 'none',
             resize: 'vertical',
@@ -431,7 +431,7 @@ const FootnoteItem = memo(function FootnoteItem({
           style={{
             fontSize: '13px',
             lineHeight: 1.5,
-            color: visibleContent ? '#374151' : '#9CA3AF',
+            color: visibleContent ? 'var(--color-text-primary)' : 'var(--color-text-tertiary)',
             cursor: isLocked ? 'default' : 'pointer',
             padding: '4px 0',
           }}
