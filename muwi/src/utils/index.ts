@@ -6,3 +6,4 @@ export * from './backup';
 export * from './appRouter';
 export * from './crypto';
 export * from './theme';
+export * from './keyboard';

@@ -127,6 +127,31 @@ describe('Shelf', () => {
     expect(app.activeDiary).toBe('drafts');
   });
 
+  it('opens diary without transition delay when reduced motion is enabled', () => {
+    const originalMatchMedia = window.matchMedia;
+    window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+      matches: query.includes('prefers-reduced-motion'),
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }));
+
+    try {
+      render(<Shelf />);
+      fireEvent.click(screen.getByRole('button', { name: 'Open Drafts' }));
+
+      const app = useAppStore.getState();
+      expect(app.currentView).toBe('diary');
+      expect(app.activeDiary).toBe('drafts');
+    } finally {
+      window.matchMedia = originalMatchMedia;
+    }
+  });
+
   it('shows context menu on right-click and opens selected diary', () => {
     render(<Shelf />);
 

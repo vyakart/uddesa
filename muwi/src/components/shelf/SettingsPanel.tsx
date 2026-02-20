@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type KeyboardEvent } from 'react';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { Button, Input, Select, Toggle } from '@/components/common';
 
@@ -25,7 +25,39 @@ export function SettingsPanel() {
   const clearPasskey = useSettingsStore((state) => state.clearPasskey);
 
   const panelTitle = `${activeTab[0].toUpperCase()}${activeTab.slice(1)} Settings`;
+  const tabId = `settings-tab-${activeTab}`;
   const tabPanelId = `settings-panel-${activeTab}`;
+
+  const handleTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    const currentIndex = TABS.findIndex((tab) => tab.id === activeTab);
+    if (currentIndex < 0) {
+      return;
+    }
+
+    let nextIndex = currentIndex;
+
+    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+      event.preventDefault();
+      nextIndex = (currentIndex + 1) % TABS.length;
+    } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      nextIndex = (currentIndex - 1 + TABS.length) % TABS.length;
+    } else if (event.key === 'Home') {
+      event.preventDefault();
+      nextIndex = 0;
+    } else if (event.key === 'End') {
+      event.preventDefault();
+      nextIndex = TABS.length - 1;
+    } else {
+      return;
+    }
+
+    const nextTab = TABS[nextIndex];
+    setActiveTab(nextTab.id);
+    requestAnimationFrame(() => {
+      document.getElementById(`settings-tab-${nextTab.id}`)?.focus();
+    });
+  };
 
   return (
     <div className="muwi-settings">
@@ -38,7 +70,9 @@ export function SettingsPanel() {
             id={`settings-tab-${tab.id}`}
             aria-controls={`settings-panel-${tab.id}`}
             aria-selected={activeTab === tab.id}
+            tabIndex={activeTab === tab.id ? 0 : -1}
             onClick={() => setActiveTab(tab.id)}
+            onKeyDown={handleTabKeyDown}
             className={['muwi-sidebar-item', 'muwi-settings__tab', activeTab === tab.id ? 'is-active' : null]
               .filter(Boolean)
               .join(' ')}
@@ -51,6 +85,7 @@ export function SettingsPanel() {
       <section
         id={tabPanelId}
         role="tabpanel"
+        aria-labelledby={tabId}
         aria-label={panelTitle}
         className="muwi-settings__content"
       >
@@ -102,10 +137,13 @@ export function SettingsPanel() {
           <div className="muwi-settings__shortcut-copy">
             <p>Core keyboard shortcuts:</p>
             <ul>
-              <li>Home shelf: Ctrl/Cmd + H</li>
-              <li>Open settings: Ctrl/Cmd + ,</li>
-              <li>Close current panel: Esc</li>
-              <li>Save in editors: Ctrl/Cmd + S</li>
+              <li>Command palette: Ctrl/Cmd + K</li>
+              <li>Settings: Ctrl/Cmd + ,</li>
+              <li>Toggle sidebar: Ctrl/Cmd + B</li>
+              <li>Switch diaries: Ctrl/Cmd + 1-6</li>
+              <li>Go to shelf: Ctrl/Cmd + H</li>
+              <li>Close active overlay / go back: Esc</li>
+              <li>Editor formatting: Ctrl/Cmd + B, I, U, 1, 2, 3</li>
             </ul>
           </div>
         ) : null}

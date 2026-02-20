@@ -1985,8 +1985,8 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 7.6.4, 7.7 through 7.12
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Global shortcuts (`Cmd/Ctrl+K`, `Cmd+,`, `Cmd+B`, `Cmd+1-6`, `Esc`) work
-  - [ ] Editor shortcuts remain functional in each diary
+  - [x] Global shortcuts (`Cmd/Ctrl+K`, `Cmd+,`, `Cmd+B`, `Cmd+1-6`, `Esc`) work
+  - [x] Editor shortcuts remain functional in each diary
   - [ ] Focus order follows visual order
 
 #### Task 7.13.2: ARIA and Semantic Roles Pass
@@ -2003,9 +2003,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 7.4.1 through 7.4.6
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] All interactive controls show tokenized focus ring
-  - [ ] Overlay close returns focus to trigger
-  - [ ] Focus is never trapped outside active modal/palette
+  - [x] All interactive controls show tokenized focus ring
+  - [x] Overlay close returns focus to trigger
+  - [x] Focus is never trapped outside active modal/palette
 
 #### Task 7.13.4: Contrast and Color-State Validation
 - **Description**: Verify WCAG contrast and non-color-only status indicators
@@ -2021,15 +2021,15 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 7.1.2, 7.5.6, 7.6.3
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] Reduced-motion mode effectively neutralizes non-essential animations
-  - [ ] Critical information remains visible without animation cues
+  - [x] Reduced-motion mode effectively neutralizes non-essential animations
+  - [x] Critical information remains visible without animation cues
 
 #### Task 7.13.6: Accessibility Test Suite + Manual Audit
 - **Description**: Automate and manually validate accessibility baseline
 - **Dependencies**: 7.13.1 through 7.13.5
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Automated checks (axe or equivalent) run in CI
+  - [x] Automated checks (axe or equivalent) run in CI
   - [ ] Manual keyboard-only audit complete
   - [ ] Manual screen reader spot-check complete
 
@@ -2042,9 +2042,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/hooks/useGlobalShortcuts.ts`
   - `muwi/src/components/shelf/SettingsPanel.tsx`
 - **Acceptance Criteria**:
-  - [ ] No conflicting shortcut combinations for different actions in same context
-  - [ ] Shortcut map is visible in settings/help copy
-  - [ ] Shortcut-related tests updated and passing
+  - [x] No conflicting shortcut combinations for different actions in same context
+  - [x] Shortcut map is visible in settings/help copy
+  - [x] Shortcut-related tests updated and passing
 
 ### 7.14 Responsive and Window-Resize Behavior
 

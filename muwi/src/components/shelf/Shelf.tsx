@@ -5,6 +5,7 @@ import { db } from '@/db/database';
 import { DiaryCard } from './DiaryCard';
 import { useAppStore, type DiaryType } from '@/stores/appStore';
 import { useSettingsStore, selectShelfLayout } from '@/stores/settingsStore';
+import { usePrefersReducedMotion } from '@/hooks';
 import { ContextMenu, Modal, Button, type ContextMenuItem } from '@/components/common';
 import { SettingsPanel } from './SettingsPanel';
 
@@ -93,6 +94,7 @@ export function Shelf() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [transitionDiary, setTransitionDiary] = useState<DiaryType | null>(null);
   const transitionTimerRef = useRef<number | null>(null);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   const [contextMenuState, setContextMenuState] = useState<{
     x: number;
@@ -178,6 +180,11 @@ export function Shelf() {
 
   const handleDiaryClick = (type: DiaryType) => {
     if (isTransitioning) {
+      return;
+    }
+
+    if (prefersReducedMotion) {
+      openDiary(type);
       return;
     }
 

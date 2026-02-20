@@ -9,6 +9,7 @@ import {
 } from '@/stores/draftsStore';
 import { DraftList } from './DraftList';
 import { DraftEditor } from './DraftEditor';
+import { hasActiveModalDialog, isEditableTarget } from '@/utils/keyboard';
 
 const STATUS_LABELS = {
   'in-progress': 'In Progress',
@@ -53,6 +54,10 @@ export function Drafts() {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (hasActiveModalDialog() || isEditableTarget(e.target)) {
+        return;
+      }
+
       const isMod = e.metaKey || e.ctrlKey;
 
       // Ctrl/Cmd + N: Create new draft

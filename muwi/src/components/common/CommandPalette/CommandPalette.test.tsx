@@ -57,6 +57,52 @@ describe('CommandPalette', () => {
     });
   });
 
+  it('traps tab focus within the command palette surface', () => {
+    render(<CommandPalette />);
+
+    act(() => {
+      useAppStore.getState().openCommandPalette();
+    });
+
+    const input = screen.getByRole('combobox', { name: 'Command search' });
+    const options = screen.getAllByRole('option');
+    const lastOption = options[options.length - 1];
+
+    lastOption.focus();
+    fireEvent.keyDown(document, { key: 'Tab' });
+    expect(input).toHaveFocus();
+
+    input.focus();
+    fireEvent.keyDown(document, { key: 'Tab', shiftKey: true });
+    expect(lastOption).toHaveFocus();
+  });
+
+  it('restores focus to the trigger after the palette closes', () => {
+    function Harness() {
+      return (
+        <div>
+          <button type="button" onClick={() => useAppStore.getState().openCommandPalette()}>
+            Open palette
+          </button>
+          <CommandPalette />
+        </div>
+      );
+    }
+
+    render(<Harness />);
+
+    const trigger = screen.getByRole('button', { name: 'Open palette' });
+    trigger.focus();
+    fireEvent.click(trigger);
+
+    expect(screen.getByRole('dialog', { name: 'Command palette' })).toBeInTheDocument();
+
+    fireEvent.keyDown(screen.getByRole('combobox', { name: 'Command search' }), { key: 'Escape' });
+
+    expect(screen.queryByRole('dialog', { name: 'Command palette' })).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
+  });
+
   it('shows recent commands when query is empty', () => {
     render(<CommandPalette />);
 

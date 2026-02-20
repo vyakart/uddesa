@@ -1,4 +1,4 @@
-import { useMemo, useRef, useEffect, useCallback, type KeyboardEvent } from 'react';
+import { useMemo, useRef, useEffect, useCallback, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { Search } from 'lucide-react';
 import { useAppStore } from '@/stores/appStore';
 import { useSettingsStore } from '@/stores/settingsStore';
@@ -17,6 +17,7 @@ import {
 } from '@/utils/commands';
 
 const GROUP_ORDER: Array<'Navigation' | 'Actions' | 'Settings'> = ['Navigation', 'Actions', 'Settings'];
+const FOCUSABLE_SELECTOR = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
 function groupRank(group: CommandDefinition['group']): number {
   const index = GROUP_ORDER.indexOf(group);
@@ -53,6 +54,8 @@ export function CommandPalette() {
   const createBlackboardCanvas = useBlackboardStore((state) => state.createCanvas);
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const paletteRef = useRef<HTMLDivElement>(null);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
 
   const registry = useMemo(() => createCommandRegistry(), []);
 
@@ -182,7 +185,54 @@ export function CommandPalette() {
       return;
     }
 
+    returnFocusRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
     inputRef.current?.focus();
+
+    const onKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== 'Tab') {
+        return;
+      }
+
+      const paletteNode = paletteRef.current;
+      if (!paletteNode) {
+        return;
+      }
+
+      const activeElement = document.activeElement;
+      if (!(activeElement instanceof HTMLElement) || !paletteNode.contains(activeElement)) {
+        return;
+      }
+
+      const focusables = paletteNode.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+      if (focusables.length === 0) {
+        event.preventDefault();
+        paletteNode.focus();
+        return;
+      }
+
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+
+      if (!event.shiftKey && activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      } else if (event.shiftKey && activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      }
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+
+      const focusTarget = returnFocusRef.current;
+      if (focusTarget && document.contains(focusTarget)) {
+        focusTarget.focus();
+      }
+      returnFocusRef.current = null;
+    };
   }, [isOpen]);
 
   useEffect(() => {
@@ -211,7 +261,7 @@ export function CommandPalette() {
   );
 
   const handleKeyDown = useCallback(
-    (event: KeyboardEvent<HTMLInputElement>) => {
+    (event: ReactKeyboardEvent<HTMLInputElement>) => {
       if (event.key === 'ArrowDown') {
         event.preventDefault();
         if (results.length === 0) {
@@ -263,13 +313,21 @@ export function CommandPalette() {
         }
       }}
     >
-      <div className="muwi-command-palette" role="dialog" aria-modal="true" aria-label="Command palette">
+      <div
+        ref={paletteRef}
+        className="muwi-command-palette"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Command palette"
+        tabIndex={-1}
+      >
         <div className="muwi-command-palette__input-row">
           <Search size={16} aria-hidden="true" className="muwi-command-palette__search-icon" />
           <input
             ref={inputRef}
             role="combobox"
             aria-label="Command search"
+            aria-haspopup="listbox"
             aria-expanded="true"
             aria-controls="command-palette-listbox"
             aria-activedescendant={

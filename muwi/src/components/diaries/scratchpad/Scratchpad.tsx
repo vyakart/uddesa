@@ -9,6 +9,7 @@ import { ScratchpadPage } from './ScratchpadPage';
 import { PageStack } from './PageStack';
 import { CategoryPicker } from './CategoryPicker';
 import type { CategoryName } from '@/types/scratchpad';
+import { hasActiveModalDialog, isEditableTarget } from '@/utils/keyboard';
 
 const SCRATCHPAD_CATEGORY_LABELS: Record<CategoryName, string> = {
   ideas: 'Ideas',
@@ -73,6 +74,10 @@ export function Scratchpad() {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (hasActiveModalDialog() || isEditableTarget(e.target)) {
+        return;
+      }
+
       // Ctrl+N or Cmd+N: Create new page
       if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
         e.preventDefault();

@@ -18,6 +18,7 @@ import type { LongDraft } from '@/types/longDrafts';
 import { TableOfContents } from './TableOfContents';
 import { SectionEditor } from './SectionEditor';
 import { FocusMode } from './FocusMode';
+import { hasActiveModalDialog, isEditableTarget } from '@/utils/keyboard';
 
 export function LongDrafts() {
   const isLoading = useLongDraftsStore(selectLongDraftsIsLoading);
@@ -53,14 +54,18 @@ export function LongDrafts() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (hasActiveModalDialog() || isEditableTarget(e.target)) {
+        return;
+      }
+
       const isMod = e.metaKey || e.ctrlKey;
 
-      if (isMod && e.key === 'n' && currentDocumentId) {
+      if (isMod && !e.shiftKey && e.key.toLowerCase() === 'n' && currentDocumentId) {
         e.preventDefault();
         createSection(currentDocumentId);
       }
 
-      if (isMod && e.shiftKey && e.key === 'N') {
+      if (isMod && e.shiftKey && e.key.toLowerCase() === 'n') {
         e.preventDefault();
         createLongDraft();
       }

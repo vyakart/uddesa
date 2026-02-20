@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useState, useRef } from 'react';
+import { usePrefersReducedMotion } from '@/hooks';
 import { useLongDraftsStore, selectViewMode, selectCurrentSection } from '@/stores/longDraftsStore';
 
 interface FocusModeProps {
@@ -9,6 +10,7 @@ export function FocusMode({ children }: FocusModeProps) {
   const viewMode = useLongDraftsStore(selectViewMode);
   const currentSection = useLongDraftsStore(selectCurrentSection);
   const toggleFocusMode = useLongDraftsStore((state) => state.toggleFocusMode);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   const [showControls, setShowControls] = useState(false);
   const [isOverlayVisible, setIsOverlayVisible] = useState(viewMode === 'focus');
@@ -17,7 +19,9 @@ export function FocusMode({ children }: FocusModeProps) {
   const exitAnimationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const isFocusMode = viewMode === 'focus';
-  const controlsVisible = isFocusMode && showControls;
+  const overlayVisible = prefersReducedMotion ? isFocusMode : isOverlayVisible;
+  const overlayActive = prefersReducedMotion ? isFocusMode : isOverlayActive;
+  const controlsVisible = prefersReducedMotion ? isFocusMode : isFocusMode && showControls;
 
   // Handle keyboard shortcut (Escape to exit focus mode, F11 to toggle)
   useEffect(() => {
@@ -42,6 +46,11 @@ export function FocusMode({ children }: FocusModeProps) {
   const handleMouseMove = useCallback(() => {
     if (!isFocusMode) return;
 
+    if (prefersReducedMotion) {
+      setShowControls(true);
+      return;
+    }
+
     setShowControls(true);
 
     if (controlsTimeoutRef.current) {
@@ -51,7 +60,7 @@ export function FocusMode({ children }: FocusModeProps) {
     controlsTimeoutRef.current = setTimeout(() => {
       setShowControls(false);
     }, 2000);
-  }, [isFocusMode]);
+  }, [isFocusMode, prefersReducedMotion]);
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -69,6 +78,16 @@ export function FocusMode({ children }: FocusModeProps) {
   useEffect(() => {
     let rafId: number | null = null;
     let nestedRafId: number | null = null;
+
+    if (prefersReducedMotion) {
+      if (controlsTimeoutRef.current) {
+        clearTimeout(controlsTimeoutRef.current);
+      }
+      if (exitAnimationTimeoutRef.current) {
+        clearTimeout(exitAnimationTimeoutRef.current);
+      }
+      return;
+    }
 
     if (isFocusMode) {
       if (exitAnimationTimeoutRef.current) {
@@ -115,9 +134,9 @@ export function FocusMode({ children }: FocusModeProps) {
         clearTimeout(exitAnimationTimeoutRef.current);
       }
     };
-  }, [isFocusMode, isOverlayVisible]);
+  }, [isFocusMode, isOverlayVisible, prefersReducedMotion]);
 
-  if (!isOverlayVisible) {
+  if (!overlayVisible) {
     return <>{children}</>;
   }
 
@@ -131,10 +150,10 @@ export function FocusMode({ children }: FocusModeProps) {
         backgroundColor: 'var(--color-bg-paper)',
         display: 'flex',
         flexDirection: 'column',
-        opacity: isOverlayActive ? 1 : 0,
-        transform: isOverlayActive ? 'scale(1)' : 'scale(0.995)',
-        transition: 'opacity 220ms ease, transform 220ms ease',
-        pointerEvents: isOverlayActive ? 'auto' : 'none',
+        opacity: overlayActive ? 1 : 0,
+        transform: overlayActive ? 'scale(1)' : 'scale(0.995)',
+        transition: prefersReducedMotion ? 'none' : 'opacity 220ms ease, transform 220ms ease',
+        pointerEvents: overlayActive ? 'auto' : 'none',
         willChange: 'opacity, transform',
       }}
     >
@@ -153,7 +172,7 @@ export function FocusMode({ children }: FocusModeProps) {
           borderBottom: '1px solid var(--color-border-default)',
           opacity: controlsVisible ? 1 : 0,
           transform: controlsVisible ? 'translateY(0)' : 'translateY(-100%)',
-          transition: 'opacity 300ms ease, transform 300ms ease',
+          transition: prefersReducedMotion ? 'none' : 'opacity 300ms ease, transform 300ms ease',
           pointerEvents: controlsVisible ? 'auto' : 'none',
           zIndex: 10,
         }}
@@ -167,6 +186,7 @@ export function FocusMode({ children }: FocusModeProps) {
             fill="none"
             stroke="var(--color-text-secondary)"
             strokeWidth="2"
+            aria-hidden="true"
           >
             <path d="M15 3h6v6M14 10l7-7M10 3H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-6" />
           </svg>
@@ -183,7 +203,9 @@ export function FocusMode({ children }: FocusModeProps) {
 
         {/* Exit button */}
         <button
+          type="button"
           onClick={toggleFocusMode}
+          aria-label="Exit focus mode"
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -195,7 +217,7 @@ export function FocusMode({ children }: FocusModeProps) {
             border: 'none',
             borderRadius: '6px',
             cursor: 'pointer',
-            transition: 'all 150ms ease',
+            transition: prefersReducedMotion ? 'none' : 'all 150ms ease',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.backgroundColor = 'var(--color-border-default)';
@@ -204,7 +226,7 @@ export function FocusMode({ children }: FocusModeProps) {
             e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)';
           }}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
             <path d="M18 6L6 18M6 6l12 12" />
           </svg>
           Exit Focus Mode
@@ -236,7 +258,7 @@ export function FocusMode({ children }: FocusModeProps) {
           backgroundColor: 'var(--color-bg-paper)',
           borderRadius: '20px',
           opacity: controlsVisible ? 0 : 0.6,
-          transition: 'opacity 300ms ease',
+          transition: prefersReducedMotion ? 'none' : 'opacity 300ms ease',
           pointerEvents: 'none',
         }}
       >
@@ -250,12 +272,15 @@ export function FocusMode({ children }: FocusModeProps) {
 export function FocusModeToggle() {
   const viewMode = useLongDraftsStore(selectViewMode);
   const toggleFocusMode = useLongDraftsStore((state) => state.toggleFocusMode);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   const isFocusMode = viewMode === 'focus';
 
   return (
     <button
+      type="button"
       onClick={toggleFocusMode}
+      aria-label={isFocusMode ? 'Exit focus mode' : 'Enter focus mode'}
       title={isFocusMode ? 'Exit Focus Mode (Cmd+Shift+F)' : 'Enter Focus Mode (Cmd+Shift+F)'}
       style={{
         display: 'flex',
@@ -268,7 +293,7 @@ export function FocusModeToggle() {
         border: isFocusMode ? '1px solid var(--color-accent-default)' : '1px solid var(--color-border-default)',
         borderRadius: '6px',
         cursor: 'pointer',
-        transition: 'all 150ms ease',
+        transition: prefersReducedMotion ? 'none' : 'all 150ms ease',
       }}
       onMouseEnter={(e) => {
         if (!isFocusMode) {
@@ -283,14 +308,14 @@ export function FocusModeToggle() {
     >
       {isFocusMode ? (
         <>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
             <path d="M8 3H5a2 2 0 00-2 2v3M21 8V5a2 2 0 00-2-2h-3M8 21H5a2 2 0 01-2-2v-3M16 21h3a2 2 0 002-2v-3" />
           </svg>
           Exit Focus
         </>
       ) : (
         <>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
             <path d="M8 3v3a2 2 0 01-2 2H3M21 8h-3a2 2 0 01-2-2V3M3 16h3a2 2 0 012 2v3M16 21v-3a2 2 0 012-2h3" />
           </svg>
           Focus Mode

@@ -19,8 +19,22 @@ describe('SettingsPanel', () => {
     expect(screen.getByRole('tab', { name: 'Privacy' })).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('tab', { name: 'Shortcuts' }));
-    expect(screen.getByRole('tabpanel', { name: 'Shortcuts Settings' })).toBeInTheDocument();
+    expect(screen.getByRole('tabpanel', { name: 'Shortcuts' })).toBeInTheDocument();
     expect(screen.getByText(/Core keyboard shortcuts/i)).toBeInTheDocument();
+  });
+
+  it('supports arrow-key navigation between settings tabs', async () => {
+    render(<SettingsPanel />);
+
+    const appearanceTab = screen.getByRole('tab', { name: 'Appearance' });
+    appearanceTab.focus();
+    fireEvent.keyDown(appearanceTab, { key: 'ArrowRight' });
+
+    const shortcutsTab = screen.getByRole('tab', { name: 'Shortcuts' });
+    await waitFor(() => {
+      expect(shortcutsTab).toHaveFocus();
+      expect(shortcutsTab).toHaveAttribute('aria-selected', 'true');
+    });
   });
 
   it('updates appearance and backup settings', async () => {

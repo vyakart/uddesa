@@ -6,6 +6,7 @@ import { useSettingsStore } from '@/stores/settingsStore';
 import { defaultPersonalDiarySettings } from '@/types/diary';
 import { EntryNavigation } from './EntryNavigation';
 import { DiaryEntry } from './DiaryEntry';
+import { hasActiveModalDialog, isEditableTarget } from '@/utils/keyboard';
 
 // Helper to safely convert entry.date to Date object (handles both string and Date)
 function toDate(date: string | Date): Date {
@@ -98,6 +99,10 @@ export function PersonalDiary() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (hasActiveModalDialog() || isEditableTarget(event.target)) {
+        return;
+      }
+
       const isMod = event.ctrlKey || event.metaKey;
       const baseDate = currentEntry ? toDate(currentEntry.date) : new Date();
 

@@ -23,6 +23,7 @@ import { AcademicSectionEditor } from './AcademicSectionEditor';
 import { BibliographyManager } from './BibliographyManager';
 import { ReferenceLibraryPanel } from './ReferenceLibraryPanel';
 import { TemplateSelector } from './TemplateSelector';
+import { hasActiveModalDialog, isEditableTarget } from '@/utils/keyboard';
 
 const CITATION_STYLE_LABELS: Record<CitationStyle, string> = {
   apa7: 'APA 7th',
@@ -111,13 +112,11 @@ export function Academic() {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const isMod = event.metaKey || event.ctrlKey;
-      const target = event.target;
-      const isEditable =
-        target instanceof HTMLElement &&
-        (target.tagName === 'INPUT' ||
-          target.tagName === 'TEXTAREA' ||
-          target.isContentEditable ||
-          target.closest('.ProseMirror') instanceof HTMLElement);
+      const isEditable = isEditableTarget(event.target);
+
+      if (hasActiveModalDialog()) {
+        return;
+      }
 
       if (isMod && !event.shiftKey && event.key.toLowerCase() === 'n') {
         event.preventDefault();

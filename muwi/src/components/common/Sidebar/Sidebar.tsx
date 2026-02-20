@@ -35,6 +35,7 @@ export function Sidebar({
         role="navigation"
         aria-label={ariaLabel ?? `${title} Navigation`}
         aria-hidden={!isOpen}
+        inert={!isOpen}
       >
         <div className="muwi-sidebar__header">
           <button

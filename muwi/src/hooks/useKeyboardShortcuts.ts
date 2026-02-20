@@ -1,11 +1,12 @@
 import { useEffect, useCallback } from 'react';
+import { isEditableTarget } from '@/utils/keyboard';
 
 type ModifierKey = 'ctrl' | 'alt' | 'shift' | 'meta';
 
 interface ShortcutConfig {
   key: string;
   modifiers?: ModifierKey[];
-  action: () => void;
+  action: (event: KeyboardEvent) => void;
   preventDefault?: boolean;
 }
 
@@ -61,13 +62,10 @@ export function useKeyboardShortcuts(
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
       if (!enabled) return;
+      if (event.defaultPrevented) return;
 
       // Don't trigger shortcuts when typing in input fields
-      const targetElement = event.target as HTMLElement;
-      const isInputField =
-        targetElement.tagName === 'INPUT' ||
-        targetElement.tagName === 'TEXTAREA' ||
-        targetElement.isContentEditable;
+      const isInputField = isEditableTarget(event.target);
 
       for (const config of shortcuts) {
         if (matchesShortcut(event, config)) {
@@ -79,7 +77,7 @@ export function useKeyboardShortcuts(
           if (config.preventDefault !== false) {
             event.preventDefault();
           }
-          config.action();
+          config.action(event);
           return;
         }
       }
@@ -110,6 +108,13 @@ export const SHORTCUT_KEYS = {
   HEADING_3: { key: '3', modifiers: ['ctrl'] as ModifierKey[] },
   FIND: { key: 'f', modifiers: ['ctrl'] as ModifierKey[] },
   COMMAND_PALETTE: { key: 'k', modifiers: ['ctrl'] as ModifierKey[] },
+  SIDEBAR: { key: 'b', modifiers: ['ctrl'] as ModifierKey[] },
+  DIARY_1: { key: '1', modifiers: ['ctrl'] as ModifierKey[] },
+  DIARY_2: { key: '2', modifiers: ['ctrl'] as ModifierKey[] },
+  DIARY_3: { key: '3', modifiers: ['ctrl'] as ModifierKey[] },
+  DIARY_4: { key: '4', modifiers: ['ctrl'] as ModifierKey[] },
+  DIARY_5: { key: '5', modifiers: ['ctrl'] as ModifierKey[] },
+  DIARY_6: { key: '6', modifiers: ['ctrl'] as ModifierKey[] },
   ZOOM_IN: { key: '=', modifiers: ['ctrl'] as ModifierKey[] },
   ZOOM_OUT: { key: '-', modifiers: ['ctrl'] as ModifierKey[] },
   ZOOM_RESET: { key: '0', modifiers: ['ctrl'] as ModifierKey[] },
