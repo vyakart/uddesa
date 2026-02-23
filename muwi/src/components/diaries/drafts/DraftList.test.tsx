@@ -315,10 +315,8 @@ describe('DraftList', () => {
     expect(screen.getAllByRole('heading')[0]).toHaveTextContent('Beta');
 
     const newDraftButton = screen.getByRole('button', { name: 'New Draft' });
-    fireEvent.mouseEnter(newDraftButton);
-    expect(newDraftButton).toHaveStyle({ backgroundColor: 'var(--color-accent-hover)' });
-    fireEvent.mouseLeave(newDraftButton);
-    expect(newDraftButton).toHaveStyle({ backgroundColor: 'var(--color-accent-default)' });
+    expect(newDraftButton).toHaveClass('muwi-button');
+    expect(newDraftButton).toHaveAttribute('data-variant', 'primary');
 
     const unselectedHeading = screen.getByRole('heading', { name: 'Gamma' });
     const unselectedCard = unselectedHeading.closest('.muwi-drafts-list__item');
@@ -368,10 +366,8 @@ describe('DraftList', () => {
 
     fireEvent.contextMenu(screen.getByRole('heading', { name: 'Toggle Draft' }));
     const deleteButton = screen.getByRole('button', { name: 'Delete' });
-    fireEvent.mouseEnter(deleteButton);
-    expect(deleteButton).toHaveStyle({ backgroundColor: 'var(--color-error-subtle)' });
-    fireEvent.mouseLeave(deleteButton);
-    expect(deleteButton).not.toHaveStyle({ backgroundColor: 'var(--color-error-subtle)' });
+    expect(deleteButton).toHaveClass('muwi-context-menu__item');
+    expect(deleteButton).toHaveAttribute('data-destructive', 'true');
     fireEvent.click(deleteButton);
     await waitFor(() => {
       expect(deleteDraft).not.toHaveBeenCalled();

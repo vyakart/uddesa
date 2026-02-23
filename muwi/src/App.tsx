@@ -56,15 +56,66 @@ const diaryDisplayNames: Record<DiaryType, string> = {
 function DiaryLoadingState({ diary }: { diary: DiaryType }) {
   return (
     <main
-      className="min-h-screen flex items-center justify-center"
+      className="muwi-chrome-text min-h-screen [background-color:var(--color-bg-primary)] [color:var(--color-text-secondary)]"
       role="main"
       aria-busy="true"
       aria-live="polite"
-      aria-label={`${diaryDisplayNames[diary]} loading`}
+      aria-labelledby="diary-loading-status"
     >
-      <p role="status" className="text-gray-500">
-        Loading {diaryDisplayNames[diary]}...
+      <p id="diary-loading-status" role="status" className="sr-only">
+        Loading {diaryDisplayNames[diary]}.
       </p>
+
+      <div className="grid min-h-screen w-full grid-cols-1 md:grid-cols-[240px_minmax(0,1fr)] xl:grid-cols-[240px_minmax(0,1fr)_280px]">
+        <aside
+          aria-hidden="true"
+          className="hidden border-r md:flex md:flex-col md:gap-3 md:px-4 md:py-4 [border-color:var(--color-border-default)] [background-color:var(--color-bg-secondary)]"
+        >
+          <div className="h-8 w-28 animate-pulse rounded-md [background-color:var(--color-bg-tertiary)] motion-reduce:animate-none" />
+          <div className="mt-2 h-6 w-full animate-pulse rounded-md [background-color:var(--color-bg-tertiary)] motion-reduce:animate-none" />
+          <div className="h-6 w-5/6 animate-pulse rounded-md [background-color:var(--color-bg-tertiary)] motion-reduce:animate-none" />
+          <div className="h-6 w-4/5 animate-pulse rounded-md [background-color:var(--color-bg-tertiary)] motion-reduce:animate-none" />
+          <div className="mt-4 h-6 w-full animate-pulse rounded-md [background-color:var(--color-bg-tertiary)] motion-reduce:animate-none" />
+          <div className="h-6 w-3/4 animate-pulse rounded-md [background-color:var(--color-bg-tertiary)] motion-reduce:animate-none" />
+        </aside>
+
+        <section className="flex min-w-0 flex-col">
+          <div
+            aria-hidden="true"
+            className="h-11 border-b px-4 py-2 [border-color:var(--color-border-default)] [background-color:var(--color-bg-primary)]"
+          >
+            <div className="h-full w-40 animate-pulse rounded-md [background-color:var(--color-bg-secondary)] motion-reduce:animate-none" />
+          </div>
+
+          <div className="flex flex-1 items-start justify-center px-4 py-6 md:px-6">
+            <div
+              aria-hidden="true"
+              className="w-full max-w-[720px] rounded-lg border p-4 shadow-sm md:p-6 [border-color:var(--color-border-default)] [background-color:var(--color-bg-canvas)]"
+            >
+              <div className="mb-5 h-7 w-52 animate-pulse rounded-md [background-color:var(--color-bg-secondary)] motion-reduce:animate-none" />
+              <div className="space-y-3">
+                <div className="h-4 w-full animate-pulse rounded-md [background-color:var(--color-bg-secondary)] motion-reduce:animate-none" />
+                <div className="h-4 w-11/12 animate-pulse rounded-md [background-color:var(--color-bg-secondary)] motion-reduce:animate-none" />
+                <div className="h-4 w-10/12 animate-pulse rounded-md [background-color:var(--color-bg-secondary)] motion-reduce:animate-none" />
+                <div className="h-4 w-9/12 animate-pulse rounded-md [background-color:var(--color-bg-secondary)] motion-reduce:animate-none" />
+              </div>
+              <p className="mt-5 [color:var(--color-text-tertiary)]">
+                Loading {diaryDisplayNames[diary]}...
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <aside
+          aria-hidden="true"
+          className="hidden border-l xl:flex xl:flex-col xl:gap-3 xl:px-4 xl:py-4 [border-color:var(--color-border-default)] [background-color:var(--color-bg-secondary)]"
+        >
+          <div className="h-8 w-24 animate-pulse rounded-md [background-color:var(--color-bg-tertiary)] motion-reduce:animate-none" />
+          <div className="h-20 w-full animate-pulse rounded-lg [background-color:var(--color-bg-tertiary)] motion-reduce:animate-none" />
+          <div className="h-20 w-full animate-pulse rounded-lg [background-color:var(--color-bg-tertiary)] motion-reduce:animate-none" />
+          <div className="h-20 w-full animate-pulse rounded-lg [background-color:var(--color-bg-tertiary)] motion-reduce:animate-none" />
+        </aside>
+      </div>
     </main>
   );
 }
@@ -144,8 +195,10 @@ function App() {
   // Show loading state while settings load
   if (!isSettingsLoaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Loading...</p>
+      <div className="muwi-chrome-text flex min-h-screen items-center justify-center [background-color:var(--color-bg-primary)]">
+        <p role="status" aria-live="polite" className="[color:var(--color-text-tertiary)]">
+          Loading settings...
+        </p>
       </div>
     );
   }

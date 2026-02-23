@@ -100,6 +100,15 @@ export function ExcalidrawWrapper({
   const gridOffsetX = normalizeGridOffset(viewport.panX, gridPitch);
   const gridOffsetY = normalizeGridOffset(viewport.panY, gridPitch);
 
+  const handleExcalidrawAPI = useCallback((api: ExcalidrawImperativeAPI | null) => {
+    if (!api) {
+      return;
+    }
+
+    // Excalidraw may invoke this callback repeatedly; only capture the first API handle for this mount.
+    setExcalidrawAPI((current) => current ?? api);
+  }, []);
+
   // Debounced save function
   const debouncedSave = useCallback(
     (newElements: readonly ExcalidrawElement[], appState?: AppState) => {
@@ -223,7 +232,7 @@ export function ExcalidrawWrapper({
       }}
     >
       <Excalidraw
-        excalidrawAPI={(api) => setExcalidrawAPI(api)}
+        excalidrawAPI={handleExcalidrawAPI}
         initialData={{
           elements: elements,
           appState: {

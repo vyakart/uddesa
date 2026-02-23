@@ -1175,11 +1175,11 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 7.0.1
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] All CSS magic numbers in shared UI replaced by design tokens
-  - [ ] All 6 diary types run inside the new shared shell
-  - [ ] Command palette available globally (`Cmd+K` / `Ctrl+K`)
-  - [ ] Accessibility checks pass (keyboard + ARIA + contrast + reduced motion)
-  - [ ] Existing unit/integration tests updated and green
+  - [x] All CSS magic numbers in shared UI replaced by design tokens
+  - [x] All 6 diary types run inside the new shared shell
+  - [x] Command palette available globally (`Cmd+K` / `Ctrl+K`)
+  - [x] Accessibility checks pass (keyboard + ARIA + contrast + reduced motion)
+  - [x] Existing unit/integration tests updated and green
 
 ### 7.1 Foundation: Tokens, Themes, Fonts, CSS Architecture
 
@@ -1220,7 +1220,7 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - [x] `:root` / `[data-theme="light"]` tokens complete
   - [x] `[data-theme="dark"]` overrides complete
   - [x] Blackboard and scratchpad-specific color tokens included
-  - [ ] No component hard-codes theme colors
+  - [x] No component hard-codes theme colors
 
 #### Task 7.1.4: Add CSS Reset and Base Element Rules
 - **Description**: Normalize base rendering and remove conflicting defaults
@@ -1846,9 +1846,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Effort**: M
 - **Files to Modify**: `muwi/src/components/diaries/drafts/Drafts.tsx`
 - **Acceptance Criteria**:
-  - [ ] Draft list in sidebar slot
-  - [ ] Editor canvas in canvas slot
-  - [ ] Status bar present
+  - [x] Draft list in sidebar slot
+  - [x] Editor canvas in canvas slot
+  - [x] Status bar present
 
 #### Task 7.10.2: Rebuild Draft Sidebar Visual Hierarchy
 - **Description**: Align draft list rows and status dots to token system
@@ -1858,9 +1858,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/diaries/drafts/DraftList.tsx`
   - `muwi/src/components/diaries/drafts/StatusBadge.tsx`
 - **Acceptance Criteria**:
-  - [ ] Rows use standardized sidebar item styles
-  - [ ] Status dots map to in-progress/review/complete tokens
-  - [ ] Sort controls remain functional
+  - [x] Rows use standardized sidebar item styles
+  - [x] Status dots map to in-progress/review/complete tokens
+  - [x] Sort controls remain functional
 
 #### Task 7.10.3: Align Draft Editor Toolbar to Shared Model
 - **Description**: Replace custom inline toolbar visuals with shared system
@@ -1868,16 +1868,16 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Effort**: M
 - **Files to Modify**: `muwi/src/components/diaries/drafts/DraftEditor.tsx`
 - **Acceptance Criteria**:
-  - [ ] Toolbar groups match Drafts spec
-  - [ ] Button active states use accent token treatment
+  - [x] Toolbar groups match Drafts spec
+  - [x] Button active states use accent token treatment
 
 #### Task 7.10.4: Add Drafts Status Bar + Empty State
 - **Description**: Add status strip and first-use state
 - **Dependencies**: 7.10.2, 7.10.3
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] Left side shows draft status text
-  - [ ] Right side shows word count + read time
+  - [x] Left side shows draft status text
+  - [x] Right side shows word count + read time
 
 ### 7.11 Long Drafts UI Migration
 
@@ -1887,9 +1887,9 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Effort**: M
 - **Files to Modify**: `muwi/src/components/diaries/long-drafts/LongDrafts.tsx`
 - **Acceptance Criteria**:
-  - [ ] Section tree occupies sidebar slot
-  - [ ] Editor canvas and status bar integrated
-  - [ ] Focus mode still works
+  - [x] Section tree occupies sidebar slot
+  - [x] Editor canvas and status bar integrated
+  - [x] Focus mode still works
 
 #### Task 7.11.2: Refactor TOC Sidebar to Spec
 - **Description**: Align section tree visuals and interactions
@@ -1897,8 +1897,8 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Effort**: M
 - **Files to Modify**: `muwi/src/components/diaries/long-drafts/TableOfContents.tsx`
 - **Acceptance Criteria**:
-  - [ ] Collapsible tree with drag handles and counts
-  - [ ] Active/hover/sidebar section label styling matches tokens
+  - [x] Collapsible tree with drag handles and counts
+  - [x] Active/hover/sidebar section label styling matches tokens
 
 #### Task 7.11.3: Align Long Drafts Toolbar Groups
 - **Description**: Apply spec toolbar groups including footnotes and focus
@@ -1908,24 +1908,24 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - `muwi/src/components/diaries/long-drafts/LongDrafts.tsx`
   - `muwi/src/components/diaries/long-drafts/SectionEditor.tsx`
 - **Acceptance Criteria**:
-  - [ ] Grouping/order follows Long Drafts spec
-  - [ ] Focus mode toggle icon/state reflect spec
+  - [x] Grouping/order follows Long Drafts spec
+  - [x] Focus mode toggle icon/state reflect spec
 
 #### Task 7.11.4: Implement Right Panel for TOC/Document Settings
 - **Description**: Use on-demand right panel when sidebar collapsed or settings requested
 - **Dependencies**: 7.3.4, 7.11.1
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] TOC panel view available in right panel
-  - [ ] Document settings panel view available in right panel
+  - [x] TOC panel view available in right panel
+  - [x] Document settings panel view available in right panel
 
 #### Task 7.11.5: Add Long Drafts Status Bar + Empty State
 - **Description**: Add section-aware metrics and empty guidance
 - **Dependencies**: 7.11.2, 7.11.3
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] Status bar shows `Section: {name}` and `{section_words}/{total_words}`
-  - [ ] Empty state uses long-drafts specific copy/action
+  - [x] Status bar shows `Section: {name}` and `{section_words}/{total_words}`
+  - [x] Empty state uses long-drafts specific copy/action
 
 ### 7.12 Academic UI Migration
 
@@ -2119,16 +2119,16 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 7.12.5
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] Baseline profile captured for startup and diary switch
-  - [ ] Regressions documented with follow-up tasks if needed
+  - [x] Baseline profile captured for startup and diary switch
+  - [x] Regressions documented with follow-up tasks if needed
 
 #### Task 7.15.2: Remove Remaining Inline Style Bottlenecks
 - **Description**: Eliminate remaining heavy inline style usage in diary components
 - **Dependencies**: 7.7 through 7.12
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] No high-churn components create large inline style objects per render
-  - [ ] Styling is largely class/token driven
+  - [x] No high-churn components create large inline style objects per render
+  - [x] Styling is largely class/token driven
 
 #### Task 7.15.3: Add Code Splitting for Heavy Diary Views
 - **Description**: Lazy-load heavy diary surfaces to improve startup time
@@ -2136,25 +2136,25 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Effort**: M
 - **Files to Modify**: `muwi/src/App.tsx`
 - **Acceptance Criteria**:
-  - [ ] Heavy diaries loaded via dynamic import boundaries
-  - [ ] Loading states are accessible and non-jarring
+  - [x] Heavy diaries loaded via dynamic import boundaries
+  - [x] Loading states are accessible and non-jarring
 
 #### Task 7.15.4: Bundle and Runtime Verification
 - **Description**: Validate bundle size and runtime behavior post-refactor
 - **Dependencies**: 7.15.2, 7.15.3
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] Build completes with no new critical warnings
-  - [ ] Runtime memory/CPU does not regress significantly from baseline
+  - [x] Build completes with no new critical warnings
+  - [x] Runtime memory/CPU does not regress significantly from baseline
 
 #### Task 7.15.5: Stabilize Tests Against Styling Refactors
 - **Description**: Reduce brittle tests that assert raw style literals likely to change with tokenization
 - **Dependencies**: 7.4.8, 7.15.2
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Style-literal assertions replaced with semantic assertions where possible
-  - [ ] Snapshot noise reduced for style-only churn
-  - [ ] Test suite remains green during ongoing UI migration
+  - [x] Style-literal assertions replaced with semantic assertions where possible
+  - [x] Snapshot noise reduced for style-only churn
+  - [x] Test suite remains green during ongoing UI migration
 
 ### 7.16 Distribution and Release (Post-Refactor)
 
@@ -2163,37 +2163,37 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
 - **Dependencies**: 7.15.4
 - **Effort**: L
 - **Acceptance Criteria**:
-  - [ ] macOS build (DMG/zip)
-  - [ ] Windows build (NSIS/portable)
-  - [ ] Linux build (AppImage/deb)
-  - [ ] Signing/update settings wired where applicable
+  - [x] macOS build (DMG/zip)
+  - [x] Windows build (NSIS/portable)
+  - [x] Linux build (AppImage/deb)
+  - [x] Signing/update settings wired where applicable
 
 #### Task 7.16.2: Update CI Workflow for Phase 7 Gates
 - **Description**: Require tests/build checks for refactor stability
 - **Dependencies**: 7.13.6, 7.15.4
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Unit + integration tests run on PR
-  - [ ] E2E smoke tests run on PR/release branch
-  - [ ] Build artifacts uploaded for tagged releases
+  - [x] Unit + integration tests run on PR
+  - [x] E2E smoke tests run on PR/release branch
+  - [x] Build artifacts uploaded for tagged releases
 
 #### Task 7.16.3: Release Automation and Changelog
 - **Description**: Finalize automated release process with versioning
 - **Dependencies**: 7.16.1, 7.16.2
 - **Effort**: M
 - **Acceptance Criteria**:
-  - [ ] Semantic version workflow established
-  - [ ] Changelog generated from commits
-  - [ ] Release artifacts and update manifest published
+  - [x] Semantic version workflow established
+  - [x] Changelog generated from commits
+  - [x] Release artifacts and update manifest published
 
 #### Task 7.16.4: Final Phase 7 Go/No-Go Checklist
 - **Description**: Explicit final verification before declaring Phase 7 complete
 - **Dependencies**: 7.16.3
 - **Effort**: S
 - **Acceptance Criteria**:
-  - [ ] All Phase 7 tasks either complete or explicitly deferred
-  - [ ] UI matches design-system invariants (tokens, layout model, typography hierarchy)
-  - [ ] No open P0/P1 regressions
+  - [x] All Phase 7 tasks either complete or explicitly deferred
+  - [x] UI matches design-system invariants (tokens, layout model, typography hierarchy)
+  - [x] No open P0/P1 regressions
 
 ---
 

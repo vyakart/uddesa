@@ -215,36 +215,11 @@ export function DraftList({ onCreateNew }: DraftListProps) {
   return (
     <div className="muwi-drafts-list">
       {/* Header with New Draft button */}
-      <div
-        style={{
-          padding: '8px 0',
-          borderBottom: '1px solid var(--color-border-default)',
-        }}
-      >
+      <div className="muwi-drafts-list__header">
         <button
           onClick={onCreateNew}
-          style={{
-            width: '100%',
-            padding: '10px 16px',
-            backgroundColor: 'var(--color-accent-default)',
-            color: 'var(--color-text-inverse)',
-            border: 'none',
-            borderRadius: '8px',
-            fontSize: '14px',
-            fontWeight: 500,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px',
-            transition: 'background-color 150ms ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--color-accent-hover)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--color-accent-default)';
-          }}
+          className="muwi-button is-full-width"
+          data-variant="primary"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M12 5v14M5 12h14" />
@@ -254,31 +229,13 @@ export function DraftList({ onCreateNew }: DraftListProps) {
       </div>
 
       {/* Sort and Filter controls */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '8px',
-          padding: '12px 0',
-          borderBottom: '1px solid var(--color-border-default)',
-        }}
-      >
+      <div className="muwi-drafts-list__controls">
         {/* Sort dropdown */}
-        <div ref={sortMenuRef} style={{ position: 'relative', flex: 1 }}>
+        <div ref={sortMenuRef} className="muwi-dropdown">
           <button
             onClick={() => setShowSortMenu(!showSortMenu)}
-            style={{
-              width: '100%',
-              padding: '6px 10px',
-              fontSize: '12px',
-              color: 'var(--color-text-secondary)',
-              backgroundColor: 'var(--color-bg-primary)',
-              border: '1px solid var(--color-border-default)',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
+            className="muwi-dropdown__trigger"
+            aria-expanded={showSortMenu}
           >
             <span>{sortByLabels[sortBy]}</span>
             <svg
@@ -288,47 +245,23 @@ export function DraftList({ onCreateNew }: DraftListProps) {
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
-              style={{ transform: showSortMenu ? 'rotate(180deg)' : 'none' }}
+              className="muwi-dropdown__chevron"
             >
               <path d="M6 9l6 6 6-6" />
             </svg>
           </button>
 
           {showSortMenu && (
-            <div
-              style={{
-                position: 'absolute',
-                top: '100%',
-                left: 0,
-                right: 0,
-                marginTop: '4px',
-                backgroundColor: 'var(--color-bg-primary)',
-                border: '1px solid var(--color-border-default)',
-                borderRadius: '6px',
-                boxShadow: 'var(--shadow-md)',
-                zIndex: 50,
-              }}
-            >
+            <div className="muwi-dropdown__menu">
               {(Object.keys(sortByLabels) as DraftSortBy[]).map((option) => (
                 <button
                   key={option}
                   onClick={() => handleSortChange(option)}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    fontSize: '12px',
-                    textAlign: 'left',
-                    border: 'none',
-                    backgroundColor: sortBy === option ? 'var(--color-bg-tertiary)' : 'transparent',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}
+                  className={`muwi-dropdown__item ${sortBy === option ? 'is-active' : ''}`}
                 >
                   {sortByLabels[option]}
                   {sortBy === option && (
-                    <span style={{ color: 'var(--color-text-secondary)' }}>
+                    <span className="muwi-dropdown__item-indicator">
                       {sortOrder === 'desc' ? '↓' : '↑'}
                     </span>
                   )}
@@ -339,22 +272,11 @@ export function DraftList({ onCreateNew }: DraftListProps) {
         </div>
 
         {/* Filter dropdown */}
-        <div ref={filterMenuRef} style={{ position: 'relative', flex: 1 }}>
+        <div ref={filterMenuRef} className="muwi-dropdown">
           <button
             onClick={() => setShowFilterMenu(!showFilterMenu)}
-            style={{
-              width: '100%',
-              padding: '6px 10px',
-              fontSize: '12px',
-              color: 'var(--color-text-secondary)',
-              backgroundColor: 'var(--color-bg-primary)',
-              border: '1px solid var(--color-border-default)',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
+            className="muwi-dropdown__trigger"
+            aria-expanded={showFilterMenu}
           >
             <span>{filterLabels[filterStatus]}</span>
             <svg
@@ -364,40 +286,19 @@ export function DraftList({ onCreateNew }: DraftListProps) {
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
-              style={{ transform: showFilterMenu ? 'rotate(180deg)' : 'none' }}
+              className="muwi-dropdown__chevron"
             >
               <path d="M6 9l6 6 6-6" />
             </svg>
           </button>
 
           {showFilterMenu && (
-            <div
-              style={{
-                position: 'absolute',
-                top: '100%',
-                left: 0,
-                right: 0,
-                marginTop: '4px',
-                backgroundColor: 'var(--color-bg-primary)',
-                border: '1px solid var(--color-border-default)',
-                borderRadius: '6px',
-                boxShadow: 'var(--shadow-md)',
-                zIndex: 50,
-              }}
-            >
+            <div className="muwi-dropdown__menu">
               {(Object.keys(filterLabels) as (DraftStatus | 'all')[]).map((option) => (
                 <button
                   key={option}
                   onClick={() => handleFilterChange(option)}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    fontSize: '12px',
-                    textAlign: 'left',
-                    border: 'none',
-                    backgroundColor: filterStatus === option ? 'var(--color-bg-tertiary)' : 'transparent',
-                    cursor: 'pointer',
-                  }}
+                  className={`muwi-dropdown__item ${filterStatus === option ? 'is-active' : ''}`}
                 >
                   {filterLabels[option]}
                 </button>
@@ -410,14 +311,7 @@ export function DraftList({ onCreateNew }: DraftListProps) {
       {/* Draft list */}
       <div className="muwi-drafts-list__scroll">
         {drafts.length === 0 ? (
-          <div
-            style={{
-              padding: '32px 16px',
-              textAlign: 'center',
-              color: 'var(--color-text-tertiary)',
-              fontSize: '14px',
-            }}
-          >
+          <div className="muwi-drafts-list__empty">
             {filterStatus !== 'all' ? 'No drafts match filter' : 'No drafts yet'}
           </div>
         ) : (
@@ -437,18 +331,8 @@ export function DraftList({ onCreateNew }: DraftListProps) {
       {/* Context menu */}
       {contextMenu && (
         <div
-          style={{
-            position: 'fixed',
-            top: contextMenu.y,
-            left: contextMenu.x,
-            backgroundColor: 'var(--color-bg-primary)',
-            border: '1px solid var(--color-border-default)',
-            borderRadius: '8px',
-            boxShadow: 'var(--shadow-md)',
-            zIndex: 100,
-            minWidth: '120px',
-            overflow: 'hidden',
-          }}
+          className="muwi-context-menu"
+          style={{ top: contextMenu.y, left: contextMenu.x }}
         >
           <button
             onClick={() => {
@@ -463,44 +347,15 @@ export function DraftList({ onCreateNew }: DraftListProps) {
               }
               void handleLockDraft(contextDraft.id);
             }}
-            style={{
-              width: '100%',
-              padding: '10px 16px',
-              fontSize: '13px',
-              color: 'var(--color-text-primary)',
-              border: 'none',
-              backgroundColor: 'transparent',
-              cursor: 'pointer',
-              textAlign: 'left',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
+            className="muwi-context-menu__item"
           >
             {contextDraft?.isLocked ? 'Unlock' : 'Lock'}
           </button>
-          <div style={{ height: 1, backgroundColor: 'var(--color-border-default)' }} />
+          <div className="muwi-context-menu__separator" />
           <button
             onClick={() => handleDelete(contextMenu.draftId)}
-            style={{
-              width: '100%',
-              padding: '10px 16px',
-              fontSize: '13px',
-              color: 'var(--color-error)',
-              border: 'none',
-              backgroundColor: 'transparent',
-              cursor: 'pointer',
-              textAlign: 'left',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--color-error-subtle)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
+            className="muwi-context-menu__item"
+            data-destructive="true"
           >
             Delete
           </button>

@@ -3796,3 +3796,498 @@
     transform: translateY(0);
   }
 }
+
+/* ==========================================================================
+   Dropdowns
+   ========================================================================== */
+
+.muwi-dropdown {
+  position: relative;
+  flex: 1;
+}
+
+.muwi-dropdown__trigger {
+  width: 100%;
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  transition: var(--transition-colors);
+}
+
+.muwi-dropdown__trigger:hover {
+  border-color: var(--color-border-hover);
+}
+
+.muwi-dropdown__trigger:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.muwi-dropdown__chevron {
+  transition: transform var(--duration-normal) var(--ease-default);
+}
+
+.muwi-dropdown__trigger[aria-expanded='true'] .muwi-dropdown__chevron {
+  transform: rotate(180deg);
+}
+
+.muwi-dropdown__menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: var(--space-1);
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  z-index: var(--z-dropdown);
+  overflow: hidden;
+}
+
+.muwi-dropdown__item {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-xs);
+  text-align: left;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--color-text-primary);
+  transition: var(--transition-colors);
+}
+
+.muwi-dropdown__item:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+.muwi-dropdown__item.is-active {
+  background-color: var(--color-bg-tertiary);
+}
+
+.muwi-dropdown__item-indicator {
+  color: var(--color-text-secondary);
+}
+
+/* ==========================================================================
+   Empty States
+   ========================================================================== */
+
+.muwi-empty-state {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: var(--space-6);
+}
+
+.muwi-empty-state__icon {
+  color: var(--color-text-tertiary);
+  opacity: 0.5;
+}
+
+.muwi-empty-state__title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.muwi-empty-state__description {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.muwi-empty-state__action {
+  margin-top: var(--space-2);
+}
+
+/* ==========================================================================
+   Loading States
+   ========================================================================== */
+
+.muwi-loading-state {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+}
+
+.muwi-loading-state__content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.muwi-loading-state__spinner {
+  animation: muwi-spin 1s linear infinite;
+}
+
+@keyframes muwi-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================================================
+   Error States
+   ========================================================================== */
+
+.muwi-error-state {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-error);
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.muwi-error-state__icon {
+  opacity: 0.8;
+}
+
+.muwi-error-state__content {
+  text-align: center;
+}
+
+.muwi-error-state__title {
+  font-weight: var(--weight-medium);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.muwi-error-state__message {
+  color: var(--color-text-secondary);
+  margin: 0;
+  font-size: var(--font-size-sm);
+}
+
+/* ==========================================================================
+   Drafts List Extensions
+   ========================================================================== */
+
+.muwi-drafts-list__header {
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.muwi-drafts-list__controls {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.muwi-drafts-list__empty {
+  padding: var(--space-8) var(--space-4);
+  text-align: center;
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-sm);
+}
+
+/* ==========================================================================
+   Long Drafts TOC Extensions
+   ========================================================================== */
+
+.muwi-longdrafts-toc {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.muwi-longdrafts-toc.is-collapsed {
+  width: auto;
+  padding: var(--space-2);
+}
+
+.muwi-longdrafts-toc__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.muwi-longdrafts-toc__title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.muwi-longdrafts-toc__toolbar-row {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.muwi-longdrafts-toc__tree {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-2) 0;
+}
+
+.muwi-longdrafts-toc__empty {
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-sm);
+}
+
+.muwi-longdrafts-toc__empty p {
+  margin: 0;
+}
+
+.muwi-longdrafts-toc__empty p + p {
+  margin-top: var(--space-1);
+}
+
+.muwi-longdrafts-toc__footer {
+  padding: var(--space-2) var(--space-3);
+  border-top: 1px solid var(--color-border-default);
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.muwi-longdrafts-toc__item {
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.muwi-longdrafts-toc__item.is-drop-target {
+  background-color: var(--color-accent-subtle);
+}
+
+.muwi-longdrafts-toc__item.is-dragging {
+  opacity: 0.5;
+}
+
+.muwi-longdrafts-toc__drag-handle {
+  color: var(--color-text-tertiary);
+  cursor: grab;
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-default);
+}
+
+.muwi-longdrafts-toc__item:hover .muwi-longdrafts-toc__drag-handle {
+  opacity: 1;
+}
+
+.muwi-longdrafts-toc__expand {
+  width: 16px;
+  height: 16px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  border-radius: var(--radius-xs);
+  transition: var(--transition-colors);
+}
+
+.muwi-longdrafts-toc__expand:hover {
+  background: var(--color-hover-overlay);
+  color: var(--color-text-primary);
+}
+
+.muwi-longdrafts-toc__expand-placeholder {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.muwi-longdrafts-toc__status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.muwi-longdrafts-toc__item-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--font-size-sm);
+}
+
+.muwi-longdrafts-toc__item-count {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Long Drafts Toolbar
+   ========================================================================== */
+
+.muwi-longdrafts-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.muwi-longdrafts-toolbar__group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.muwi-longdrafts-toolbar__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+/* ==========================================================================
+   Long Drafts Settings Panel
+   ========================================================================== */
+
+.muwi-longdrafts-settings {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.muwi-longdrafts-settings__copy {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.muwi-longdrafts-settings__toggle-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+
+.muwi-longdrafts-settings__toggle-row input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-accent-default);
+}
+
+/* ==========================================================================
+   Draft Editor
+   ========================================================================== */
+
+.muwi-draft-editor__toolbar {
+  padding: var(--space-2) var(--space-4);
+  border-top: 1px solid var(--color-border-default);
+  background: var(--color-bg-primary);
+}
+
+/* ==========================================================================
+   Document Switcher Modal
+   ========================================================================== */
+
+.muwi-document-switcher {
+  position: fixed;
+  inset: 0;
+  background-color: var(--color-bg-overlay);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 100px;
+  z-index: var(--z-modal);
+}
+
+.muwi-document-switcher__panel {
+  width: 400px;
+  max-height: 500px;
+  background-color: var(--color-bg-elevated);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-modal);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.muwi-document-switcher__header {
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-border-default);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.muwi-document-switcher__title {
+  margin: 0;
+  font-size: var(--font-size-md);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.muwi-document-switcher__list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.muwi-document-switcher__item {
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--color-border-default);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: var(--transition-colors);
+}
+
+.muwi-document-switcher__item:hover {
+  background-color: var(--color-bg-secondary);
+}
+
+.muwi-document-switcher__item.is-active {
+  background-color: var(--color-accent-subtle);
+}
+
+.muwi-document-switcher__item-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-primary);
+}
+
+.muwi-document-switcher__item-meta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  margin-top: var(--space-0);
+}
+
+.muwi-document-switcher__footer {
+  padding: var(--space-3) var(--space-5);
+  border-top: 1px solid var(--color-border-default);
+}

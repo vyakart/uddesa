@@ -16,8 +16,13 @@
     "test:e2e:headed": "playwright test --headed",
     "audit:deps:json": "npm audit --json",
     "audit:deps:summary": "node scripts/security/summarize-npm-audit.mjs",
+    "changelog": "node scripts/release/generate-changelog.mjs",
+    "changelog:write": "node scripts/release/generate-changelog.mjs --output CHANGELOG.md",
     "electron:dev": "vite",
-    "electron:build": "npm run build && electron-builder",
+    "electron:build": "npm run build && electron-builder --config electron-builder.config.cjs",
+    "electron:build:mac": "npm run build && electron-builder --config electron-builder.config.cjs --mac",
+    "electron:build:win": "npm run build && electron-builder --config electron-builder.config.cjs --win",
+    "electron:build:linux": "npm run build && electron-builder --config electron-builder.config.cjs --linux",
     "electron:preview": "vite build && electron ."
   },
   "dependencies": {

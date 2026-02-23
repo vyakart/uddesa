@@ -146,16 +146,8 @@ export function LongDrafts() {
         diaryType="long-drafts"
         toolbar={<div />}
         canvas={
-          <div
-            style={{
-              flex: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'var(--color-text-secondary)',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div className="muwi-loading-state">
+            <div className="muwi-loading-state__content">
               <svg
                 width="24"
                 height="24"
@@ -163,20 +155,12 @@ export function LongDrafts() {
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
-                style={{ animation: 'spin 1s linear infinite' }}
+                className="muwi-loading-state__spinner"
               >
                 <path d="M21 12a9 9 0 11-6.219-8.56" />
               </svg>
               <span>Loading documents...</span>
             </div>
-            <style>
-              {`
-                @keyframes spin {
-                  from { transform: rotate(0deg); }
-                  to { transform: rotate(360deg); }
-                }
-              `}
-            </style>
           </div>
         }
         status={{ left: 'Loading Long Drafts...', right: 'Preparing document workspace' }}
@@ -190,17 +174,7 @@ export function LongDrafts() {
         diaryType="long-drafts"
         toolbar={<div />}
         canvas={
-          <div
-            style={{
-              flex: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'var(--color-error)',
-              flexDirection: 'column',
-              gap: '16px',
-            }}
-          >
+          <div className="muwi-error-state">
             <svg
               width="48"
               height="48"
@@ -208,26 +182,20 @@ export function LongDrafts() {
               fill="none"
               stroke="currentColor"
               strokeWidth="1.5"
+              className="muwi-error-state__icon"
             >
               <circle cx="12" cy="12" r="10" />
               <line x1="12" y1="8" x2="12" y2="12" />
               <line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
-            <div style={{ textAlign: 'center' }}>
-              <p style={{ fontWeight: 500, margin: '0 0 8px 0' }}>Error loading documents</p>
-              <p style={{ color: 'var(--color-text-secondary)', margin: 0, fontSize: '14px' }}>{error}</p>
+            <div className="muwi-error-state__content">
+              <p className="muwi-error-state__title">Error loading documents</p>
+              <p className="muwi-error-state__message">{error}</p>
             </div>
             <button
               onClick={() => loadLongDrafts()}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: 'var(--color-accent-default)',
-                color: 'var(--color-text-inverse)',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '14px',
-                cursor: 'pointer',
-              }}
+              className="muwi-button"
+              data-variant="primary"
             >
               Try Again
             </button>
@@ -262,17 +230,7 @@ export function LongDrafts() {
           />
         }
         canvas={
-          <div
-            style={{
-              flex: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexDirection: 'column',
-              gap: '24px',
-              color: 'var(--color-text-secondary)',
-            }}
-          >
+          <div className="muwi-empty-state">
             <svg
               width="64"
               height="64"
@@ -280,47 +238,27 @@ export function LongDrafts() {
               fill="none"
               stroke="currentColor"
               strokeWidth="1"
-              style={{ opacity: 0.5 }}
+              className="muwi-empty-state__icon"
             >
               <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
               <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
             </svg>
-            <div style={{ textAlign: 'center' }}>
-              <h2 style={{ fontSize: '20px', fontWeight: 600, margin: '0 0 8px 0', color: 'var(--color-text-primary)' }}>
-                Start your first long draft
-              </h2>
-              <p style={{ fontSize: '14px', margin: 0 }}>
-                Create a document and build it section by section.
-              </p>
+            <h2 className="muwi-empty-state__title">Start your first long draft</h2>
+            <p className="muwi-empty-state__description">
+              Create a document and build it section by section.
+            </p>
+            <div className="muwi-empty-state__action">
+              <button
+                onClick={handleCreateDocument}
+                className="muwi-button"
+                data-variant="primary"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+                Create New Document
+              </button>
             </div>
-            <button
-              onClick={handleCreateDocument}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '12px 24px',
-                backgroundColor: 'var(--color-accent-default)',
-                color: 'var(--color-text-inverse)',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '15px',
-                fontWeight: 500,
-                cursor: 'pointer',
-                transition: 'background-color 150ms ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'var(--color-accent-hover)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'var(--color-accent-default)';
-              }}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 5v14M5 12h14" />
-              </svg>
-              Create New Document
-            </button>
           </div>
         }
         status={{ left: 'Section: None selected', right: '0/0 words' }}
@@ -676,66 +614,18 @@ function DocumentSwitcher({ onClose, onCreateNew }: DocumentSwitcherProps) {
   );
 
   return (
-    <div
-      onClick={onClose}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        backgroundColor: 'var(--color-bg-overlay)',
-        display: 'flex',
-        alignItems: 'flex-start',
-        justifyContent: 'center',
-        paddingTop: '100px',
-        zIndex: 1000,
-      }}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          width: '400px',
-          maxHeight: '500px',
-          backgroundColor: 'var(--color-bg-elevated)',
-          borderRadius: '12px',
-          boxShadow: 'var(--shadow-modal)',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        <div
-          style={{
-            padding: '16px 20px',
-            borderBottom: '1px solid var(--color-border-default)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--color-text-primary)' }}>
-            Documents
-          </h3>
-          <button
-            onClick={onClose}
-            style={{
-              width: '28px',
-              height: '28px',
-              border: 'none',
-              backgroundColor: 'transparent',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'var(--color-text-secondary)',
-              borderRadius: '4px',
-            }}
-          >
+    <div className="muwi-document-switcher" onClick={onClose}>
+      <div className="muwi-document-switcher__panel" onClick={(e) => e.stopPropagation()}>
+        <div className="muwi-document-switcher__header">
+          <h3 className="muwi-document-switcher__title">Documents</h3>
+          <button onClick={onClose} className="muwi-sidebar-button" aria-label="Close">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M18 6L6 18M6 6l12 12" />
             </svg>
           </button>
         </div>
 
-        <div style={{ flex: 1, overflowY: 'auto' }}>
+        <div className="muwi-document-switcher__list">
           {documents.map((doc) => {
             const updatedDate = formatMetadataDate(doc.metadata?.modifiedAt ?? doc.modifiedAt);
 
@@ -743,51 +633,20 @@ function DocumentSwitcher({ onClose, onCreateNew }: DocumentSwitcherProps) {
               <div
                 key={doc.id}
                 onClick={() => handleSelect(doc.id)}
-                style={{
-                  padding: '12px 20px',
-                  borderBottom: '1px solid var(--color-border-default)',
-                  cursor: 'pointer',
-                  backgroundColor: doc.id === currentDocumentId ? 'var(--color-accent-subtle)' : 'transparent',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}
-                onMouseEnter={(e) => {
-                  if (doc.id !== currentDocumentId) {
-                    e.currentTarget.style.backgroundColor = 'var(--color-bg-secondary)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (doc.id !== currentDocumentId) {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                  }
-                }}
+                className={`muwi-document-switcher__item ${doc.id === currentDocumentId ? 'is-active' : ''}`}
               >
                 <div>
-                  <div style={{ fontSize: '14px', fontWeight: 500, color: 'var(--color-text-primary)' }}>
-                    {doc.title}
-                  </div>
-                  <div style={{ fontSize: '12px', color: 'var(--color-text-tertiary)', marginTop: '2px' }}>
+                  <div className="muwi-document-switcher__item-title">{doc.title}</div>
+                  <div className="muwi-document-switcher__item-meta">
                     {(doc.metadata?.totalWordCount ?? 0).toLocaleString()} words
                     {updatedDate ? ` • Updated ${updatedDate}` : ''}
                   </div>
                 </div>
                 <button
                   onClick={(e) => handleDelete(doc.id, e)}
-                  style={{
-                    width: '24px',
-                    height: '24px',
-                    border: 'none',
-                    backgroundColor: 'transparent',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'var(--color-error)',
-                    opacity: 0.5,
-                    borderRadius: '4px',
-                  }}
+                  className="muwi-sidebar-button"
                   title="Delete document"
+                  data-destructive="true"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2" />
@@ -798,27 +657,14 @@ function DocumentSwitcher({ onClose, onCreateNew }: DocumentSwitcherProps) {
           })}
         </div>
 
-        <div style={{ padding: '12px 20px', borderTop: '1px solid var(--color-border-default)' }}>
+        <div className="muwi-document-switcher__footer">
           <button
             onClick={() => {
               onCreateNew();
               onClose();
             }}
-            style={{
-              width: '100%',
-              padding: '10px 16px',
-              backgroundColor: 'var(--color-accent-default)',
-              color: 'var(--color-text-inverse)',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: 500,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-            }}
+            className="muwi-button is-full-width"
+            data-variant="primary"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 5v14M5 12h14" />
