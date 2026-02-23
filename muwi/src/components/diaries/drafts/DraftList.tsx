@@ -60,7 +60,7 @@ function truncateText(text: string, maxLength: number): string {
 // Helper to sort drafts
 function sortDrafts(drafts: Draft[], sortBy: DraftSortBy, sortOrder: 'asc' | 'desc'): Draft[] {
   const sorted = [...drafts].sort((a, b) => {
-    let comparison = 0;
+    let comparison: number;
     switch (sortBy) {
       case 'title':
         comparison = a.title.localeCompare(b.title);

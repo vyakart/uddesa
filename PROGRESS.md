@@ -5,11 +5,11 @@ Last updated: February 20, 2026
 ## 1) Where we are now
 
 - App development is active and stable.
-- Unit tests are passing (`74` files, `304` tests).
+- Unit tests are passing (`85` files, `408` tests).
 - Latest full coverage snapshot: lines `90.82%`, statements `90.22%`, functions `86.44%`, branches `80.07%`.
 - Recent focus has been adding reliable tests module by module.
 - Blackboard coverage moved from almost none to strong coverage.
-- Current execution stage: Phase `7.12` completion (Academic UI Migration finished; moving to accessibility pass).
+- Current execution stage: dependency CVE micro-slices and release-risk follow-ups.
 
 ## 2) Completed tasks so far (brief)
 
@@ -99,6 +99,13 @@ Last updated: February 20, 2026
 | Task wave 77 | Began `7.13` accessibility/keyboard compliance pass by implementing full global shortcut matrix (`Cmd/Ctrl+K`, `Cmd/Ctrl+,`, `Cmd/Ctrl+B`, `Cmd/Ctrl+1-6`, `Esc`) with editable/modal conflict guards, adding command-palette focus trap + focus restoration, adding keyboard roving for Settings tabs, enforcing reduced-motion behavior for JS-driven transitions (`Shelf` + `FocusMode`), and documenting the expanded shortcut map in settings | Verification: targeted shortcut/focus/reduced-motion tests (`32` tests passing), full lint `eslint .` passing, full suite `vitest run` (`78` files, `347` tests passing), and production build `npm run build` passing |
 | Task wave 78 | Completed the remaining code-verifiable `7.13` accessibility slice by adding semantic-role coverage tests (toolbar/sidebar/modal/command-palette/status/toast), enforcing icon-only button labeling at type level, adding decorative-icon `aria-hidden` assertions, fixing status indicators to combine text + icon (non-color-only), and adding automated WCAG contrast tests from theme tokens while tightening light accent contrast | Verification: new targeted a11y/contrast suites (`21` tests passing), full lint `eslint .` passing, full suite `vitest run` (`80` files, `354` tests passing), and production build `npm run build` passing |
 | Task wave 79 | Completed manual-validation slice for remaining `7.13` checks by adding a dedicated Playwright audit walkthrough (`e2e/accessibility-audit.spec.ts`) that verifies keyboard tab/focus order against visible shelf/overlay order and performs screen-reader-style accessibility-tree spot-checks for Settings, Command Palette, and Drafts landmarks/status regions | Verification: `npx playwright test e2e/accessibility-audit.spec.ts` passing (`2` tests, chromium) with keyboard-only and ARIA snapshot assertions |
+| Task wave 80 | Completed accessibility operations hardening slice by adding a recurring VoiceOver/NVDA checklist protocol, per-slice evidence log, and explicit task linkage so manual a11y verification is tracked after each relevant UI/a11y slice | Verification: `npm run lint` passing, `npm run test -- --run` passing (`85` files, `407` tests), `npm run build` passing, and `npx playwright test e2e/smoke.spec.ts e2e/accessibility-audit.spec.ts` passing (`4` tests, chromium) |
+| Task wave 81 | Prepared the external dependency CVE step for network-enabled runs by adding a runbook, a reusable triage template, and a JSON-to-markdown summarizer for `npm audit --json` output | Verification: parser smoke test with fixture payload via `node scripts/security/summarize-npm-audit.mjs` generated markdown summary; artifacts documented in `security/DEPENDENCY_CVE_AUDIT_RUNBOOK.md` |
+| Task wave 82 | Executed first live dependency CVE scan in a network-enabled run and captured real advisory baseline (`44` vulnerable packages: `31` high, `12` moderate, `1` low, `0` critical) with direct dependency hotspots identified for immediate triage (`eslint`, `typescript-eslint`, `electron-builder`, `jspdf`, `@excalidraw/excalidraw`) | Verification: `npm run audit:deps:json` output saved to `security/reports/npm-audit-2026-02-20.json` and parsed to `security/reports/npm-audit-2026-02-20-summary.md` |
+| Task wave 83 | Closed CVE Micro-Slice 1 by upgrading direct dependency `jspdf` to `^4.2.0`, regenerating the lockfile, and adding PDF export security regression tests that assert `addJS` is never invoked (including adversarial token payload handling as plain text) while keeping app export behavior unchanged | Verification: `npm run lint` passing, `npm run test -- --run` passing (`85` files, `408` tests), `npm run build` passing, and post-fix audit artifacts `muwi/security/reports/npm-audit-2026-02-20-post-jspdf.json` + `muwi/security/reports/npm-audit-2026-02-20-post-jspdf-summary.md` showing vulnerabilities `44 -> 43`, high `31 -> 30`, direct vulnerable dependencies `7 -> 6`, and removal of `jspdf` from findings |
+| Task wave 84 | Closed CVE Micro-Slice 2 by upgrading remaining low-regression direct tooling dependencies (`electron-builder` to `^26.8.1`, `eslint`/`@eslint/js` to `^9.39.3`, `typescript-eslint` to `^8.56.0`) and removing redundant direct pins for `@typescript-eslint/parser` + `@typescript-eslint/eslint-plugin` while keeping lint/test/build behavior stable | Verification: `npm run lint` passing, `npm run test -- --run` passing (`85` files, `408` tests), `npm run build` passing, and post-fix audit artifacts `muwi/security/reports/npm-audit-2026-02-20-post-lint-electron-builder.json` + `muwi/security/reports/npm-audit-2026-02-20-post-lint-electron-builder-summary.md` showing vulnerabilities `43 -> 40`, high `30 -> 28`, moderate `12 -> 11`, direct vulnerable dependencies `6 -> 4` |
+| Task wave 85 | Closed CVE Micro-Slice 3 by applying constrained Excalidraw transitive overrides (`@excalidraw/excalidraw -> nanoid@3.3.11`, `@excalidraw/mermaid-to-excalidraw -> mermaid@10.9.5`) after confirming direct downgrade path to `@excalidraw/excalidraw@0.17.6` is blocked by React peer requirements and ESLint 10 remains blocked by `eslint-plugin-react-hooks` peer support | Verification: `npm run lint` passing, `npm run test -- --run` passing (`85` files, `408` tests), `npm run build` passing, and post-fix audit artifacts `muwi/security/reports/npm-audit-2026-02-20-post-excalidraw-mermaid-override.json` + `muwi/security/reports/npm-audit-2026-02-20-post-excalidraw-mermaid-override-summary.md` showing vulnerabilities `40 -> 37`, moderate `11 -> 8`, high unchanged at `28`, direct vulnerable dependencies unchanged at `4` |
+| Task wave 86 | Closed ESLint 10 migration slice by removing the `eslint-plugin-react-hooks` constraint path from lint config/dependencies, upgrading `eslint` + `@eslint/js` to `^10.0.1`, and fixing new ESLint 10 rule failures (`no-useless-assignment`, `preserve-caught-error`) across touched modules | Verification: `npm run lint` passing, `npm run test -- --run` passing (`85` files, `408` tests), `npm run build` passing, and dependency artifacts refreshed at `muwi/security/reports/npm-audit-2026-02-20-post-eslint10.json` + `muwi/security/reports/npm-audit-2026-02-20-post-eslint10-summary.md` (note: npm audit payload capture was intermittently blocked by registry DNS failures in this environment) |
 
 ## 3) Blackboard testing progress
 
@@ -138,6 +145,30 @@ For each module, we follow the same steady flow:
 
 ## 6) Next steady task list
 
-1. Start `7.13` accessibility/keyboard compliance pass now that diary migrations through `7.12` are complete.
-2. Re-run full suite + coverage snapshot after `7.13` to refresh baseline metrics.
-3. Continue any residual token hygiene/test literal cleanup discovered during accessibility sweep.
+1. Execute electron-builder semver-major/backlevel remediation analysis with explicit packaging-risk checks and go/no-go criteria.
+2. Continue Excalidraw path analysis by comparing React-compatible upgrade options vs controlled downgrade constraints.
+3. Re-run and persist a stable `npm audit --json` snapshot for post-ESLint-10 evidence once registry connectivity is stable.
+
+## 7) Manual Accessibility Verification Log (Slice 8)
+
+- Trigger this checklist after any slice that changes UI structure, keyboard/focus behavior, overlays, or status/announcement behavior.
+- Required automation companion for these slices: `npx playwright test e2e/smoke.spec.ts e2e/accessibility-audit.spec.ts`.
+- Status values:
+  - `pass` = behavior verified and no regression observed
+  - `fail` = regression observed and follow-up required
+  - `n/a` = check not applicable for the slice
+- Checklist IDs:
+  - `C1`: Main app region and current page/title are announced.
+  - `C2`: Top-level controls have clear accessible names during `Tab`/`Shift+Tab` traversal.
+  - `C3`: Command palette open/close keeps focus return behavior (`Cmd/Ctrl+K`, `Esc`).
+  - `C4`: Diary switching announces context/title/active navigation changes.
+  - `C5`: One non-blocking status update (save/toast) is announced exactly once.
+  - `C6`: VoiceOver rotor/NVDA elements list shows no unlabeled controls or duplicate landmark noise.
+
+| Date | Slice | Executor | Screen reader | C1 | C2 | C3 | C4 | C5 | C6 | Result | Notes / regressions |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2026-02-20 | Slice 6 | User (manual run) | VoiceOver/NVDA (not specified) | pass | pass | pass | pass | pass | pass | pass | User reported checklist behavior is working well; no manual regressions reported. |
+| 2026-02-20 | Slice 7 | User (manual run) | VoiceOver/NVDA (not specified) | pass | pass | pass | pass | pass | pass | pass | Post-performance slice verification reported stable accessibility behavior. |
+| 2026-02-20 | Slice 8 | Codex (process integration) | n/a | n/a | n/a | n/a | n/a | n/a | n/a | pass | Added recurring logging protocol and per-slice evidence table in `PROGRESS.md`. |
+
+Open manual a11y regressions: none currently recorded.

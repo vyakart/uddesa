@@ -1,22 +1,73 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import {
   useAppStore,
   selectCurrentView,
   selectActiveDiary,
   selectActiveItemId,
+  type DiaryType,
 } from '@/stores/appStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useGlobalShortcuts, usePasteHandler } from '@/hooks';
 import { applyThemeToDocument, getSystemPrefersDark, resolveTheme, watchSystemTheme } from '@/utils/theme';
 import { Shelf } from '@/components/shelf';
-import { CommandPalette, ErrorBoundary } from '@/components/common';
-import { PersonalDiary } from '@/components/diaries/personal-diary';
-import { Blackboard } from '@/components/diaries/blackboard';
-import { Scratchpad } from '@/components/diaries/scratchpad';
-import { Drafts } from '@/components/diaries/drafts';
-import { LongDrafts } from '@/components/diaries/long-drafts';
-import { Academic } from '@/components/diaries/academic';
+import { CommandPalette } from '@/components/common/CommandPalette';
+import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { buildPathFromState, parseAppRoute, routeMatchesState } from '@/utils/appRouter';
+
+const PersonalDiary = lazy(async () => {
+  const module = await import('@/components/diaries/personal-diary');
+  return { default: module.PersonalDiary };
+});
+
+const Blackboard = lazy(async () => {
+  const module = await import('@/components/diaries/blackboard');
+  return { default: module.Blackboard };
+});
+
+const Scratchpad = lazy(async () => {
+  const module = await import('@/components/diaries/scratchpad');
+  return { default: module.Scratchpad };
+});
+
+const Drafts = lazy(async () => {
+  const module = await import('@/components/diaries/drafts');
+  return { default: module.Drafts };
+});
+
+const LongDrafts = lazy(async () => {
+  const module = await import('@/components/diaries/long-drafts');
+  return { default: module.LongDrafts };
+});
+
+const Academic = lazy(async () => {
+  const module = await import('@/components/diaries/academic');
+  return { default: module.Academic };
+});
+
+const diaryDisplayNames: Record<DiaryType, string> = {
+  scratchpad: 'Scratchpad',
+  blackboard: 'Blackboard',
+  'personal-diary': 'Personal Diary',
+  drafts: 'Drafts',
+  'long-drafts': 'Long Drafts',
+  academic: 'Academic',
+};
+
+function DiaryLoadingState({ diary }: { diary: DiaryType }) {
+  return (
+    <main
+      className="min-h-screen flex items-center justify-center"
+      role="main"
+      aria-busy="true"
+      aria-live="polite"
+      aria-label={`${diaryDisplayNames[diary]} loading`}
+    >
+      <p role="status" className="text-gray-500">
+        Loading {diaryDisplayNames[diary]}...
+      </p>
+    </main>
+  );
+}
 
 function App() {
   const currentView = useAppStore(selectCurrentView);
@@ -131,7 +182,11 @@ function App() {
 
   return (
     <>
-      <ErrorBoundary key={activeDiary}>{renderDiary()}</ErrorBoundary>
+      <ErrorBoundary key={activeDiary}>
+        <Suspense fallback={<DiaryLoadingState diary={activeDiary} />}>
+          {renderDiary()}
+        </Suspense>
+      </ErrorBoundary>
       <CommandPalette />
     </>
   );

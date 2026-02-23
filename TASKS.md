@@ -2032,6 +2032,7 @@ This document breaks down the MUWI implementation into executable tasks. Each ta
   - [x] Automated checks (axe or equivalent) run in CI
   - [x] Manual keyboard-only audit complete
   - [x] Manual screen reader spot-check complete
+  - [x] Manual audit results are logged per relevant slice in `PROGRESS.md`
 - **VoiceOver/NVDA Human Spot-Check (5-10 min)**:
   - Launch the app and confirm the main app region and current page/title are announced.
   - Traverse top-level controls by keyboard (`Tab`/`Shift+Tab`) and verify each interactive element has a clear accessible name.

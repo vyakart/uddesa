@@ -38,7 +38,7 @@ interface DraftsState {
 
 function sortDrafts(drafts: Draft[], sortBy: DraftSortBy, sortOrder: SortOrder): Draft[] {
   const sorted = [...drafts].sort((a, b) => {
-    let comparison = 0;
+    let comparison: number;
     switch (sortBy) {
       case 'title':
         comparison = a.title.localeCompare(b.title);

@@ -73,6 +73,54 @@ describe('ContextMenu', () => {
     expect(onClose).toHaveBeenCalledTimes(2);
   });
 
+  it('supports submenu keyboard navigation and separator rendering branches', () => {
+    const onClose = vi.fn();
+    const openSpy = vi.fn();
+    const renameSpy = vi.fn();
+    const duplicateSpy = vi.fn();
+
+    const items: ContextMenuItem[] = [
+      {
+        id: 'open',
+        label: 'Open',
+        shortcut: '⌘O',
+        icon: <span>icon-open</span>,
+        onSelect: openSpy,
+      },
+      {
+        id: 'more',
+        label: 'More',
+        submenu: [
+          { id: 'sub-disabled', label: 'Disabled sub', disabled: true, onSelect: vi.fn() },
+          { id: 'rename', label: 'Rename', shortcut: 'R', icon: <span>icon-rename</span>, onSelect: renameSpy },
+          { id: 'sub-separator', type: 'separator' },
+          { id: 'duplicate', label: 'Duplicate', onSelect: duplicateSpy },
+        ],
+      },
+    ];
+
+    render(<ContextMenu isOpen x={20} y={20} items={items} onClose={onClose} />);
+    const menu = screen.getByRole('menu', { name: 'Context menu' });
+    menu.focus();
+
+    expect(screen.getByText('⌘O')).toBeInTheDocument();
+
+    fireEvent.keyDown(menu, { key: 'ArrowDown' });
+    fireEvent.keyDown(menu, { key: 'Enter' });
+    expect(screen.getByRole('menu', { name: 'Submenu' })).toBeInTheDocument();
+    expect(screen.getAllByRole('separator').length).toBeGreaterThan(0);
+
+    fireEvent.keyDown(menu, { key: 'ArrowDown' });
+    fireEvent.keyDown(menu, { key: 'ArrowUp' });
+    fireEvent.keyDown(menu, { key: 'ArrowLeft' });
+    expect(screen.queryByRole('menu', { name: 'Submenu' })).not.toBeInTheDocument();
+
+    fireEvent.keyDown(menu, { key: 'ArrowRight' });
+    fireEvent.keyDown(menu, { key: 'Enter' });
+    expect(renameSpy).toHaveBeenCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
   it('closes when clicking outside and supports submenu via hover', () => {
     const onClose = vi.fn();
     const { items } = createItems();
@@ -87,6 +135,47 @@ describe('ContextMenu', () => {
     expect(screen.getByRole('menu', { name: 'Submenu' })).toBeInTheDocument();
 
     fireEvent.mouseDown(screen.getByRole('button', { name: 'Outside' }));
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not execute disabled or nested-submenu actions on click', () => {
+    const onClose = vi.fn();
+    const leafSpy = vi.fn();
+    const items: ContextMenuItem[] = [
+      { id: 'disabled-root', label: 'Disabled root', disabled: true, onSelect: vi.fn() },
+      {
+        id: 'more',
+        label: 'More',
+        submenu: [
+          { id: 'disabled-sub', label: 'Disabled sub', disabled: true, onSelect: vi.fn() },
+          {
+            id: 'nested-submenu',
+            label: 'Nested submenu',
+            submenu: [{ id: 'leaf-child', label: 'Leaf child', onSelect: vi.fn() }],
+          },
+          { id: 'leaf', label: 'Leaf', onSelect: leafSpy },
+        ],
+      },
+    ];
+
+    render(<ContextMenu isOpen x={40} y={40} items={items} onClose={onClose} />);
+
+    const disabledRoot = screen.getByRole('menuitem', { name: 'Disabled root' });
+    fireEvent.mouseEnter(disabledRoot);
+    fireEvent.click(disabledRoot);
+    expect(onClose).not.toHaveBeenCalled();
+
+    fireEvent.mouseEnter(screen.getByRole('menuitem', { name: 'More' }));
+    const submenu = screen.getByRole('menu', { name: 'Submenu' });
+    expect(submenu).toBeInTheDocument();
+
+    fireEvent.mouseEnter(screen.getByRole('menuitem', { name: 'Disabled sub' }));
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Disabled sub' }));
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Nested submenu' }));
+    expect(onClose).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Leaf' }));
+    expect(leafSpy).toHaveBeenCalledTimes(1);
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
@@ -135,6 +224,44 @@ describe('ContextMenu', () => {
       expect(screen.queryByRole('menu', { name: 'Context menu' })).not.toBeInTheDocument();
       expect(trigger).toHaveFocus();
     });
+  });
+
+  it('closes safely when return-focus target is removed before cleanup', async () => {
+    const user = userEvent.setup();
+
+    function Harness() {
+      const [isOpen, setIsOpen] = useState(false);
+      const items: ContextMenuItem[] = [{ id: 'open', label: 'Open', onSelect: vi.fn() }];
+
+      return (
+        <div>
+          <button type="button" onClick={() => setIsOpen(true)}>
+            Open removable menu
+          </button>
+          <ContextMenu isOpen={isOpen} x={80} y={80} items={items} onClose={() => setIsOpen(false)} />
+        </div>
+      );
+    }
+
+    render(<Harness />);
+    const trigger = screen.getByRole('button', { name: 'Open removable menu' });
+    await user.click(trigger);
+    await waitFor(() => expect(screen.getByRole('menu', { name: 'Context menu' })).toBeInTheDocument());
+
+    trigger.remove();
+    fireEvent.keyDown(screen.getByRole('menu', { name: 'Context menu' }), { key: 'Tab' });
+
+    await waitFor(() => {
+      expect(screen.queryByRole('menu', { name: 'Context menu' })).not.toBeInTheDocument();
+    });
+  });
+
+  it('returns null when closed or when there are no items', () => {
+    const { rerender } = render(<ContextMenu isOpen={false} x={0} y={0} items={[]} onClose={vi.fn()} />);
+    expect(screen.queryByRole('menu', { name: 'Context menu' })).not.toBeInTheDocument();
+
+    rerender(<ContextMenu isOpen x={0} y={0} items={[]} onClose={vi.fn()} />);
+    expect(screen.queryByRole('menu', { name: 'Context menu' })).not.toBeInTheDocument();
   });
 
   it('uses tokenized context-menu layout and item styles', () => {

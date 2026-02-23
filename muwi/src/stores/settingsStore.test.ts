@@ -63,4 +63,28 @@ describe('settingsStore', () => {
     await state.clearPasskey();
     expect(await state.hasPasskey()).toBe(false);
   });
+
+  it('does not persist passkey hash/salt to localStorage payload', async () => {
+    const state = useSettingsStore.getState();
+
+    await state.setPasskey('persist-secret', 'persist-hint');
+    expect(await state.verifyPasskey('persist-secret')).toBe(true);
+
+    const persistedRaw = localStorage.getItem('settings-store-persist');
+    expect(persistedRaw).toBeTruthy();
+
+    const persisted = JSON.parse(persistedRaw as string) as {
+      state: {
+        global: Record<string, unknown>;
+      };
+      version: number;
+    };
+
+    expect(persisted.version).toBe(1);
+    expect(persisted.state.global.passkeyHint).toBe('persist-hint');
+    expect(persisted.state.global.passkeyHash).toBeUndefined();
+    expect(persisted.state.global.passkeySalt).toBeUndefined();
+    expect('passkeyHash' in persisted.state.global).toBe(false);
+    expect('passkeySalt' in persisted.state.global).toBe(false);
+  });
 });

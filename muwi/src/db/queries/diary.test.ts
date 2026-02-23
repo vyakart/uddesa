@@ -78,4 +78,20 @@ describe('diary queries', () => {
     expect(dates).toContain(today);
     expect(dates).toEqual([...dates].sort());
   });
+
+  it('creates today entry when one does not exist', async () => {
+    const today = new Date().toISOString().split('T')[0];
+
+    const created = await getOrCreateTodayEntry();
+    expect(created.date).toBe(today);
+    expect(created.content).toBe('');
+    expect(created.wordCount).toBe(0);
+    expect(created.isLocked).toBe(false);
+
+    const fetchedAgain = await getOrCreateTodayEntry();
+    expect(fetchedAgain.id).toBe(created.id);
+
+    const entriesForToday = (await getAllEntries()).filter((entry) => entry.date === today);
+    expect(entriesForToday).toHaveLength(1);
+  });
 });

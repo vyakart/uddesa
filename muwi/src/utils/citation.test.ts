@@ -73,6 +73,26 @@ describe('citation utils', () => {
     });
   });
 
+  it('sanitizes bundled bibliography entry output and decodes safe entities', () => {
+    vi.spyOn(CSL.Engine.prototype, 'makeBibliography').mockImplementation(
+      () =>
+        [
+          {},
+          [
+            '<div><script>alert(1)</script><span onclick="evil()">Safe &amp; Sound&nbsp;&lt;ok&gt;</span></div>',
+          ],
+        ] as never
+    );
+
+    const entry = makeEntry({ title: 'Injected <img src=x onerror=alert(1)>' });
+    const formatted = formatBibliographyEntry(entry, 'apa7');
+
+    expect(formatted).toBe('Safe & Sound <ok>');
+    expect(formatted).not.toContain('<script');
+    expect(formatted).not.toContain('onclick=');
+    expect(formatted).not.toContain('alert(1)');
+  });
+
   it('handles in-text page-number formats for legacy citation-js templates', () => {
     const formatSpy = vi.spyOn(Cite.prototype, 'format')
       .mockReturnValueOnce('(Smith, 2024)')

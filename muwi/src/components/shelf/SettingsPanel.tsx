@@ -1,6 +1,7 @@
 import { useState, type KeyboardEvent } from 'react';
 import { useSettingsStore } from '@/stores/settingsStore';
-import { Button, Input, Select, Toggle } from '@/components/common';
+import { Button } from '@/components/common/Button';
+import { Input, Select, Toggle } from '@/components/common/FormControls';
 
 type SettingsTab = 'appearance' | 'shortcuts' | 'backup' | 'privacy';
 
@@ -34,7 +35,7 @@ export function SettingsPanel() {
       return;
     }
 
-    let nextIndex = currentIndex;
+    let nextIndex: number;
 
     if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
       event.preventDefault();

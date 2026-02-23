@@ -6,7 +6,9 @@ import { DiaryCard } from './DiaryCard';
 import { useAppStore, type DiaryType } from '@/stores/appStore';
 import { useSettingsStore, selectShelfLayout } from '@/stores/settingsStore';
 import { usePrefersReducedMotion } from '@/hooks';
-import { ContextMenu, Modal, Button, type ContextMenuItem } from '@/components/common';
+import { Button } from '@/components/common/Button';
+import { ContextMenu, type ContextMenuItem } from '@/components/common/ContextMenu';
+import { Modal } from '@/components/common/Modal';
 import { SettingsPanel } from './SettingsPanel';
 
 const DIARY_ORDER: DiaryType[] = [

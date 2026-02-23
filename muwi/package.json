@@ -14,6 +14,8 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
+    "audit:deps:json": "npm audit --json",
+    "audit:deps:summary": "node scripts/security/summarize-npm-audit.mjs",
     "electron:dev": "vite",
     "electron:build": "npm run build && electron-builder",
     "electron:preview": "vite build && electron ."
@@ -37,7 +39,7 @@
     "dexie": "^4.3.0",
     "dexie-react-hooks": "^4.2.0",
     "docx": "^9.5.1",
-    "jspdf": "^4.0.0",
+    "jspdf": "^4.2.0",
     "lucide-react": "^0.574.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -45,7 +47,7 @@
     "zustand": "^5.0.10"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.1",
+    "@eslint/js": "^10.0.1",
     "@faker-js/faker": "^10.2.0",
     "@playwright/test": "^1.58.2",
     "@testing-library/jest-dom": "^6.9.1",
@@ -54,17 +56,14 @@
     "@types/node": "^24.10.9",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
-    "@typescript-eslint/eslint-plugin": "^8.53.0",
-    "@typescript-eslint/parser": "^8.53.0",
     "@vitejs/plugin-react": "^5.1.1",
     "@vitest/coverage-v8": "^4.0.17",
     "@vitest/ui": "^4.0.17",
     "autoprefixer": "^10.4.23",
     "electron": "^40.0.0",
-    "electron-builder": "^26.4.0",
-    "eslint": "^9.39.2",
+    "electron-builder": "^26.8.1",
+    "eslint": "^10.0.1",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "fake-indexeddb": "^6.2.5",
     "globals": "^16.5.0",
@@ -73,10 +72,18 @@
     "prettier": "^3.8.0",
     "tailwindcss": "^4.1.18",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.46.4",
+    "typescript-eslint": "^8.56.0",
     "vite": "^7.2.4",
     "vite-plugin-electron": "^0.29.0",
     "vite-plugin-electron-renderer": "^0.14.6",
     "vitest": "^4.0.17"
+  },
+  "overrides": {
+    "@excalidraw/excalidraw": {
+      "nanoid": "3.3.11"
+    },
+    "@excalidraw/mermaid-to-excalidraw": {
+      "mermaid": "10.9.5"
+    }
   }
 }

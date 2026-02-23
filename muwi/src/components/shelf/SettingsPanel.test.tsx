@@ -37,6 +37,50 @@ describe('SettingsPanel', () => {
     });
   });
 
+  it('supports ArrowLeft/ArrowUp/Home/End tab-key navigation', async () => {
+    render(<SettingsPanel />);
+
+    const appearanceTab = screen.getByRole('tab', { name: 'Appearance' });
+    appearanceTab.focus();
+
+    fireEvent.keyDown(appearanceTab, { key: 'ArrowLeft' });
+    const privacyTab = screen.getByRole('tab', { name: 'Privacy' });
+    await waitFor(() => {
+      expect(privacyTab).toHaveFocus();
+      expect(privacyTab).toHaveAttribute('aria-selected', 'true');
+    });
+
+    fireEvent.keyDown(privacyTab, { key: 'ArrowUp' });
+    const backupTab = screen.getByRole('tab', { name: 'Backup' });
+    await waitFor(() => {
+      expect(backupTab).toHaveFocus();
+      expect(backupTab).toHaveAttribute('aria-selected', 'true');
+    });
+
+    fireEvent.keyDown(backupTab, { key: 'Home' });
+    await waitFor(() => {
+      expect(appearanceTab).toHaveFocus();
+      expect(appearanceTab).toHaveAttribute('aria-selected', 'true');
+    });
+
+    fireEvent.keyDown(appearanceTab, { key: 'End' });
+    await waitFor(() => {
+      expect(privacyTab).toHaveFocus();
+      expect(privacyTab).toHaveAttribute('aria-selected', 'true');
+    });
+  });
+
+  it('ignores unrelated tab key events', () => {
+    render(<SettingsPanel />);
+
+    const appearanceTab = screen.getByRole('tab', { name: 'Appearance' });
+    appearanceTab.focus();
+    fireEvent.keyDown(appearanceTab, { key: 'x' });
+
+    expect(appearanceTab).toHaveFocus();
+    expect(appearanceTab).toHaveAttribute('aria-selected', 'true');
+  });
+
   it('updates appearance and backup settings', async () => {
     render(<SettingsPanel />);
 
@@ -75,6 +119,24 @@ describe('SettingsPanel', () => {
     });
   });
 
+  it('does not update backup location when chooser returns null', async () => {
+    window.electronAPI.selectBackupLocation = vi.fn().mockResolvedValueOnce(null);
+    useSettingsStore.setState((state) => ({
+      global: {
+        ...state.global,
+        backupLocation: '/existing/location',
+      },
+    }));
+
+    render(<SettingsPanel />);
+    fireEvent.click(screen.getByRole('tab', { name: 'Backup' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Choose' }));
+
+    await waitFor(() => {
+      expect(useSettingsStore.getState().global.backupLocation).toBe('/existing/location');
+    });
+  });
+
   it('supports passkey set and clear actions', async () => {
     render(<SettingsPanel />);
 
@@ -103,6 +165,38 @@ describe('SettingsPanel', () => {
       expect(global.passkeyHash).toBeUndefined();
       expect(global.passkeySalt).toBeUndefined();
       expect(global.passkeyHint).toBeUndefined();
+    });
+  });
+
+  it('skips save for blank passkey and trims hint to undefined when empty', async () => {
+    const setPasskeySpy = vi.fn().mockResolvedValue(undefined);
+    useSettingsStore.setState({
+      ...useSettingsStore.getState(),
+      setPasskey: setPasskeySpy,
+    });
+
+    render(<SettingsPanel />);
+    fireEvent.click(screen.getByRole('tab', { name: 'Privacy' }));
+
+    fireEvent.change(screen.getByLabelText('Set Passkey'), {
+      target: { value: '   ' },
+    });
+    fireEvent.change(screen.getByLabelText('Passkey Hint'), {
+      target: { value: 'ignored' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Save Passkey' }));
+    expect(setPasskeySpy).not.toHaveBeenCalled();
+
+    fireEvent.change(screen.getByLabelText('Set Passkey'), {
+      target: { value: '  keep-me  ' },
+    });
+    fireEvent.change(screen.getByLabelText('Passkey Hint'), {
+      target: { value: '   ' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Save Passkey' }));
+
+    await waitFor(() => {
+      expect(setPasskeySpy).toHaveBeenCalledWith('keep-me', undefined);
     });
   });
 });

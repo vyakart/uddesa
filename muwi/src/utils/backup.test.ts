@@ -172,6 +172,36 @@ describe('backup utils', () => {
     expect(
       validateBackup({ metadata: { ...backup.metadata, totalRecords: -1 }, data: backup.data })
     ).toBe(false);
+    expect(
+      validateBackup({ metadata: { ...backup.metadata, totalRecords: backup.metadata.totalRecords + 1 }, data: backup.data })
+    ).toBe(false);
+    expect(
+      validateBackup({
+        metadata: backup.metadata,
+        data: {
+          ...backup.data,
+          drafts: [null],
+        },
+      })
+    ).toBe(false);
+    expect(
+      validateBackup({
+        metadata: backup.metadata,
+        data: {
+          ...backup.data,
+          drafts: [1 as never],
+        },
+      })
+    ).toBe(false);
+    expect(
+      validateBackup({
+        metadata: {
+          ...backup.metadata,
+          appVersion: 'v1',
+        },
+        data: backup.data,
+      })
+    ).toBe(false);
     expect(validateBackup({ metadata: { version: '1.0.0', createdAt: new Date().toISOString() }, data: null })).toBe(
       false
     );
@@ -180,6 +210,7 @@ describe('backup utils', () => {
     expect(parsed.metadata.version).toBe('1.0.0');
 
     expect(() => parseBackupJSON('{invalid')).toThrow('Invalid JSON format');
+    expect(() => parseBackupJSON('   ')).toThrow('Backup file is empty');
     expect(() =>
       parseBackupJSON(
         JSON.stringify({
@@ -188,6 +219,17 @@ describe('backup utils', () => {
         })
       )
     ).toThrow('Invalid backup format');
+
+    const RealTextEncoder = TextEncoder;
+    class OversizedTextEncoderMock {
+      encode() {
+        return { byteLength: 100 * 1024 * 1024 + 1 } as Uint8Array;
+      }
+    }
+
+    vi.stubGlobal('TextEncoder', OversizedTextEncoderMock as unknown as typeof TextEncoder);
+    expect(() => parseBackupJSON('{}')).toThrow('Backup file exceeds size limit');
+    vi.stubGlobal('TextEncoder', RealTextEncoder);
   });
 
   it('wraps create backup errors with a descriptive message', async () => {
@@ -261,7 +303,18 @@ describe('backup utils', () => {
 
     transactionSpy.mockRejectedValueOnce('boom' as never);
     const failed = await restoreBackup(makeBackup(), false);
-    expect(failed).toEqual({ success: false, error: 'Unknown error occurred during restore' });
+    expect(failed).toEqual({ success: false, error: 'Failed to restore backup data: Unknown restore error' });
+  });
+
+  it('returns clear errors when clearing existing data fails before restore', async () => {
+    const transactionSpy = vi.spyOn(db, 'transaction').mockRejectedValueOnce(new Error('clear exploded'));
+    const result = await restoreBackup(makeBackup(), true);
+
+    expect(result).toEqual({
+      success: false,
+      error: 'Failed to clear existing data: clear exploded',
+    });
+    expect(transactionSpy).toHaveBeenCalledTimes(1);
   });
 
   it('saves and loads backup files through Electron API methods', async () => {

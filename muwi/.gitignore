@@ -88,3 +88,6 @@ tmp/
 temp/
 .tmp/
 .cache/
+
+# Security scan artifacts
+security/reports/

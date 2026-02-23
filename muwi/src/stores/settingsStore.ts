@@ -84,6 +84,30 @@ export interface SettingsState extends SettingsDataState {
   reset: () => void;
 }
 
+type PersistedSettingsState = Pick<
+  SettingsState,
+  'global' | 'scratchpad' | 'blackboard' | 'personalDiary' | 'drafts' | 'longDrafts' | 'academic'
+>;
+
+const SETTINGS_STORE_PERSIST_VERSION = 1;
+
+function sanitizePersistedGlobal(global: GlobalSettings): GlobalSettings {
+  const sanitizedGlobal = { ...global };
+  delete sanitizedGlobal.passkeyHash;
+  delete sanitizedGlobal.passkeySalt;
+  return sanitizedGlobal;
+}
+
+function sanitizePersistedState(
+  persistedState: Partial<PersistedSettingsState>
+): Partial<PersistedSettingsState> {
+  const nextState = { ...persistedState };
+  if (nextState.global) {
+    nextState.global = sanitizePersistedGlobal(nextState.global);
+  }
+  return nextState;
+}
+
 const initialState: SettingsDataState = {
   global: { ...defaultGlobalSettings },
   scratchpad: { ...defaultScratchpadSettings },
@@ -266,9 +290,17 @@ export const useSettingsStore = create<SettingsState>()(
     ),
     {
       name: 'settings-store-persist',
+      version: SETTINGS_STORE_PERSIST_VERSION,
       storage: createJSONStorage(() => localStorage),
+      migrate: (persistedState: unknown) => {
+        if (!persistedState || typeof persistedState !== 'object') {
+          return persistedState as PersistedSettingsState;
+        }
+
+        return sanitizePersistedState(persistedState as PersistedSettingsState) as PersistedSettingsState;
+      },
       partialize: (state) => ({
-        global: state.global,
+        global: sanitizePersistedGlobal(state.global),
         scratchpad: state.scratchpad,
         blackboard: state.blackboard,
         personalDiary: state.personalDiary,

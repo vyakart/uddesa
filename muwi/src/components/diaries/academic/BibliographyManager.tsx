@@ -327,7 +327,7 @@ const BibliographyEntryItem = memo(function BibliographyEntryItem({
   onEdit,
   onDelete,
 }: BibliographyEntryItemProps) {
-  const formattedEntry = useMemo(
+  const formattedEntryText = useMemo(
     () => formatBibliographyEntry(entry, citationStyle as 'apa7'),
     [entry, citationStyle]
   );
@@ -356,8 +356,9 @@ const BibliographyEntryItem = memo(function BibliographyEntryItem({
               color: 'var(--color-text-primary)',
               lineHeight: 1.5,
             }}
-            dangerouslySetInnerHTML={{ __html: formattedEntry }}
-          />
+          >
+            {formattedEntryText}
+          </div>
           <div
             style={{
               display: 'flex',

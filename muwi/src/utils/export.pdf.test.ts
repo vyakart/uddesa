@@ -24,6 +24,7 @@ type MockPdfShape = {
   currentPage: number;
   textCalls: TextCall[];
   setFontCalls: Array<[string, string]>;
+  addJsCalls: number;
 };
 
 declare global {
@@ -43,6 +44,7 @@ vi.mock('jspdf', () => {
     currentPage = 1;
     textCalls: TextCall[] = [];
     setFontCalls: Array<[string, string]> = [];
+    addJsCalls = 0;
 
     constructor(options: JsPdfOptions) {
       this.options = options;
@@ -105,6 +107,11 @@ vi.mock('jspdf', () => {
       void type;
       return new ArrayBuffer(128);
     }
+
+    addJS(script: string): void {
+      void script;
+      this.addJsCalls += 1;
+    }
   }
 
   return { jsPDF: MockJsPdf };
@@ -145,6 +152,7 @@ describe('exportToPDF', () => {
 
     expect(getCreatedPdfs()[0]?.options.format).toBe('a4');
     expect(getCreatedPdfs()[1]?.options.format).toBe('letter');
+    expect(getCreatedPdfs().every((pdf) => pdf.addJsCalls === 0)).toBe(true);
   });
 
   it('exports text content and preserves heading/list/blockquote formatting', async () => {
@@ -169,6 +177,7 @@ describe('exportToPDF', () => {
     );
     expect(pdf.setFontCalls).toContainEqual(['helvetica', 'bold']);
     expect(pdf.setFontCalls).toContainEqual(['helvetica', 'italic']);
+    expect(pdf.addJsCalls).toBe(0);
   });
 
   it('adds header and footer text with page numbers across pages', async () => {
@@ -197,5 +206,32 @@ describe('exportToPDF', () => {
     expect(footerCalls).toHaveLength(pdf.pageCount);
     expect(footerCalls.at(0)).toContain(`Page 1 of ${pdf.pageCount}`);
     expect(footerCalls.at(-1)).toContain(`Page ${pdf.pageCount} of ${pdf.pageCount}`);
+    expect(pdf.addJsCalls).toBe(0);
+  });
+
+  it('treats adversarial PDF-like tokens as plain text and never calls addJS', async () => {
+    await exportToPDF(
+      'Security Payload',
+      '<p>OpenAction /JS &lt;&lt; /S /JavaScript /JS (app.alert(1)) &gt;&gt;</p><p>Literal tokens: &lt;&lt; &gt;&gt;</p>',
+      {
+        includeTitle: false,
+        includeHeader: false,
+        includeFooter: false,
+        includePageNumbers: false,
+      }
+    );
+
+    const pdf = latestPdf();
+    const renderedText = pdf.textCalls.map((call) =>
+      Array.isArray(call.text) ? call.text.join(' ') : call.text
+    );
+
+    expect(renderedText).toEqual(
+      expect.arrayContaining([
+        'OpenAction /JS << /S /JavaScript /JS (app.alert(1)) >>',
+        'Literal tokens: << >>',
+      ])
+    );
+    expect(pdf.addJsCalls).toBe(0);
   });
 });

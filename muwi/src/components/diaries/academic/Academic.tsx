@@ -368,52 +368,42 @@ export function Academic() {
     </div>
   );
 
-  let canvas = null;
-
-  if (isLoading) {
-    canvas = (
-      <div className="muwi-academic-state" data-tone="neutral">
-        <div className="muwi-academic-state__spinner" aria-hidden="true" />
-        <p>Loading papers...</p>
-      </div>
-    );
-  } else if (error) {
-    canvas = (
-      <div className="muwi-academic-state" data-tone="error">
-        <p>{error}</p>
-        <button type="button" className="muwi-button" data-size="sm" data-variant="secondary" onClick={() => loadPapers()}>
-          Retry
-        </button>
-      </div>
-    );
-  } else if (papers.length === 0) {
-    canvas = (
-      <div className="muwi-academic-state" data-tone="neutral">
-        <p>No papers yet</p>
-        <span>Choose a template to get started.</span>
-        <button
-          type="button"
-          onClick={() => setShowTemplateSelector(true)}
-          className="muwi-button"
-          data-size="md"
-          data-variant="primary"
-        >
-          Create Paper
-        </button>
-      </div>
-    );
-  } else {
-    canvas = (
-      <AcademicSectionEditor
-        key={currentSection?.id ?? 'empty-academic-section'}
-        section={currentSection}
-        onTitleChange={handleTitleChange}
-        onContentChange={handleContentChange}
-        onOpenBibliographyPanel={() => handleTogglePanel('bibliography')}
-        onOpenReferenceLibraryPanel={() => handleTogglePanel('reference-library')}
-      />
-    );
-  }
+  const canvas = isLoading ? (
+    <div className="muwi-academic-state" data-tone="neutral">
+      <div className="muwi-academic-state__spinner" aria-hidden="true" />
+      <p>Loading papers...</p>
+    </div>
+  ) : error ? (
+    <div className="muwi-academic-state" data-tone="error">
+      <p>{error}</p>
+      <button type="button" className="muwi-button" data-size="sm" data-variant="secondary" onClick={() => loadPapers()}>
+        Retry
+      </button>
+    </div>
+  ) : papers.length === 0 ? (
+    <div className="muwi-academic-state" data-tone="neutral">
+      <p>No papers yet</p>
+      <span>Choose a template to get started.</span>
+      <button
+        type="button"
+        onClick={() => setShowTemplateSelector(true)}
+        className="muwi-button"
+        data-size="md"
+        data-variant="primary"
+      >
+        Create Paper
+      </button>
+    </div>
+  ) : (
+    <AcademicSectionEditor
+      key={currentSection?.id ?? 'empty-academic-section'}
+      section={currentSection}
+      onTitleChange={handleTitleChange}
+      onContentChange={handleContentChange}
+      onOpenBibliographyPanel={() => handleTogglePanel('bibliography')}
+      onOpenReferenceLibraryPanel={() => handleTogglePanel('reference-library')}
+    />
+  );
 
   const rightPanelContent =
     activeAcademicPanel === 'bibliography' || activeAcademicPanel === 'reference-library' ? (

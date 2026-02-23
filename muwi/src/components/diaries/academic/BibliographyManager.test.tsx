@@ -2,11 +2,10 @@ import { fireEvent, render, screen, waitFor } from '@/test';
 import { useAcademicStore } from '@/stores/academicStore';
 import type { BibliographyEntry } from '@/types/academic';
 import { BibliographyManager } from './BibliographyManager';
-import { fetchFromDOI, parseBibTeX } from '@/utils/citation';
+import { fetchFromDOI, formatBibliographyEntry, parseBibTeX } from '@/utils/citation';
 
 vi.mock('@/utils/citation', () => ({
-  formatBibliographyEntry: (entry: { title: string; year: number }) =>
-    `${entry.title} (${entry.year})`,
+  formatBibliographyEntry: vi.fn((entry: BibliographyEntry) => `${entry.title} (${entry.year})`),
   parseBibTeX: vi.fn(),
   fetchFromDOI: vi.fn(),
 }));
@@ -35,6 +34,9 @@ describe('BibliographyManager', () => {
   beforeEach(() => {
     useAcademicStore.setState(useAcademicStore.getInitialState(), true);
     vi.clearAllMocks();
+    vi.mocked(formatBibliographyEntry).mockImplementation(
+      (entry) => `${entry.title} (${entry.year})`
+    );
   });
 
   it('filters/selects entries and supports edit/delete actions', async () => {
@@ -259,5 +261,29 @@ describe('BibliographyManager', () => {
     expect(closeButton).toBeTruthy();
     fireEvent.click(closeButton!);
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it('renders formatted bibliography text as inert content (no HTML execution path)', () => {
+    const maliciousFormattedValue =
+      '<img src="x" onerror="alert(1)"><script>alert(2)</script>Encoded &amp; text';
+    vi.mocked(formatBibliographyEntry).mockReturnValueOnce(maliciousFormattedValue);
+
+    const entry = makeEntry({ id: 'entry-malicious', title: 'Malicious Entry' });
+    useAcademicStore.setState({
+      bibliographyEntries: [entry],
+      citationStyle: 'apa7',
+      addBibliographyEntry: vi.fn().mockResolvedValue(entry),
+      updateBibliographyEntry: vi.fn().mockResolvedValue(undefined),
+      deleteBibliographyEntry: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const { container } = render(<BibliographyManager />);
+
+    expect(container.querySelector('img')).not.toBeInTheDocument();
+    expect(container.querySelector('script')).not.toBeInTheDocument();
+    expect(
+      screen.getByText((content) => content.includes('<img src="x" onerror="alert(1)">'))
+    ).toBeInTheDocument();
+    expect(screen.getByText((content) => content.includes('Encoded &amp; text'))).toBeInTheDocument();
   });
 });

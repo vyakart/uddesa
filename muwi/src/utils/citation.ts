@@ -107,12 +107,15 @@ function buildCiteprocEngine(
 
 function htmlToText(value: string): string {
   return value
+    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, ' ')
     .replace(/<[^>]*>/g, ' ')
     .replace(/&nbsp;/gi, ' ')
     .replace(/&amp;/gi, '&')
     .replace(/&lt;/gi, '<')
     .replace(/&gt;/gi, '>')
     .replace(/&#39;/gi, "'")
+    .replace(/&apos;/gi, "'")
     .replace(/&quot;/gi, '"')
     .replace(/\s+/g, ' ')
     .trim();
@@ -367,7 +370,7 @@ export function parseBibTeX(bibtex: string): Partial<BibliographyEntry>[] {
     });
   } catch (error) {
     console.error('Error parsing BibTeX:', error);
-    throw new Error('Failed to parse BibTeX. Please check the format.');
+    throw new Error('Failed to parse BibTeX. Please check the format.', { cause: error });
   }
 }
 
@@ -447,7 +450,7 @@ export async function fetchFromDOI(doi: string): Promise<Partial<BibliographyEnt
     if (error instanceof Error) {
       throw error;
     }
-    throw new Error('Failed to fetch DOI data');
+    throw new Error('Failed to fetch DOI data', { cause: error });
   }
 }
 
