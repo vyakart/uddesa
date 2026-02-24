@@ -1,73 +1,177 @@
-# React + TypeScript + Vite
+# MUWI (Multi-Utility Writing Interface)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+MUWI is a local-first writing workspace with six focused "diary" modes in one app:
 
-Currently, two official plugins are available:
+- Scratchpad
+- Blackboard
+- Personal Diary
+- Drafts
+- Long Drafts
+- Academic Papers
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+It is built with React + TypeScript + Vite and packaged as an Electron desktop app.
 
-## React Compiler
+## Requirements
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Node.js 20+ (recommended)
+- npm 10+ (recommended)
+- macOS/Linux/Windows for local development
 
-## Expanding the ESLint configuration
+## Quick Start
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd muwi
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+This starts the Vite renderer app (browser mode).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Development Workflows
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Web / Renderer Dev
+
+```bash
+cd muwi
+npm run dev
 ```
+
+- Default Vite dev server starts (see terminal output for URL).
+- Useful for most UI and store development.
+
+## Local Electron Smoke Run (built renderer)
+
+```bash
+cd muwi
+npm run electron:preview
+```
+
+If Electron launches with `ELECTRON_RUN_AS_NODE` issues in your environment:
+
+```bash
+cd muwi
+npm run electron:preview:cleanenv
+```
+
+## Linting and Tests
+
+```bash
+cd muwi
+npm run lint
+npm run test
+npm run test:coverage
+```
+
+Playwright E2E (browser):
+
+```bash
+cd muwi
+npx playwright install
+npm run test:e2e
+```
+
+Playwright Electron smoke:
+
+```bash
+cd muwi
+npm run test:e2e:electron
+```
+
+## Build and Packaging
+
+## Web Build
+
+```bash
+cd muwi
+npm run build
+```
+
+## Electron Packaging
+
+```bash
+cd muwi
+npm run electron:build
+```
+
+Platform-specific packaging:
+
+```bash
+cd muwi
+npm run electron:build:mac
+npm run electron:build:win
+npm run electron:build:linux
+```
+
+Artifacts are written to `muwi/release/<version>/` (for example `muwi/release/0.0.0/`).
+
+### Packaging Notes
+
+- `muwi/build/icons/` contains platform icon assets used by `electron-builder`.
+- Local packaging may skip code signing/notarization if you do not have Apple signing credentials installed.
+- The repo includes `muwi/scripts/notarize.cjs`; notarization is skipped automatically when Apple credentials are missing.
+
+## Key User Workflows
+
+## Command Palette
+
+- Open with `Cmd+K` (macOS) or `Ctrl+K` (Windows/Linux).
+- Use it to navigate diaries and open utility panels (including export flows).
+- `Escape` closes the command palette and other overlays.
+
+## Backup / Restore
+
+- Open **Settings** and use the **Backup** tab.
+- Configure backup location and auto-backup options there.
+- Restore/import is handled through the backup UI and Electron file dialogs.
+
+## Export
+
+- Use the in-app Export panel.
+- Supported export formats in the UI include `PDF`, `DOCX`, and `TeX`.
+
+## Project Structure (high level)
+
+```text
+muwi/
+  electron/        Electron main + preload
+  src/             React app, stores, DB, components, styles
+  e2e/             Playwright specs
+  scripts/         Release/security utility scripts
+  build/           Packaging resources (icons, entitlements)
+  audit/           Audit reports and evidence
+```
+
+## Technology Highlights
+
+- React 19 + TypeScript
+- Vite 7
+- Electron 40
+- Zustand (state)
+- Dexie / IndexedDB (local data)
+- TipTap (rich text)
+- Excalidraw (blackboard/canvas)
+- Playwright + Vitest (tests)
+
+## Troubleshooting
+
+## Packaging warnings about `description` / `author`
+
+- These fields are defined in `muwi/package.json` and are required for clean release metadata.
+
+## macOS signing/notarization warnings during local builds
+
+- Expected on machines without a valid Developer ID signing identity and Apple notarization credentials.
+- Packaging can still produce local artifacts for validation.
+
+## Large bundle warnings during `vite build`
+
+- The project intentionally uses route-level splitting, but some heavy deferred chunks (e.g. Excalidraw / citation tooling) still trigger size warnings.
+- These are tracked as performance/bundle optimization follow-up work.
+
+## Related Docs
+
+- `../AUDIT_PLAN.md`
+- `../AUDIT_PLAN_DETAILED.md`
+- `../TESTING.md` (strategy/reference; may lag current config details)
+- `../IMPLEMENTATION.md` (historical/technical design reference; may lag current implementation)
+

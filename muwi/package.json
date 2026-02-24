@@ -2,6 +2,8 @@
   "name": "muwi",
   "private": true,
   "version": "0.0.0",
+  "description": "Multi-Utility Writing Interface desktop app",
+  "author": "ziksartin",
   "type": "module",
   "main": "dist-electron/main.js",
   "scripts": {

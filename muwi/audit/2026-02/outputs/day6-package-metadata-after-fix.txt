@@ -1,0 +1,12 @@
+     1	{
+     2	  "name": "muwi",
+     3	  "private": true,
+     4	  "version": "0.0.0",
+     5	  "description": "Multi-Utility Writing Interface desktop app",
+     6	  "author": "ziksartin",
+     7	  "type": "module",
+     8	  "main": "dist-electron/main.js",
+     9	  "scripts": {
+    10	    "dev": "vite",
+    11	    "build": "tsc -b && vite build",
+    12	    "lint": "eslint .",

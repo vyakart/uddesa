@@ -1,0 +1,2 @@
+muwi/build/entitlements.mac.plist
+muwi/build/icons/README.md

@@ -1,0 +1,6 @@
+muwi/e2e/academic.spec.ts
+muwi/e2e/accessibility-audit.spec.ts
+muwi/e2e/electron-smoke.spec.ts
+muwi/e2e/long-drafts.spec.ts
+muwi/e2e/performance-baseline.spec.ts
+muwi/e2e/smoke.spec.ts

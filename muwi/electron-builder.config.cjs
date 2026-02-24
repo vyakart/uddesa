@@ -96,10 +96,12 @@ const config = {
     icon: 'build/icons',
     artifactName: '${productName}-${version}-${arch}.${ext}',
     desktop: {
-      Name: 'MUWI',
-      Comment: 'Multi-Utility Writing Interface',
-      Categories: 'Office;TextEditor;',
-      Keywords: 'writing;notes;diary;drafts;academic;',
+      entry: {
+        Name: 'MUWI',
+        Comment: 'Multi-Utility Writing Interface',
+        Categories: 'Office;TextEditor;',
+        Keywords: 'writing;notes;diary;drafts;academic;',
+      },
     },
   },
 
