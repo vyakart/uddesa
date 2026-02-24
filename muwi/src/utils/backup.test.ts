@@ -317,6 +317,34 @@ describe('backup utils', () => {
     expect(transactionSpy).toHaveBeenCalledTimes(1);
   });
 
+  it('rolls back clearExisting restore when restore bulkPut fails after clear starts', async () => {
+    const originalDraft = makeDraft({ id: 'draft-original', title: 'Original Draft' });
+    await db.drafts.put(originalDraft);
+    await db.settings.put(defaultGlobalSettings);
+
+    const replacementBackup = makeBackup({
+      metadata: {
+        totalRecords: 1,
+      },
+      data: {
+        drafts: [makeDraft({ id: 'draft-replacement', title: 'Replacement Draft' })],
+      },
+    });
+
+    vi.spyOn(db.drafts, 'bulkPut').mockRejectedValueOnce(new Error('restore exploded'));
+
+    const result = await restoreBackup(replacementBackup, true);
+    expect(result).toEqual({
+      success: false,
+      error: 'Failed to restore backup data: restore exploded',
+    });
+
+    expect(await db.drafts.count()).toBe(1);
+    expect(await db.settings.count()).toBe(1);
+    expect(await db.drafts.get('draft-original')).toMatchObject({ title: 'Original Draft' });
+    expect(await db.drafts.get('draft-replacement')).toBeUndefined();
+  });
+
   it('saves and loads backup files through Electron API methods', async () => {
     await db.drafts.put(makeDraft());
     const backup = await createBackup();

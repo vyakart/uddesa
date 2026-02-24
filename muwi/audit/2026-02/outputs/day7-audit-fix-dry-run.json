@@ -1,0 +1,1806 @@
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @radix-ui/react-tabs@1.0.2
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   react@"^19.2.0" from the root project
+npm warn   38 more (@excalidraw/excalidraw, @floating-ui/react-dom, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-tabs@1.0.2
+npm warn node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs
+npm warn   @radix-ui/react-tabs@"1.0.2" from @excalidraw/excalidraw@0.18.0
+npm warn   node_modules/@excalidraw/excalidraw
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-tabs@1.0.2
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs
+npm warn     @radix-ui/react-tabs@"1.0.2" from @excalidraw/excalidraw@0.18.0
+npm warn     node_modules/@excalidraw/excalidraw
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @radix-ui/react-tabs@1.0.2
+npm warn Found: react-dom@19.2.3
+npm warn node_modules/react-dom
+npm warn   react-dom@"^19.2.0" from the root project
+npm warn   14 more (@excalidraw/excalidraw, @floating-ui/react-dom, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react-dom@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-tabs@1.0.2
+npm warn node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs
+npm warn   @radix-ui/react-tabs@"1.0.2" from @excalidraw/excalidraw@0.18.0
+npm warn   node_modules/@excalidraw/excalidraw
+npm warn
+npm warn Conflicting peer dependency: react-dom@18.3.1
+npm warn node_modules/react-dom
+npm warn   peer react-dom@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-tabs@1.0.2
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs
+npm warn     @radix-ui/react-tabs@"1.0.2" from @excalidraw/excalidraw@0.18.0
+npm warn     node_modules/@excalidraw/excalidraw
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @radix-ui/react-context@1.0.0
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   react@"^19.2.0" from the root project
+npm warn   38 more (@excalidraw/excalidraw, @floating-ui/react-dom, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-context@1.0.0
+npm warn node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-context
+npm warn   @radix-ui/react-context@"1.0.0" from @radix-ui/react-tabs@1.0.2
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs
+npm warn   2 more (@radix-ui/react-roving-focus, @radix-ui/react-collection)
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-context@1.0.0
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-context
+npm warn     @radix-ui/react-context@"1.0.0" from @radix-ui/react-tabs@1.0.2
+npm warn     node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs
+npm warn     2 more (@radix-ui/react-roving-focus, @radix-ui/react-collection)
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @radix-ui/react-direction@1.0.0
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   react@"^19.2.0" from the root project
+npm warn   38 more (@excalidraw/excalidraw, @floating-ui/react-dom, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-direction@1.0.0
+npm warn node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-direction
+npm warn   @radix-ui/react-direction@"1.0.0" from @radix-ui/react-tabs@1.0.2
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs
+npm warn   1 more (@radix-ui/react-roving-focus)
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-direction@1.0.0
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-direction
+npm warn     @radix-ui/react-direction@"1.0.0" from @radix-ui/react-tabs@1.0.2
+npm warn     node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs
+npm warn     1 more (@radix-ui/react-roving-focus)
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @radix-ui/react-id@1.0.0
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   react@"^19.2.0" from the root project
+npm warn   38 more (@excalidraw/excalidraw, @floating-ui/react-dom, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-id@1.0.0
+npm warn node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-id
+npm warn   @radix-ui/react-id@"1.0.0" from @radix-ui/react-tabs@1.0.2
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs
+npm warn   1 more (@radix-ui/react-roving-focus)
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-id@1.0.0
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-id
+npm warn     @radix-ui/react-id@"1.0.0" from @radix-ui/react-tabs@1.0.2
+npm warn     node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs
+npm warn     1 more (@radix-ui/react-roving-focus)
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @radix-ui/react-presence@1.0.0
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   react@"^19.2.0" from the root project
+npm warn   38 more (@excalidraw/excalidraw, @floating-ui/react-dom, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-presence@1.0.0
+npm warn node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-presence
+npm warn   @radix-ui/react-presence@"1.0.0" from @radix-ui/react-tabs@1.0.2
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-presence@1.0.0
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-presence
+npm warn     @radix-ui/react-presence@"1.0.0" from @radix-ui/react-tabs@1.0.2
+npm warn     node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @radix-ui/react-presence@1.0.0
+npm warn Found: react-dom@19.2.3
+npm warn node_modules/react-dom
+npm warn   react-dom@"^19.2.0" from the root project
+npm warn   14 more (@excalidraw/excalidraw, @floating-ui/react-dom, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react-dom@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-presence@1.0.0
+npm warn node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-presence
+npm warn   @radix-ui/react-presence@"1.0.0" from @radix-ui/react-tabs@1.0.2
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs
+npm warn
+npm warn Conflicting peer dependency: react-dom@18.3.1
+npm warn node_modules/react-dom
+npm warn   peer react-dom@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-presence@1.0.0
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-presence
+npm warn     @radix-ui/react-presence@"1.0.0" from @radix-ui/react-tabs@1.0.2
+npm warn     node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @radix-ui/react-primitive@1.0.1
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   react@"^19.2.0" from the root project
+npm warn   38 more (@excalidraw/excalidraw, @floating-ui/react-dom, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-primitive@1.0.1
+npm warn node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-primitive
+npm warn   @radix-ui/react-primitive@"1.0.1" from @radix-ui/react-tabs@1.0.2
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs
+npm warn   2 more (@radix-ui/react-roving-focus, @radix-ui/react-collection)
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-primitive@1.0.1
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-primitive
+npm warn     @radix-ui/react-primitive@"1.0.1" from @radix-ui/react-tabs@1.0.2
+npm warn     node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs
+npm warn     2 more (@radix-ui/react-roving-focus, @radix-ui/react-collection)
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @radix-ui/react-primitive@1.0.1
+npm warn Found: react-dom@19.2.3
+npm warn node_modules/react-dom
+npm warn   react-dom@"^19.2.0" from the root project
+npm warn   14 more (@excalidraw/excalidraw, @floating-ui/react-dom, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react-dom@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-primitive@1.0.1
+npm warn node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-primitive
+npm warn   @radix-ui/react-primitive@"1.0.1" from @radix-ui/react-tabs@1.0.2
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs
+npm warn   2 more (@radix-ui/react-roving-focus, @radix-ui/react-collection)
+npm warn
+npm warn Conflicting peer dependency: react-dom@18.3.1
+npm warn node_modules/react-dom
+npm warn   peer react-dom@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-primitive@1.0.1
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-primitive
+npm warn     @radix-ui/react-primitive@"1.0.1" from @radix-ui/react-tabs@1.0.2
+npm warn     node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs
+npm warn     2 more (@radix-ui/react-roving-focus, @radix-ui/react-collection)
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @radix-ui/react-roving-focus@1.0.2
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   react@"^19.2.0" from the root project
+npm warn   38 more (@excalidraw/excalidraw, @floating-ui/react-dom, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-roving-focus@1.0.2
+npm warn node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-roving-focus
+npm warn   @radix-ui/react-roving-focus@"1.0.2" from @radix-ui/react-tabs@1.0.2
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-roving-focus@1.0.2
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-roving-focus
+npm warn     @radix-ui/react-roving-focus@"1.0.2" from @radix-ui/react-tabs@1.0.2
+npm warn     node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @radix-ui/react-roving-focus@1.0.2
+npm warn Found: react-dom@19.2.3
+npm warn node_modules/react-dom
+npm warn   react-dom@"^19.2.0" from the root project
+npm warn   14 more (@excalidraw/excalidraw, @floating-ui/react-dom, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react-dom@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-roving-focus@1.0.2
+npm warn node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-roving-focus
+npm warn   @radix-ui/react-roving-focus@"1.0.2" from @radix-ui/react-tabs@1.0.2
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs
+npm warn
+npm warn Conflicting peer dependency: react-dom@18.3.1
+npm warn node_modules/react-dom
+npm warn   peer react-dom@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-roving-focus@1.0.2
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-roving-focus
+npm warn     @radix-ui/react-roving-focus@"1.0.2" from @radix-ui/react-tabs@1.0.2
+npm warn     node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @radix-ui/react-use-controllable-state@1.0.0
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   react@"^19.2.0" from the root project
+npm warn   38 more (@excalidraw/excalidraw, @floating-ui/react-dom, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-use-controllable-state@1.0.0
+npm warn node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-use-controllable-state
+npm warn   @radix-ui/react-use-controllable-state@"1.0.0" from @radix-ui/react-tabs@1.0.2
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs
+npm warn   1 more (@radix-ui/react-roving-focus)
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-use-controllable-state@1.0.0
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-use-controllable-state
+npm warn     @radix-ui/react-use-controllable-state@"1.0.0" from @radix-ui/react-tabs@1.0.2
+npm warn     node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs
+npm warn     1 more (@radix-ui/react-roving-focus)
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @radix-ui/react-use-layout-effect@1.0.0
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   react@"^19.2.0" from the root project
+npm warn   38 more (@excalidraw/excalidraw, @floating-ui/react-dom, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-use-layout-effect@1.0.0
+npm warn node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-id/node_modules/@radix-ui/react-use-layout-effect
+npm warn   @radix-ui/react-use-layout-effect@"1.0.0" from @radix-ui/react-id@1.0.0
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-id
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-use-layout-effect@1.0.0
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-id/node_modules/@radix-ui/react-use-layout-effect
+npm warn     @radix-ui/react-use-layout-effect@"1.0.0" from @radix-ui/react-id@1.0.0
+npm warn     node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-id
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @radix-ui/react-compose-refs@1.0.0
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   react@"^19.2.0" from the root project
+npm warn   38 more (@excalidraw/excalidraw, @floating-ui/react-dom, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-compose-refs@1.0.0
+npm warn node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-presence/node_modules/@radix-ui/react-compose-refs
+npm warn   @radix-ui/react-compose-refs@"1.0.0" from @radix-ui/react-presence@1.0.0
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-presence
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-compose-refs@1.0.0
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-presence/node_modules/@radix-ui/react-compose-refs
+npm warn     @radix-ui/react-compose-refs@"1.0.0" from @radix-ui/react-presence@1.0.0
+npm warn     node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-presence
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @radix-ui/react-use-layout-effect@1.0.0
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   react@"^19.2.0" from the root project
+npm warn   38 more (@excalidraw/excalidraw, @floating-ui/react-dom, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-use-layout-effect@1.0.0
+npm warn node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-presence/node_modules/@radix-ui/react-use-layout-effect
+npm warn   @radix-ui/react-use-layout-effect@"1.0.0" from @radix-ui/react-presence@1.0.0
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-presence
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-use-layout-effect@1.0.0
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-presence/node_modules/@radix-ui/react-use-layout-effect
+npm warn     @radix-ui/react-use-layout-effect@"1.0.0" from @radix-ui/react-presence@1.0.0
+npm warn     node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-presence
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @radix-ui/react-slot@1.0.1
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   react@"^19.2.0" from the root project
+npm warn   38 more (@excalidraw/excalidraw, @floating-ui/react-dom, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-slot@1.0.1
+npm warn node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-primitive/node_modules/@radix-ui/react-slot
+npm warn   @radix-ui/react-slot@"1.0.1" from @radix-ui/react-primitive@1.0.1
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-primitive
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-slot@1.0.1
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-primitive/node_modules/@radix-ui/react-slot
+npm warn     @radix-ui/react-slot@"1.0.1" from @radix-ui/react-primitive@1.0.1
+npm warn     node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-primitive
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @radix-ui/react-collection@1.0.1
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   react@"^19.2.0" from the root project
+npm warn   38 more (@excalidraw/excalidraw, @floating-ui/react-dom, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-collection@1.0.1
+npm warn node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-roving-focus/node_modules/@radix-ui/react-collection
+npm warn   @radix-ui/react-collection@"1.0.1" from @radix-ui/react-roving-focus@1.0.2
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-roving-focus
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-collection@1.0.1
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-roving-focus/node_modules/@radix-ui/react-collection
+npm warn     @radix-ui/react-collection@"1.0.1" from @radix-ui/react-roving-focus@1.0.2
+npm warn     node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-roving-focus
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @radix-ui/react-collection@1.0.1
+npm warn Found: react-dom@19.2.3
+npm warn node_modules/react-dom
+npm warn   react-dom@"^19.2.0" from the root project
+npm warn   14 more (@excalidraw/excalidraw, @floating-ui/react-dom, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react-dom@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-collection@1.0.1
+npm warn node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-roving-focus/node_modules/@radix-ui/react-collection
+npm warn   @radix-ui/react-collection@"1.0.1" from @radix-ui/react-roving-focus@1.0.2
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-roving-focus
+npm warn
+npm warn Conflicting peer dependency: react-dom@18.3.1
+npm warn node_modules/react-dom
+npm warn   peer react-dom@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-collection@1.0.1
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-roving-focus/node_modules/@radix-ui/react-collection
+npm warn     @radix-ui/react-collection@"1.0.1" from @radix-ui/react-roving-focus@1.0.2
+npm warn     node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-roving-focus
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @radix-ui/react-compose-refs@1.0.0
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   react@"^19.2.0" from the root project
+npm warn   38 more (@excalidraw/excalidraw, @floating-ui/react-dom, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-compose-refs@1.0.0
+npm warn node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-roving-focus/node_modules/@radix-ui/react-compose-refs
+npm warn   @radix-ui/react-compose-refs@"1.0.0" from @radix-ui/react-roving-focus@1.0.2
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-roving-focus
+npm warn   2 more (@radix-ui/react-collection, @radix-ui/react-slot)
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-compose-refs@1.0.0
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-roving-focus/node_modules/@radix-ui/react-compose-refs
+npm warn     @radix-ui/react-compose-refs@"1.0.0" from @radix-ui/react-roving-focus@1.0.2
+npm warn     node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-roving-focus
+npm warn     2 more (@radix-ui/react-collection, @radix-ui/react-slot)
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @radix-ui/react-use-callback-ref@1.0.0
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   react@"^19.2.0" from the root project
+npm warn   38 more (@excalidraw/excalidraw, @floating-ui/react-dom, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-use-callback-ref@1.0.0
+npm warn node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-roving-focus/node_modules/@radix-ui/react-use-callback-ref
+npm warn   @radix-ui/react-use-callback-ref@"1.0.0" from @radix-ui/react-roving-focus@1.0.2
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-roving-focus
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-use-callback-ref@1.0.0
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-roving-focus/node_modules/@radix-ui/react-use-callback-ref
+npm warn     @radix-ui/react-use-callback-ref@"1.0.0" from @radix-ui/react-roving-focus@1.0.2
+npm warn     node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-roving-focus
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @radix-ui/react-use-callback-ref@1.0.0
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   react@"^19.2.0" from the root project
+npm warn   38 more (@excalidraw/excalidraw, @floating-ui/react-dom, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-use-callback-ref@1.0.0
+npm warn node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-use-controllable-state/node_modules/@radix-ui/react-use-callback-ref
+npm warn   @radix-ui/react-use-callback-ref@"1.0.0" from @radix-ui/react-use-controllable-state@1.0.0
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-use-controllable-state
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-use-callback-ref@1.0.0
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-use-controllable-state/node_modules/@radix-ui/react-use-callback-ref
+npm warn     @radix-ui/react-use-callback-ref@"1.0.0" from @radix-ui/react-use-controllable-state@1.0.0
+npm warn     node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-use-controllable-state
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @radix-ui/react-compose-refs@1.0.0
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   react@"^19.2.0" from the root project
+npm warn   38 more (@excalidraw/excalidraw, @floating-ui/react-dom, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-compose-refs@1.0.0
+npm warn node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-primitive/node_modules/@radix-ui/react-slot/node_modules/@radix-ui/react-compose-refs
+npm warn   @radix-ui/react-compose-refs@"1.0.0" from @radix-ui/react-slot@1.0.1
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-primitive/node_modules/@radix-ui/react-slot
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-compose-refs@1.0.0
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-primitive/node_modules/@radix-ui/react-slot/node_modules/@radix-ui/react-compose-refs
+npm warn     @radix-ui/react-compose-refs@"1.0.0" from @radix-ui/react-slot@1.0.1
+npm warn     node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-primitive/node_modules/@radix-ui/react-slot
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @radix-ui/react-slot@1.0.1
+npm warn Found: react@19.2.3
+npm warn node_modules/react
+npm warn   react@"^19.2.0" from the root project
+npm warn   38 more (@excalidraw/excalidraw, @floating-ui/react-dom, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-slot@1.0.1
+npm warn node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-roving-focus/node_modules/@radix-ui/react-collection/node_modules/@radix-ui/react-slot
+npm warn   @radix-ui/react-slot@"1.0.1" from @radix-ui/react-collection@1.0.1
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-roving-focus/node_modules/@radix-ui/react-collection
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8 || ^17.0 || ^18.0" from @radix-ui/react-slot@1.0.1
+npm warn   node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-roving-focus/node_modules/@radix-ui/react-collection/node_modules/@radix-ui/react-slot
+npm warn     @radix-ui/react-slot@"1.0.1" from @radix-ui/react-collection@1.0.1
+npm warn     node_modules/@excalidraw/excalidraw/node_modules/@radix-ui/react-tabs/node_modules/@radix-ui/react-roving-focus/node_modules/@radix-ui/react-collection
+add @rollup/rollup-win32-x64-msvc 4.55.1
+add @rollup/rollup-win32-x64-gnu 4.55.1
+add @rollup/rollup-win32-ia32-msvc 4.55.1
+add @rollup/rollup-win32-arm64-msvc 4.55.1
+add @rollup/rollup-openharmony-arm64 4.55.1
+add @rollup/rollup-openbsd-x64 4.55.1
+add @rollup/rollup-linux-x64-musl 4.55.1
+add @rollup/rollup-linux-x64-gnu 4.55.1
+add @rollup/rollup-linux-s390x-gnu 4.55.1
+add @rollup/rollup-linux-riscv64-musl 4.55.1
+add @rollup/rollup-linux-riscv64-gnu 4.55.1
+add @rollup/rollup-linux-ppc64-musl 4.55.1
+add @rollup/rollup-linux-ppc64-gnu 4.55.1
+add @rollup/rollup-linux-loong64-musl 4.55.1
+add @rollup/rollup-linux-loong64-gnu 4.55.1
+add @rollup/rollup-linux-arm64-musl 4.55.1
+add @rollup/rollup-linux-arm64-gnu 4.55.1
+add @rollup/rollup-linux-arm-musleabihf 4.55.1
+add @rollup/rollup-linux-arm-gnueabihf 4.55.1
+add @rollup/rollup-freebsd-x64 4.55.1
+add @rollup/rollup-freebsd-arm64 4.55.1
+add @rollup/rollup-darwin-x64 4.55.1
+add @rollup/rollup-android-arm64 4.55.1
+add @rollup/rollup-android-arm-eabi 4.55.1
+add @parcel/watcher-win32-x64 2.5.4
+add @parcel/watcher-win32-ia32 2.5.4
+add @parcel/watcher-win32-arm64 2.5.4
+add @parcel/watcher-linux-x64-musl 2.5.4
+add @parcel/watcher-linux-x64-glibc 2.5.4
+add @parcel/watcher-linux-arm64-musl 2.5.4
+add @parcel/watcher-linux-arm64-glibc 2.5.4
+add @parcel/watcher-linux-arm-musl 2.5.4
+add @parcel/watcher-linux-arm-glibc 2.5.4
+add @parcel/watcher-freebsd-x64 2.5.4
+add @parcel/watcher-darwin-x64 2.5.4
+add @parcel/watcher-android-arm64 2.5.4
+add @esbuild/win32-x64 0.27.2
+add @esbuild/win32-ia32 0.27.2
+add @esbuild/win32-arm64 0.27.2
+add @esbuild/sunos-x64 0.27.2
+add @esbuild/openharmony-arm64 0.27.2
+add @esbuild/openbsd-x64 0.27.2
+add @esbuild/openbsd-arm64 0.27.2
+add @esbuild/netbsd-x64 0.27.2
+add @esbuild/netbsd-arm64 0.27.2
+add @esbuild/linux-x64 0.27.2
+add @esbuild/linux-s390x 0.27.2
+add @esbuild/linux-riscv64 0.27.2
+add @esbuild/linux-ppc64 0.27.2
+add @esbuild/linux-mips64el 0.27.2
+add @esbuild/linux-loong64 0.27.2
+add @esbuild/linux-ia32 0.27.2
+add @esbuild/linux-arm64 0.27.2
+add @esbuild/linux-arm 0.27.2
+add @esbuild/freebsd-x64 0.27.2
+add @esbuild/freebsd-arm64 0.27.2
+add @esbuild/darwin-x64 0.27.2
+add @esbuild/android-x64 0.27.2
+add @esbuild/android-arm64 0.27.2
+add @esbuild/android-arm 0.27.2
+add @esbuild/aix-ppc64 0.27.2
+change @typescript-eslint/visitor-keys 8.56.0 => 8.56.1
+change @typescript-eslint/utils 8.56.0 => 8.56.1
+change @typescript-eslint/typescript-estree 8.56.0 => 8.56.1
+add balanced-match 4.0.4
+change minimatch 9.0.5 => 10.2.2
+change brace-expansion 2.0.2 => 5.0.3
+change @typescript-eslint/types 8.56.0 => 8.56.1
+change @typescript-eslint/type-utils 8.56.0 => 8.56.1
+change @typescript-eslint/tsconfig-utils 8.56.0 => 8.56.1
+change @typescript-eslint/project-service 8.56.0 => 8.56.1
+change @typescript-eslint/scope-manager 8.56.0 => 8.56.1
+change @typescript-eslint/parser 8.56.0 => 8.56.1
+change @typescript-eslint/eslint-plugin 8.56.0 => 8.56.1
+add balanced-match 4.0.4
+change minimatch 9.0.5 => 9.0.6
+change brace-expansion 2.0.2 => 5.0.3
+change typescript-eslint 8.56.0 => 8.56.1
+change minimatch 3.1.2 => 3.1.3
+change markdown-it 14.1.0 => 14.1.1
+change filelist 1.0.4 => 1.0.5
+add balanced-match 4.0.4
+change brace-expansion 2.0.2 => 5.0.3
+change minimatch 5.1.6 => 10.2.2
+change diff 5.2.0 => 5.2.2
+add balanced-match 4.0.4
+change minimatch 9.0.5 => 9.0.6
+change brace-expansion 2.0.2 => 5.0.3
+change ajv 6.12.6 => 6.14.0
+{
+  "add": [
+    {
+      "name": "@rollup/rollup-win32-x64-msvc",
+      "version": "4.55.1",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@rollup/rollup-win32-x64-msvc"
+    },
+    {
+      "name": "@rollup/rollup-win32-x64-gnu",
+      "version": "4.55.1",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@rollup/rollup-win32-x64-gnu"
+    },
+    {
+      "name": "@rollup/rollup-win32-ia32-msvc",
+      "version": "4.55.1",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@rollup/rollup-win32-ia32-msvc"
+    },
+    {
+      "name": "@rollup/rollup-win32-arm64-msvc",
+      "version": "4.55.1",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@rollup/rollup-win32-arm64-msvc"
+    },
+    {
+      "name": "@rollup/rollup-openharmony-arm64",
+      "version": "4.55.1",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@rollup/rollup-openharmony-arm64"
+    },
+    {
+      "name": "@rollup/rollup-openbsd-x64",
+      "version": "4.55.1",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@rollup/rollup-openbsd-x64"
+    },
+    {
+      "name": "@rollup/rollup-linux-x64-musl",
+      "version": "4.55.1",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@rollup/rollup-linux-x64-musl"
+    },
+    {
+      "name": "@rollup/rollup-linux-x64-gnu",
+      "version": "4.55.1",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@rollup/rollup-linux-x64-gnu"
+    },
+    {
+      "name": "@rollup/rollup-linux-s390x-gnu",
+      "version": "4.55.1",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@rollup/rollup-linux-s390x-gnu"
+    },
+    {
+      "name": "@rollup/rollup-linux-riscv64-musl",
+      "version": "4.55.1",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@rollup/rollup-linux-riscv64-musl"
+    },
+    {
+      "name": "@rollup/rollup-linux-riscv64-gnu",
+      "version": "4.55.1",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@rollup/rollup-linux-riscv64-gnu"
+    },
+    {
+      "name": "@rollup/rollup-linux-ppc64-musl",
+      "version": "4.55.1",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@rollup/rollup-linux-ppc64-musl"
+    },
+    {
+      "name": "@rollup/rollup-linux-ppc64-gnu",
+      "version": "4.55.1",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@rollup/rollup-linux-ppc64-gnu"
+    },
+    {
+      "name": "@rollup/rollup-linux-loong64-musl",
+      "version": "4.55.1",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@rollup/rollup-linux-loong64-musl"
+    },
+    {
+      "name": "@rollup/rollup-linux-loong64-gnu",
+      "version": "4.55.1",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@rollup/rollup-linux-loong64-gnu"
+    },
+    {
+      "name": "@rollup/rollup-linux-arm64-musl",
+      "version": "4.55.1",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@rollup/rollup-linux-arm64-musl"
+    },
+    {
+      "name": "@rollup/rollup-linux-arm64-gnu",
+      "version": "4.55.1",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@rollup/rollup-linux-arm64-gnu"
+    },
+    {
+      "name": "@rollup/rollup-linux-arm-musleabihf",
+      "version": "4.55.1",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@rollup/rollup-linux-arm-musleabihf"
+    },
+    {
+      "name": "@rollup/rollup-linux-arm-gnueabihf",
+      "version": "4.55.1",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@rollup/rollup-linux-arm-gnueabihf"
+    },
+    {
+      "name": "@rollup/rollup-freebsd-x64",
+      "version": "4.55.1",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@rollup/rollup-freebsd-x64"
+    },
+    {
+      "name": "@rollup/rollup-freebsd-arm64",
+      "version": "4.55.1",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@rollup/rollup-freebsd-arm64"
+    },
+    {
+      "name": "@rollup/rollup-darwin-x64",
+      "version": "4.55.1",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@rollup/rollup-darwin-x64"
+    },
+    {
+      "name": "@rollup/rollup-android-arm64",
+      "version": "4.55.1",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@rollup/rollup-android-arm64"
+    },
+    {
+      "name": "@rollup/rollup-android-arm-eabi",
+      "version": "4.55.1",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@rollup/rollup-android-arm-eabi"
+    },
+    {
+      "name": "@parcel/watcher-win32-x64",
+      "version": "2.5.4",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@parcel/watcher-win32-x64"
+    },
+    {
+      "name": "@parcel/watcher-win32-ia32",
+      "version": "2.5.4",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@parcel/watcher-win32-ia32"
+    },
+    {
+      "name": "@parcel/watcher-win32-arm64",
+      "version": "2.5.4",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@parcel/watcher-win32-arm64"
+    },
+    {
+      "name": "@parcel/watcher-linux-x64-musl",
+      "version": "2.5.4",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@parcel/watcher-linux-x64-musl"
+    },
+    {
+      "name": "@parcel/watcher-linux-x64-glibc",
+      "version": "2.5.4",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@parcel/watcher-linux-x64-glibc"
+    },
+    {
+      "name": "@parcel/watcher-linux-arm64-musl",
+      "version": "2.5.4",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@parcel/watcher-linux-arm64-musl"
+    },
+    {
+      "name": "@parcel/watcher-linux-arm64-glibc",
+      "version": "2.5.4",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@parcel/watcher-linux-arm64-glibc"
+    },
+    {
+      "name": "@parcel/watcher-linux-arm-musl",
+      "version": "2.5.4",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@parcel/watcher-linux-arm-musl"
+    },
+    {
+      "name": "@parcel/watcher-linux-arm-glibc",
+      "version": "2.5.4",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@parcel/watcher-linux-arm-glibc"
+    },
+    {
+      "name": "@parcel/watcher-freebsd-x64",
+      "version": "2.5.4",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@parcel/watcher-freebsd-x64"
+    },
+    {
+      "name": "@parcel/watcher-darwin-x64",
+      "version": "2.5.4",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@parcel/watcher-darwin-x64"
+    },
+    {
+      "name": "@parcel/watcher-android-arm64",
+      "version": "2.5.4",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@parcel/watcher-android-arm64"
+    },
+    {
+      "name": "@esbuild/win32-x64",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/win32-x64"
+    },
+    {
+      "name": "@esbuild/win32-ia32",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/win32-ia32"
+    },
+    {
+      "name": "@esbuild/win32-arm64",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/win32-arm64"
+    },
+    {
+      "name": "@esbuild/sunos-x64",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/sunos-x64"
+    },
+    {
+      "name": "@esbuild/openharmony-arm64",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/openharmony-arm64"
+    },
+    {
+      "name": "@esbuild/openbsd-x64",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/openbsd-x64"
+    },
+    {
+      "name": "@esbuild/openbsd-arm64",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/openbsd-arm64"
+    },
+    {
+      "name": "@esbuild/netbsd-x64",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/netbsd-x64"
+    },
+    {
+      "name": "@esbuild/netbsd-arm64",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/netbsd-arm64"
+    },
+    {
+      "name": "@esbuild/linux-x64",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/linux-x64"
+    },
+    {
+      "name": "@esbuild/linux-s390x",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/linux-s390x"
+    },
+    {
+      "name": "@esbuild/linux-riscv64",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/linux-riscv64"
+    },
+    {
+      "name": "@esbuild/linux-ppc64",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/linux-ppc64"
+    },
+    {
+      "name": "@esbuild/linux-mips64el",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/linux-mips64el"
+    },
+    {
+      "name": "@esbuild/linux-loong64",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/linux-loong64"
+    },
+    {
+      "name": "@esbuild/linux-ia32",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/linux-ia32"
+    },
+    {
+      "name": "@esbuild/linux-arm64",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/linux-arm64"
+    },
+    {
+      "name": "@esbuild/linux-arm",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/linux-arm"
+    },
+    {
+      "name": "@esbuild/freebsd-x64",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/freebsd-x64"
+    },
+    {
+      "name": "@esbuild/freebsd-arm64",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/freebsd-arm64"
+    },
+    {
+      "name": "@esbuild/darwin-x64",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/darwin-x64"
+    },
+    {
+      "name": "@esbuild/android-x64",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/android-x64"
+    },
+    {
+      "name": "@esbuild/android-arm64",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/android-arm64"
+    },
+    {
+      "name": "@esbuild/android-arm",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/android-arm"
+    },
+    {
+      "name": "@esbuild/aix-ppc64",
+      "version": "0.27.2",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@esbuild/aix-ppc64"
+    },
+    {
+      "name": "balanced-match",
+      "version": "4.0.4",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/typescript-estree/node_modules/balanced-match"
+    },
+    {
+      "name": "balanced-match",
+      "version": "4.0.4",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@electron/universal/node_modules/balanced-match"
+    },
+    {
+      "name": "balanced-match",
+      "version": "4.0.4",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/filelist/node_modules/balanced-match"
+    },
+    {
+      "name": "balanced-match",
+      "version": "4.0.4",
+      "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/cacache/node_modules/balanced-match"
+    }
+  ],
+  "added": 65,
+  "audited": 1057,
+  "change": [
+    {
+      "from": {
+        "name": "@typescript-eslint/visitor-keys",
+        "version": "8.56.0",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/visitor-keys"
+      },
+      "to": {
+        "name": "@typescript-eslint/visitor-keys",
+        "version": "8.56.1",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/visitor-keys"
+      }
+    },
+    {
+      "from": {
+        "name": "@typescript-eslint/utils",
+        "version": "8.56.0",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/utils"
+      },
+      "to": {
+        "name": "@typescript-eslint/utils",
+        "version": "8.56.1",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/utils"
+      }
+    },
+    {
+      "from": {
+        "name": "@typescript-eslint/typescript-estree",
+        "version": "8.56.0",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/typescript-estree"
+      },
+      "to": {
+        "name": "@typescript-eslint/typescript-estree",
+        "version": "8.56.1",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/typescript-estree"
+      }
+    },
+    {
+      "from": {
+        "name": "minimatch",
+        "version": "9.0.5",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/typescript-estree/node_modules/minimatch"
+      },
+      "to": {
+        "name": "minimatch",
+        "version": "10.2.2",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/typescript-estree/node_modules/minimatch"
+      }
+    },
+    {
+      "from": {
+        "name": "brace-expansion",
+        "version": "2.0.2",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/typescript-estree/node_modules/brace-expansion"
+      },
+      "to": {
+        "name": "brace-expansion",
+        "version": "5.0.3",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/typescript-estree/node_modules/brace-expansion"
+      }
+    },
+    {
+      "from": {
+        "name": "@typescript-eslint/types",
+        "version": "8.56.0",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/types"
+      },
+      "to": {
+        "name": "@typescript-eslint/types",
+        "version": "8.56.1",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/types"
+      }
+    },
+    {
+      "from": {
+        "name": "@typescript-eslint/type-utils",
+        "version": "8.56.0",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/type-utils"
+      },
+      "to": {
+        "name": "@typescript-eslint/type-utils",
+        "version": "8.56.1",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/type-utils"
+      }
+    },
+    {
+      "from": {
+        "name": "@typescript-eslint/tsconfig-utils",
+        "version": "8.56.0",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/tsconfig-utils"
+      },
+      "to": {
+        "name": "@typescript-eslint/tsconfig-utils",
+        "version": "8.56.1",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/tsconfig-utils"
+      }
+    },
+    {
+      "from": {
+        "name": "@typescript-eslint/project-service",
+        "version": "8.56.0",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/project-service"
+      },
+      "to": {
+        "name": "@typescript-eslint/project-service",
+        "version": "8.56.1",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/project-service"
+      }
+    },
+    {
+      "from": {
+        "name": "@typescript-eslint/scope-manager",
+        "version": "8.56.0",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/scope-manager"
+      },
+      "to": {
+        "name": "@typescript-eslint/scope-manager",
+        "version": "8.56.1",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/scope-manager"
+      }
+    },
+    {
+      "from": {
+        "name": "@typescript-eslint/parser",
+        "version": "8.56.0",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/parser"
+      },
+      "to": {
+        "name": "@typescript-eslint/parser",
+        "version": "8.56.1",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/parser"
+      }
+    },
+    {
+      "from": {
+        "name": "@typescript-eslint/eslint-plugin",
+        "version": "8.56.0",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/eslint-plugin"
+      },
+      "to": {
+        "name": "@typescript-eslint/eslint-plugin",
+        "version": "8.56.1",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@typescript-eslint/eslint-plugin"
+      }
+    },
+    {
+      "from": {
+        "name": "minimatch",
+        "version": "9.0.5",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@electron/universal/node_modules/minimatch"
+      },
+      "to": {
+        "name": "minimatch",
+        "version": "9.0.6",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@electron/universal/node_modules/minimatch"
+      }
+    },
+    {
+      "from": {
+        "name": "brace-expansion",
+        "version": "2.0.2",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@electron/universal/node_modules/brace-expansion"
+      },
+      "to": {
+        "name": "brace-expansion",
+        "version": "5.0.3",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/@electron/universal/node_modules/brace-expansion"
+      }
+    },
+    {
+      "from": {
+        "name": "typescript-eslint",
+        "version": "8.56.0",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/typescript-eslint"
+      },
+      "to": {
+        "name": "typescript-eslint",
+        "version": "8.56.1",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/typescript-eslint"
+      }
+    },
+    {
+      "from": {
+        "name": "minimatch",
+        "version": "3.1.2",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/minimatch"
+      },
+      "to": {
+        "name": "minimatch",
+        "version": "3.1.3",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/minimatch"
+      }
+    },
+    {
+      "from": {
+        "name": "markdown-it",
+        "version": "14.1.0",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/markdown-it"
+      },
+      "to": {
+        "name": "markdown-it",
+        "version": "14.1.1",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/markdown-it"
+      }
+    },
+    {
+      "from": {
+        "name": "filelist",
+        "version": "1.0.4",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/filelist"
+      },
+      "to": {
+        "name": "filelist",
+        "version": "1.0.5",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/filelist"
+      }
+    },
+    {
+      "from": {
+        "name": "brace-expansion",
+        "version": "2.0.2",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/filelist/node_modules/brace-expansion"
+      },
+      "to": {
+        "name": "brace-expansion",
+        "version": "5.0.3",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/filelist/node_modules/brace-expansion"
+      }
+    },
+    {
+      "from": {
+        "name": "minimatch",
+        "version": "5.1.6",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/filelist/node_modules/minimatch"
+      },
+      "to": {
+        "name": "minimatch",
+        "version": "10.2.2",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/filelist/node_modules/minimatch"
+      }
+    },
+    {
+      "from": {
+        "name": "diff",
+        "version": "5.2.0",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/diff"
+      },
+      "to": {
+        "name": "diff",
+        "version": "5.2.2",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/diff"
+      }
+    },
+    {
+      "from": {
+        "name": "minimatch",
+        "version": "9.0.5",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/cacache/node_modules/minimatch"
+      },
+      "to": {
+        "name": "minimatch",
+        "version": "9.0.6",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/cacache/node_modules/minimatch"
+      }
+    },
+    {
+      "from": {
+        "name": "brace-expansion",
+        "version": "2.0.2",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/cacache/node_modules/brace-expansion"
+      },
+      "to": {
+        "name": "brace-expansion",
+        "version": "5.0.3",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/cacache/node_modules/brace-expansion"
+      }
+    },
+    {
+      "from": {
+        "name": "ajv",
+        "version": "6.12.6",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/ajv"
+      },
+      "to": {
+        "name": "ajv",
+        "version": "6.14.0",
+        "path": "/Users/ziksartin/tools/uddesa/muwi/node_modules/ajv"
+      }
+    }
+  ],
+  "changed": 24,
+  "funding": 218,
+  "remove": [],
+  "removed": 0,
+  "audit": {
+    "auditReportVersion": 2,
+    "vulnerabilities": {
+      "@electron/asar": {
+        "name": "@electron/asar",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "glob",
+          "minimatch"
+        ],
+        "effects": [
+          "@electron/universal",
+          "app-builder-lib",
+          "electron-winstaller"
+        ],
+        "range": "3.2.1 - 3.4.1",
+        "nodes": [
+          "node_modules/@electron/asar"
+        ],
+        "fixAvailable": {
+          "name": "electron-builder",
+          "version": "22.14.13",
+          "isSemVerMajor": true
+        }
+      },
+      "@electron/rebuild": {
+        "name": "@electron/rebuild",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "node-gyp"
+        ],
+        "effects": [
+          "app-builder-lib"
+        ],
+        "range": "3.2.10 - 3.6.2 || >=4.0.1",
+        "nodes": [
+          "node_modules/@electron/rebuild"
+        ],
+        "fixAvailable": {
+          "name": "electron-builder",
+          "version": "22.14.13",
+          "isSemVerMajor": true
+        }
+      },
+      "@electron/universal": {
+        "name": "@electron/universal",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "@electron/asar",
+          "dir-compare",
+          "minimatch"
+        ],
+        "effects": [
+          "app-builder-lib"
+        ],
+        "range": ">=1.0.1",
+        "nodes": [
+          "node_modules/@electron/universal"
+        ],
+        "fixAvailable": {
+          "name": "electron-builder",
+          "version": "22.14.13",
+          "isSemVerMajor": true
+        }
+      },
+      "@excalidraw/excalidraw": {
+        "name": "@excalidraw/excalidraw",
+        "severity": "moderate",
+        "isDirect": true,
+        "via": [
+          "@excalidraw/mermaid-to-excalidraw"
+        ],
+        "effects": [],
+        "range": "0.17.1-08b13f9 - 0.17.1-test || >=0.18.0-6135548",
+        "nodes": [
+          "node_modules/@excalidraw/excalidraw"
+        ],
+        "fixAvailable": {
+          "name": "@excalidraw/excalidraw",
+          "version": "0.17.6",
+          "isSemVerMajor": true
+        }
+      },
+      "@excalidraw/mermaid-to-excalidraw": {
+        "name": "@excalidraw/mermaid-to-excalidraw",
+        "severity": "moderate",
+        "isDirect": false,
+        "via": [
+          "nanoid"
+        ],
+        "effects": [
+          "@excalidraw/excalidraw"
+        ],
+        "range": "*",
+        "nodes": [
+          "node_modules/@excalidraw/mermaid-to-excalidraw"
+        ],
+        "fixAvailable": {
+          "name": "@excalidraw/excalidraw",
+          "version": "0.17.6",
+          "isSemVerMajor": true
+        }
+      },
+      "@typescript-eslint/eslint-plugin": {
+        "name": "@typescript-eslint/eslint-plugin",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "@typescript-eslint/type-utils",
+          "@typescript-eslint/utils"
+        ],
+        "effects": [],
+        "range": "6.16.0 - 8.56.0",
+        "nodes": [
+          ""
+        ],
+        "fixAvailable": true
+      },
+      "@typescript-eslint/parser": {
+        "name": "@typescript-eslint/parser",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "@typescript-eslint/typescript-estree"
+        ],
+        "effects": [
+          "typescript-eslint"
+        ],
+        "range": "6.16.0 - 8.56.0",
+        "nodes": [
+          ""
+        ],
+        "fixAvailable": true
+      },
+      "@typescript-eslint/type-utils": {
+        "name": "@typescript-eslint/type-utils",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "@typescript-eslint/typescript-estree",
+          "@typescript-eslint/utils"
+        ],
+        "effects": [
+          "@typescript-eslint/eslint-plugin"
+        ],
+        "range": "6.16.0 - 8.56.0",
+        "nodes": [
+          ""
+        ],
+        "fixAvailable": true
+      },
+      "@typescript-eslint/typescript-estree": {
+        "name": "@typescript-eslint/typescript-estree",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "minimatch"
+        ],
+        "effects": [
+          "@typescript-eslint/parser",
+          "@typescript-eslint/type-utils",
+          "@typescript-eslint/utils",
+          "typescript-eslint"
+        ],
+        "range": "6.16.0 - 8.56.1-alpha.2",
+        "nodes": [
+          ""
+        ],
+        "fixAvailable": true
+      },
+      "@typescript-eslint/utils": {
+        "name": "@typescript-eslint/utils",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "@typescript-eslint/typescript-estree"
+        ],
+        "effects": [
+          "typescript-eslint"
+        ],
+        "range": "6.16.0 - 8.56.0",
+        "nodes": [
+          ""
+        ],
+        "fixAvailable": true
+      },
+      "ajv": {
+        "name": "ajv",
+        "severity": "moderate",
+        "isDirect": false,
+        "via": [
+          {
+            "source": 1113428,
+            "name": "ajv",
+            "dependency": "ajv",
+            "title": "ajv has ReDoS when using `$data` option",
+            "url": "https://github.com/advisories/GHSA-2g4f-4pwh-qvx6",
+            "severity": "moderate",
+            "cwe": [
+              "CWE-400",
+              "CWE-1333"
+            ],
+            "cvss": {
+              "score": 0,
+              "vectorString": null
+            },
+            "range": "<6.14.0"
+          }
+        ],
+        "effects": [],
+        "range": "<6.14.0",
+        "nodes": [
+          ""
+        ],
+        "fixAvailable": true
+      },
+      "app-builder-lib": {
+        "name": "app-builder-lib",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "@electron/asar",
+          "@electron/rebuild",
+          "@electron/universal",
+          "dmg-builder",
+          "electron-builder-squirrel-windows"
+        ],
+        "effects": [
+          "dmg-builder",
+          "electron-builder",
+          "electron-builder-squirrel-windows"
+        ],
+        "range": ">=23.0.0-alpha.0",
+        "nodes": [
+          "node_modules/app-builder-lib"
+        ],
+        "fixAvailable": {
+          "name": "electron-builder",
+          "version": "22.14.13",
+          "isSemVerMajor": true
+        }
+      },
+      "cacache": {
+        "name": "cacache",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "glob"
+        ],
+        "effects": [
+          "make-fetch-happen"
+        ],
+        "range": "6.1.1 - 19.0.1",
+        "nodes": [
+          "node_modules/cacache"
+        ],
+        "fixAvailable": {
+          "name": "electron-builder",
+          "version": "22.14.13",
+          "isSemVerMajor": true
+        }
+      },
+      "diff": {
+        "name": "diff",
+        "severity": "low",
+        "isDirect": false,
+        "via": [
+          {
+            "source": 1112705,
+            "name": "diff",
+            "dependency": "diff",
+            "title": "jsdiff has a Denial of Service vulnerability in parsePatch and applyPatch",
+            "url": "https://github.com/advisories/GHSA-73rr-hh4g-fpgx",
+            "severity": "low",
+            "cwe": [
+              "CWE-400",
+              "CWE-1333"
+            ],
+            "cvss": {
+              "score": 0,
+              "vectorString": null
+            },
+            "range": ">=5.0.0 <5.2.2"
+          }
+        ],
+        "effects": [],
+        "range": "5.0.0 - 5.2.1",
+        "nodes": [
+          ""
+        ],
+        "fixAvailable": true
+      },
+      "dir-compare": {
+        "name": "dir-compare",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "minimatch"
+        ],
+        "effects": [
+          "@electron/universal"
+        ],
+        "range": "*",
+        "nodes": [
+          "node_modules/dir-compare"
+        ],
+        "fixAvailable": {
+          "name": "electron-builder",
+          "version": "22.14.13",
+          "isSemVerMajor": true
+        }
+      },
+      "dmg-builder": {
+        "name": "dmg-builder",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "app-builder-lib"
+        ],
+        "effects": [
+          "app-builder-lib",
+          "electron-builder"
+        ],
+        "range": ">=23.0.0-alpha.0",
+        "nodes": [
+          "node_modules/dmg-builder"
+        ],
+        "fixAvailable": {
+          "name": "electron-builder",
+          "version": "22.14.13",
+          "isSemVerMajor": true
+        }
+      },
+      "electron-builder": {
+        "name": "electron-builder",
+        "severity": "high",
+        "isDirect": true,
+        "via": [
+          "app-builder-lib",
+          "dmg-builder"
+        ],
+        "effects": [],
+        "range": "19.25.0 || >=23.0.0-alpha.0",
+        "nodes": [
+          "node_modules/electron-builder"
+        ],
+        "fixAvailable": {
+          "name": "electron-builder",
+          "version": "22.14.13",
+          "isSemVerMajor": true
+        }
+      },
+      "electron-builder-squirrel-windows": {
+        "name": "electron-builder-squirrel-windows",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "app-builder-lib",
+          "electron-winstaller"
+        ],
+        "effects": [],
+        "range": ">=23.0.0-alpha.0",
+        "nodes": [
+          "node_modules/electron-builder-squirrel-windows"
+        ],
+        "fixAvailable": true
+      },
+      "electron-winstaller": {
+        "name": "electron-winstaller",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "@electron/asar",
+          "temp"
+        ],
+        "effects": [
+          "electron-builder-squirrel-windows"
+        ],
+        "range": ">=3.0.0",
+        "nodes": [
+          "node_modules/electron-winstaller"
+        ],
+        "fixAvailable": true
+      },
+      "filelist": {
+        "name": "filelist",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "minimatch"
+        ],
+        "effects": [],
+        "range": "0.0.2 - 1.0.4",
+        "nodes": [
+          ""
+        ],
+        "fixAvailable": true
+      },
+      "glob": {
+        "name": "glob",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "minimatch"
+        ],
+        "effects": [
+          "cacache",
+          "rimraf"
+        ],
+        "range": "3.0.0 - 10.5.0",
+        "nodes": [
+          "node_modules/cacache/node_modules/glob",
+          "node_modules/glob"
+        ],
+        "fixAvailable": {
+          "name": "electron-builder",
+          "version": "22.14.13",
+          "isSemVerMajor": true
+        }
+      },
+      "make-fetch-happen": {
+        "name": "make-fetch-happen",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "cacache"
+        ],
+        "effects": [
+          "node-gyp"
+        ],
+        "range": "<=14.0.3",
+        "nodes": [
+          "node_modules/make-fetch-happen"
+        ],
+        "fixAvailable": {
+          "name": "electron-builder",
+          "version": "22.14.13",
+          "isSemVerMajor": true
+        }
+      },
+      "markdown-it": {
+        "name": "markdown-it",
+        "severity": "moderate",
+        "isDirect": false,
+        "via": [
+          {
+            "source": 1113190,
+            "name": "markdown-it",
+            "dependency": "markdown-it",
+            "title": "markdown-it is has a Regular Expression Denial of Service (ReDoS)",
+            "url": "https://github.com/advisories/GHSA-38c4-r59v-3vqw",
+            "severity": "moderate",
+            "cwe": [
+              "CWE-1333"
+            ],
+            "cvss": {
+              "score": 5.3,
+              "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+            },
+            "range": ">=13.0.0 <14.1.1"
+          }
+        ],
+        "effects": [],
+        "range": "13.0.0 - 14.1.0",
+        "nodes": [
+          ""
+        ],
+        "fixAvailable": true
+      },
+      "minimatch": {
+        "name": "minimatch",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          {
+            "source": 1113371,
+            "name": "minimatch",
+            "dependency": "minimatch",
+            "title": "minimatch has a ReDoS via repeated wildcards with non-matching literal in pattern",
+            "url": "https://github.com/advisories/GHSA-3ppc-4f35-3m26",
+            "severity": "high",
+            "cwe": [
+              "CWE-1333"
+            ],
+            "cvss": {
+              "score": 0,
+              "vectorString": null
+            },
+            "range": "<10.2.1"
+          }
+        ],
+        "effects": [
+          "@electron/asar",
+          "@electron/universal",
+          "@typescript-eslint/typescript-estree",
+          "dir-compare",
+          "filelist",
+          "glob"
+        ],
+        "range": "<10.2.1",
+        "nodes": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "node_modules/minimatch"
+        ],
+        "fixAvailable": {
+          "name": "electron-builder",
+          "version": "22.14.13",
+          "isSemVerMajor": true
+        }
+      },
+      "nanoid": {
+        "name": "nanoid",
+        "severity": "moderate",
+        "isDirect": false,
+        "via": [
+          {
+            "source": 1109564,
+            "name": "nanoid",
+            "dependency": "nanoid",
+            "title": "Predictable results in nanoid generation when given non-integer values",
+            "url": "https://github.com/advisories/GHSA-mwcw-c2x4-8c55",
+            "severity": "moderate",
+            "cwe": [
+              "CWE-835"
+            ],
+            "cvss": {
+              "score": 4.3,
+              "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:N"
+            },
+            "range": ">=4.0.0 <5.0.9"
+          }
+        ],
+        "effects": [
+          "@excalidraw/mermaid-to-excalidraw"
+        ],
+        "range": "4.0.0 - 5.0.8",
+        "nodes": [
+          "node_modules/@excalidraw/mermaid-to-excalidraw/node_modules/nanoid"
+        ],
+        "fixAvailable": {
+          "name": "@excalidraw/excalidraw",
+          "version": "0.17.6",
+          "isSemVerMajor": true
+        }
+      },
+      "node-gyp": {
+        "name": "node-gyp",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "make-fetch-happen"
+        ],
+        "effects": [
+          "@electron/rebuild"
+        ],
+        "range": "8.0.0 - 11.5.0",
+        "nodes": [
+          "node_modules/node-gyp"
+        ],
+        "fixAvailable": {
+          "name": "electron-builder",
+          "version": "22.14.13",
+          "isSemVerMajor": true
+        }
+      },
+      "rimraf": {
+        "name": "rimraf",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "glob"
+        ],
+        "effects": [
+          "temp"
+        ],
+        "range": "2.3.0 - 3.0.2 || 4.2.0 - 5.0.10",
+        "nodes": [
+          "node_modules/rimraf"
+        ],
+        "fixAvailable": true
+      },
+      "temp": {
+        "name": "temp",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "rimraf"
+        ],
+        "effects": [
+          "electron-winstaller"
+        ],
+        "range": ">=0.8.4",
+        "nodes": [
+          "node_modules/temp"
+        ],
+        "fixAvailable": true
+      },
+      "typescript-eslint": {
+        "name": "typescript-eslint",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "@typescript-eslint/eslint-plugin",
+          "@typescript-eslint/parser",
+          "@typescript-eslint/typescript-estree",
+          "@typescript-eslint/utils"
+        ],
+        "effects": [],
+        "range": "<=8.56.0",
+        "nodes": [
+          ""
+        ],
+        "fixAvailable": true
+      }
+    },
+    "metadata": {
+      "vulnerabilities": {
+        "info": 0,
+        "low": 1,
+        "moderate": 5,
+        "high": 23,
+        "critical": 0,
+        "total": 29
+      },
+      "dependencies": {
+        "prod": 408,
+        "dev": 630,
+        "optional": 125,
+        "peer": 39,
+        "peerOptional": 0,
+        "total": 1056
+      }
+    }
+  }
+}

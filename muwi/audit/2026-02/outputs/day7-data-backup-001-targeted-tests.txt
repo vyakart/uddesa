@@ -1,0 +1,14 @@
+
+> muwi@0.0.0 test
+> vitest src/utils/backup.test.ts
+
+
+ RUN  v4.0.17 /Users/ziksartin/tools/uddesa/muwi
+
+ ✓ src/utils/backup.test.ts (13 tests) 61ms
+
+ Test Files  1 passed (1)
+      Tests  13 passed (13)
+   Start at  22:37:52
+   Duration  887ms (transform 107ms, setup 89ms, import 210ms, tests 61ms, environment 430ms)
+

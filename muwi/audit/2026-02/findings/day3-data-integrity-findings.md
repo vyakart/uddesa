@@ -1,4 +1,5 @@
 ### [DATA-BACKUP-001] Restore Replace Flow Is Not Atomic Across Clear + Restore
+- Status: Remediated (Day 7 follow-up, 2026-02-24)
 - Area: Data Layer / Backup Integrity
 - Severity: High
 - Files: `muwi/src/utils/backup.ts:383`, `muwi/src/utils/backup.ts:413`, `muwi/src/utils/backup.ts:428`
@@ -18,6 +19,10 @@
   - Execute clear + restore within a single Dexie transaction, or restore into a staging database and swap only on success.
 - Regression Tests Needed:
   - Simulate `clearExisting=true` with clear success + restore failure and assert original records are still present.
+- Remediation Notes:
+  - `restoreBackup()` now performs the `clearExisting=true` clear + restore flow in a single Dexie transaction and preserves error-path messaging by tracking clear vs restore phase.
+  - Added failure-injection regression test that forces `bulkPut` failure after clear begins and verifies original records remain present after rollback.
+  - Validation: `muwi/audit/2026-02/outputs/day7-data-backup-001-targeted-tests.txt` (`13/13` tests passed in `src/utils/backup.test.ts`).
 
 ### [DATA-QUERY-001] Multi-Table Query Mutations Are Mostly Not Transaction-Wrapped
 - Area: Data Layer

@@ -47,6 +47,20 @@ test('electron app launches with preload API and loads blackboard route', async 
     expect(preloadShape.hasLoadBackup).toBe(true);
     expect(['darwin', 'win32', 'linux']).toContain(preloadShape.platform ?? '');
 
+    const runtimeWebPreferences = await electronApp.evaluate(({ BrowserWindow }) => {
+      const mainWindow = BrowserWindow.getAllWindows()[0];
+      const prefs = mainWindow?.webContents.getLastWebPreferences();
+      return {
+        sandbox: prefs?.sandbox,
+        contextIsolation: prefs?.contextIsolation,
+        nodeIntegration: prefs?.nodeIntegration,
+      };
+    });
+
+    expect(runtimeWebPreferences.sandbox).toBe(true);
+    expect(runtimeWebPreferences.contextIsolation).toBe(true);
+    expect(runtimeWebPreferences.nodeIntegration).toBe(false);
+
     await page.evaluate(() => {
       window.history.pushState({}, '', '/');
       window.dispatchEvent(new PopStateEvent('popstate'));

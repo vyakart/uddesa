@@ -12,6 +12,77 @@ Classification uses `package-lock.json` `packages[*].dev` flags across all match
 - Install scope: dev=24, runtime=1, unknown=4
 - Likely exposure: dev/build-tooling-likely=24, runtime-path-possible=1, needs-manual-triage=4
 
+## Day 7 Refresh (2026-02-24)
+
+Sources:
+
+- `muwi/audit/2026-02/outputs/day7-audit-deps-json.txt`
+- `muwi/audit/2026-02/outputs/day7-audit-deps-summary.md`
+- `muwi/audit/2026-02/outputs/day7-audit-fix-dry-run.json`
+
+Re-run result:
+
+- Counts unchanged from Day 1/Day 2 baseline (`29` total; `23` high; `5` moderate; `1` low).
+- No `Critical` vulnerabilities reported.
+- High-severity findings remain concentrated in dev/build tooling chains (primarily `electron-builder` and `typescript-eslint` transitive paths).
+- Runtime-path findings remain in the `moderate`/`low` range (`@excalidraw/excalidraw`, `@excalidraw/mermaid-to-excalidraw`, `markdown-it`, `nanoid`, `diff`), based on prior Day 2 lockfile + `npm ls` path analysis.
+
+Dry-run remediation output (`npm audit fix --dry-run --json`) notes:
+
+- The output includes peer dependency resolution warnings and a large proposed install-plan churn (many optional platform binaries and transitive package changes), which is not a safe blind patch for a release-closeout pass.
+- The audit payload nested in the dry-run output still reports the same vulnerability totals (`29` total; `23` high; `5` moderate; `1` low).
+- `electron-builder` fixes are still indicated as semver-major path changes in the advisory output.
+
+### Residual Risk Statement (Day 7)
+
+- `High` counts are currently assessed as dev/build-tooling exposure, not direct shipped runtime-path exposure, based on the Day 2 triage classification and unchanged Day 7 audit counts.
+- Release/runtime residual risk remains from unresolved `moderate` runtime-path packages in the editor/diagram/document stack (notably Excalidraw/mermaid and markdown parsing paths).
+- Recommended disposition for launch decision:
+  - Do not treat `SEC-DEPS-001` as a stop-ship for local/private beta if the team explicitly accepts build-tooling high findings and moderate runtime findings with a dated remediation plan.
+  - For public production launch, complete a dependency upgrade pass (or package-level mitigations/feature deferral) and re-run regression + packaging validation before sign-off.
+
+## Day 7 Controlled Remediation Pass (2026-02-24)
+
+Changes applied:
+
+- `typescript-eslint` upgraded `8.56.0 -> 8.56.1` (direct dev dependency)
+- Added `package.json` overrides for audited patch-level transitive updates:
+  - `ajv@6.14.0`
+  - `diff@5.2.2`
+  - `markdown-it@14.1.1`
+
+Validation inputs:
+
+- Install log: `muwi/audit/2026-02/outputs/day7-sec-deps-001-controlled-install.txt`
+- Post-upgrade audit JSON: `muwi/audit/2026-02/outputs/day7-audit-deps-after-controlled-upgrade-json.txt`
+- Post-upgrade audit summary: `muwi/audit/2026-02/outputs/day7-audit-deps-after-controlled-upgrade-summary.md`
+
+Outcome (post-upgrade):
+
+- Vulnerabilities reduced from `29` to `20`
+- Severity delta:
+  - `High`: `23 -> 17`
+  - `Moderate`: `5 -> 3`
+  - `Low`: `1 -> 0`
+- Resolved advisories/packages in this pass:
+  - `typescript-eslint` + `@typescript-eslint/*` chain
+  - `ajv`
+  - `markdown-it`
+  - `diff`
+
+Current remaining set (20 packages):
+
+- `High` (17): all in `electron-builder` / packaging toolchain dependency chain (`electron-builder`, `app-builder-lib`, `dmg-builder`, `@electron/*`, `glob`, `minimatch`, `node-gyp`, etc.)
+- `Moderate` (3): Excalidraw runtime-path chain (`@excalidraw/excalidraw`, `@excalidraw/mermaid-to-excalidraw`, `nanoid`)
+
+Updated residual risk (after controlled pass):
+
+- The remaining `High` findings are still dev/build-tooling exposure concentrated in the packaging chain.
+- The remaining runtime-path exposure is now narrowed to the Excalidraw/Mermaid chain (`3` moderate packages).
+- This materially improves release risk posture, but `SEC-DEPS-001` remains open until the team either:
+  - performs a validated Excalidraw-path remediation/feature mitigation, or
+  - records a formal risk acceptance (owner + review date) for the remaining moderate runtime findings and packaging-chain high findings.
+
 ## Runtime / Mixed-Scope Vulnerabilities (prioritize for release risk)
 
 | Package | Sev | Direct | Scope | Exposure | Top-level effects | Sample lock paths | Fix |

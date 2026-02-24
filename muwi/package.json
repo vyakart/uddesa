@@ -81,13 +81,16 @@
     "prettier": "^3.8.0",
     "tailwindcss": "^4.1.18",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.56.0",
+    "typescript-eslint": "^8.56.1",
     "vite": "^7.2.4",
     "vite-plugin-electron": "^0.29.0",
     "vite-plugin-electron-renderer": "^0.14.6",
     "vitest": "^4.0.17"
   },
   "overrides": {
+    "ajv": "6.14.0",
+    "diff": "5.2.2",
+    "markdown-it": "14.1.1",
     "@excalidraw/excalidraw": {
       "nanoid": "3.3.11"
     },

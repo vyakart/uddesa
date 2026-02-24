@@ -1,0 +1,353 @@
+
+> muwi@0.0.0 test:coverage
+> vitest run --coverage
+
+
+ RUN  v4.0.17 /Users/ziksartin/tools/uddesa/muwi
+      Coverage enabled with v8
+
+stderr | src/components/diaries/PersonalDiary/DiaryEntry.test.tsx > DiaryEntry > auto-saves content changes with debounce and updates word count
+An update to DiaryEntry inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/components/diaries/scratchpad/TextBlock.test.tsx (5 tests) 686ms
+     ✓ locks and unlocks an individual text block with passkey prompt  346ms
+ ✓ src/components/diaries/PersonalDiary/DiaryEntry.test.tsx (9 tests) 1012ms
+     ✓ locks and unlocks entry when passkey is configured  318ms
+ ✓ src/components/diaries/academic/BibliographyManager.test.tsx (6 tests) 1940ms
+     ✓ filters/selects entries and supports edit/delete actions  415ms
+     ✓ imports a reference from DOI  497ms
+     ✓ imports references from BibTeX  324ms
+     ✓ handles add-modal validation and error branches across manual/DOI/BibTeX modes  460ms
+ ✓ src/components/diaries/drafts/Drafts.test.tsx (7 tests) 1360ms
+     ✓ loads drafts on mount and renders list + selected draft editor  444ms
+     ✓ handles deleting drafts through the list context menu  312ms
+ ✓ src/components/common/ExportPanel/ExportPanel.test.tsx (5 tests) 2475ms
+     ✓ shows options per format (PDF/DOCX vs LaTeX)  385ms
+     ✓ shows progress indicator and exports with selected options  1905ms
+ ✓ src/components/diaries/academic/Academic.test.tsx (6 tests) 1931ms
+     ✓ renders error state and supports retry  338ms
+     ✓ renders empty state and creates paper via template selector  440ms
+     ✓ renders main editor flow and handles toolbar/sidebar/panel interactions  588ms
+     ✓ does not recompute section hierarchy on unrelated app-store re-renders  322ms
+ ✓ src/components/diaries/drafts/DraftList.test.tsx (8 tests) 2952ms
+     ✓ lists drafts with preview, status badge, word count, and sort controls  580ms
+     ✓ selects draft on click and updates sort/filter actions  492ms
+     ✓ locks and unlocks drafts from context menu with passkey prompt flow  646ms
+     ✓ handles empty states for all/filter views and closes menus on outside click  427ms
+     ✓ toggles sort order when selecting the current sort and supports status click/delete cancel paths  315ms
+ ✓ src/components/diaries/academic/ReferenceLibraryPanel.test.tsx (3 tests) 449ms
+     ✓ exports global references as JSON  359ms
+ ✓ src/components/diaries/academic/TemplateSelector.test.tsx (3 tests) 1251ms
+     ✓ creates blank paper with default title when no input is provided  542ms
+     ✓ creates paper with IMRAD template and metadata fields  417ms
+stderr | src/components/common/CommandPalette/CommandPalette.test.tsx > CommandPalette > runs diary-only commands (export) and toggles dark-mode command from dark to light
+An update to CommandPalette inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/hooks/useContentLocking.test.tsx (14 tests) 1360ms
+ ✓ src/components/diaries/PersonalDiary/DatePicker.test.tsx (4 tests) 702ms
+     ✓ opens calendar, supports month navigation, and closes with escape  313ms
+ ✓ src/components/common/CommandPalette/CommandPalette.test.tsx (15 tests) 1139ms
+ ✓ src/components/diaries/scratchpad/Scratchpad.test.tsx (3 tests) 1675ms
+     ✓ loads pages on mount and shows page stack, category picker, and page count  440ms
+     ✓ locks and unlocks the current page with passkey prompt flow  1054ms
+ ✓ src/components/shelf/Shelf.test.tsx (9 tests) 1291ms
+     ✓ displays all six diary cards and command palette hint  318ms
+     ✓ shows context menu on right-click and opens selected diary  343ms
+ ✓ src/components/common/PasskeyPrompt/PasskeyPrompt.test.tsx (6 tests) 1384ms
+     ✓ renders passkey input and submit button  631ms
+ ✓ src/components/diaries/long-drafts/FootnoteManager.test.tsx (3 tests) 949ms
+     ✓ supports navigate, inline edit/save, and context menu delete  534ms
+ ✓ src/components/common/ContextMenu/ContextMenu.test.tsx (11 tests) 823ms
+ ✓ src/components/diaries/long-drafts/LongDrafts.test.tsx (6 tests) 791ms
+     ✓ renders main layout, handles shortcuts, and supports document switching/deletion  369ms
+ ✓ src/App.test.tsx (4 tests) 759ms
+     ✓ supports deep linking to personal diary route  411ms
+     ✓ syncs URL when store navigation changes including item route params  315ms
+ ✓ src/components/diaries/blackboard/BlackboardToolbar.test.tsx (3 tests) 615ms
+     ✓ toggles index visibility and sets active drawing tool  329ms
+ ✓ src/utils/citation.test.ts (12 tests) 474ms
+     ✓ supports style switching across bundled and legacy styles  359ms
+ ✓ src/components/diaries/long-drafts/SectionEditor.test.tsx (6 tests) 694ms
+     ✓ renders normal editor UI and auto-saves title/content/notes + status changes  545ms
+ ✓ src/components/diaries/blackboard/Blackboard.test.tsx (4 tests) 781ms
+     ✓ loads on mount, rebuilds index on canvas change, and cycles index visibility states  386ms
+ ✓ src/components/shelf/SettingsPanel.test.tsx (8 tests) 1404ms
+     ✓ supports tabbed navigation sections  317ms
+     ✓ supports ArrowLeft/ArrowUp/Home/End tab-key navigation  376ms
+ ✓ src/components/common/DiaryLayout/DiaryLayout.test.tsx (3 tests) 322ms
+ ✓ src/components/common/Toast/Toast.test.tsx (4 tests) 420ms
+     ✓ renders toasts in a bottom-center viewport with icon slot and variants  311ms
+ ✓ src/components/diaries/academic/CitationPicker.test.tsx (3 tests) 475ms
+     ✓ loads references, filters/searches, and inserts citation for selected entry  305ms
+ ✓ src/utils/export.test.ts (6 tests) 429ms
+ ✓ src/components/diaries/scratchpad/CategoryPicker.test.tsx (4 tests) 597ms
+     ✓ shows current category with color and lists all categories  415ms
+ ✓ src/components/diaries/PersonalDiary/PersonalDiary.test.tsx (5 tests) 528ms
+     ✓ renders a first-use empty state when no entry is selected  302ms
+ ✓ src/components/diaries/long-drafts/FocusMode.test.tsx (6 tests) 471ms
+     ✓ shows focus mode UI and exits with Escape  338ms
+ ✓ src/components/common/Modal/Modal.test.tsx (6 tests) 369ms
+ ✓ src/components/diaries/blackboard/IndexPanel.test.tsx (3 tests) 254ms
+ ✓ src/components/diaries/drafts/DraftEditor.test.tsx (6 tests) 481ms
+ ✓ src/components/diaries/long-drafts/TableOfContents.test.tsx (5 tests) 1706ms
+     ✓ renders hierarchy, supports section actions, and context-menu operations  644ms
+     ✓ supports lock/unlock actions with passkey prompt in section context menu  767ms
+ ✓ src/components/common/FormControls/FormControls.test.tsx (4 tests) 693ms
+     ✓ renders input with accessible label, hint, and error wiring  358ms
+ ✓ src/components/diaries/PersonalDiary/EntryNavigation.test.tsx (3 tests) 516ms
+     ✓ groups entries by month and retains optional mood indicators  436ms
+ ✓ src/components/diaries/drafts/StatusBadge.test.tsx (3 tests) 453ms
+     ✓ shows status text with mapped color styling  365ms
+ ✓ src/components/diaries/blackboard/ExcalidrawWrapper.test.tsx (5 tests) 310ms
+ ✓ src/components/common/accessibility.semantics.test.tsx (4 tests) 471ms
+     ✓ applies required semantic roles to toolbar, sidebar, modal, and statusbar  320ms
+ ✓ src/components/common/BackupPanel/BackupPanel.test.tsx (3 tests) 1045ms
+     ✓ does not render when closed and loads stats when opened  428ms
+     ✓ runs backup and restore flows, updates last backup timestamp, and refreshes stats after restore  316ms
+ ✓ src/components/diaries/scratchpad/PageStack.test.tsx (2 tests) 278ms
+ ✓ src/components/shelf/DiaryCard.test.tsx (3 tests) 453ms
+     ✓ displays diary name, icon, and metadata  314ms
+ ✓ src/components/common/FontSelector/FontSelector.test.tsx (3 tests) 301ms
+ ✓ src/components/common/Button/Button.test.tsx (4 tests) 243ms
+ ✓ src/components/common/ErrorBoundary/ErrorBoundary.test.tsx (3 tests) 346ms
+ ✓ src/stores/settingsStore.test.ts (4 tests) 261ms
+ ✓ src/components/common/Toolbar/Toolbar.test.tsx (3 tests) 301ms
+ ✓ src/utils/crypto.test.ts (6 tests) 185ms
+ ✓ src/components/common/NavigationHeader/NavigationHeader.test.tsx (3 tests) 273ms
+ ✓ src/components/diaries/scratchpad/ScratchpadPage.test.tsx (3 tests) 294ms
+ ✓ src/stores/draftsStore.test.ts (5 tests) 126ms
+ ✓ src/components/diaries/academic/AcademicSectionEditor.test.tsx (5 tests) 771ms
+     ✓ renders normal mode, auto-saves title/content, and inserts citations  496ms
+ ✓ src/db/queries/diary.test.ts (4 tests) 129ms
+ ✓ src/db/queries/drafts.test.ts (2 tests) 54ms
+ ✓ src/db/queries/blackboard.test.ts (3 tests) 173ms
+ ✓ src/components/common/DiaryLayout/DiaryLayout.responsive.test.tsx (4 tests) 501ms
+ ✓ src/db/queries/longDrafts.test.ts (3 tests) 104ms
+ ✓ src/stores/scratchpadStore.test.ts (4 tests) 110ms
+ ✓ src/db/queries/scratchpad.test.ts (3 tests) 90ms
+ ✓ src/stores/blackboardStore.test.ts (3 tests) 156ms
+ ✓ src/stores/personalDiaryStore.test.ts (5 tests) 172ms
+ ✓ src/test/db-utils.test.ts (2 tests) 82ms
+ ✓ src/utils/backup.test.ts (13 tests) 327ms
+ ✓ src/stores/academicStore.test.ts (12 tests) 467ms
+ ✓ src/utils/citeproc.test.ts (3 tests) 106ms
+ ✓ src/utils/export.pdf.test.ts (4 tests) 40ms
+ ✓ src/hooks/useGlobalShortcuts.test.tsx (11 tests) 58ms
+ ✓ src/stores/longDraftsStore.test.ts (10 tests) 282ms
+ ✓ src/hooks/usePasteHandler.test.tsx (4 tests) 46ms
+ ✓ src/db/queries/academic.test.ts (4 tests) 179ms
+ ✓ src/utils/keyboard.test.ts (4 tests) 32ms
+ ✓ src/utils/export.word.test.ts (3 tests) 26ms
+ ✓ src/db/queries/settings.test.ts (3 tests) 159ms
+ ✓ src/extensions/footnote.test.ts (3 tests) 16ms
+ ✓ src/styles/theme-switching.test.tsx (3 tests) 14ms
+ ✓ src/hooks/useEditorShortcuts.test.tsx (3 tests) 30ms
+ ✓ electron/backupImport.test.ts (2 tests) 10ms
+ ✓ src/utils/appRouter.test.ts (3 tests) 5ms
+ ✓ src/stores/appStore.test.ts (3 tests) 6ms
+ ✓ src/styles/tokens.test.ts (2 tests) 6ms
+ ✓ src/hooks/useKeyboardShortcuts.test.tsx (5 tests) 43ms
+ ✓ src/styles/contrast.test.ts (3 tests) 3ms
+ ✓ src/styles/responsive-layout.test.ts (3 tests) 7ms
+ ✓ src/components/diaries/academic/useCitationShortcut.test.tsx (1 test) 15ms
+ ✓ src/test/store-utils.test.ts (4 tests) 4ms
+
+ Test Files  86 passed (86)
+      Tests  416 passed (416)
+   Start at  22:38:07
+   Duration  41.45s (transform 5.87s, setup 8.90s, import 146.26s, tests 45.72s, environment 52.78s)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   88.95 |       80 |   86.51 |   89.28 |                   
+ src               |   77.33 |    65.21 |      75 |   76.38 |                   
+  App.tsx          |   77.33 |    65.21 |      75 |   76.38 | ...20-222,228-232 
+ src/components    |       0 |        0 |       0 |       0 |                   
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ ...ponents/common |       0 |        0 |       0 |       0 |                   
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ ...on/BackupPanel |   86.07 |     66.1 |   86.66 |   87.01 |                   
+  BackupPanel.tsx  |   86.07 |     66.1 |   86.66 |   87.01 | ...75-183,325-335 
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ .../common/Button |     100 |      100 |     100 |     100 |                   
+  Button.tsx       |     100 |      100 |     100 |     100 |                   
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ ...CommandPalette |    86.7 |    81.91 |   84.21 |   84.47 |                   
+  ...ndPalette.tsx |    86.7 |    81.91 |   84.21 |   84.47 | ...68,278,364-366 
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ ...on/ContextMenu |    86.7 |    78.26 |   93.54 |   86.36 |                   
+  ContextMenu.tsx  |    86.7 |    78.26 |   93.54 |   86.36 | ...06-308,351-354 
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ ...on/DiaryLayout |   78.21 |    71.69 |     100 |   76.59 |                   
+  DiaryLayout.tsx  |   78.21 |    71.69 |     100 |   76.59 | 60,142,164-190    
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ .../ErrorBoundary |     100 |      100 |     100 |     100 |                   
+  ...rBoundary.tsx |     100 |      100 |     100 |     100 |                   
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ ...on/ExportPanel |    90.9 |    78.72 |    62.5 |    90.9 |                   
+  ExportPanel.tsx  |    90.9 |    78.72 |    62.5 |    90.9 | 258-284,302,323   
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ ...n/FontSelector |     100 |      100 |     100 |     100 |                   
+  FontSelector.tsx |     100 |      100 |     100 |     100 |                   
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ ...n/FormControls |     100 |    85.71 |     100 |     100 |                   
+  FormControls.tsx |     100 |    85.71 |     100 |     100 | ...19,136,163,188 
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ ...s/common/Modal |   91.66 |    89.36 |     100 |   91.66 |                   
+  Modal.tsx        |   91.66 |    89.36 |     100 |   91.66 | 46,67-69          
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ ...vigationHeader |     100 |      100 |     100 |     100 |                   
+  ...ionHeader.tsx |     100 |      100 |     100 |     100 |                   
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ ...mmon/PageStack |       0 |        0 |       0 |       0 |                   
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ .../PasskeyPrompt |      92 |    84.61 |     100 |    91.3 |                   
+  ...keyPrompt.tsx |      92 |    84.61 |     100 |    91.3 | 49,78             
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ ...mon/RightPanel |     100 |       60 |     100 |     100 |                   
+  RightPanel.tsx   |     100 |       60 |     100 |     100 | 23-29             
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ ...common/Sidebar |   33.33 |    66.66 |      50 |   33.33 |                   
+  Sidebar.tsx      |   33.33 |    66.66 |      50 |   33.33 | 80-84             
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ ...mmon/StatusBar |     100 |      100 |     100 |     100 |                   
+  StatusBar.tsx    |     100 |      100 |     100 |     100 |                   
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ ...ommon/TitleBar |     100 |       50 |     100 |     100 |                   
+  TitleBar.tsx     |     100 |       50 |     100 |     100 | 6                 
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ ...s/common/Toast |   84.93 |    80.64 |      92 |   84.28 |                   
+  Toast.tsx        |   82.35 |    82.75 |   92.85 |   82.35 | ...-80,85,116,132 
+  ToastContext.ts  |     100 |      100 |     100 |     100 |                   
+  ...tProvider.tsx |   94.11 |      100 |      90 |   92.85 | 27                
+  index.ts         |       0 |        0 |       0 |       0 |                   
+  useToast.ts      |      75 |       50 |     100 |      75 | 7                 
+ ...common/Toolbar |      95 |    88.88 |     100 |   94.73 |                   
+  Toolbar.tsx      |      95 |    88.88 |     100 |   94.73 | 47                
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ ...onents/diaries |       0 |        0 |       0 |       0 |                   
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ .../PersonalDiary |   89.89 |    82.35 |   83.75 |   89.17 |                   
+  DatePicker.tsx   |   89.83 |    73.68 |    87.5 |   89.28 | 38-42,80-83       
+  DiaryEntry.tsx   |   92.39 |    92.85 |      80 |   91.95 | 53,291-331        
+  ...avigation.tsx |   92.68 |    77.27 |     100 |    92.5 | 8,55,66           
+  ...onalDiary.tsx |   86.31 |    76.78 |   79.16 |    84.7 | ...,92-95,103,209 
+ ...aries/academic |   86.79 |    77.73 |   81.85 |   87.94 |                   
+  Academic.tsx     |   89.04 |    79.79 |   87.93 |   87.69 | ...69,422-423,511 
+  ...ionEditor.tsx |   80.74 |    72.81 |   73.33 |   83.13 | ...35,676-684,725 
+  ...hyManager.tsx |    87.5 |    84.28 |    75.4 |   86.88 | ...,995,1037-1110 
+  ...ionPicker.tsx |   95.31 |    84.78 |   88.88 |   94.82 | 82,177-246        
+  ...raryPanel.tsx |   84.68 |    61.53 |    86.2 |   90.52 | ...45-146,196,276 
+  ...eSelector.tsx |   93.33 |    88.88 |   89.65 |   93.18 | 331-334           
+  index.ts         |       0 |        0 |       0 |       0 |                   
+  ...onShortcut.ts |     100 |      100 |     100 |     100 |                   
+ ...ies/blackboard |    91.9 |    76.19 |   91.02 |   91.22 |                   
+  Blackboard.tsx   |   88.37 |    89.36 |   76.66 |   87.01 | ...52,188,206-226 
+  ...rdToolbar.tsx |     100 |    68.42 |     100 |     100 | 47-52             
+  ...awWrapper.tsx |    91.2 |    69.04 |     100 |   90.69 | ...74,105,116,165 
+  IndexPanel.tsx   |    91.3 |    83.33 |     100 |    90.9 | 30,43             
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ ...diaries/drafts |   98.08 |    90.68 |    98.9 |    97.9 |                   
+  DraftEditor.tsx  |     100 |      100 |     100 |     100 |                   
+  DraftList.tsx    |   97.33 |     86.9 |   97.77 |   97.03 | 205,340-341,367   
+  Drafts.tsx       |   98.18 |    91.17 |     100 |      98 | 58                
+  StatusBadge.tsx  |     100 |       95 |     100 |     100 | 67                
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ ...es/long-drafts |   80.34 |    76.31 |      75 |   79.08 |                   
+  FocusMode.tsx    |   85.71 |    72.63 |    90.9 |    86.2 | ...94,115,223-226 
+  ...teManager.tsx |   86.36 |    86.04 |   78.57 |    87.5 | ...88,213-216,283 
+  LongDrafts.tsx   |    86.3 |     81.3 |   80.39 |   84.96 | ...51-579,663-664 
+  ...ionEditor.tsx |   64.48 |    62.93 |   50.81 |    62.2 | ...16-752,869-938 
+  ...fContents.tsx |   86.06 |    83.76 |   86.36 |   84.44 | ...61-477,534-536 
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ ...personal-diary |       0 |        0 |       0 |       0 |                   
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ ...ies/scratchpad |   83.62 |    73.97 |   85.52 |   82.99 |                   
+  ...oryPicker.tsx |     100 |    96.29 |     100 |     100 | 56                
+  PageStack.tsx    |     100 |    85.71 |     100 |     100 | 23,36             
+  Scratchpad.tsx   |    82.9 |    71.83 |   78.12 |   80.19 | ...07,261,292,318 
+  ...chpadPage.tsx |   86.36 |    66.66 |     100 |   94.44 | 39                
+  TextBlock.tsx    |   77.45 |    66.66 |    82.6 |   77.41 | ...73-174,216,244 
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ ...mponents/shelf |   92.39 |    82.14 |   90.56 |   92.25 |                   
+  DiaryCard.tsx    |   88.88 |    83.33 |     100 |   88.88 | 85                
+  ...ingsPanel.tsx |   93.33 |    88.09 |    91.3 |   92.53 | ...60-172,211,251 
+  Shelf.tsx        |   91.95 |       75 |   88.88 |    92.4 | 48,68,185,216-218 
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ src/db            |      60 |      100 |      50 |      60 |                   
+  database.ts      |      60 |      100 |      50 |      60 | 92-93             
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ src/db/queries    |   94.14 |    84.12 |   90.59 |   94.42 |                   
+  academic.ts      |   91.17 |      100 |   81.81 |   91.04 | 44,89,132,172-180 
+  blackboard.ts    |     100 |    64.28 |     100 |     100 | 34,63-73,92       
+  diary.ts         |     100 |      100 |     100 |     100 |                   
+  drafts.ts        |     100 |      100 |     100 |     100 |                   
+  index.ts         |       0 |        0 |       0 |       0 |                   
+  longDrafts.ts    |   84.61 |      100 |   72.22 |   86.48 | 44,52-55,106-107  
+  scratchpad.ts    |   96.87 |       60 |     100 |   96.87 | 40                
+  settings.ts      |      96 |    83.33 |     100 |      96 | 54                
+ src/extensions    |    72.1 |    70.12 |   94.28 |   71.91 |                   
+  footnote.ts      |    72.1 |    70.12 |   94.28 |   71.91 | 23,28,159,312-365 
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ src/hooks         |      91 |    83.33 |   98.24 |    92.3 |                   
+  index.ts         |       0 |        0 |       0 |       0 |                   
+  ...entLocking.ts |     100 |      100 |     100 |     100 |                   
+  ...rShortcuts.ts |   97.43 |    93.87 |     100 |   97.43 | 50                
+  ...lShortcuts.ts |   86.36 |    80.88 |     100 |   83.92 | ...95,104,113,122 
+  ...dShortcuts.ts |   88.37 |    78.94 |     100 |     100 | 34-43,46,65       
+  ...steHandler.ts |   86.53 |    71.11 |     100 |   86.53 | ...6,66,71-72,102 
+  ...ucedMotion.ts |      80 |    66.66 |      80 |      80 | 7,18,23           
+ src/stores        |   93.03 |    81.08 |    88.3 |   95.67 |                   
+  academicStore.ts |   95.48 |    87.11 |    91.6 |   98.19 | ...50,769,877-878 
+  appStore.ts      |   86.48 |    66.66 |   84.44 |   93.54 | 272-276           
+  ...boardStore.ts |   83.13 |       75 |   63.63 |   93.15 | 85-89,149,231-235 
+  draftsStore.ts   |   97.02 |       85 |   97.14 |   96.34 | 56-57,183         
+  index.ts         |       0 |        0 |       0 |       0 |                   
+  ...raftsStore.ts |   98.48 |    87.69 |   97.77 |   98.65 | 27,533,594        
+  ...DiaryStore.ts |   93.75 |    76.47 |   85.71 |     100 | 51,76,140-145     
+  ...chpadStore.ts |   91.54 |    60.37 |   82.05 |   94.53 | 70,79,187-196,342 
+  settingsStore.ts |   76.25 |    47.05 |   72.22 |   78.94 | ...63,287,296-300 
+ src/styles/themes |       0 |        0 |       0 |       0 |                   
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ src/types         |     100 |      100 |     100 |     100 |                   
+  academic.ts      |     100 |      100 |     100 |     100 |                   
+  blackboard.ts    |     100 |      100 |     100 |     100 |                   
+  diary.ts         |     100 |      100 |     100 |     100 |                   
+  drafts.ts        |     100 |      100 |     100 |     100 |                   
+  electron.ts      |       0 |        0 |       0 |       0 |                   
+  index.ts         |       0 |        0 |       0 |       0 |                   
+  longDrafts.ts    |     100 |      100 |     100 |     100 |                   
+  scratchpad.ts    |     100 |      100 |     100 |     100 |                   
+  settings.ts      |     100 |      100 |     100 |     100 |                   
+ src/utils         |   93.23 |    84.02 |   86.66 |   93.67 |                   
+  appRouter.ts     |     100 |    95.65 |     100 |     100 | 79                
+  backup.ts        |   97.02 |    93.75 |     100 |   96.89 | ...34,393,406,496 
+  citation.ts      |   95.65 |    81.13 |   96.96 |   95.48 | ...29,199-201,288 
+  citeproc.ts      |     100 |      100 |     100 |     100 |                   
+  commands.ts      |   70.37 |    90.62 |   39.13 |   69.81 | 45-162,250,256    
+  crypto.ts        |   91.17 |    82.35 |     100 |   90.62 | 24,39,72          
+  export.ts        |   95.72 |    77.92 |     100 |   96.61 | ...11,841,852,866 
+  index.ts         |       0 |        0 |       0 |       0 |                   
+  keyboard.ts      |     100 |      100 |     100 |     100 |                   
+  theme.ts         |      68 |    66.66 |    62.5 |   72.72 | 17,25,35,40,48-49 
+-------------------|---------|----------|---------|---------|-------------------

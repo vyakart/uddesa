@@ -409,23 +409,16 @@ export async function restoreBackup(backup: BackupData, clearExisting = true): P
     };
   }
 
-  // Clear existing data if requested
-  if (clearExisting) {
-    try {
-      await db.transaction('rw', db.tables, async () => {
-        await Promise.all(db.tables.map((table) => table.clear()));
-      });
-    } catch (error) {
-      return {
-        success: false,
-        error: `Failed to clear existing data: ${getErrorMessage(error, 'Unknown clear error')}`,
-      };
-    }
-  }
-
   const dataToRestore = backup.data;
+  let restorePhase: 'clear' | 'restore' = clearExisting ? 'clear' : 'restore';
   try {
     await db.transaction('rw', db.tables, async () => {
+      if (clearExisting) {
+        restorePhase = 'clear';
+        await Promise.all(db.tables.map((table) => table.clear()));
+      }
+
+      restorePhase = 'restore';
       await Promise.all([
         dataToRestore.scratchpadPages.length > 0 && db.scratchpadPages.bulkPut(dataToRestore.scratchpadPages),
         dataToRestore.textBlocks.length > 0 && db.textBlocks.bulkPut(dataToRestore.textBlocks),
@@ -445,6 +438,13 @@ export async function restoreBackup(backup: BackupData, clearExisting = true): P
       ]);
     });
   } catch (error) {
+    if (clearExisting && restorePhase === 'clear') {
+      return {
+        success: false,
+        error: `Failed to clear existing data: ${getErrorMessage(error, 'Unknown clear error')}`,
+      };
+    }
+
     return {
       success: false,
       error: `Failed to restore backup data: ${getErrorMessage(error, 'Unknown restore error')}`,

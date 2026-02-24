@@ -52,7 +52,9 @@
 - Recommended Fix:
   - Evaluate enabling sandbox and document compatibility constraints if deferred.
 - Remediation Status:
-  - `Partially mitigated` (`sandbox: true` enabled in code and build/typecheck pass; Electron runtime smoke verification still pending)
+  - `Remediated` (`sandbox: true` enabled in code and runtime-verified via Electron Playwright smoke test)
+  - Day 7 runtime evidence: `muwi/audit/2026-02/outputs/day7-electron-sandbox-smoke.txt`
+  - Validation includes runtime assertion of `webPreferences.sandbox === true` (plus `contextIsolation === true`, `nodeIntegration === false`) in `muwi/e2e/electron-smoke.spec.ts`
 
 ### PERF-BUNDLE-001 Oversized Route Chunks Persist Despite Route-Level Lazy Loading
 - Area: Performance / Bundle Size

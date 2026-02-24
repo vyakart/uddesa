@@ -1,0 +1,153 @@
+
+> muwi@0.0.0 build
+> tsc -b && vite build
+
+vite v7.3.1 building client environment for production...
+transforming...
+✓ 4570 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                     1.48 kB │ gzip:     0.61 kB
+dist/assets/jetbrains-mono-greek-400-normal-C190GLew.woff2          4.23 kB
+dist/assets/inter-vietnamese-400-normal-DMkecbls.woff2              4.97 kB
+dist/assets/inter-vietnamese-600-normal-Cc8MFFhd.woff2              5.10 kB
+dist/assets/inter-vietnamese-700-normal-DlLaEgI2.woff2              5.10 kB
+dist/assets/inter-vietnamese-500-normal-DOriooB6.woff2              5.11 kB
+dist/assets/inter-greek-ext-400-normal-DGGRlc-M.woff2               5.26 kB
+dist/assets/jetbrains-mono-cyrillic-400-normal-BEIGL1Tu.woff2       5.33 kB
+dist/assets/jetbrains-mono-vietnamese-400-normal-CqNFfHCs.woff      5.37 kB
+dist/assets/inter-greek-ext-500-normal-C4iEst2y.woff2               5.43 kB
+dist/assets/inter-greek-ext-600-normal-DRtmH8MT.woff2               5.43 kB
+dist/assets/inter-greek-ext-700-normal-qfdV9bQt.woff2               5.44 kB
+dist/assets/geist-mono-cyrillic-400-normal-Ce5q_31Z.woff2           5.46 kB
+dist/assets/geist-mono-cyrillic-500-normal-CJBLNVQT.woff2           5.66 kB
+dist/assets/jetbrains-mono-greek-400-normal-B9oWc5Lo.woff           5.66 kB
+dist/assets/crimson-pro-vietnamese-400-normal-C3m3Wqkz.woff2        5.75 kB
+dist/assets/crimson-pro-vietnamese-600-normal-BD5z241x.woff2        5.85 kB
+dist/assets/geist-mono-latin-ext-400-normal-Cgks_Qgx.woff2          6.42 kB
+dist/assets/geist-mono-latin-ext-500-normal-CQcGuCNt.woff2          6.50 kB
+dist/assets/inter-vietnamese-400-normal-Bbgyi5SW.woff               6.50 kB
+dist/assets/inter-vietnamese-500-normal-mJboJaSs.woff               6.60 kB
+dist/assets/inter-vietnamese-700-normal-BZaoP0fm.woff               6.63 kB
+dist/assets/inter-vietnamese-600-normal-BuLX-rYi.woff               6.64 kB
+dist/assets/jetbrains-mono-cyrillic-400-normal-ugxPyKxw.woff        6.98 kB
+dist/assets/inter-greek-ext-400-normal-KugGGMne.woff                7.06 kB
+dist/assets/geist-mono-cyrillic-400-normal-BPBWmzPh.woff            7.16 kB
+dist/assets/inter-greek-ext-500-normal-2j5mBUwD.woff                7.19 kB
+dist/assets/inter-greek-ext-600-normal-B8X0CLgF.woff                7.21 kB
+dist/assets/inter-greek-ext-700-normal-BoQ6DsYi.woff                7.22 kB
+dist/assets/jetbrains-mono-latin-ext-400-normal-Bc8Ftmh3.woff2      7.34 kB
+dist/assets/geist-mono-cyrillic-500-normal-mNhfPmgl.woff            7.35 kB
+dist/assets/crimson-pro-vietnamese-400-normal-CEHt5KbE.woff         7.49 kB
+dist/assets/crimson-pro-vietnamese-600-normal-WXpto_XS.woff         7.56 kB
+dist/assets/inter-cyrillic-400-normal-obahsSVq.woff2                7.71 kB
+dist/assets/inter-greek-400-normal-B4URO6DV.woff2                   7.78 kB
+dist/assets/inter-cyrillic-500-normal-BasfLYem.woff2                7.90 kB
+dist/assets/inter-cyrillic-700-normal-CjBOestx.woff2                7.90 kB
+dist/assets/inter-greek-500-normal-BIZE56-Y.woff2                   7.92 kB
+dist/assets/inter-greek-700-normal-C3JjAnD8.woff2                   7.92 kB
+dist/assets/inter-greek-600-normal-plRanbMR.woff2                   7.94 kB
+dist/assets/inter-cyrillic-600-normal-CWCymEST.woff2                7.97 kB
+dist/assets/geist-mono-latin-ext-400-normal-CxNRRMGd.woff           8.74 kB
+dist/assets/geist-mono-latin-ext-500-normal-diTenJ8L.woff           8.86 kB
+dist/assets/inter-cyrillic-400-normal-HOLc17fK.woff                 9.78 kB
+dist/assets/inter-cyrillic-700-normal-DrXBdSj3.woff                 9.91 kB
+dist/assets/inter-greek-400-normal-q2sYcFCs.woff                    9.92 kB
+dist/assets/inter-cyrillic-600-normal-4D_pXhcN.woff                 9.94 kB
+dist/assets/inter-cyrillic-500-normal-CxZf_p3X.woff                 9.94 kB
+dist/assets/inter-greek-500-normal-Xzm54t5V.woff                    9.98 kB
+dist/assets/inter-greek-700-normal-BUv2fZ6O.woff                    9.98 kB
+dist/assets/inter-greek-600-normal-BZpKdvQh.woff                   10.03 kB
+dist/assets/jetbrains-mono-latin-ext-400-normal-fXTG6kC5.woff      10.13 kB
+dist/assets/inter-cyrillic-ext-400-normal-BQZuk6qB.woff2           10.23 kB
+dist/assets/inter-cyrillic-ext-500-normal-B0yAr1jD.woff2           10.43 kB
+dist/assets/inter-cyrillic-ext-600-normal-Dfes3d0z.woff2           10.48 kB
+dist/assets/inter-cyrillic-ext-700-normal-BjwYoWNd.woff2           10.50 kB
+dist/assets/inter-cyrillic-ext-400-normal-DQukG94-.woff            13.34 kB
+dist/assets/inter-cyrillic-ext-700-normal-LO58E6JB.woff            13.41 kB
+dist/assets/inter-cyrillic-ext-500-normal-BmqWE9Dz.woff            13.45 kB
+dist/assets/inter-cyrillic-ext-600-normal-Bcila6Z-.woff            13.46 kB
+dist/assets/geist-mono-latin-400-normal-LC9RFr9I.woff2             14.71 kB
+dist/assets/crimson-pro-latin-ext-400-normal-B3ID4PT2.woff2        15.22 kB
+dist/assets/crimson-pro-latin-ext-600-normal-DTIcmTiA.woff2        15.28 kB
+dist/assets/geist-mono-latin-500-normal-D3o2eNa9.woff2             15.30 kB
+dist/assets/crimson-pro-latin-400-normal-B4SlG4wx.woff2            18.34 kB
+dist/assets/caveat-latin-ext-400-normal-D7hBUiug.woff2             18.60 kB
+dist/assets/crimson-pro-latin-600-normal-vJ8oEdKU.woff2            18.78 kB
+dist/assets/geist-mono-latin-400-normal-CoULgQGM.woff              19.17 kB
+dist/assets/geist-mono-latin-500-normal-DOxI7kZ4.woff              19.64 kB
+dist/assets/Assistant-SemiBold-SCI4bEL9.woff2                      20.21 kB
+dist/assets/Assistant-Regular-DVxZuzxb.woff2                       20.23 kB
+dist/assets/Assistant-Medium-DrcxCXg3.woff2                        20.32 kB
+dist/assets/Assistant-Bold-gm-uSS1B.woff2                          20.38 kB
+dist/assets/crimson-pro-latin-ext-400-normal-BWiDT69a.woff         20.46 kB
+dist/assets/crimson-pro-latin-ext-600-normal-ChXPf8Fx.woff         20.68 kB
+dist/assets/jetbrains-mono-latin-400-normal-V6pRDFza.woff2         21.17 kB
+dist/assets/crimson-pro-latin-400-normal-BzhyrSeK.woff             22.93 kB
+dist/assets/crimson-pro-latin-600-normal-Ca4fy0Cf.woff             23.36 kB
+dist/assets/inter-latin-400-normal-C38fXH4l.woff2                  23.66 kB
+dist/assets/caveat-latin-ext-400-normal-DtiRFvw0.woff              24.09 kB
+dist/assets/caveat-cyrillic-ext-400-normal-3iEGd-c5.woff2          24.23 kB
+dist/assets/inter-latin-500-normal-Cerq10X2.woff2                  24.27 kB
+dist/assets/inter-latin-700-normal-Yt3aPRUw.woff2                  24.36 kB
+dist/assets/inter-latin-600-normal-LgqL8muc.woff2                  24.45 kB
+dist/assets/jetbrains-mono-latin-400-normal-6-qcROiO.woff          27.50 kB
+dist/assets/caveat-cyrillic-ext-400-normal-Cg0RnRQ5.woff           29.73 kB
+dist/assets/inter-latin-400-normal-CyCys3Eg.woff                   30.70 kB
+dist/assets/inter-latin-600-normal-CiBQ2DWP.woff                   31.26 kB
+dist/assets/inter-latin-500-normal-BL9OpVg8.woff                   31.28 kB
+dist/assets/inter-latin-700-normal-BLAVimhd.woff                   31.32 kB
+dist/assets/geist-sans-latin-400-normal-gapTbOY8.woff2             33.40 kB
+dist/assets/geist-sans-latin-500-normal-uokXdC-Q.woff2             34.72 kB
+dist/assets/inter-latin-ext-400-normal-C1nco2VV.woff2              35.00 kB
+dist/assets/geist-sans-latin-600-normal-DFOURf8L.woff2             35.29 kB
+dist/assets/geist-sans-latin-700-normal-BmN9tIp5.woff2             35.48 kB
+dist/assets/inter-latin-ext-500-normal-CV4jyFjo.woff2              36.02 kB
+dist/assets/inter-latin-ext-700-normal-Ca8adRJv.woff2              36.24 kB
+dist/assets/inter-latin-ext-600-normal-D2bJ5OIk.woff2              36.26 kB
+dist/assets/geist-sans-latin-400-normal-BOaIZNA2.woff              38.91 kB
+dist/assets/geist-sans-latin-500-normal-CN2lyvyL.woff              40.52 kB
+dist/assets/geist-sans-latin-600-normal-CA1yjETN.woff              41.20 kB
+dist/assets/geist-sans-latin-700-normal-CjScfYeH.woff              41.40 kB
+dist/assets/caveat-cyrillic-400-normal-9cDH9rLW.woff2              45.12 kB
+dist/assets/inter-latin-ext-400-normal-77YHD8bZ.woff               47.56 kB
+dist/assets/inter-latin-ext-500-normal-BxGbmqWO.woff               48.49 kB
+dist/assets/inter-latin-ext-700-normal-TidjK2hL.woff               48.63 kB
+dist/assets/inter-latin-ext-600-normal-CIVaiw4L.woff               48.67 kB
+dist/assets/caveat-latin-400-normal-D6LQsQ_v.woff2                 48.84 kB
+dist/assets/caveat-cyrillic-400-normal-CebvvJET.woff               53.10 kB
+dist/assets/caveat-latin-400-normal-BzhAQZkN.woff                  60.11 kB
+dist/assets/index-BJTFnNfe.css                                    139.36 kB │ gzip:    27.81 kB
+dist/assets/blackboard-excalidraw-core-OdNREpkL.css               145.06 kB │ gzip:    22.95 kB
+dist/assets/file-open-7c801643-684qeFg4.js                          0.45 kB │ gzip:     0.31 kB
+dist/assets/file-open-002ab408-DIuFHtCF.js                          0.54 kB │ gzip:     0.33 kB
+dist/assets/directory-open-01563666-DWU9wJ6I.js                     0.59 kB │ gzip:     0.36 kB
+dist/assets/file-save-3189631c-C1wFhQhH.js                          0.71 kB │ gzip:     0.47 kB
+dist/assets/file-save-745eba88-Bb9F9Kg7.js                          0.87 kB │ gzip:     0.50 kB
+dist/assets/directory-open-4ed118d0-CunoC1EB.js                     1.55 kB │ gzip:     0.79 kB
+dist/assets/roundRect-mAH3dD0p.js                                   2.90 kB │ gzip:     1.03 kB
+dist/assets/blackboard-excalidraw-wrapper-BsaAx8iM.js               6.08 kB │ gzip:     2.49 kB
+dist/assets/academic-template-selector-BOsaVHu5.js                  7.97 kB │ gzip:     2.36 kB
+dist/assets/diary-blackboard-BqnZ-QGS.js                           10.54 kB │ gzip:     3.33 kB
+dist/assets/diary-scratchpad-Bvbyf_HD.js                           13.09 kB │ gzip:     4.09 kB
+dist/assets/diary-personal-diary-CabkYrKg.js                       14.05 kB │ gzip:     4.80 kB
+dist/assets/diary-drafts-DRcnIZCi.js                               19.58 kB │ gzip:     5.95 kB
+dist/assets/blackboard-mermaid-bridge-CghDw_rB.js                  25.54 kB │ gzip:     8.90 kB
+dist/assets/pica-1_TXrNSx.js                                       32.44 kB │ gzip:    12.78 kB
+dist/assets/image-blob-reduce.esm-BLtmMM_J.js                      45.80 kB │ gzip:    16.59 kB
+dist/assets/diary-long-drafts-DkA1CWFR.js                          55.20 kB │ gzip:    13.45 kB
+dist/assets/academic-reference-tools-DKaM23L7.js                  155.94 kB │ gzip:    47.86 kB
+dist/assets/index.es-D9cRcPvG.js                                  158.83 kB │ gzip:    52.93 kB
+dist/assets/index-0HR6RP3y.js                                     198.56 kB │ gzip:    62.07 kB
+dist/assets/html2canvas.esm-DXEQVQnt.js                           201.04 kB │ gzip:    47.07 kB
+dist/assets/blackboard-katex-vendor-XbL3y5x-.js                   265.42 kB │ gzip:    77.36 kB
+dist/assets/diary-academic-CY73WiDx.js                          1,138.35 kB │ gzip:   357.97 kB
+dist/assets/academic-citation-B6Tdhcn5.js                       2,649.82 kB │ gzip:   678.99 kB
+dist/assets/blackboard-mermaid-vendor-D-v-QYDc.js               3,127.16 kB │ gzip:   933.30 kB
+dist/assets/blackboard-excalidraw-core-BFHNWYrA.js              4,080.31 kB │ gzip: 1,418.87 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 23.25s
