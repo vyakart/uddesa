@@ -3,6 +3,32 @@ import { devtools } from 'zustand/middleware';
 import type { LongDraft, Section, Footnote } from '@/types/longDrafts';
 import * as longDraftsQueries from '@/db/queries/longDrafts';
 
+const SECTION_METADATA_SYNC_DEBOUNCE_MS = 300;
+const pendingDocumentMetadataSyncs = new Map<string, ReturnType<typeof setTimeout>>();
+
+function cancelScheduledDocumentMetadataSync(longDraftId: string): void {
+  const timer = pendingDocumentMetadataSyncs.get(longDraftId);
+  if (!timer) return;
+  clearTimeout(timer);
+  pendingDocumentMetadataSyncs.delete(longDraftId);
+}
+
+function scheduleDocumentMetadataSync(longDraftId: string, get: () => LongDraftsState): void {
+  cancelScheduledDocumentMetadataSync(longDraftId);
+  const timer = setTimeout(() => {
+    pendingDocumentMetadataSyncs.delete(longDraftId);
+    void get().updateDocumentMetadata(longDraftId);
+  }, SECTION_METADATA_SYNC_DEBOUNCE_MS);
+  pendingDocumentMetadataSyncs.set(longDraftId, timer);
+}
+
+export function __resetLongDraftMetadataSyncSchedulerForTests(): void {
+  for (const timer of pendingDocumentMetadataSyncs.values()) {
+    clearTimeout(timer);
+  }
+  pendingDocumentMetadataSyncs.clear();
+}
+
 export type ViewMode = 'normal' | 'focus';
 export type SectionStatus = 'draft' | 'in-progress' | 'review' | 'complete';
 
@@ -205,6 +231,7 @@ export const useLongDraftsStore = create<LongDraftsState>()(
 
       deleteLongDraft: async (id: string) => {
         try {
+          cancelScheduledDocumentMetadataSync(id);
           await longDraftsQueries.deleteLongDraft(id);
           set(state => {
             const updatedDrafts = state.longDrafts.filter(d => d.id !== id);
@@ -339,10 +366,10 @@ export const useLongDraftsStore = create<LongDraftsState>()(
             return { sectionsMap: newMap };
           });
 
-          // Update document's total word count
+          // Coalesce metadata writes to reduce autosave write amplification.
           const section = get().findSectionById(id);
           if (section) {
-            await get().updateDocumentMetadata(section.longDraftId);
+            scheduleDocumentMetadataSync(section.longDraftId, get);
           }
         } catch (error) {
           set({
@@ -526,6 +553,7 @@ export const useLongDraftsStore = create<LongDraftsState>()(
       },
 
       updateDocumentMetadata: async (longDraftId: string) => {
+        cancelScheduledDocumentMetadataSync(longDraftId);
         const totalWordCount = get().getTotalWordCount(longDraftId);
         const currentSection = get().getCurrentSection();
         const currentDoc = get().getCurrentLongDraft();

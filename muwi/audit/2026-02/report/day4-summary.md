@@ -6,7 +6,7 @@ Date: 2026-02-24
 
 - Day 4 review: Completed (automated a11y run + component/UX code review + findings)
 - Automated accessibility E2E spec: PASS (`2` tests)
-- Day 4 follow-up fixes: Partial remediation completed (`A11Y-STATE-001`, `A11Y-NAV-001`)
+- Day 4 follow-up fixes: Code-level remediation completed (`A11Y-STATE-001`, `A11Y-NAV-001`, `UX-THEME-001`, `UX-FLOW-001`)
 
 ## Deliverables Produced
 
@@ -16,6 +16,7 @@ Date: 2026-02-24
 - UX color scan evidence: `muwi/audit/2026-02/outputs/day4-ux-hardcoded-colors.txt`
 - UX `!important` scan evidence: `muwi/audit/2026-02/outputs/day4-ux-important-usage.txt`
 - Remediation targeted tests: `muwi/audit/2026-02/outputs/day4-remediation-targeted-tests.txt`
+- Remediation targeted tests (passkey + footnote): `muwi/audit/2026-02/outputs/day4-remediation-targeted-tests-2.txt`
 
 ## Remediation Status (Post-Day 4 Fixes)
 
@@ -25,17 +26,20 @@ Date: 2026-02-24
 - `A11Y-NAV-001` (Medium): Remediated
   - Added mobile sidebar overlay focus handoff, `Escape` close, and focus restore behavior.
   - Covered by responsive keyboard/focus test.
-- `UX-THEME-001` (Medium): Open
-- `UX-FLOW-001` (Low): Open
+- `UX-THEME-001` (Medium): Remediated
+  - Footnote extension colors now use theme CSS variables.
+  - Covered by updated footnote extension test assertion.
+- `UX-FLOW-001` (Low): Remediated
+  - Settings blank passkey save now shows inline validation feedback (`role=\"alert\"`).
+  - Covered by updated `SettingsPanel` tests.
 
 ## Highest-Priority Day 4 Findings (Current Open)
 
-- `UX-THEME-001` (Medium): Footnote extension injects hardcoded colors outside theme tokens, risking dark-mode inconsistency.
-- `UX-FLOW-001` (Low): Settings passkey save silently no-ops on empty input.
+- Manual verification gap: Lighthouse accessibility audit on core flows not yet executed.
+- Manual verification gap: Screen reader pass (VoiceOver minimum, NVDA recommended) not yet executed.
 
 ## Follow-Up Priorities
 
-1. Tokenize footnote extension colors (CSS variables/classes) and verify light/dark readability.
-2. Add validation feedback for empty Settings passkey submissions.
-3. Run manual Lighthouse accessibility audit on core flows and attach screenshots/findings.
-4. Run manual screen reader pass (VoiceOver minimum) and record announcement quality issues.
+1. Run manual Lighthouse accessibility audit on core flows and attach screenshots/findings.
+2. Run manual screen reader pass (VoiceOver minimum, NVDA if available) and record announcement quality issues.
+3. Proceed to Day 5 (performance + code quality deep review) per audit plan order.

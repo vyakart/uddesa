@@ -200,14 +200,21 @@ export function Academic() {
     [currentSections]
   );
 
-  const sectionHierarchy = currentPaperId ? getSectionHierarchy(currentPaperId) : [];
-  const structureRows = STRUCTURE_TEMPLATE.map((templateRow) => {
-    const matchedSection = currentSections.find((section) => findTemplateMatch(section, templateRow.aliases));
-    return {
-      ...templateRow,
-      section: matchedSection ?? null,
-    };
-  });
+  const sectionHierarchy = useMemo(
+    () => (currentPaperId ? getSectionHierarchy(currentPaperId) : []),
+    [currentPaperId, currentSections, getSectionHierarchy]
+  );
+  const structureRows = useMemo(
+    () =>
+      STRUCTURE_TEMPLATE.map((templateRow) => {
+        const matchedSection = currentSections.find((section) => findTemplateMatch(section, templateRow.aliases));
+        return {
+          ...templateRow,
+          section: matchedSection ?? null,
+        };
+      }),
+    [currentSections]
+  );
 
   const isAcademicPanelOpen = rightPanelState.isOpen && rightPanelState.context?.source === 'academic';
   const activeAcademicPanel = isAcademicPanelOpen ? rightPanelState.panelType : null;

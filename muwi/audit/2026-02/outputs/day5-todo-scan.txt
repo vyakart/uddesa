@@ -1,0 +1,3 @@
+src/components/diaries/scratchpad/CategoryPicker.test.tsx:6:const TEST_TODOS_COLOR = ['#', '010203'].join('');
+src/components/diaries/scratchpad/CategoryPicker.test.tsx:44:          todos: TEST_TODOS_COLOR,
+src/components/diaries/scratchpad/CategoryPicker.test.tsx:61:      expect.stringContaining(`--muwi-category-swatch: ${TEST_TODOS_COLOR}`)

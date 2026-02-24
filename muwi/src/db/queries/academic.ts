@@ -66,6 +66,19 @@ export async function deleteAcademicSection(id: string): Promise<void> {
   await db.academicSections.delete(id);
 }
 
+export async function reorderAcademicSections(paperId: string, sectionIds: string[]): Promise<void> {
+  await db.transaction('rw', db.academicSections, db.academicPapers, async () => {
+    for (let i = 0; i < sectionIds.length; i++) {
+      await db.academicSections.update(sectionIds[i], { order: i });
+    }
+
+    await db.academicPapers.update(paperId, {
+      sectionIds,
+      modifiedAt: new Date(),
+    });
+  });
+}
+
 // Bibliography Entries CRUD
 
 export async function createBibliographyEntry(entry: BibliographyEntry): Promise<string> {

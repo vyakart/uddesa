@@ -49,6 +49,7 @@ describe('Footnote extension', () => {
 
     expect(rendered?.[0]).toBe('sup');
     expect(rendered?.[2]).toBe('[7]');
+    expect((rendered?.[1] as Record<string, unknown>)?.style).toContain('var(--color-accent-default)');
 
     const renderedFallback = Footnote.config.renderHTML?.call(Footnote, {
       HTMLAttributes: {},

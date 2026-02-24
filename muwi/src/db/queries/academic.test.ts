@@ -10,6 +10,7 @@ import {
   deleteAcademicSection,
   deleteCitation,
   deleteFigure,
+  reorderAcademicSections,
   searchBibliographyEntries,
 } from './academic';
 
@@ -181,5 +182,30 @@ describe('academic queries', () => {
     expect(await db.figures.get(orphanFigure.id)).toBeUndefined();
 
     await expect(deleteFigure('missing-figure')).resolves.toBeUndefined();
+  });
+
+  it('reorders academic sections transactionally and updates paper sectionIds ordering', async () => {
+    const paper = makePaper({ id: 'paper-reorder' });
+    await db.academicPapers.put(paper);
+
+    const first = makeSection(paper.id, { id: 'section-a', order: 0 });
+    const second = makeSection(paper.id, { id: 'section-b', order: 1 });
+    const third = makeSection(paper.id, { id: 'section-c', order: 2 });
+
+    await db.academicSections.bulkPut([first, second, third]);
+    await db.academicPapers.update(paper.id, { sectionIds: [first.id, second.id, third.id] });
+
+    await reorderAcademicSections(paper.id, [third.id, first.id, second.id]);
+
+    const reorderedSections = await db.academicSections
+      .where('paperId')
+      .equals(paper.id)
+      .sortBy('order');
+    expect(reorderedSections.map((section) => section.id)).toEqual([third.id, first.id, second.id]);
+    expect(reorderedSections.map((section) => section.order)).toEqual([0, 1, 2]);
+
+    const updatedPaper = await db.academicPapers.get(paper.id);
+    expect(updatedPaper?.sectionIds).toEqual([third.id, first.id, second.id]);
+    expect(updatedPaper?.modifiedAt).toBeInstanceOf(Date);
   });
 });

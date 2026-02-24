@@ -32,24 +32,55 @@ const statusLabels: Record<string, string> = {
   complete: 'Complete',
 };
 
-function buildSectionHierarchy(sections: Section[], parentId: string | null = null, depth: number = 0): SectionNode[] {
-  return sections
-    .filter((section) => section.parentId === parentId)
-    .sort((a, b) => a.order - b.order)
-    .map((section) => ({
-      section,
-      depth,
-      children: buildSectionHierarchy(sections, section.id, depth + 1),
-    }));
+type SectionChildrenIndex = Map<string | null, Section[]>;
+
+function buildSectionChildrenIndex(sections: Section[]): SectionChildrenIndex {
+  const childrenIndex: SectionChildrenIndex = new Map();
+
+  for (const section of sections) {
+    const siblings = childrenIndex.get(section.parentId);
+    if (siblings) {
+      siblings.push(section);
+    } else {
+      childrenIndex.set(section.parentId, [section]);
+    }
+  }
+
+  for (const siblings of childrenIndex.values()) {
+    siblings.sort((a, b) => a.order - b.order);
+  }
+
+  return childrenIndex;
 }
 
-function flattenSectionHierarchy(nodes: SectionNode[]): string[] {
-  const ids: string[] = [];
-  for (const node of nodes) {
-    ids.push(node.section.id);
-    ids.push(...flattenSectionHierarchy(node.children));
+function buildSectionHierarchyFromIndex(
+  childrenIndex: SectionChildrenIndex,
+  parentId: string | null = null,
+  depth: number = 0
+): SectionNode[] {
+  const siblings = childrenIndex.get(parentId) ?? [];
+  return siblings.map((section) => ({
+    section,
+    depth,
+    children: buildSectionHierarchyFromIndex(childrenIndex, section.id, depth + 1),
+  }));
+}
+
+function flattenSectionIdsFromIndex(
+  childrenIndex: SectionChildrenIndex,
+  parentId: string | null = null,
+  ids: string[] = []
+): string[] {
+  const siblings = childrenIndex.get(parentId) ?? [];
+  for (const section of siblings) {
+    ids.push(section.id);
+    flattenSectionIdsFromIndex(childrenIndex, section.id, ids);
   }
   return ids;
+}
+
+function flattenSectionsByHierarchyOrder(sections: Section[]): string[] {
+  return flattenSectionIdsFromIndex(buildSectionChildrenIndex(sections));
 }
 
 export function TableOfContents({ onCreateSection, variant = 'sidebar' }: TableOfContentsProps) {
@@ -58,18 +89,18 @@ export function TableOfContents({ onCreateSection, variant = 'sidebar' }: TableO
   const currentSectionId = useLongDraftsStore(selectCurrentSectionId);
   const isTOCVisible = useLongDraftsStore(selectIsTOCVisible);
   const sectionsMap = useLongDraftsStore(selectSectionsMap);
+  const currentSections = currentLongDraftId ? (sectionsMap.get(currentLongDraftId) ?? []) : [];
+  const sectionChildrenIndex = useMemo(() => buildSectionChildrenIndex(currentSections), [currentSections]);
 
   const sectionHierarchy = useMemo(() => {
     if (!currentLongDraftId) return [];
-    const sections = sectionsMap.get(currentLongDraftId) ?? [];
-    return buildSectionHierarchy(sections);
-  }, [sectionsMap, currentLongDraftId]);
+    return buildSectionHierarchyFromIndex(sectionChildrenIndex);
+  }, [currentLongDraftId, sectionChildrenIndex]);
 
   const totalWordCount = useMemo(() => {
     if (!currentLongDraftId) return 0;
-    const sections = sectionsMap.get(currentLongDraftId) ?? [];
-    return sections.reduce((total, section) => total + section.wordCount, 0);
-  }, [sectionsMap, currentLongDraftId]);
+    return currentSections.reduce((total, section) => total + section.wordCount, 0);
+  }, [currentLongDraftId, currentSections]);
 
   const setCurrentSection = useLongDraftsStore((state) => state.setCurrentSection);
   const toggleTOC = useLongDraftsStore((state) => state.toggleTOC);
@@ -88,7 +119,7 @@ export function TableOfContents({ onCreateSection, variant = 'sidebar' }: TableO
   const [dropTargetSectionId, setDropTargetSectionId] = useState<string | null>(null);
 
   const lockingTargetId = contextMenu?.sectionId ?? unlockPromptSectionId ?? '';
-  const allSections = currentLongDraftId ? (sectionsMap.get(currentLongDraftId) ?? []) : [];
+  const allSections = currentSections;
   const contextSection = contextMenu
     ? allSections.find((section) => section.id === contextMenu.sectionId) ?? null
     : null;
@@ -228,7 +259,7 @@ export function TableOfContents({ onCreateSection, variant = 'sidebar' }: TableO
       return nextOrder === undefined ? section : { ...section, order: nextOrder };
     });
 
-    const allSectionIds = flattenSectionHierarchy(buildSectionHierarchy(normalizedSections));
+    const allSectionIds = flattenSectionsByHierarchyOrder(normalizedSections);
 
     try {
       await reorderSections(currentLongDraftId, allSectionIds);

@@ -1,0 +1,248 @@
+src/hooks/useKeyboardShortcuts.ts:62:  const handleKeyDown = useCallback(
+src/hooks/useKeyboardShortcuts.ts:88:  useEffect(() => {
+src/hooks/usePasteHandler.ts:100:  useEffect(() => {
+src/hooks/useContentLocking.ts:34:  const refresh = useCallback(async () => {
+src/hooks/useContentLocking.ts:53:  useEffect(() => {
+src/hooks/useContentLocking.ts:57:  const lock = useCallback(async () => {
+src/hooks/useContentLocking.ts:84:  const unlock = useCallback(
+src/hooks/useContentLocking.ts:121:  const toggleLock = useCallback(
+src/hooks/usePrefersReducedMotion.ts:16:  useEffect(() => {
+src/hooks/useEditorShortcuts.ts:42:  useEffect(() => {
+src/components/shelf/Shelf.tsx:107:  useEffect(() => {
+src/components/shelf/Shelf.tsx:175:  useEffect(() => {
+src/components/shelf/Shelf.tsx:201:  const contextItems: ContextMenuItem[] = useMemo(() => {
+src/components/shelf/Shelf.tsx:245:            key={type}
+src/components/shelf/SettingsPanel.tsx:70:            key={tab.id}
+src/components/common/ExportPanel/ExportPanel.tsx:67:  const handleExport = useCallback(async () => {
+src/components/common/ExportPanel/ExportPanel.tsx:188:                  key={nextFormat}
+src/components/diaries/blackboard/Blackboard.tsx:35:  useEffect(() => {
+src/components/diaries/blackboard/Blackboard.tsx:49:  const handleNavigateToElement = useCallback(
+src/components/diaries/blackboard/Blackboard.tsx:61:  const handleElementsChange = useCallback(() => {
+src/components/diaries/blackboard/Blackboard.tsx:81:  const handleCanvasContextMenu = useCallback((event: MouseEvent) => {
+src/components/diaries/blackboard/Blackboard.tsx:86:  const handleFontSelected = useCallback(
+src/components/diaries/blackboard/Blackboard.tsx:94:  useEffect(() => {
+src/components/diaries/blackboard/Blackboard.tsx:129:  const handleEmptyStateAction = useCallback(() => {
+src/components/diaries/blackboard/Blackboard.tsx:150:              key={entry.id}
+src/components/common/DiaryLayout/DiaryLayout.tsx:113:  useEffect(() => {
+src/components/common/DiaryLayout/DiaryLayout.tsx:127:  useEffect(() => {
+src/components/common/DiaryLayout/DiaryLayout.tsx:135:  useEffect(() => {
+src/components/common/CommandPalette/CommandPalette.tsx:60:  const registry = useMemo(() => createCommandRegistry(), []);
+src/components/common/CommandPalette/CommandPalette.tsx:62:  const commandContext = useMemo(
+src/components/common/CommandPalette/CommandPalette.tsx:126:  const results = useMemo(() => {
+src/components/common/CommandPalette/CommandPalette.tsx:183:  useEffect(() => {
+src/components/common/CommandPalette/CommandPalette.tsx:238:  useEffect(() => {
+src/components/common/CommandPalette/CommandPalette.tsx:255:  const runCommand = useCallback(
+src/components/common/CommandPalette/CommandPalette.tsx:263:  const handleKeyDown = useCallback(
+src/components/common/CommandPalette/CommandPalette.tsx:355:                <div key={command.id}>
+src/components/common/Toolbar/Toolbar.tsx:66:              key={item.id}
+src/components/common/Toolbar/Toolbar.tsx:78:            key={item.id}
+src/components/diaries/blackboard/ExcalidrawWrapper.tsx:103:  const handleExcalidrawAPI = useCallback((api: ExcalidrawImperativeAPI | null) => {
+src/components/diaries/blackboard/ExcalidrawWrapper.tsx:113:  const debouncedSave = useCallback(
+src/components/diaries/blackboard/ExcalidrawWrapper.tsx:134:  const handleChange = useCallback(
+src/components/diaries/blackboard/ExcalidrawWrapper.tsx:147:  useEffect(() => {
+src/components/diaries/blackboard/ExcalidrawWrapper.tsx:184:  useEffect(() => {
+src/components/diaries/blackboard/ExcalidrawWrapper.tsx:192:  useEffect(() => {
+src/components/common/ContextMenu/ContextMenu.tsx:107:  const measuredMenuHeight = useMemo(() => measureMenuHeight(items), [items]);
+src/components/common/ContextMenu/ContextMenu.tsx:108:  const position = useMemo(
+src/components/common/ContextMenu/ContextMenu.tsx:113:  useEffect(() => {
+src/components/common/ContextMenu/ContextMenu.tsx:272:          return <div key={item.id} role="separator" className="muwi-context-menu__separator" />;
+src/components/common/ContextMenu/ContextMenu.tsx:280:            key={item.id}
+src/components/common/ContextMenu/ContextMenu.tsx:343:              <div key={submenuItem.id} role="separator" className="muwi-context-menu__separator" />
+src/components/common/ContextMenu/ContextMenu.tsx:346:                key={submenuItem.id}
+src/components/common/Toast/Toast.tsx:48:  const clearTimer = useCallback(() => {
+src/components/common/Toast/Toast.tsx:55:  const startTimer = useCallback(() => {
+src/components/common/Toast/Toast.tsx:73:  const pauseTimer = useCallback(() => {
+src/components/common/Toast/Toast.tsx:83:  useEffect(() => {
+src/components/common/Toast/Toast.tsx:100:  useEffect(() => {
+src/components/common/Modal/Modal.tsx:36:  useEffect(() => {
+src/components/diaries/blackboard/Blackboard.test.tsx:69:        <button key={font} type="button" onClick={() => onChange(font)}>
+src/components/common/FontSelector/FontSelector.tsx:35:            key={font}
+src/components/common/FontSelector/FontSelector.tsx:63:          <option key={font} value={font} style={{ fontFamily: getPreviewFontFamily(font) }}>
+src/components/common/BackupPanel/BackupPanel.tsx:54:  useEffect(() => {
+src/components/common/BackupPanel/BackupPanel.tsx:66:  const handleBackup = useCallback(async () => {
+src/components/common/BackupPanel/BackupPanel.tsx:92:  const handleRestore = useCallback(async () => {
+src/components/common/BackupPanel/BackupPanel.tsx:120:  const handleSelectLocation = useCallback(async () => {
+src/components/common/BackupPanel/BackupPanel.tsx:142:  const handleSaveSettings = useCallback(() => {
+src/components/common/BackupPanel/BackupPanel.tsx:218:                      <div key={table.name} className="muwi-backup-panel__table-card">
+src/components/common/Toast/ToastProvider.tsx:22:  const dismissToast = useCallback((id: string) => {
+src/components/common/Toast/ToastProvider.tsx:26:  const clearToasts = useCallback(() => {
+src/components/common/Toast/ToastProvider.tsx:30:  const showToast = useCallback((toast: ToastInput) => {
+src/components/common/Toast/ToastProvider.tsx:53:              key={toast.id}
+src/components/diaries/blackboard/IndexPanel.tsx:86:              <li key={entry.id}>
+src/components/diaries/PersonalDiary/EntryNavigation.tsx:80:  const groupedEntries = useMemo(() => groupEntriesByMonth(entries), [entries]);
+src/components/diaries/PersonalDiary/EntryNavigation.tsx:88:          <section key={group.key} className="muwi-personal-nav__group" aria-label={group.label}>
+src/components/diaries/PersonalDiary/EntryNavigation.tsx:100:                    key={entry.id}
+src/components/diaries/blackboard/BlackboardToolbar.tsx:117:            key={tool.id}
+src/components/diaries/blackboard/BlackboardToolbar.tsx:152:              <option key={option.value} value={option.value}>
+src/components/diaries/PersonalDiary/PersonalDiary.tsx:45:  useEffect(() => {
+src/components/diaries/PersonalDiary/PersonalDiary.tsx:59:  const handleDateChange = useCallback(
+src/components/diaries/PersonalDiary/PersonalDiary.tsx:66:  const handleContentChange = useCallback(
+src/components/diaries/PersonalDiary/PersonalDiary.tsx:75:  const handleCreateNewEntry = useCallback(() => {
+src/components/diaries/PersonalDiary/PersonalDiary.tsx:86:  const handleGoToToday = useCallback(() => {
+src/components/diaries/PersonalDiary/PersonalDiary.tsx:90:  const handleLockChange = useCallback(
+src/components/diaries/PersonalDiary/PersonalDiary.tsx:100:  useEffect(() => {
+src/components/diaries/PersonalDiary/PersonalDiary.tsx:252:              key={currentEntry?.id ?? 'empty-entry'}
+src/components/diaries/long-drafts/TableOfContents.tsx:62:  const sectionHierarchy = useMemo(() => {
+src/components/diaries/long-drafts/TableOfContents.tsx:68:  const totalWordCount = useMemo(() => {
+src/components/diaries/long-drafts/TableOfContents.tsx:106:  const toggleExpanded = useCallback((sectionId: string) => {
+src/components/diaries/long-drafts/TableOfContents.tsx:118:  const handleContextMenu = useCallback((e: React.MouseEvent, sectionId: string) => {
+src/components/diaries/long-drafts/TableOfContents.tsx:123:  const handleDelete = useCallback(async (sectionId: string) => {
+src/components/diaries/long-drafts/TableOfContents.tsx:130:  const handleAddSubsection = useCallback((parentId: string) => {
+src/components/diaries/long-drafts/TableOfContents.tsx:136:  const promptPasskeySetup = useCallback(() => {
+src/components/diaries/long-drafts/TableOfContents.tsx:144:  const handleLockSection = useCallback(async (sectionId: string) => {
+src/components/diaries/long-drafts/TableOfContents.tsx:159:  const handleUnlockSubmit = useCallback(async (passkey: string) => {
+src/components/diaries/long-drafts/TableOfContents.tsx:171:  const handleBackgroundClick = useCallback(() => {
+src/components/diaries/long-drafts/TableOfContents.tsx:177:  const resetDragState = useCallback(() => {
+src/components/diaries/long-drafts/TableOfContents.tsx:182:  const handleDragStart = useCallback((sectionId: string) => {
+src/components/diaries/long-drafts/TableOfContents.tsx:188:  const handleDragOverSection = useCallback((sectionId: string) => {
+src/components/diaries/long-drafts/TableOfContents.tsx:195:  const handleDropOnSection = useCallback(async (targetSectionId: string) => {
+src/components/diaries/long-drafts/TableOfContents.tsx:308:              key={node.section.id}
+src/components/diaries/long-drafts/TableOfContents.tsx:601:              key={childNode.section.id}
+src/components/diaries/PersonalDiary/DatePicker.tsx:31:  useEffect(() => {
+src/components/diaries/PersonalDiary/DatePicker.tsx:36:  useEffect(() => {
+src/components/diaries/PersonalDiary/DatePicker.tsx:53:  useEffect(() => {
+src/components/diaries/PersonalDiary/DatePicker.tsx:101:          <div key={name} className="muwi-personal-date-picker__weekday">
+src/components/diaries/PersonalDiary/DatePicker.tsx:117:            key={day.toISOString()}
+src/components/diaries/PersonalDiary/DatePicker.tsx:132:        <div key={day.toISOString()} className="muwi-personal-date-picker__week">
+src/components/diaries/academic/Academic.tsx:103:  useEffect(() => {
+src/components/diaries/academic/Academic.tsx:108:  const handleTogglePanel = useCallback(
+src/components/diaries/academic/Academic.tsx:124:  useEffect(() => {
+src/components/diaries/academic/Academic.tsx:153:  const handleCreatePaper = useCallback(
+src/components/diaries/academic/Academic.tsx:165:  const handleTitleChange = useCallback(
+src/components/diaries/academic/Academic.tsx:174:  const handleContentChange = useCallback(
+src/components/diaries/academic/Academic.tsx:183:  const handleAddSection = useCallback(async () => {
+src/components/diaries/academic/Academic.tsx:189:  const handleDeleteSection = useCallback(
+src/components/diaries/academic/Academic.tsx:198:  const totalCharacterCount = useMemo(
+src/components/diaries/academic/Academic.tsx:283:            <option key={paper.id} value={paper.id}>
+src/components/diaries/academic/Academic.tsx:304:                key={row.id}
+src/components/diaries/academic/Academic.tsx:411:      key={currentSection?.id ?? 'empty-academic-section'}
+src/components/diaries/academic/Academic.tsx:433:                <option key={style} value={style}>
+src/components/diaries/academic/Academic.tsx:497:          <div key={node.section.id}>
+src/components/diaries/long-drafts/SectionEditor.tsx:274:  const scheduleTypewriterCenter = useCallback(() => {
+src/components/diaries/long-drafts/SectionEditor.tsx:310:  useEffect(() => {
+src/components/diaries/long-drafts/SectionEditor.tsx:320:  useEffect(() => {
+src/components/diaries/long-drafts/SectionEditor.tsx:347:  useEffect(() => {
+src/components/diaries/long-drafts/SectionEditor.tsx:357:  const handleTitleChange = useCallback(
+src/components/diaries/long-drafts/SectionEditor.tsx:372:  const handleNotesChange = useCallback(
+src/components/diaries/long-drafts/SectionEditor.tsx:387:  const handleStatusSelect = useCallback(
+src/components/diaries/long-drafts/SectionEditor.tsx:396:  const handleInsertFootnote = useCallback(async () => {
+src/components/diaries/long-drafts/SectionEditor.tsx:418:  const handleUpdateFootnote = useCallback(async (footnoteId: string, content: string) => {
+src/components/diaries/long-drafts/SectionEditor.tsx:430:  const handleDeleteFootnote = useCallback(async (footnoteId: string) => {
+src/components/diaries/long-drafts/SectionEditor.tsx:452:  const handleNavigateToFootnote = useCallback((footnoteId: string) => {
+src/components/diaries/long-drafts/SectionEditor.tsx:701:                    key={status.value}
+src/components/diaries/academic/CitationPicker.tsx:33:  useEffect(() => {
+src/components/diaries/academic/CitationPicker.tsx:38:  useEffect(() => {
+src/components/diaries/academic/CitationPicker.tsx:43:  const filteredEntries = useMemo(() => {
+src/components/diaries/academic/CitationPicker.tsx:54:  const handleInsert = useCallback(async () => {
+src/components/diaries/academic/CitationPicker.tsx:68:  const handleKeyDown = useCallback(
+src/components/diaries/academic/CitationPicker.tsx:100:  useEffect(() => {
+src/components/diaries/academic/CitationPicker.tsx:168:                  key={entry.id}
+src/components/diaries/long-drafts/FootnoteManager.tsx:27:  useEffect(() => {
+src/components/diaries/long-drafts/FootnoteManager.tsx:35:  const handleContextMenu = useCallback((e: React.MouseEvent, footnoteId: string) => {
+src/components/diaries/long-drafts/FootnoteManager.tsx:40:  const handleDelete = useCallback(
+src/components/diaries/long-drafts/FootnoteManager.tsx:135:            key={footnote.id}
+src/components/diaries/long-drafts/FootnoteManager.tsx:260:  useEffect(() => {
+src/components/diaries/long-drafts/FootnoteManager.tsx:268:  useEffect(() => {
+src/components/diaries/long-drafts/FootnoteManager.tsx:276:  const handleContentChange = useCallback(
+src/components/diaries/long-drafts/FootnoteManager.tsx:292:  const handleBlur = useCallback(() => {
+src/components/diaries/long-drafts/FootnoteManager.tsx:301:  const handleKeyDown = useCallback(
+src/components/diaries/long-drafts/FootnoteManager.tsx:311:  const handleStartEdit = useCallback(() => {
+src/components/diaries/PersonalDiary/DiaryEntry.tsx:185:  useEffect(() => {
+src/components/diaries/PersonalDiary/DiaryEntry.tsx:192:  useEffect(() => {
+src/components/diaries/drafts/DraftEditor.tsx:247:  useEffect(() => {
+src/components/diaries/drafts/DraftEditor.tsx:258:  const handleTitleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+src/components/diaries/long-drafts/LongDrafts.tsx:47:  useEffect(() => {
+src/components/diaries/long-drafts/LongDrafts.tsx:55:  useEffect(() => {
+src/components/diaries/long-drafts/LongDrafts.tsx:78:  const handleCreateDocument = useCallback(async () => {
+src/components/diaries/long-drafts/LongDrafts.tsx:82:  const handleCreateSection = useCallback(
+src/components/diaries/long-drafts/LongDrafts.tsx:91:  const handleTitleChange = useCallback(
+src/components/diaries/long-drafts/LongDrafts.tsx:100:  const handleContentChange = useCallback(
+src/components/diaries/long-drafts/LongDrafts.tsx:109:  const handleNotesChange = useCallback(
+src/components/diaries/long-drafts/LongDrafts.tsx:118:  const handleStatusChange = useCallback(
+src/components/diaries/long-drafts/LongDrafts.tsx:127:  const handleToggleTocPanel = useCallback(() => {
+src/components/diaries/long-drafts/LongDrafts.tsx:135:  const handleToggleDocumentSettingsPanel = useCallback(() => {
+src/components/diaries/long-drafts/LongDrafts.tsx:319:              key={currentSectionId ?? 'empty-section'}
+src/components/diaries/long-drafts/LongDrafts.tsx:531:    <div className="muwi-longdrafts-settings" key={document.id}>
+src/components/diaries/long-drafts/LongDrafts.tsx:598:  const handleSelect = useCallback(
+src/components/diaries/long-drafts/LongDrafts.tsx:606:  const handleDelete = useCallback(
+src/components/diaries/long-drafts/LongDrafts.tsx:634:                key={doc.id}
+src/components/diaries/drafts/DraftList.tsx:95:  const drafts = useMemo(() => {
+src/components/diaries/drafts/DraftList.tsx:136:  useEffect(() => {
+src/components/diaries/drafts/DraftList.tsx:153:  const handleSortChange = useCallback((newSortBy: DraftSortBy) => {
+src/components/diaries/drafts/DraftList.tsx:163:  const handleFilterChange = useCallback((status: DraftStatus | 'all') => {
+src/components/diaries/drafts/DraftList.tsx:168:  const handleContextMenu = useCallback((e: React.MouseEvent, draftId: string) => {
+src/components/diaries/drafts/DraftList.tsx:173:  const handleDelete = useCallback(async (id: string) => {
+src/components/diaries/drafts/DraftList.tsx:180:  const promptPasskeySetup = useCallback(() => {
+src/components/diaries/drafts/DraftList.tsx:188:  const handleLockDraft = useCallback(async (draftId: string) => {
+src/components/diaries/drafts/DraftList.tsx:203:  const handleUnlockSubmit = useCallback(async (passkey: string) => {
+src/components/diaries/drafts/DraftList.tsx:258:                  key={option}
+src/components/diaries/drafts/DraftList.tsx:299:                  key={option}
+src/components/diaries/drafts/DraftList.tsx:320:              key={draft.id}
+src/components/diaries/drafts/Drafts.tsx:43:  useEffect(() => {
+src/components/diaries/drafts/Drafts.tsx:50:  const handleCreateNew = useCallback(async () => {
+src/components/diaries/drafts/Drafts.tsx:55:  useEffect(() => {
+src/components/diaries/drafts/Drafts.tsx:74:  const handleTitleChange = useCallback(
+src/components/diaries/drafts/Drafts.tsx:83:  const handleContentChange = useCallback(
+src/components/diaries/drafts/Drafts.tsx:92:  const handleStatusCycle = useCallback(() => {
+src/components/diaries/drafts/Drafts.tsx:190:          key={currentDraftId ?? 'empty-draft'}
+src/components/diaries/long-drafts/FocusMode.tsx:27:  useEffect(() => {
+src/components/diaries/long-drafts/FocusMode.tsx:46:  const handleMouseMove = useCallback(() => {
+src/components/diaries/long-drafts/FocusMode.tsx:66:  useEffect(() => {
+src/components/diaries/long-drafts/FocusMode.tsx:78:  useEffect(() => {
+src/components/diaries/scratchpad/ScratchpadPage.tsx:21:  const handleClick = useCallback(
+src/components/diaries/scratchpad/ScratchpadPage.tsx:37:  const handleCreateFirstBlock = useCallback(() => {
+src/components/diaries/scratchpad/ScratchpadPage.tsx:73:            <TextBlock key={block.id} block={block} isPageLocked={page.isLocked} />
+src/components/diaries/academic/TemplateSelector.tsx:101:  const parsedKeywords = useMemo(
+src/components/diaries/academic/TemplateSelector.tsx:110:  const parsedCustomSections = useMemo(
+src/components/diaries/academic/TemplateSelector.tsx:213:                  key={template.id}
+src/components/diaries/academic/TemplateSelector.tsx:299:                  key={`author-${index}`}
+src/components/diaries/academic/ReferenceLibraryPanel.tsx:131:  const selectedEntry = useMemo(
+src/components/diaries/academic/ReferenceLibraryPanel.tsx:136:  useEffect(() => {
+src/components/diaries/academic/ReferenceLibraryPanel.tsx:143:  const handleExport = useCallback(() => {
+src/components/diaries/academic/ReferenceLibraryPanel.tsx:168:  const handleImportFile = useCallback(
+src/components/diaries/academic/ReferenceLibraryPanel.tsx:205:  const handleToggleLink = useCallback(
+src/components/diaries/academic/ReferenceLibraryPanel.tsx:371:                      key={paper.id}
+src/components/diaries/scratchpad/CategoryPicker.tsx:33:  useEffect(() => {
+src/components/diaries/scratchpad/CategoryPicker.tsx:97:              key={category}
+src/components/diaries/scratchpad/TextBlock.tsx:43:  useEffect(() => {
+src/components/diaries/scratchpad/TextBlock.tsx:49:  const handleInput = useCallback(() => {
+src/components/diaries/scratchpad/TextBlock.tsx:56:  const handleBlur = useCallback(() => {
+src/components/diaries/scratchpad/TextBlock.tsx:72:  const handleFocus = useCallback(() => {
+src/components/diaries/scratchpad/TextBlock.tsx:77:  const handleKeyDown = useCallback(
+src/components/diaries/scratchpad/TextBlock.tsx:103:  const handleMouseDown = useCallback(
+src/components/diaries/scratchpad/TextBlock.tsx:125:  useEffect(() => {
+src/components/diaries/scratchpad/TextBlock.tsx:153:  const promptPasskeySetup = useCallback(() => {
+src/components/diaries/scratchpad/TextBlock.tsx:161:  const handleBlockLockToggle = useCallback(async () => {
+src/components/diaries/scratchpad/TextBlock.tsx:180:  const handleUnlockSubmit = useCallback(async (passkey: string) => {
+src/components/diaries/scratchpad/PageStack.tsx:17:            key={page.id}
+src/components/diaries/scratchpad/Scratchpad.tsx:61:  useEffect(() => {
+src/components/diaries/scratchpad/Scratchpad.tsx:75:  useEffect(() => {
+src/components/diaries/scratchpad/Scratchpad.tsx:114:  const handleCategoryChange = useCallback(
+src/components/diaries/scratchpad/Scratchpad.tsx:123:  const handleCreatePage = useCallback(() => {
+src/components/diaries/scratchpad/Scratchpad.tsx:127:  const promptPasskeySetup = useCallback(() => {
+src/components/diaries/scratchpad/Scratchpad.tsx:135:  const handlePageLockToggle = useCallback(async () => {
+src/components/diaries/scratchpad/Scratchpad.tsx:157:  const handleUnlockSubmit = useCallback(async (passkey: string) => {
+src/components/diaries/academic/BibliographyManager.tsx:49:  const filteredEntries = useMemo(() => {
+src/components/diaries/academic/BibliographyManager.tsx:71:  const availableTags = useMemo(
+src/components/diaries/academic/BibliographyManager.tsx:76:  const handleDelete = useCallback(
+src/components/diaries/academic/BibliographyManager.tsx:200:              key={tag}
+src/components/diaries/academic/BibliographyManager.tsx:235:              key={entry.id}
+src/components/diaries/academic/BibliographyManager.tsx:330:  const formattedEntryText = useMemo(
+src/components/diaries/academic/BibliographyManager.tsx:383:                key={`${entry.id}-${tag}`}
+src/components/diaries/academic/BibliographyManager.tsx:557:              key={m}
+src/components/diaries/academic/BibliographyManager.tsx:611:                    <option key={value} value={value}>
+src/components/diaries/academic/BibliographyManager.tsx:1005:                  <option key={value} value={value}>
+src/components/diaries/academic/useCitationShortcut.ts:4:  useEffect(() => {
+src/components/diaries/academic/AcademicSectionEditor.tsx:195:  useEffect(() => {
+src/components/diaries/academic/AcademicSectionEditor.tsx:214:  useEffect(() => {
+src/components/diaries/academic/AcademicSectionEditor.tsx:221:  const crossReferenceOptions = useMemo(() => {
+src/components/diaries/academic/AcademicSectionEditor.tsx:236:  const effectiveCrossReferenceTarget = useMemo(() => {
+src/components/diaries/academic/AcademicSectionEditor.tsx:243:  const openCitationPicker = useCallback(() => {
+src/components/diaries/academic/AcademicSectionEditor.tsx:256:  const handleTitleChange = useCallback(
+src/components/diaries/academic/AcademicSectionEditor.tsx:272:  const handleInsertCitation = useCallback(
+src/components/diaries/academic/AcademicSectionEditor.tsx:282:  const handleInsertFigure = useCallback(() => {
+src/components/diaries/academic/AcademicSectionEditor.tsx:294:  const handleInsertTable = useCallback(() => {
+src/components/diaries/academic/AcademicSectionEditor.tsx:308:  const handleInsertCrossReference = useCallback(() => {
+src/components/diaries/academic/AcademicSectionEditor.tsx:327:  const updateAcademicSettings = useCallback(
+src/components/diaries/academic/AcademicSectionEditor.tsx:467:                  <option key={preset.id} value={preset.id}>
+src/components/diaries/academic/AcademicSectionEditor.tsx:641:                      <option key={option.value} value={option.value}>

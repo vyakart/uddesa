@@ -3,6 +3,7 @@ import * as longDraftsQueries from '@/db/queries/longDrafts';
 import { clearDatabase } from '@/test/db-utils';
 import type { LongDraft, Section } from '@/types/longDrafts';
 import {
+  __resetLongDraftMetadataSyncSchedulerForTests,
   selectCurrentDocumentWordCount,
   selectCurrentLongDraft,
   selectCurrentSection,
@@ -62,10 +63,14 @@ function makeSection(
 describe('longDraftsStore', () => {
   beforeEach(async () => {
     await clearDatabase(db);
+    __resetLongDraftMetadataSyncSchedulerForTests();
+    vi.useRealTimers();
     useLongDraftsStore.setState(useLongDraftsStore.getInitialState(), true);
   });
 
   afterEach(() => {
+    __resetLongDraftMetadataSyncSchedulerForTests();
+    vi.useRealTimers();
     vi.restoreAllMocks();
   });
 
@@ -218,6 +223,31 @@ describe('longDraftsStore', () => {
     expect(stateAfterDelete.currentLongDraftId).toBe(draftB.id);
     expect(stateAfterDelete.currentSectionId).toBeNull();
     expect(stateAfterDelete.sectionsMap.has(draftA.id)).toBe(false);
+  });
+
+  it('coalesces document metadata writes across rapid section updates', async () => {
+    const draft = await useLongDraftsStore.getState().createLongDraft('Coalesce Doc');
+    const section = await useLongDraftsStore.getState().createSection(draft.id, 'Section');
+    vi.spyOn(longDraftsQueries, 'updateSection').mockResolvedValue(1);
+
+    const updateDocumentMetadata = vi.fn().mockResolvedValue(undefined);
+    useLongDraftsStore.setState({
+      ...useLongDraftsStore.getState(),
+      updateDocumentMetadata,
+    });
+
+    vi.useFakeTimers();
+
+    await useLongDraftsStore.getState().updateSection(section.id, { title: 'One' });
+    await useLongDraftsStore.getState().updateSection(section.id, { title: 'Two' });
+    await useLongDraftsStore.getState().updateSection(section.id, { notes: 'Three' });
+
+    expect(updateDocumentMetadata).not.toHaveBeenCalled();
+
+    await vi.advanceTimersByTimeAsync(1000);
+
+    expect(updateDocumentMetadata).toHaveBeenCalledTimes(1);
+    expect(updateDocumentMetadata).toHaveBeenCalledWith(draft.id);
   });
 
   it('covers selector fallbacks and no-op action guards', async () => {

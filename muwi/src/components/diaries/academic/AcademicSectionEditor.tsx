@@ -102,6 +102,9 @@ const controlStyle: React.CSSProperties = {
   color: 'var(--color-text-primary)',
 };
 
+const METRICS_UPDATE_DEBOUNCE_MS = 150;
+const CONTENT_SAVE_DEBOUNCE_MS = 500;
+
 export function AcademicSectionEditor({
   section,
   onTitleChange,
@@ -132,6 +135,7 @@ export function AcademicSectionEditor({
   const [selectedCrossReference, setSelectedCrossReference] = useState('');
 
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const metricsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const titleSaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const currentSettings = currentPaper?.settings;
@@ -172,21 +176,27 @@ export function AcademicSectionEditor({
       },
     },
     onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      const text = editor.getText();
+      if (metricsTimeoutRef.current) {
+        clearTimeout(metricsTimeoutRef.current);
+      }
+      metricsTimeoutRef.current = setTimeout(() => {
+        const html = editor.getHTML();
+        const text = editor.getText();
 
-      setWordCount(countWords(text));
-      setFigureCount(getHighestNumber(html, /Figure\s+(\d+)\./gi));
-      setTableCount(getHighestNumber(html, /Table\s+(\d+)\./gi));
-      setHeadingReferences(extractHeadingReferences(html));
+        setWordCount(countWords(text));
+        setFigureCount(getHighestNumber(html, /Figure\s+(\d+)\./gi));
+        setTableCount(getHighestNumber(html, /Table\s+(\d+)\./gi));
+        setHeadingReferences(extractHeadingReferences(html));
+      }, METRICS_UPDATE_DEBOUNCE_MS);
 
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
       }
 
       saveTimeoutRef.current = setTimeout(() => {
+        const html = editor.getHTML();
         onContentChange(html);
-      }, 500);
+      }, CONTENT_SAVE_DEBOUNCE_MS);
     },
   });
 
@@ -214,6 +224,7 @@ export function AcademicSectionEditor({
   useEffect(() => {
     return () => {
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+      if (metricsTimeoutRef.current) clearTimeout(metricsTimeoutRef.current);
       if (titleSaveTimeoutRef.current) clearTimeout(titleSaveTimeoutRef.current);
     };
   }, []);
@@ -264,7 +275,7 @@ export function AcademicSectionEditor({
 
       titleSaveTimeoutRef.current = setTimeout(() => {
         onTitleChange(newTitle);
-      }, 500);
+      }, CONTENT_SAVE_DEBOUNCE_MS);
     },
     [onTitleChange]
   );

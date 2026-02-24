@@ -192,7 +192,7 @@ describe('Academic', () => {
 
     expect(screen.getByText('No papers yet')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Create Paper' }));
-    expect(screen.getByTestId('template-selector')).toBeInTheDocument();
+    expect(await screen.findByTestId('template-selector')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Confirm Template' }));
     await waitFor(() => {
@@ -247,7 +247,7 @@ describe('Academic', () => {
     render(<Academic />);
 
     expect(screen.getByTestId('academic-section-editor')).toHaveTextContent('Section: Intro');
-    expect(screen.getByTestId('bibliography-panel')).toBeInTheDocument();
+    expect(await screen.findByTestId('bibliography-panel')).toBeInTheDocument();
     expect(screen.getByTestId('academic-status')).toHaveTextContent('42 words · 5 chars');
 
     fireEvent.click(screen.getByRole('button', { name: 'Mock Title Update' }));
@@ -274,10 +274,50 @@ describe('Academic', () => {
     expect(useAppStore.getState().rightPanel.panelType).toBe('reference-library');
 
     fireEvent.keyDown(window, { key: 'n', ctrlKey: true });
-    expect(screen.getByTestId('template-selector')).toBeInTheDocument();
+    expect(await screen.findByTestId('template-selector')).toBeInTheDocument();
 
     fireEvent.keyDown(window, { key: 'b', ctrlKey: true });
     expect(useAppStore.getState().rightPanel.panelType).toBe('bibliography');
+  });
+
+  it('does not recompute section hierarchy on unrelated app-store re-renders', async () => {
+    const loadPapers = vi.fn().mockResolvedValue(undefined);
+    const loadBibliographyEntries = vi.fn().mockResolvedValue(undefined);
+    const paper = makePaper({ id: 'paper-render' });
+    const section = makeSection({ id: 'section-render', paperId: paper.id, title: 'Intro', wordCount: 10 });
+    const getSectionHierarchy = vi.fn(() => [{ section, children: [], depth: 0 }]);
+
+    useAcademicStore.setState({
+      papers: [paper],
+      currentPaperId: paper.id,
+      currentSectionId: section.id,
+      sectionsMap: new Map([[paper.id, [section]]]),
+      isLoading: false,
+      error: null,
+      loadPapers,
+      loadBibliographyEntries,
+      getSectionHierarchy,
+    });
+
+    render(<Academic />);
+
+    expect(getSectionHierarchy).toHaveBeenCalledTimes(1);
+
+    act(() => {
+      useAppStore.setState({
+        ...useAppStore.getState(),
+        rightPanel: {
+          isOpen: true,
+          panelType: 'reference-library',
+          context: { source: 'academic' },
+        },
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('reference-library-panel')).toBeInTheDocument();
+    });
+    expect(getSectionHierarchy).toHaveBeenCalledTimes(1);
   });
 
   it('handles template close/null-template and delete-cancel path', async () => {

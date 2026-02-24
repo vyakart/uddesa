@@ -1,0 +1,17 @@
+
+> muwi@0.0.0 test:e2e
+> playwright test e2e/performance-baseline.spec.ts
+
+[2m[WebServer] [22m(node:95811) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:95813) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:95813) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[phase7-7.15.1-baseline] {"capturedAt":"2026-02-24T14:54:27.776Z","browser":"chromium","startup":{"shelfVisibleMs":383,"route":"/","domContentLoadedMs":167,"loadEventMs":173},"switches":[{"label":"cold:scratchpad","durationMs":937,"route":"/scratchpad","shellBreakpoint":"wide"},{"label":"cold:long-drafts","durationMs":892,"route":"/long-drafts","shellBreakpoint":"wide"},{"label":"cold:blackboard","durationMs":1028,"route":"/blackboard","shellBreakpoint":"wide"},{"label":"cold:academic","durationMs":899,"route":"/academic","shellBreakpoint":"wide"},{"label":"warm:academic","durationMs":413,"route":"/academic","shellBreakpoint":"wide"}]}
+  ✓  1 [chromium] › e2e/performance-baseline.spec.ts:21:1 › performance baseline: startup and shelf-mediated diary switches (5.1s)
+
+  1 passed (7.6s)

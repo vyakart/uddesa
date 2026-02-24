@@ -168,7 +168,7 @@ describe('SettingsPanel', () => {
     });
   });
 
-  it('skips save for blank passkey and trims hint to undefined when empty', async () => {
+  it('shows validation feedback for blank passkey and trims hint to undefined when empty', async () => {
     const setPasskeySpy = vi.fn().mockResolvedValue(undefined);
     useSettingsStore.setState({
       ...useSettingsStore.getState(),
@@ -186,9 +186,13 @@ describe('SettingsPanel', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: 'Save Passkey' }));
     expect(setPasskeySpy).not.toHaveBeenCalled();
+    expect(screen.getByRole('alert')).toHaveTextContent('Passkey is required');
 
     fireEvent.change(screen.getByLabelText('Set Passkey'), {
       target: { value: '  keep-me  ' },
+    });
+    await waitFor(() => {
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     });
     fireEvent.change(screen.getByLabelText('Passkey Hint'), {
       target: { value: '   ' },

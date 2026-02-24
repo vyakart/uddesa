@@ -59,7 +59,7 @@
   - Validation: responsive keyboard/focus test added and passing (`muwi/audit/2026-02/outputs/day4-remediation-targeted-tests.txt`).
 
 ### [UX-THEME-001] Footnote Extension Uses Hardcoded Colors Outside Theme Tokens
-- Status: Open
+- Status: Remediated (post-Day 4 follow-up fix on 2026-02-24)
 - Area: UX/UI / Design Token Consistency
 - Severity: Medium
 - Files: `muwi/src/extensions/footnote.ts:135`, `muwi/src/extensions/footnote.ts:324`, `muwi/src/extensions/footnote.ts:326`
@@ -81,9 +81,12 @@
   - Add dark/light visual checks for footnote marker/list readability.
 - Regression Tests Needed:
   - Theme-aware rendering snapshot or DOM-style assertions for footnote marker/list color hooks.
+- Remediation Notes:
+  - Replaced hardcoded footnote marker/list colors with theme CSS variables in `muwi/src/extensions/footnote.ts`.
+  - Validation: footnote extension tests pass and assert tokenized marker style (`muwi/audit/2026-02/outputs/day4-remediation-targeted-tests-2.txt`).
 
 ### [UX-FLOW-001] Settings Passkey Save Silently Ignores Empty Input
-- Status: Open
+- Status: Remediated (post-Day 4 follow-up fix on 2026-02-24)
 - Area: UX/UI / Primary Flow Validation (Privacy)
 - Severity: Low
 - Files: `muwi/src/components/shelf/SettingsPanel.tsx:250`, `muwi/src/components/shelf/SettingsPanel.tsx:252`
@@ -102,3 +105,6 @@
   - Reuse form error styling (or toast) to surface validation feedback for blank passkey submissions.
 - Regression Tests Needed:
   - SettingsPanel test covering empty `Save Passkey` click and expected error/announcement.
+- Remediation Notes:
+  - Added inline `role="alert"` validation feedback for blank passkey saves in `muwi/src/components/shelf/SettingsPanel.tsx`.
+  - Validation: `SettingsPanel` tests pass with explicit blank-passkey alert coverage (`muwi/audit/2026-02/outputs/day4-remediation-targeted-tests-2.txt`).

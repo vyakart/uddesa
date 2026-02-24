@@ -1,0 +1,3 @@
+src/components/diaries/long-drafts/TableOfContents.tsx:35:function buildSectionHierarchy(sections: Section[], parentId: string | null = null, depth: number = 0): SectionNode[] {
+src/stores/academicStore.ts:141:function buildSectionHierarchy(sections: AcademicSection[], parentId: string | null = null, depth: number = 0): AcademicSectionNode[] {
+src/stores/longDraftsStore.ts:80:function buildSectionHierarchy(sections: Section[], parentId: string | null = null, depth: number = 0): SectionNode[] {

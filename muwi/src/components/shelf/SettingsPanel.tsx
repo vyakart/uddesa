@@ -17,6 +17,7 @@ export function SettingsPanel() {
   const [passkey, setPasskeyInput] = useState('');
   const [passkeyHint, setPasskeyHint] = useState('');
   const [backupLocationError, setBackupLocationError] = useState<string | null>(null);
+  const [passkeyError, setPasskeyError] = useState<string | null>(null);
 
   const global = useSettingsStore((state) => state.global);
   const updateTheme = useSettingsStore((state) => state.updateTheme);
@@ -232,15 +233,31 @@ export function SettingsPanel() {
               aria-label="Set Passkey"
               type="password"
               value={passkey}
-              onChange={(event) => setPasskeyInput(event.target.value)}
+              onChange={(event) => {
+                setPasskeyInput(event.target.value);
+                if (passkeyError) {
+                  setPasskeyError(null);
+                }
+              }}
             />
 
             <Input
               label="Passkey Hint"
               aria-label="Passkey Hint"
               value={passkeyHint}
-              onChange={(event) => setPasskeyHint(event.target.value)}
+              onChange={(event) => {
+                setPasskeyHint(event.target.value);
+                if (passkeyError) {
+                  setPasskeyError(null);
+                }
+              }}
             />
+
+            {passkeyError ? (
+              <p role="alert" className="muwi-passkey-error">
+                {passkeyError}
+              </p>
+            ) : null}
 
             <div className="muwi-settings__actions">
               <Button
@@ -249,8 +266,10 @@ export function SettingsPanel() {
                 onClick={async () => {
                   const nextPasskey = passkey.trim();
                   if (!nextPasskey) {
+                    setPasskeyError('Passkey is required');
                     return;
                   }
+                  setPasskeyError(null);
                   await setPasskey(nextPasskey, passkeyHint.trim() || undefined);
                   setPasskeyInput('');
                   setPasskeyHint('');
@@ -258,7 +277,14 @@ export function SettingsPanel() {
               >
                 Save Passkey
               </Button>
-              <Button size="sm" variant="secondary" onClick={() => void clearPasskey()}>
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => {
+                  setPasskeyError(null);
+                  void clearPasskey();
+                }}
+              >
                 Clear Passkey
               </Button>
             </div>

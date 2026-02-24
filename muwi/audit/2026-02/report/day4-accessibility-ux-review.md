@@ -24,6 +24,7 @@ Date: 2026-02-24
 - UX hardcoded color scan: `muwi/audit/2026-02/outputs/day4-ux-hardcoded-colors.txt`
 - UX `!important` scan: `muwi/audit/2026-02/outputs/day4-ux-important-usage.txt`
 - Day 4 remediation targeted tests: `muwi/audit/2026-02/outputs/day4-remediation-targeted-tests.txt`
+- Day 4 remediation targeted tests (passkey + footnote): `muwi/audit/2026-02/outputs/day4-remediation-targeted-tests-2.txt`
 
 ## Remediation Status Update (Post-Fix Implementation)
 
@@ -33,8 +34,12 @@ Date: 2026-02-24
 - `A11Y-NAV-001` (mobile sidebar overlay keyboard/focus): Remediated
   - Implemented overlay focus handoff, `Escape` close, tab containment, and focus restore fallback to the toolbar sidebar opener.
   - Added responsive test coverage for overlay focus entry and focus restoration on `Escape`.
-- `UX-THEME-001`: Open
-- `UX-FLOW-001`: Open
+- `UX-THEME-001` (footnote tokenization): Remediated
+  - Replaced hardcoded footnote extension colors with theme CSS variable references.
+  - Added footnote extension test assertion for tokenized marker styling.
+- `UX-FLOW-001` (Settings blank passkey save no-op): Remediated
+  - Added inline validation feedback (`role=\"alert\"`) for blank passkey submissions.
+  - Added `SettingsPanel` test coverage for blank passkey error behavior.
 
 ## Automated Accessibility Check Result
 
@@ -53,9 +58,10 @@ Notes:
   - escape close
   - focus restoration
   - labeled dialogs/toolbar semantics
-- Day 4 remaining risk is concentrated in flows outside the current automated a11y scope and in token consistency:
-  - footnote extension styling bypasses theme tokens (dark-mode consistency risk)
-  - settings privacy flow still has a silent empty-passkey no-op
+- Day 4 code-level findings identified in this review are now remediated.
+- Remaining Day 4 risk is operational/manual verification coverage:
+  - Lighthouse accessibility audit on core flows
+  - Screen reader pass (VoiceOver/NVDA)
 - UX token scan shows most hardcoded color hits are expected theme definitions/tests, but the footnote extension is a real runtime exception.
 - `!important` usage is limited and mostly intentional (modal width overrides + reduced-motion overrides).
 
@@ -63,8 +69,8 @@ Notes:
 
 - Medium: `A11Y-STATE-001` backup/export panel messages are visual-only (no live-region semantics) [Remediated]
 - Medium: `A11Y-NAV-001` sidebar overlay mode lacks explicit keyboard focus management and test coverage [Remediated]
-- Medium: `UX-THEME-001` footnote extension hardcodes colors outside theme tokens
-- Low: `UX-FLOW-001` settings passkey save silently ignores empty input
+- Medium: `UX-THEME-001` footnote extension hardcodes colors outside theme tokens [Remediated]
+- Low: `UX-FLOW-001` settings passkey save silently ignores empty input [Remediated]
 
 Detailed entries: `muwi/audit/2026-02/findings/day4-a11y-ux-findings.md`
 

@@ -11,6 +11,32 @@ import type {
 } from '@/types/academic';
 import * as academicQueries from '@/db/queries/academic';
 
+const SECTION_METADATA_SYNC_DEBOUNCE_MS = 300;
+const pendingPaperMetadataSyncs = new Map<string, ReturnType<typeof setTimeout>>();
+
+function cancelScheduledPaperMetadataSync(paperId: string): void {
+  const timer = pendingPaperMetadataSyncs.get(paperId);
+  if (!timer) return;
+  clearTimeout(timer);
+  pendingPaperMetadataSyncs.delete(paperId);
+}
+
+function schedulePaperMetadataSync(paperId: string, get: () => AcademicState): void {
+  cancelScheduledPaperMetadataSync(paperId);
+  const timer = setTimeout(() => {
+    pendingPaperMetadataSyncs.delete(paperId);
+    void get().updatePaperMetadata(paperId);
+  }, SECTION_METADATA_SYNC_DEBOUNCE_MS);
+  pendingPaperMetadataSyncs.set(paperId, timer);
+}
+
+export function __resetAcademicMetadataSyncSchedulerForTests(): void {
+  for (const timer of pendingPaperMetadataSyncs.values()) {
+    clearTimeout(timer);
+  }
+  pendingPaperMetadataSyncs.clear();
+}
+
 export type AcademicViewMode = 'normal' | 'focus';
 export type AcademicSectionStatus = 'draft' | 'in-progress' | 'review' | 'complete';
 
@@ -292,6 +318,7 @@ export const useAcademicStore = create<AcademicState>()(
 
       deletePaper: async (id: string) => {
         try {
+          cancelScheduledPaperMetadataSync(id);
           await academicQueries.deletePaper(id);
           set(state => {
             const updatedPapers = state.papers.filter(p => p.id !== id);
@@ -417,7 +444,7 @@ export const useAcademicStore = create<AcademicState>()(
 
           const section = get().findSectionById(id);
           if (section) {
-            await get().updatePaperMetadata(section.paperId);
+            schedulePaperMetadataSync(section.paperId, get);
           }
         } catch (error) {
           set({
@@ -468,10 +495,7 @@ export const useAcademicStore = create<AcademicState>()(
 
       reorderSections: async (paperId: string, sectionIds: string[]) => {
         try {
-          // Update order in database
-          for (let i = 0; i < sectionIds.length; i++) {
-            await academicQueries.updateAcademicSection(sectionIds[i], { order: i });
-          }
+          await academicQueries.reorderAcademicSections(paperId, sectionIds);
 
           set(state => {
             const newMap = new Map(state.sectionsMap);
@@ -777,6 +801,7 @@ export const useAcademicStore = create<AcademicState>()(
       },
 
       updatePaperMetadata: async (paperId: string) => {
+        cancelScheduledPaperMetadataSync(paperId);
         const totalWordCount = get().getTotalWordCount(paperId);
         const currentPaper = get().getCurrentPaper();
 

@@ -132,7 +132,7 @@ export const Footnote = Mark.create<FootnoteOptions>({
         class: 'footnote-marker',
         style: `
           cursor: pointer;
-          color: #4A90A4;
+          color: var(--color-accent-default);
           font-weight: 600;
           font-size: 0.75em;
           vertical-align: super;
@@ -321,9 +321,9 @@ export const Footnote = Mark.create<FootnoteOptions>({
                 container.className = 'footnote-list';
                 container.style.marginTop = '1.5rem';
                 container.style.paddingTop = '0.75rem';
-                container.style.borderTop = '1px solid #E5E7EB';
+                container.style.borderTop = '1px solid var(--color-border-default)';
                 container.style.fontSize = '0.9rem';
-                container.style.color = '#4B5563';
+                container.style.color = 'var(--color-text-secondary)';
 
                 const heading = document.createElement('div');
                 heading.textContent = 'Footnotes';

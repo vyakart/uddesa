@@ -1,0 +1,14 @@
+
+> muwi@0.0.0 test
+> vitest --run src/components/diaries/long-drafts/TableOfContents.test.tsx
+
+
+ RUN  v4.0.17 /Users/ziksartin/tools/uddesa/muwi
+
+ ✓ src/components/diaries/long-drafts/TableOfContents.test.tsx (5 tests) 412ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  20:42:53
+   Duration  2.47s (transform 366ms, setup 83ms, import 1.47s, tests 412ms, environment 420ms)
+

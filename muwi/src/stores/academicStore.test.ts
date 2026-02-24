@@ -3,6 +3,7 @@ import * as academicQueries from '@/db/queries/academic';
 import { clearDatabase } from '@/test/db-utils';
 import type { BibliographyEntry } from '@/types/academic';
 import {
+  __resetAcademicMetadataSyncSchedulerForTests,
   selectAcademicCurrentSection,
   selectAcademicCurrentSections,
   selectAcademicIsFocusMode,
@@ -33,10 +34,14 @@ function makeEntryInput(overrides: Partial<Omit<BibliographyEntry, 'id' | 'creat
 describe('academicStore', () => {
   beforeEach(async () => {
     await clearDatabase(db);
+    __resetAcademicMetadataSyncSchedulerForTests();
+    vi.useRealTimers();
     useAcademicStore.setState(useAcademicStore.getInitialState(), true);
   });
 
   afterEach(() => {
+    __resetAcademicMetadataSyncSchedulerForTests();
+    vi.useRealTimers();
     vi.restoreAllMocks();
   });
 
@@ -196,6 +201,31 @@ describe('academicStore', () => {
     expect(selectCurrentPaper(stateAfterDelete)?.id).toBe(paperB.id);
   });
 
+  it('coalesces paper metadata writes across rapid academic section updates', async () => {
+    const paper = await useAcademicStore.getState().createPaper('Coalesce Paper');
+    const section = await useAcademicStore.getState().createSection(paper.id, 'Section');
+    vi.spyOn(academicQueries, 'updateAcademicSection').mockResolvedValue(1);
+
+    const updatePaperMetadata = vi.fn().mockResolvedValue(undefined);
+    useAcademicStore.setState({
+      ...useAcademicStore.getState(),
+      updatePaperMetadata,
+    });
+
+    vi.useFakeTimers();
+
+    await useAcademicStore.getState().updateSection(section.id, { title: 'One' });
+    await useAcademicStore.getState().updateSection(section.id, { title: 'Two' });
+    await useAcademicStore.getState().updateSection(section.id, { content: '<p>a b c</p>' });
+
+    expect(updatePaperMetadata).not.toHaveBeenCalled();
+
+    await vi.advanceTimersByTimeAsync(1000);
+
+    expect(updatePaperMetadata).toHaveBeenCalledTimes(1);
+    expect(updatePaperMetadata).toHaveBeenCalledWith(paper.id);
+  });
+
   it('covers selector fallbacks and citation-style update guards', () => {
     const updatePaper = vi.fn().mockResolvedValue(undefined);
     useAcademicStore.setState({
@@ -270,7 +300,7 @@ describe('academicStore', () => {
     await useAcademicStore.getState().updateSection('section-fail', { title: 'Updated' });
     expect(useAcademicStore.getState().error).toBe('Failed to update section');
 
-    vi.spyOn(academicQueries, 'updateAcademicSection').mockRejectedValueOnce('reorder-failure');
+    vi.spyOn(academicQueries, 'reorderAcademicSections').mockRejectedValueOnce('reorder-failure');
     await useAcademicStore.getState().reorderSections('paper-fail', ['s1']);
     expect(useAcademicStore.getState().error).toBe('Failed to reorder sections');
 
@@ -372,7 +402,7 @@ describe('academicStore', () => {
 
     await useAcademicStore.getState().deleteSection('missing-section');
 
-    vi.spyOn(academicQueries, 'updateAcademicSection').mockRejectedValueOnce(new Error('reorder error'));
+    vi.spyOn(academicQueries, 'reorderAcademicSections').mockRejectedValueOnce(new Error('reorder error'));
     await useAcademicStore.getState().reorderSections('paper-fail', ['s1']);
     expect(useAcademicStore.getState().error).toBe('reorder error');
 

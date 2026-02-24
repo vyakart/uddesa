@@ -1,0 +1,14 @@
+
+> muwi@0.0.0 test
+> vitest --run src/components/diaries/academic/AcademicSectionEditor.test.tsx
+
+
+ RUN  v4.0.17 /Users/ziksartin/tools/uddesa/muwi
+
+ ✓ src/components/diaries/academic/AcademicSectionEditor.test.tsx (5 tests) 193ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  20:40:56
+   Duration  2.01s (transform 211ms, setup 87ms, import 1.23s, tests 193ms, environment 411ms)
+

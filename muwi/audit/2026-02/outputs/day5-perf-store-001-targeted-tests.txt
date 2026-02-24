@@ -1,0 +1,15 @@
+
+> muwi@0.0.0 test
+> vitest --run src/stores/longDraftsStore.test.ts src/stores/academicStore.test.ts
+
+
+ RUN  v4.0.17 /Users/ziksartin/tools/uddesa/muwi
+
+ ✓ src/stores/longDraftsStore.test.ts (10 tests) 58ms
+ ✓ src/stores/academicStore.test.ts (12 tests) 109ms
+
+ Test Files  2 passed (2)
+      Tests  22 passed (22)
+   Start at  20:34:16
+   Duration  1.68s (transform 258ms, setup 128ms, import 1.29s, tests 167ms, environment 686ms)
+

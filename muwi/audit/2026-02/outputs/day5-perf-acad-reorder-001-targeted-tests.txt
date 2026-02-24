@@ -1,0 +1,15 @@
+
+> muwi@0.0.0 test
+> vitest --run src/db/queries/academic.test.ts src/stores/academicStore.test.ts
+
+
+ RUN  v4.0.17 /Users/ziksartin/tools/uddesa/muwi
+
+ ✓ src/db/queries/academic.test.ts (4 tests) 33ms
+ ✓ src/stores/academicStore.test.ts (12 tests) 114ms
+
+ Test Files  2 passed (2)
+      Tests  16 passed (16)
+   Start at  20:37:18
+   Duration  2.01s (transform 281ms, setup 192ms, import 1.41s, tests 148ms, environment 996ms)
+
