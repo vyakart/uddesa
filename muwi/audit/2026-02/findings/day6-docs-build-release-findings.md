@@ -46,6 +46,7 @@
   - Replaced `muwi/README.md` template content with MUWI-specific setup, dev/test/build/package, backup/export, and troubleshooting documentation.
 
 ### [DOC-IMPL-001] `IMPLEMENTATION.md` Does Not Reflect Current Shipped Stack and File Layout
+- Status: Remediated (2026-02-24)
 - Area: Documentation
 - Severity: Medium
 - Files: `IMPLEMENTATION.md:13`, `IMPLEMENTATION.md:15`, `IMPLEMENTATION.md:16`, `IMPLEMENTATION.md:21`, `IMPLEMENTATION.md:22`, `IMPLEMENTATION.md:101`, `IMPLEMENTATION.md:154`, `IMPLEMENTATION.md:157`, `muwi/package.json:51`, `muwi/package.json:70`, `muwi/package.json:80`, `muwi/package.json:83`
@@ -67,8 +68,12 @@
   - Multiple core stack and path references are stale.
 - Recommended Fix:
   - Either (a) update `IMPLEMENTATION.md` to current shipped reality, or (b) relabel it as historical design/spec and add a current architecture reference.
+- Remediation Notes:
+  - Relabeled `IMPLEMENTATION.md` as a historical design/implementation reference.
+  - Added a Day 6 audit status banner with explicit pointers to current source-of-truth files (`muwi/README.md`, `muwi/package.json`, `muwi/vite.config.ts`, `muwi/electron/*`, `muwi/src/**`).
 
 ### [DOC-TEST-001] `TESTING.md` Is Out of Sync with Current Test Configuration and Scripts
+- Status: Remediated (2026-02-24)
 - Area: Documentation / Testing
 - Severity: Medium
 - Files: `TESTING.md:16`, `TESTING.md:25`, `TESTING.md:166`, `TESTING.md:187`, `TESTING.md:188`, `muwi/playwright.config.ts:11`, `muwi/playwright.config.ts:17`, `muwi/playwright.config.ts:18`, `muwi/playwright.config.ts:22`, `muwi/playwright.electron.config.ts:1`, `muwi/package.json:15`, `muwi/package.json:17`, `muwi/package.json:77`
@@ -87,6 +92,9 @@
   - Multiple concrete config snippets and assumptions are stale.
 - Recommended Fix:
   - Replace example-heavy stale config snippets with current command references and short links to actual config files, plus a maintained test matrix.
+- Remediation Notes:
+  - Relabeled `TESTING.md` as a historical testing strategy reference.
+  - Added a Day 6 audit status banner with explicit pointers to current source-of-truth files (`muwi/README.md`, `muwi/package.json`, `muwi/vitest.config.ts`, `muwi/playwright*.config.ts`, `muwi/src/test/setup.ts`).
 
 ### [REL-ASSET-001] Packaging Icon Assets Are Missing (Placeholder-Only `build/icons`)
 - Status: Remediated (2026-02-24)
@@ -116,6 +124,7 @@
   - Evidence: `muwi/audit/2026-02/outputs/day6-electron-build-after-icons.txt`
 
 ### [REL-CI-001] No CI Workflow Configuration for PR/Release Gating
+- Status: Remediated (2026-02-24)
 - Area: Build & Release / CI-CD
 - Severity: Medium
 - Files: `.github/workflows` (missing)
@@ -132,6 +141,9 @@
   - No CI workflow configuration detected.
 - Recommended Fix:
   - Add a minimal CI workflow with PR gating for `npm run lint`, `npm run test:coverage` (or targeted tests), and `npm run build`; add a release packaging workflow separately if needed.
+- Remediation Notes:
+  - Added GitHub Actions workflow `/.github/workflows/muwi-ci.yml`.
+  - Workflow runs on `push`/`pull_request` for `muwi/**` paths and executes `npm ci`, `npm run lint`, `npm run test:coverage`, and `npm run build` in `muwi/`.
 
 ### [REL-META-001] Package Metadata Missing `description` and `author` for Release Artifacts
 - Status: Remediated (2026-02-24)

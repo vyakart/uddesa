@@ -75,6 +75,10 @@ Interpretation:
 
 - `IMPLEMENTATION.md` reads as a historical design/implementation draft rather than a reliable shipped-state reference.
 
+Update (2026-02-24, post-fix):
+
+- Remediated by relabeling `IMPLEMENTATION.md` as a historical design/implementation reference and adding explicit pointers to current source-of-truth files in `muwi/`.
+
 ## 3. `TESTING.md` is a stale strategy/template and mismatches current configs
 
 Examples:
@@ -87,6 +91,10 @@ Examples:
 Interpretation:
 
 - `TESTING.md` is currently better treated as planning/reference material than executable operational documentation.
+
+Update (2026-02-24, post-fix):
+
+- Remediated by relabeling `TESTING.md` as a historical testing strategy reference and adding explicit pointers to current test scripts/config files.
 
 ## Build/Release Audit Findings (Initial)
 
@@ -136,6 +144,10 @@ Impact:
 
 - Release readiness depends on manual local execution only, increasing risk of inconsistent checks and missed regressions.
 
+Update (2026-02-24, post-fix):
+
+- Remediated by adding `/.github/workflows/muwi-ci.yml` with PR/push validation for `muwi/` changes (`lint`, `test:coverage`, `build`).
+
 ## 7. Package metadata is incomplete for release packaging
 
 - `electron-builder` warns that `description` and `author` are missing in `muwi/package.json` (captured in `muwi/audit/2026-02/outputs/day6-electron-build.txt`).
@@ -170,18 +182,23 @@ Detailed entries: `muwi/audit/2026-02/findings/day6-docs-build-release-findings.
 - High: `DOC-README-001` app README is still Vite template (effective user/operator docs missing) (remediated 2026-02-24)
 - Medium: `DOC-IMPL-001` `IMPLEMENTATION.md` shipped-state drift (versions + structure)
 - Medium: `DOC-TEST-001` `TESTING.md` config/script drift vs current Vitest/Playwright setup
+- Medium: `DOC-IMPL-001` `IMPLEMENTATION.md` shipped-state drift (versions + structure) (remediated 2026-02-24)
+- Medium: `DOC-TEST-001` `TESTING.md` config/script drift vs current Vitest/Playwright setup (remediated 2026-02-24)
 - Medium: `REL-ASSET-001` production icon assets missing from `muwi/build/icons`
 - Medium: `REL-ASSET-001` production icon assets missing from `muwi/build/icons` (remediated 2026-02-24)
 - Medium: `REL-CI-001` no CI workflow configuration for lint/test/build gating
+- Medium: `REL-CI-001` no CI workflow configuration for lint/test/build gating (remediated 2026-02-24)
 - Low: `REL-META-001` package metadata missing `description`/`author`
 - Low: `REL-META-001` package metadata missing `description`/`author` (remediated 2026-02-24)
 
 ## Pending Day 6 Work
 
 - Complete documentation gap inventory for:
-  - backup/restore user docs
-  - keyboard shortcuts reference
-  - IPC API documentation (`muwi/docs/API.md` or equivalent)
-  - changelog policy and `muwi/CHANGELOG.md` generation path
 - Optional: Reproduce the post-artifact non-exit outside this execution harness (plain terminal run) to determine whether it is tool-session-specific
 - Decide CI/CD minimum bar (at least lint + unit/integration + build checks on PR)
+
+Update (2026-02-24, post-fix):
+
+- `muwi/docs/API.md` added to document the Electron preload/IPC surface.
+- `muwi/CHANGELOG.md` generated via `npm run changelog:write` and augmented with a changelog maintenance policy section.
+- Minimal CI workflow added at `/.github/workflows/muwi-ci.yml`.

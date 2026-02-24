@@ -14,10 +14,12 @@ Date: 2026-02-24
   - Added production icon set and reran packaging (macOS artifacts generated)
   - Added `description`/`author` package metadata and investigated post-artifact non-exit behavior
   - Replaced `muwi/README.md` template with MUWI-specific documentation
+  - Relabeled `IMPLEMENTATION.md` and `TESTING.md` as historical references with current-source-of-truth pointers
+  - Added `muwi/docs/API.md` documenting the Electron preload/IPC surface
+  - Added `muwi/CHANGELOG.md` and documented changelog generation/maintenance policy
+  - Added minimal GitHub Actions CI workflow for `muwi/` (`lint`, `test:coverage`, `build`)
 - Pending to fully close Day 6:
-  - Docs remediation/update pass (README/testing/implementation/API/changelog)
-  - Packaging config fixes + successful rerun of `npm run electron:build`
-  - CI workflow implementation (or explicit defer decision)
+  - Optional validation/documentation follow-up only (plain-terminal packaging non-exit repro)
 
 ## Deliverables Produced (This Pass)
 
@@ -39,16 +41,16 @@ Date: 2026-02-24
 - `REL-ASSET-001` was remediated: platform icons were added (`icon.icns`, `icon.ico`, Linux PNG set), and packaging progressed to producing macOS x64/arm64 `.zip`/`.dmg` artifacts plus blockmaps.
 - `REL-META-001` was remediated by adding `description` and `author` to `muwi/package.json`.
 - `DOC-README-001` was remediated by replacing the default Vite template `muwi/README.md` with MUWI-specific operational documentation.
+- `DOC-IMPL-001` and `DOC-TEST-001` were remediated by relabeling `IMPLEMENTATION.md` / `TESTING.md` as historical references and adding current source-of-truth pointers.
+- `REL-CI-001` was remediated by adding a minimal GitHub Actions workflow (`/.github/workflows/muwi-ci.yml`) covering lint/test/build for `muwi/`.
+- Day 6 documentation deliverables for IPC API + changelog policy were added (`muwi/docs/API.md`, `muwi/CHANGELOG.md`).
 - Post-artifact "hang" investigation indicates packaging completed and no related processes remained; likely command-session/tooling behavior in this environment rather than a current `electron-builder` config blocker.
 - Code signing/notarization are skipped locally due absent credentials/identity (expected for local validation).
-- Packaging build log also reports missing `description` and `author` in `muwi/package.json`.
-- `muwi/build/icons/` currently contains only a placeholder `README.md`, while the packaging config references platform icon files.
-- `IMPLEMENTATION.md` and `TESTING.md` contain multiple stale examples/version claims and should not be treated as authoritative shipped-state docs in their current form.
 - No `.github/workflows/` directory is present, so PR/build validation appears to be manual-only right now.
 
 ## Follow-Up Priorities
 
 1. Optional: Verify `npm run electron:build` exit behavior in a plain local terminal (outside this execution harness) and document whether the non-exit is tool-session-specific.
-2. Replace `muwi/README.md` template content with actual MUWI setup/run/test/build + backup/restore documentation.
-3. Decide whether to update or relabel `IMPLEMENTATION.md` and `TESTING.md` (current-state docs vs historical/design references).
-4. Add a minimal CI workflow for lint/test/build gating (or document an explicit no-CI release process).
+2. Optional: Verify `npm run electron:build` exit behavior in a plain local terminal (outside this execution harness) and document whether the non-exit is tool-session-specific.
+3. Begin Day 7+ consolidation: dedupe findings, normalize severity, and draft remediation plan/sign-off checklist.
+4. Close the remaining Day 5 manual profiling evidence gap by running `muwi/audit/2026-02/report/day5-manual-react-profiler-checklist.md`.

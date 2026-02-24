@@ -1,6 +1,23 @@
-# MUWI Implementation Guide
+# MUWI Implementation Guide (Historical Design / Implementation Reference)
 
-## Technical Implementation Documentation
+## Status (Day 6 Docs Audit Update - 2026-02-24)
+
+This document is retained as a historical design/implementation reference and is **not** a guaranteed shipped-state source of truth.
+
+Use these files for current implementation reality:
+
+- `muwi/README.md` (current setup/dev/build/package workflows)
+- `muwi/package.json` (current dependencies and scripts)
+- `muwi/vite.config.ts` (current Vite/Electron build integration)
+- `muwi/electron/main.ts` and `muwi/electron/preload.ts` (current Electron runtime entry points)
+- `muwi/src/**` (current components, stores, DB, and styles)
+
+Notes:
+
+- Version tables, structure trees, and code snippets below may reflect earlier project phases.
+- If exact current behavior matters, verify directly in the `muwi/` codebase files above.
+
+## Technical Implementation Documentation (Historical)
 
 ---
 

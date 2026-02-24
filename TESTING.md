@@ -1,6 +1,24 @@
-# MUWI Testing Documentation
+# MUWI Testing Documentation (Historical Strategy Reference)
 
-## Comprehensive Testing Strategy
+## Status (Day 6 Docs Audit Update - 2026-02-24)
+
+This document is retained as a historical testing strategy/reference and is **not** the current source of truth for executable commands or config snippets.
+
+Use these files for current behavior/configuration:
+
+- `muwi/README.md` (current developer workflow commands)
+- `muwi/package.json` (actual scripts)
+- `muwi/vitest.config.ts` (current Vitest config)
+- `muwi/playwright.config.ts` (current browser E2E config)
+- `muwi/playwright.electron.config.ts` (current Electron E2E config)
+- `muwi/src/test/setup.ts` (current test environment setup)
+
+Notes:
+
+- Some examples below intentionally reflect an earlier planning/design phase.
+- Treat code blocks in this file as conceptual patterns unless verified against the files above.
+
+## Comprehensive Testing Strategy (Historical)
 
 ---
 
