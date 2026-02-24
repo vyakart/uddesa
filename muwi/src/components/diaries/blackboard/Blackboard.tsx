@@ -1,10 +1,14 @@
-import { useEffect, useState, useCallback, useRef, type MouseEvent } from 'react';
+import { lazy, Suspense, useEffect, useState, useCallback, useRef, type MouseEvent } from 'react';
 import { Presentation } from 'lucide-react';
 import { Button, DiaryLayout, FontSelector } from '@/components/common';
 import { useBlackboardStore } from '@/stores/blackboardStore';
-import { ExcalidrawWrapper } from './ExcalidrawWrapper';
 import { IndexPanel } from './IndexPanel';
 import { BlackboardToolbar } from './BlackboardToolbar';
+
+const ExcalidrawWrapper = lazy(async () => {
+  const module = await import('./ExcalidrawWrapper');
+  return { default: module.ExcalidrawWrapper };
+});
 
 export function Blackboard() {
   const [isIndexVisible, setIsIndexVisible] = useState(true);
@@ -195,11 +199,13 @@ export function Blackboard() {
       ref={canvasContainerRef}
       tabIndex={-1}
     >
-      <ExcalidrawWrapper
-        onElementsChange={handleElementsChange}
-        navigationTarget={navigationTarget}
-        onNavigationHandled={() => setNavigationTarget(null)}
-      />
+      <Suspense fallback={<div className="muwi-blackboard-canvas__message">Loading canvas engine...</div>}>
+        <ExcalidrawWrapper
+          onElementsChange={handleElementsChange}
+          navigationTarget={navigationTarget}
+          onNavigationHandled={() => setNavigationTarget(null)}
+        />
+      </Suspense>
       {isEmptyCanvas ? (
         <div className="muwi-blackboard-state" role="status" aria-live="polite">
           <span className="muwi-blackboard-state__icon" aria-hidden="true">

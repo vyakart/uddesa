@@ -1,6 +1,4 @@
-import electron from 'electron';
-
-const { contextBridge, ipcRenderer } = electron;
+import { contextBridge, ipcRenderer } from 'electron';
 
 function assertString(value: unknown, fieldName: string): string {
   if (typeof value !== 'string') {

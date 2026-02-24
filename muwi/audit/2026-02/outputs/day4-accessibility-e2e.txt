@@ -1,0 +1,21 @@
+
+> muwi@0.0.0 test:e2e
+> playwright test accessibility-audit.spec.ts
+
+[2m[WebServer] [22m(node:80283) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 2 workers
+
+(node:80290) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:80289) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:80290) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:80289) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › e2e/accessibility-audit.spec.ts:17:1 › keyboard-only focus order follows visual order on shelf and overlays (2.0s)
+  ✓  2 [chromium] › e2e/accessibility-audit.spec.ts:70:1 › screen-reader spot-check via accessibility tree snapshots (2.6s)
+
+  2 passed (12.5s)

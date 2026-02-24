@@ -217,7 +217,7 @@ describe('Blackboard', () => {
     expect(screen.getByTestId('blackboard-layout-status')).toHaveTextContent('1 heading · 2 elements');
     expect(screen.getByTestId('blackboard-layout-right-panel')).toHaveTextContent('1 heading indexed.');
 
-    fireEvent.click(screen.getByTestId('excalidraw-wrapper'));
+    fireEvent.click(await screen.findByTestId('excalidraw-wrapper'));
     expect(rebuildIndex).toHaveBeenCalledTimes(1);
 
     expect(screen.getByTestId('index-panel-collapse')).toHaveTextContent('Index Expanded');

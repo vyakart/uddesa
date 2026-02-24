@@ -1,0 +1,36 @@
+Electron runtime smoke pass (preload + sandbox focus)
+Date: 2026-02-24
+
+Environment observation:
+- `ELECTRON_RUN_AS_NODE=1` was set in the shell environment.
+
+Smoke attempts:
+1. `npm run electron:dev -- --host 127.0.0.1 --port 4174`
+   - Result: FAIL (launcher/runtime environment issue)
+   - Error: `TypeError: Cannot read properties of undefined (reading 'whenReady')`
+   - Meaning: `electron/main` executed under Node (`electron.app` undefined), so preload/sandbox runtime behavior was not reached.
+
+2. `npm run electron:preview`
+   - Result: FAIL (same environment issue)
+   - Error: `TypeError: Cannot read properties of undefined (reading 'whenReady')`
+
+3. `env -u ELECTRON_RUN_AS_NODE npm run electron:preview`
+   - Result: FAIL (Electron binary launched, then aborted)
+   - Error: `.../Electron exited with signal SIGABRT`
+   - Meaning: Confirmed the real Electron binary starts when the env flag is removed, but GUI runtime aborts in this environment before a useful preload/sandbox verification signal can be collected.
+
+Conclusion:
+- Code-level `sandbox: true` and preload bundling/build succeed.
+- End-to-end runtime verification of preload + sandbox remains blocked in this environment and needs a local desktop smoke run.
+
+Update (desktop smoke run outside sandbox):
+4. `env -u ELECTRON_RUN_AS_NODE npm run electron:preview` (executed outside the sandbox)
+   - Result: PASS (startup smoke)
+   - Build completed for renderer + Electron main + preload.
+   - Electron process stayed running for an additional soak period (~8s) with no immediate preload/sandbox startup crash.
+   - Session terminated intentionally with `SIGINT`.
+
+Revised conclusion:
+- Real Electron desktop startup succeeds with `ELECTRON_RUN_AS_NODE` unset.
+- No immediate preload or `sandbox: true` startup regression observed in this smoke pass.
+- This validates startup/runtime wiring, but not deeper manual interaction flows.

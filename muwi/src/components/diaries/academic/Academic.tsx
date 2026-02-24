@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState, useCallback } from 'react';
 import { DiaryLayout } from '@/components/common/DiaryLayout';
 import { Toolbar, type ToolbarItem } from '@/components/common';
 import {
@@ -20,10 +20,22 @@ import {
 } from '@/stores/academicStore';
 import type { AcademicSection, CitationStyle, PaperCreationOptions } from '@/types/academic';
 import { AcademicSectionEditor } from './AcademicSectionEditor';
-import { BibliographyManager } from './BibliographyManager';
-import { ReferenceLibraryPanel } from './ReferenceLibraryPanel';
-import { TemplateSelector } from './TemplateSelector';
 import { hasActiveModalDialog, isEditableTarget } from '@/utils/keyboard';
+
+const BibliographyManager = lazy(async () => {
+  const module = await import('./BibliographyManager');
+  return { default: module.BibliographyManager };
+});
+
+const ReferenceLibraryPanel = lazy(async () => {
+  const module = await import('./ReferenceLibraryPanel');
+  return { default: module.ReferenceLibraryPanel };
+});
+
+const TemplateSelector = lazy(async () => {
+  const module = await import('./TemplateSelector');
+  return { default: module.TemplateSelector };
+});
 
 const CITATION_STYLE_LABELS: Record<CitationStyle, string> = {
   apa7: 'APA 7th',
@@ -430,11 +442,13 @@ export function Academic() {
         </div>
 
         <div className="muwi-academic-panel__content">
-          {activeAcademicPanel === 'bibliography' ? (
-            <BibliographyManager hideHeader />
-          ) : (
-            <ReferenceLibraryPanel hideHeader compact />
-          )}
+          <Suspense fallback={<div className="muwi-academic-sidebar__empty">Loading panel...</div>}>
+            {activeAcademicPanel === 'bibliography' ? (
+              <BibliographyManager hideHeader />
+            ) : (
+              <ReferenceLibraryPanel hideHeader compact />
+            )}
+          </Suspense>
         </div>
       </div>
     ) : null;
@@ -452,7 +466,9 @@ export function Academic() {
         <>
           {canvas}
           {showTemplateSelector ? (
-            <TemplateSelector onSelect={handleCreatePaper} onClose={() => setShowTemplateSelector(false)} />
+            <Suspense fallback={<div className="muwi-academic-state" data-tone="neutral"><p>Loading template selector...</p></div>}>
+              <TemplateSelector onSelect={handleCreatePaper} onClose={() => setShowTemplateSelector(false)} />
+            </Suspense>
           ) : null}
         </>
       }

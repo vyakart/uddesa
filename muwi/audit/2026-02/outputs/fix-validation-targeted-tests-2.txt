@@ -1,0 +1,13 @@
+
+ RUN  v4.0.17 /Users/ziksartin/tools/uddesa/muwi
+
+ ✓ src/components/common/BackupPanel/BackupPanel.test.tsx (3 tests) 322ms
+ ✓ src/components/diaries/blackboard/Blackboard.test.tsx (4 tests) 447ms
+     ✓ loads on mount, rebuilds index on canvas change, and cycles index visibility states  333ms
+ ✓ src/components/shelf/SettingsPanel.test.tsx (8 tests) 623ms
+
+ Test Files  3 passed (3)
+      Tests  15 passed (15)
+   Start at  15:54:02
+   Duration  3.34s (transform 888ms, setup 329ms, import 5.90s, tests 1.39s, environment 1.60s)
+

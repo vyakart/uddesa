@@ -1,4 +1,4 @@
-import { act, render, screen, setupUser } from '@/test';
+import { act, render, screen, setupUser, waitFor } from '@/test';
 import { useAppStore } from '@/stores/appStore';
 import { DiaryLayout } from './DiaryLayout';
 
@@ -89,5 +89,40 @@ describe('DiaryLayout responsive behavior', () => {
 
     expect(screen.getByTestId('shared-sidebar-shell')).toHaveAttribute('data-open', 'false');
     expect(screen.queryByTestId('sidebar-overlay-backdrop')).not.toBeInTheDocument();
+  });
+
+  it('moves focus into sidebar overlay and restores focus to toggle on Escape', async () => {
+    const user = setupUser();
+    resizeWindow(760);
+    useAppStore.getState().openDiary('drafts');
+
+    render(
+      <DiaryLayout diaryType="drafts" sidebar={<p>Sidebar content</p>}>
+        <p>Canvas slot</p>
+      </DiaryLayout>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Back to shelf' })).toHaveFocus();
+    });
+
+    await user.click(screen.getByTestId('sidebar-overlay-backdrop'));
+    const expandButton = screen.getByTestId('diary-sidebar-open-button');
+
+    expandButton.focus();
+    expect(expandButton).toHaveFocus();
+
+    await user.click(expandButton);
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Back to shelf' })).toHaveFocus();
+    });
+
+    await user.keyboard('{Escape}');
+
+    expect(screen.getByTestId('shared-sidebar-shell')).toHaveAttribute('data-open', 'false');
+    await waitFor(() => {
+      expect(screen.getByTestId('diary-sidebar-open-button')).toHaveFocus();
+    });
   });
 });

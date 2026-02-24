@@ -16,6 +16,7 @@ export function SettingsPanel() {
   const [activeTab, setActiveTab] = useState<SettingsTab>('appearance');
   const [passkey, setPasskeyInput] = useState('');
   const [passkeyHint, setPasskeyHint] = useState('');
+  const [backupLocationError, setBackupLocationError] = useState<string | null>(null);
 
   const global = useSettingsStore((state) => state.global);
   const updateTheme = useSettingsStore((state) => state.updateTheme);
@@ -195,12 +196,19 @@ export function SettingsPanel() {
                   size="sm"
                   variant="secondary"
                   onClick={async () => {
-                    const location = await window.electronAPI?.selectBackupLocation?.();
-                    if (location) {
-                      await updateBackupSettings(
-                        global.autoBackupEnabled,
-                        global.autoBackupFrequency,
-                        location
+                    setBackupLocationError(null);
+                    try {
+                      const location = await window.electronAPI?.selectBackupLocation?.();
+                      if (location) {
+                        await updateBackupSettings(
+                          global.autoBackupEnabled,
+                          global.autoBackupFrequency,
+                          location
+                        );
+                      }
+                    } catch (error) {
+                      setBackupLocationError(
+                        error instanceof Error ? error.message : 'Failed to open location picker'
                       );
                     }
                   }}
@@ -208,6 +216,11 @@ export function SettingsPanel() {
                   Choose
                 </Button>
               </div>
+              {backupLocationError ? (
+                <p role="alert" className="muwi-field__help" style={{ color: 'var(--color-error)' }}>
+                  {backupLocationError}
+                </p>
+              ) : null}
             </div>
           </>
         ) : null}

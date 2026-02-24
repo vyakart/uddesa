@@ -84,6 +84,7 @@ describe('BackupPanel', () => {
     await waitFor(() => {
       expect(saveBackupToFile).toHaveBeenCalledTimes(1);
       expect(screen.getByText('Backup created successfully! (12 records)')).toBeInTheDocument();
+      expect(screen.getByRole('status')).toHaveTextContent('Backup created successfully! (12 records)');
     });
     expect(screen.queryByText('Last backup: Never')).not.toBeInTheDocument();
     expect(screen.getByText(/^Last backup:/)).toBeInTheDocument();
@@ -96,6 +97,9 @@ describe('BackupPanel', () => {
     await waitFor(() => {
       expect(loadBackupFromFile).toHaveBeenCalledTimes(1);
       expect(screen.getByText('Restored 4 records from 2 tables. Refresh to see changes.')).toBeInTheDocument();
+      expect(screen.getByRole('status')).toHaveTextContent(
+        'Restored 4 records from 2 tables. Refresh to see changes.'
+      );
       expect(getBackupStats).toHaveBeenCalledTimes(2);
       expect(screen.getByText('Total: 9 records')).toBeInTheDocument();
     });
@@ -126,6 +130,9 @@ describe('BackupPanel', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Save Settings' }));
 
     expect(screen.getByText('Select a backup location to enable automatic backups.')).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Select a backup location to enable automatic backups.'
+    );
     expect(onSettingsChange).not.toHaveBeenCalled();
     expect(stopAutoBackup).not.toHaveBeenCalled();
     expect(startAutoBackup).not.toHaveBeenCalled();
@@ -156,6 +163,7 @@ describe('BackupPanel', () => {
       expect.any(Function)
     );
     expect(screen.getByText('Settings saved')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent('Settings saved');
 
     const onBackupComplete = vi.mocked(startAutoBackup).mock.calls.at(-1)?.[1] as
       | ((result: { success: boolean; recordCount?: number; error?: string }) => void)
@@ -164,6 +172,7 @@ describe('BackupPanel', () => {
       onBackupComplete?.({ success: true, recordCount: 6 });
     });
     expect(screen.getByText('Auto-backup completed (6 records).')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent('Auto-backup completed (6 records).');
 
     expect(screen.getByText('Active')).toBeInTheDocument();
   });

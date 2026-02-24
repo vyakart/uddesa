@@ -2,18 +2,19 @@ import electron from 'electron';
 import type { BrowserWindow as BrowserWindowType } from 'electron';
 import path from 'path';
 import fs from 'fs/promises';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
+import { MAX_BACKUP_BYTES, readValidatedBackupFile } from './backupImport';
 
 const { app, BrowserWindow, ipcMain, dialog } = electron;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const PACKAGED_RENDERER_ENTRY_URL = pathToFileURL(path.join(__dirname, '../dist/index.html'));
 
 let mainWindow: BrowserWindowType | null = null;
 const AUTO_BACKUP_FILE_PATTERN = /^muwi-backup-(\d+)\.json$/;
 const MIN_BACKUP_RETENTION = 1;
 const MAX_BACKUP_RETENTION = 100;
 const DEFAULT_BACKUP_RETENTION = 10;
-const MAX_BACKUP_BYTES = 100 * 1024 * 1024;
 const MAX_EXPORT_BYTES = 100 * 1024 * 1024;
 const MAX_FILENAME_LENGTH = 160;
 const ALLOWED_EXPORT_EXTENSIONS = new Set(['.pdf', '.docx', '.tex']);
@@ -117,7 +118,7 @@ function isAllowedNavigationUrl(rawUrl: string): boolean {
   try {
     const url = new URL(rawUrl);
     if (url.protocol === 'file:') {
-      return true;
+      return url.pathname === PACKAGED_RENDERER_ENTRY_URL.pathname;
     }
 
     const devServerUrl = process.env.VITE_DEV_SERVER_URL;
@@ -174,7 +175,8 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      preload: path.join(__dirname, 'preload.js'),
+      sandbox: true,
+      preload: path.join(__dirname, 'preload.cjs'),
     },
     titleBarStyle: 'hiddenInset',
     trafficLightPosition: { x: 12, y: 12 },
@@ -265,10 +267,9 @@ ipcMain.handle('load-backup', async () => {
     filters: [{ name: 'MUWI Backup', extensions: ['json'] }],
   });
 
-  if (result.filePaths.length === 0) return null;
+  if (result.canceled || result.filePaths.length === 0) return null;
 
-  const content = await fs.readFile(result.filePaths[0], 'utf-8');
-  return content;
+  return readValidatedBackupFile(result.filePaths[0]);
 });
 
 ipcMain.handle('export-file', async (_event, content: Uint8Array, defaultName: string) => {

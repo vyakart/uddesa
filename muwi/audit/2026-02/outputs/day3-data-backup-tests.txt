@@ -1,0 +1,17 @@
+
+ RUN  v4.0.17 /Users/ziksartin/tools/uddesa/muwi
+
+ ✓ src/db/queries/scratchpad.test.ts (3 tests) 81ms
+ ✓ src/db/queries/longDrafts.test.ts (3 tests) 114ms
+ ✓ src/db/queries/drafts.test.ts (2 tests) 132ms
+ ✓ src/db/queries/blackboard.test.ts (3 tests) 131ms
+ ✓ src/db/queries/diary.test.ts (4 tests) 142ms
+ ✓ src/db/queries/academic.test.ts (3 tests) 182ms
+ ✓ src/utils/backup.test.ts (12 tests) 125ms
+ ✓ src/db/queries/settings.test.ts (3 tests) 19ms
+
+ Test Files  8 passed (8)
+      Tests  33 passed (33)
+   Start at  16:23:51
+   Duration  2.14s (transform 1.12s, setup 939ms, import 3.60s, tests 926ms, environment 5.05s)
+

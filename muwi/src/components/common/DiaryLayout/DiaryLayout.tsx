@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useAppStore, type DiaryType } from '@/stores/appStore';
 import { DIARY_INFO } from '@/components/shelf/DiaryCard';
 import { RightPanel } from '@/components/common/RightPanel';
@@ -34,6 +34,8 @@ const PANEL_TITLE_MAP: Record<string, string> = {
 const BREAKPOINT_OVERLAY = 800;
 const BREAKPOINT_COMPACT = 960;
 const BREAKPOINT_WIDE = 1200;
+const FOCUSABLE_SELECTOR =
+  'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
 type ShellBreakpoint = 'overlay' | 'compact' | 'standard' | 'wide';
 
@@ -100,6 +102,8 @@ export function DiaryLayout({
   const hasStatus = status !== undefined && status !== null;
   const statusSlots = isStatusSlots(status) ? status : { left: status };
   const [shellBreakpoint, setShellBreakpoint] = useState<ShellBreakpoint>(getInitialShellBreakpoint);
+  const sidebarRef = useRef<HTMLElement | null>(null);
+  const overlayReturnFocusRef = useRef<HTMLElement | null>(null);
   const isSidebarOverlay = shellBreakpoint === 'overlay';
   const shouldAutoCollapseSidebar = shellBreakpoint === 'compact';
   const computedRightPanelTitle =
@@ -128,6 +132,82 @@ export function DiaryLayout({
     closeSidebar();
   }, [shouldAutoCollapseSidebar, rightPanelState.isOpen, isSidebarOpen, closeSidebar]);
 
+  useEffect(() => {
+    if (!hasSidebar || !isSidebarOverlay || !isSidebarOpen) {
+      return;
+    }
+
+    const sidebarNode = sidebarRef.current;
+    if (!sidebarNode) {
+      return;
+    }
+
+    const activeElement =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    if (
+      overlayReturnFocusRef.current == null &&
+      (!activeElement || !sidebarNode.contains(activeElement))
+    ) {
+      overlayReturnFocusRef.current = activeElement;
+    }
+
+    const focusables = sidebarNode.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+    (focusables[0] ?? sidebarNode).focus();
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeSidebar();
+        return;
+      }
+
+      if (event.key !== 'Tab') {
+        return;
+      }
+
+      const nodes = sidebarNode.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+      if (nodes.length === 0) {
+        event.preventDefault();
+        sidebarNode.focus();
+        return;
+      }
+
+      const first = nodes[0];
+      const last = nodes[nodes.length - 1];
+      const focusedElement = document.activeElement as HTMLElement | null;
+
+      if (!focusedElement || !sidebarNode.contains(focusedElement)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+        return;
+      }
+
+      if (!event.shiftKey && focusedElement === last) {
+        event.preventDefault();
+        first.focus();
+      } else if (event.shiftKey && focusedElement === first) {
+        event.preventDefault();
+        last.focus();
+      }
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+
+      const focusTarget = overlayReturnFocusRef.current;
+      const fallbackFocusTarget = document.querySelector<HTMLElement>(
+        '[data-testid="diary-sidebar-open-button"]'
+      );
+      const nextFocusTarget =
+        focusTarget && document.contains(focusTarget) ? focusTarget : fallbackFocusTarget;
+      if (nextFocusTarget && document.contains(nextFocusTarget)) {
+        nextFocusTarget.focus();
+      }
+      overlayReturnFocusRef.current = null;
+    };
+  }, [closeSidebar, hasSidebar, isSidebarOpen, isSidebarOverlay]);
+
   return (
     <div className="muwi-diary-layout" data-diary-type={diaryType}>
       <TitleBar contextLabel={info.name} />
@@ -146,6 +226,7 @@ export function DiaryLayout({
             onToggle={isSidebarOpen ? closeSidebar : openSidebar}
             header={sidebarHeader}
             footer={sidebarFooter}
+            asideRef={sidebarRef}
           >
             {sidebar}
           </Sidebar>
@@ -169,8 +250,12 @@ export function DiaryLayout({
                     <button
                       type="button"
                       className="muwi-sidebar-button"
-                      onClick={openSidebar}
+                      onClick={(event) => {
+                        overlayReturnFocusRef.current = event.currentTarget;
+                        openSidebar();
+                      }}
                       aria-label="Expand sidebar"
+                      data-testid="diary-sidebar-open-button"
                     >
                       ▶
                     </button>

@@ -328,8 +328,16 @@ export function ExportPanel({
             </div>
           </section>
 
-          {error ? <div className="muwi-export-panel__alert" data-variant="error">{error}</div> : null}
-          {success ? <div className="muwi-export-panel__alert" data-variant="success">{success}</div> : null}
+          {error ? (
+            <div className="muwi-export-panel__alert" data-variant="error" role="alert" aria-live="assertive">
+              {error}
+            </div>
+          ) : null}
+          {success ? (
+            <div className="muwi-export-panel__alert" data-variant="success" role="status" aria-live="polite">
+              {success}
+            </div>
+          ) : null}
         </div>
 
         <footer className="muwi-export-panel__footer">

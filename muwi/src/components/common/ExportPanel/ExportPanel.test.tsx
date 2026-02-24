@@ -135,6 +135,7 @@ describe('ExportPanel', () => {
       );
       expect(saveExport).toHaveBeenCalledWith(expect.any(Uint8Array), 'my-paper-2026-.docx');
       expect(screen.getByText('Successfully exported to my-paper-2026-.docx')).toBeInTheDocument();
+      expect(screen.getByRole('status')).toHaveTextContent('Successfully exported to my-paper-2026-.docx');
     });
 
     await waitFor(() => {
@@ -160,6 +161,7 @@ describe('ExportPanel', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Export cancelled or no save location selected.')).toBeInTheDocument();
+      expect(screen.getByRole('alert')).toHaveTextContent('Export cancelled or no save location selected.');
     });
   });
 
@@ -184,6 +186,7 @@ describe('ExportPanel', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Export failed hard')).toBeInTheDocument();
+      expect(screen.getByRole('alert')).toHaveTextContent('Export failed hard');
       expect(saveExport).not.toHaveBeenCalled();
     });
 

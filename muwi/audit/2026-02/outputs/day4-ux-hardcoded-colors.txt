@@ -1,0 +1,116 @@
+src/types/scratchpad.ts:39:    ideas: '#FFF9C4',
+src/types/scratchpad.ts:40:    todos: '#C8E6C9',
+src/types/scratchpad.ts:41:    notes: '#BBDEFB',
+src/types/scratchpad.ts:42:    questions: '#E1BEE7',
+src/types/scratchpad.ts:43:    misc: '#F5F5F5',
+src/styles/tokens.test.ts:25:    expect(lightCss).toContain('--color-bg-primary: #ffffff;');
+src/styles/tokens.test.ts:26:    expect(lightCss).toContain('--color-accent-default: hsl(var(--color-accent-h), var(--color-accent-s), 44%);');
+src/styles/tokens.test.ts:30:    expect(darkCss).toContain('--color-bg-primary: #161618;');
+src/styles/tokens.test.ts:31:    expect(darkCss).toContain('--color-accent-default: hsl(var(--color-accent-h), var(--color-accent-s), 60%);');
+src/styles/contrast.test.ts:152:    const lightBg = resolveThemeColor(lightVars, tokenVars, 'color-bg-primary', hexToRgb('#ffffff'));
+src/styles/contrast.test.ts:153:    const darkBg = resolveThemeColor(darkVars, tokenVars, 'color-bg-primary', hexToRgb('#000000'));
+src/styles/contrast.test.ts:179:    const lightBg = resolveThemeColor(lightVars, tokenVars, 'color-accent-default', hexToRgb('#ffffff'));
+src/styles/contrast.test.ts:180:    const darkBg = resolveThemeColor(darkVars, tokenVars, 'color-accent-default', hexToRgb('#000000'));
+src/styles/contrast.test.ts:195:    const lightBg = resolveThemeColor(lightVars, tokenVars, 'color-bg-primary', hexToRgb('#ffffff'));
+src/styles/contrast.test.ts:196:    const darkBg = resolveThemeColor(darkVars, tokenVars, 'color-bg-primary', hexToRgb('#000000'));
+src/test/db-utils.ts:57:    categoryColor: '#BBDEFB',
+src/test/db-utils.ts:111:      ideas: '#FFF9C4',
+src/test/db-utils.ts:112:      todos: '#C8E6C9',
+src/test/db-utils.ts:113:      notes: '#BBDEFB',
+src/test/db-utils.ts:114:      questions: '#E1BEE7',
+src/test/db-utils.ts:115:      misc: '#F5F5F5',
+src/styles/themes/light.css:4:  --color-bg-primary: #ffffff;
+src/styles/themes/light.css:5:  --color-bg-secondary: #f8f8f8;
+src/styles/themes/light.css:6:  --color-bg-tertiary: #f1f1f1;
+src/styles/themes/light.css:7:  --color-bg-canvas: #ffffff;
+src/styles/themes/light.css:8:  --color-bg-canvas-warm: #fffdf8;
+src/styles/themes/light.css:9:  --color-bg-elevated: #ffffff;
+src/styles/themes/light.css:10:  --color-bg-sunken: #f4f4f4;
+src/styles/themes/light.css:14:  --color-text-primary: #1c1c1e;
+src/styles/themes/light.css:15:  --color-text-secondary: #6b6b6f;
+src/styles/themes/light.css:16:  --color-text-tertiary: #9a9a9e;
+src/styles/themes/light.css:17:  --color-text-inverse: #ffffff;
+src/styles/themes/light.css:18:  --color-text-on-canvas: #1c1c1e;
+src/styles/themes/light.css:21:  --color-border-default: #e5e5e7;
+src/styles/themes/light.css:22:  --color-border-subtle: #eeeeef;
+src/styles/themes/light.css:23:  --color-border-strong: #d1d1d3;
+src/styles/themes/light.css:24:  --color-border-on-canvas: #e8e8ea;
+src/styles/themes/light.css:27:  --color-accent-default: hsl(var(--color-accent-h), var(--color-accent-s), 44%);
+src/styles/themes/light.css:28:  --color-accent-hover: hsl(var(--color-accent-h), var(--color-accent-s), 38%);
+src/styles/themes/light.css:29:  --color-accent-subtle: hsl(var(--color-accent-h), var(--color-accent-s), 95%);
+src/styles/themes/light.css:30:  --color-accent-text: hsl(var(--color-accent-h), var(--color-accent-s), 35%);
+src/styles/themes/light.css:33:  --color-success: #34a853;
+src/styles/themes/light.css:34:  --color-success-subtle: #e8f5e9;
+src/styles/themes/light.css:35:  --color-warning: #e8a318;
+src/styles/themes/light.css:36:  --color-warning-subtle: #fff8e1;
+src/styles/themes/light.css:37:  --color-error: #d93025;
+src/styles/themes/light.css:38:  --color-error-subtle: #fdecea;
+src/styles/themes/light.css:39:  --color-info: #4285f4;
+src/styles/themes/light.css:40:  --color-info-subtle: #e8f0fe;
+src/styles/themes/light.css:41:  --color-locked: #9e9e9e;
+src/styles/themes/light.css:51:  --color-bb-canvas: #2d3436;
+src/styles/themes/light.css:53:  --color-bb-text: #f0f0f0;
+src/styles/themes/light.css:55:  --color-bb-accent: #74b9ff;
+src/styles/themes/light.css:58:  --color-cat-ideas: #fff9c4;
+src/styles/themes/light.css:60:  --color-cat-todos: #c8e6c9;
+src/styles/themes/light.css:62:  --color-cat-notes: #bbdefb;
+src/styles/themes/light.css:64:  --color-cat-questions: #e1bee7;
+src/styles/themes/light.css:66:  --color-cat-misc: #f5f5f5;
+src/types/blackboard.ts:65:  backgroundColor: '#2D3436',
+src/types/blackboard.ts:68:  defaultStrokeColor: '#F5F5F5',
+src/db/queries/blackboard.test.ts:28:      backgroundColor: '#2D3436',
+src/db/queries/blackboard.test.ts:31:      defaultStrokeColor: '#F5F5F5',
+src/db/queries/blackboard.test.ts:51:      strokeColor: '#F5F5F5',
+src/types/diary.ts:27:  paperColor: '#FFFEF9',
+src/styles/themes/dark.css:3:  --color-bg-primary: #161618;
+src/styles/themes/dark.css:4:  --color-bg-secondary: #1c1c1e;
+src/styles/themes/dark.css:5:  --color-bg-tertiary: #242426;
+src/styles/themes/dark.css:6:  --color-bg-canvas: #1e1e20;
+src/styles/themes/dark.css:7:  --color-bg-canvas-warm: #1f1e1b;
+src/styles/themes/dark.css:8:  --color-bg-elevated: #242426;
+src/styles/themes/dark.css:9:  --color-bg-sunken: #131315;
+src/styles/themes/dark.css:13:  --color-text-primary: #e5e5e7;
+src/styles/themes/dark.css:14:  --color-text-secondary: #9a9a9e;
+src/styles/themes/dark.css:15:  --color-text-tertiary: #6b6b6f;
+src/styles/themes/dark.css:16:  --color-text-inverse: #1c1c1e;
+src/styles/themes/dark.css:17:  --color-text-on-canvas: #e5e5e7;
+src/styles/themes/dark.css:20:  --color-border-default: #2c2c2e;
+src/styles/themes/dark.css:21:  --color-border-subtle: #242426;
+src/styles/themes/dark.css:22:  --color-border-strong: #3a3a3c;
+src/styles/themes/dark.css:23:  --color-border-on-canvas: #2c2c2e;
+src/styles/themes/dark.css:26:  --color-accent-default: hsl(var(--color-accent-h), var(--color-accent-s), 60%);
+src/styles/themes/dark.css:27:  --color-accent-hover: hsl(var(--color-accent-h), var(--color-accent-s), 68%);
+src/styles/themes/dark.css:28:  --color-accent-subtle: hsl(var(--color-accent-h), var(--color-accent-s), 15%);
+src/styles/themes/dark.css:29:  --color-accent-text: hsl(var(--color-accent-h), var(--color-accent-s), 65%);
+src/styles/themes/dark.css:32:  --color-success: #57d27a;
+src/styles/themes/dark.css:34:  --color-warning: #f5c543;
+src/styles/themes/dark.css:36:  --color-error: #f28b82;
+src/styles/themes/dark.css:38:  --color-info: #8ab4f8;
+src/styles/themes/dark.css:40:  --color-locked: #757575;
+src/db/queries/scratchpad.test.ts:24:    categoryColor: '#FFF9C4',
+src/db/queries/scratchpad.test.ts:71:    await updatePage(page.id, { categoryName: 'notes', categoryColor: '#BBDEFB' });
+src/db/queries/scratchpad.test.ts:83:    const emptyPage = makePage({ pageNumber: 2, categoryName: 'notes', categoryColor: '#BBDEFB' });
+src/extensions/footnote.ts:135:          color: #4A90A4;
+src/extensions/footnote.ts:324:                container.style.borderTop = '1px solid #E5E7EB';
+src/extensions/footnote.ts:326:                container.style.color = '#4B5563';
+src/types/settings.ts:54:  accentColor: '#4A90A4',
+src/stores/settingsStore.test.ts:19:    await state.updateGlobalSettings({ theme: 'dark', accentColor: '#111111' });
+src/stores/settingsStore.test.ts:21:    expect(useSettingsStore.getState().global.accentColor).toBe('#111111');
+src/db/queries/settings.test.ts:29:      accentColor: '#000000',
+src/db/queries/settings.test.ts:35:    expect(updated.accentColor).toBe('#000000');
+src/stores/blackboardStore.test.ts:16:      backgroundColor: '#fdfbf7',
+src/stores/blackboardStore.test.ts:19:      defaultStrokeColor: '#F5F5F5',
+src/stores/blackboardStore.test.ts:108:      backgroundColor: '#2D3436',
+src/stores/blackboardStore.test.ts:115:    expect(state.canvas?.settings.backgroundColor).toBe('#2D3436');
+src/stores/scratchpadStore.test.ts:24:          ideas: '#010203',
+src/stores/scratchpadStore.test.ts:35:    expect(state.pages[0].categoryColor).toBe('#010203');
+src/components/shelf/SettingsPanel.test.tsx:93:      target: { value: '#112233' },
+src/components/shelf/SettingsPanel.test.tsx:102:      expect(global.accentColor).toBe('#112233');
+src/components/diaries/PersonalDiary/PersonalDiary.test.tsx:131:        paperColor: '#fefefe',
+src/components/diaries/PersonalDiary/PersonalDiary.test.tsx:143:    expect(containerStyle).toContain('#fefefe');
+src/components/diaries/PersonalDiary/DiaryEntry.test.tsx:73:  paperColor: '#fffef9',
+src/components/diaries/PersonalDiary/DiaryEntry.test.tsx:114:          paperColor: '#fffdf8',
+src/components/diaries/PersonalDiary/DiaryEntry.test.tsx:139:          paperColor: '#abc',
+src/components/diaries/scratchpad/ScratchpadPage.test.tsx:18:    categoryColor: '#aabbcc',
+src/components/diaries/scratchpad/PageStack.test.tsx:11:    categoryColor: '#BBDEFB',
+src/components/diaries/scratchpad/Scratchpad.test.tsx:25:    categoryColor: '#BBDEFB',

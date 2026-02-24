@@ -1,0 +1,35 @@
+
+> muwi@0.0.0 test:e2e
+> playwright test
+
+[2m[WebServer] [22m(node:33427) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 7 tests using 4 workers
+
+(node:33430) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33432) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33429) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33431) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33430) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33429) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33432) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33431) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 [chromium] › e2e/accessibility-audit.spec.ts:17:1 › keyboard-only focus order follows visual order on shelf and overlays (1.7s)
+  ✓  1 [chromium] › e2e/accessibility-audit.spec.ts:70:1 › screen-reader spot-check via accessibility tree snapshots (3.7s)
+  ✓  3 [chromium] › e2e/long-drafts.spec.ts:3:1 › long drafts flow: create document, add sections, reorder sections (4.4s)
+  ✓  4 [chromium] › e2e/academic.spec.ts:3:1 › academic flow: create paper, add reference, insert citation (4.4s)
+  ✓  6 [chromium] › e2e/smoke.spec.ts:3:1 › shelf renders all diary cards (843ms)
+  ✓  7 [chromium] › e2e/smoke.spec.ts:17:1 › resize smoke: sidebar and right panel adapt across desktop and narrow widths (1.5s)
+[phase7-7.15.1-baseline] {"capturedAt":"2026-02-23T15:01:56.928Z","browser":"chromium","startup":{"shelfVisibleMs":619,"route":"/","domContentLoadedMs":530,"loadEventMs":532},"switches":[{"label":"cold:scratchpad","durationMs":1218,"route":"/scratchpad","shellBreakpoint":"wide"},{"label":"cold:long-drafts","durationMs":924,"route":"/long-drafts","shellBreakpoint":"wide"},{"label":"cold:blackboard","durationMs":895,"route":"/blackboard","shellBreakpoint":"wide"},{"label":"cold:academic","durationMs":939,"route":"/academic","shellBreakpoint":"wide"},{"label":"warm:academic","durationMs":390,"route":"/academic","shellBreakpoint":"wide"}]}
+  ✓  5 [chromium] › e2e/performance-baseline.spec.ts:21:1 › performance baseline: startup and shelf-mediated diary switches (5.3s)
+
+  7 passed (10.4s)

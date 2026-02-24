@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { ButtonHTMLAttributes, ReactNode, RefObject } from 'react';
 
 interface SidebarProps {
   title: string;
@@ -9,6 +9,7 @@ interface SidebarProps {
   footer?: ReactNode;
   children?: ReactNode;
   ariaLabel?: string;
+  asideRef?: RefObject<HTMLElement | null>;
 }
 
 interface SidebarItemProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
@@ -27,15 +28,18 @@ export function Sidebar({
   footer,
   children,
   ariaLabel,
+  asideRef,
 }: SidebarProps) {
   return (
     <div className="muwi-sidebar-shell" data-open={isOpen ? 'true' : 'false'} data-testid="shared-sidebar-shell">
       <aside
+        ref={asideRef}
         className="muwi-sidebar"
         role="navigation"
         aria-label={ariaLabel ?? `${title} Navigation`}
         aria-hidden={!isOpen}
         inert={!isOpen}
+        tabIndex={-1}
       >
         <div className="muwi-sidebar__header">
           <button

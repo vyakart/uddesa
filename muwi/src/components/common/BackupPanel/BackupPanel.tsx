@@ -119,9 +119,16 @@ export function BackupPanel({
 
   const handleSelectLocation = useCallback(async () => {
     if (window.electronAPI?.selectBackupLocation) {
-      const location = await window.electronAPI.selectBackupLocation();
-      if (location) {
-        setLocalLocation(location);
+      try {
+        const location = await window.electronAPI.selectBackupLocation();
+        if (location) {
+          setLocalLocation(location);
+        }
+      } catch (error) {
+        setMessage({
+          type: 'error',
+          text: error instanceof Error ? error.message : 'Failed to open location picker',
+        });
       }
       return;
     }
@@ -294,7 +301,12 @@ export function BackupPanel({
             </section>
 
             {message ? (
-              <div className="muwi-backup-panel__message" data-variant={message.type === 'success' ? 'success' : 'error'}>
+              <div
+                className="muwi-backup-panel__message"
+                data-variant={message.type === 'success' ? 'success' : 'error'}
+                role={message.type === 'success' ? 'status' : 'alert'}
+                aria-live={message.type === 'success' ? 'polite' : 'assertive'}
+              >
                 {message.text}
               </div>
             ) : null}

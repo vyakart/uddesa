@@ -1,0 +1,139 @@
+
+ RUN  v4.0.17 /Users/ziksartin/tools/uddesa/muwi
+
+ ❯ src/components/diaries/blackboard/Blackboard.test.tsx (4 tests | 1 failed) 179ms
+     × loads on mount, rebuilds index on canvas change, and cycles index visibility states 33ms
+     ✓ renders error state and supports reload action 100ms
+     ✓ opens font context menu on right click and updates selected font 27ms
+     ✓ shows empty-state guidance with action and keeps zoom status visible 18ms
+ ✓ src/components/common/BackupPanel/BackupPanel.test.tsx (3 tests) 307ms
+ ✓ src/components/shelf/SettingsPanel.test.tsx (8 tests) 623ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components/diaries/blackboard/Blackboard.test.tsx > Blackboard > loads on mount, rebuilds index on canvas change, and cycles index visibility states
+TestingLibraryElementError: Unable to find an element by: [data-testid="excalidraw-wrapper"]
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mdata-testid[39m=[32m"blackboard-layout"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mdata-testid[39m=[32m"blackboard-layout-sidebar"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mdata-testid[39m=[32m"index-panel"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mdata-testid[39m=[32m"index-panel-collapse"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mIndex Expanded[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mdata-testid[39m=[32m"index-panel-nav"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mNavigate[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mdata-testid[39m=[32m"blackboard-layout-toolbar"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mdata-testid[39m=[32m"blackboard-toolbar"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0mIndex Visible[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mdata-testid[39m=[32m"blackboard-layout-canvas"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"muwi-blackboard-canvas"[39m
+          [33mdata-testid[39m=[32m"blackboard-canvas-container"[39m
+          [33mtabindex[39m=[32m"-1"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"muwi-blackboard-canvas__message"[39m
+          [36m>[39m
+            [0mLoading canvas engine...[0m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mdata-testid[39m=[32m"blackboard-layout-status"[39m
+      [36m>[39m
+        [36m<span>[39m
+          [0mZoom: 100%[0m
+        [36m</span>[39m
+        [36m<span>[39m
+          [0m1 heading · 2 elements[0m
+        [36m</span>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mdata-testid[39m=[32m"blackboard-layout-right-panel"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"muwi-blackboard-panel"[39m
+          [33mdata-testid[39m=[32m"blackboard-right-panel"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"muwi-blackboard-panel__label"[39m
+            [36m>[39m
+              [0mBlackboard[0m
+            [36m</p>[39m
+            [36m<h3[39m
+              [33mclass[39m=[32m"muwi-blackboard-panel__title"[39m
+            [36m>[39m
+              [0mCanvas[0m
+            [36m</h3>[39m
+          [36m</div>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"muwi-blackboard-panel__meta"[39m
+          [36m>[39m
+            [0m1[0m
+            [0m heading[0m
+            [0m indexed.[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"muwi-blackboard-panel__list"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"muwi-blackboard-panel__item"[39m
+              [33mtitle[39m=[32m"Heading 1"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0mHeading 1[0m
+            [36m</button>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/components/diaries/blackboard/Blackboard.test.tsx:220:28
+    218|     expect(screen.getByTestId('blackboard-layout-right-panel')).toHave…
+    219| 
+    220|     fireEvent.click(screen.getByTestId('excalidraw-wrapper'));
+       |                            ^
+    221|     expect(rebuildIndex).toHaveBeenCalledTimes(1);
+    222| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 14 passed (15)
+   Start at  15:53:18
+   Duration  3.07s (transform 741ms, setup 290ms, import 5.14s, tests 1.11s, environment 1.55s)
+

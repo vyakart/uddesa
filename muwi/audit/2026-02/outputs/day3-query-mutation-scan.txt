@@ -1,0 +1,99 @@
+muwi/src/db/queries/academic.test.ts:105:    await db.academicPapers.put(paper);
+muwi/src/db/queries/academic.test.ts:109:    expect((await db.academicPapers.get(paper.id))?.sectionIds).toEqual([attachedSection.id]);
+muwi/src/db/queries/academic.test.ts:113:    expect(await db.academicSections.get(orphanSection.id)).toMatchObject({ id: orphanSection.id });
+muwi/src/db/queries/academic.test.ts:114:    expect(await db.academicPapers.get('missing-paper')).toBeUndefined();
+muwi/src/db/queries/academic.test.ts:117:    expect(await db.academicSections.get(attachedSection.id)).toBeUndefined();
+muwi/src/db/queries/academic.test.ts:118:    expect((await db.academicPapers.get(paper.id))?.sectionIds).toEqual([]);
+muwi/src/db/queries/academic.test.ts:121:    expect(await db.academicSections.get(orphanSection.id)).toBeUndefined();
+muwi/src/db/queries/academic.test.ts:128:    await db.academicPapers.put(paper);
+muwi/src/db/queries/academic.test.ts:147:    expect((await db.academicPapers.get(paper.id))?.citationIds).toEqual([citationWithPaper.id]);
+muwi/src/db/queries/academic.test.ts:151:    expect(await db.citations.get(orphanCitation.id)).toBeDefined();
+muwi/src/db/queries/academic.test.ts:152:    expect(await db.academicPapers.get('missing-paper')).toBeUndefined();
+muwi/src/db/queries/academic.test.ts:155:    expect(await db.citations.get(citationWithPaper.id)).toBeUndefined();
+muwi/src/db/queries/academic.test.ts:156:    expect((await db.academicPapers.get(paper.id))?.citationIds).toEqual([]);
+muwi/src/db/queries/academic.test.ts:159:    expect(await db.citations.get(orphanCitation.id)).toBeUndefined();
+muwi/src/db/queries/academic.test.ts:166:    await db.academicPapers.put(paper);
+muwi/src/db/queries/academic.test.ts:170:    expect((await db.academicPapers.get(paper.id))?.figureIds).toEqual([figureWithPaper.id]);
+muwi/src/db/queries/academic.test.ts:174:    expect(await db.figures.get(orphanFigure.id)).toBeDefined();
+muwi/src/db/queries/academic.test.ts:177:    expect(await db.figures.get(figureWithPaper.id)).toBeUndefined();
+muwi/src/db/queries/academic.test.ts:178:    expect((await db.academicPapers.get(paper.id))?.figureIds).toEqual([]);
+muwi/src/db/queries/academic.test.ts:181:    expect(await db.figures.get(orphanFigure.id)).toBeUndefined();
+muwi/src/db/queries/academic.ts:23:  await db.academicSections.where('paperId').equals(id).delete();
+muwi/src/db/queries/academic.ts:24:  await db.citations.where('paperId').equals(id).delete();
+muwi/src/db/queries/academic.ts:25:  await db.figures.where('paperId').equals(id).delete();
+muwi/src/db/queries/academic.ts:26:  await db.academicPapers.delete(id);
+muwi/src/db/queries/academic.ts:32:  const id = await db.academicSections.add(section);
+muwi/src/db/queries/academic.ts:33:  const paper = await db.academicPapers.get(section.paperId);
+muwi/src/db/queries/academic.ts:35:    await db.academicPapers.update(section.paperId, {
+muwi/src/db/queries/academic.ts:56:  const section = await db.academicSections.get(id);
+muwi/src/db/queries/academic.ts:58:    const paper = await db.academicPapers.get(section.paperId);
+muwi/src/db/queries/academic.ts:60:      await db.academicPapers.update(section.paperId, {
+muwi/src/db/queries/academic.ts:66:  await db.academicSections.delete(id);
+muwi/src/db/queries/academic.ts:100:  await db.citations.where('bibliographyEntryId').equals(id).delete();
+muwi/src/db/queries/academic.ts:101:  await db.bibliographyEntries.delete(id);
+muwi/src/db/queries/academic.ts:107:  const id = await db.citations.add(citation);
+muwi/src/db/queries/academic.ts:108:  const paper = await db.academicPapers.get(citation.paperId);
+muwi/src/db/queries/academic.ts:110:    await db.academicPapers.update(citation.paperId, {
+muwi/src/db/queries/academic.ts:131:  const citation = await db.citations.get(id);
+muwi/src/db/queries/academic.ts:133:    const paper = await db.academicPapers.get(citation.paperId);
+muwi/src/db/queries/academic.ts:135:      await db.academicPapers.update(citation.paperId, {
+muwi/src/db/queries/academic.ts:141:  await db.citations.delete(id);
+muwi/src/db/queries/academic.ts:147:  const id = await db.figures.add(figure);
+muwi/src/db/queries/academic.ts:148:  const paper = await db.academicPapers.get(figure.paperId);
+muwi/src/db/queries/academic.ts:150:    await db.academicPapers.update(figure.paperId, {
+muwi/src/db/queries/academic.ts:171:  const figure = await db.figures.get(id);
+muwi/src/db/queries/academic.ts:173:    const paper = await db.academicPapers.get(figure.paperId);
+muwi/src/db/queries/academic.ts:175:      await db.academicPapers.update(figure.paperId, {
+muwi/src/db/queries/academic.ts:181:  await db.figures.delete(id);
+muwi/src/db/queries/blackboard.ts:24:  await db.canvasElements.where('canvasId').equals(id).delete();
+muwi/src/db/queries/blackboard.ts:25:  await db.blackboardCanvases.delete(id);
+muwi/src/db/queries/blackboard.ts:31:  const id = await db.canvasElements.add(element);
+muwi/src/db/queries/blackboard.ts:33:  const canvas = await db.blackboardCanvases.get(element.canvasId);
+muwi/src/db/queries/blackboard.ts:35:    await db.blackboardCanvases.update(element.canvasId, {
+muwi/src/db/queries/blackboard.ts:60:  const result = await db.canvasElements.update(id, { ...updates, modifiedAt: new Date() });
+muwi/src/db/queries/blackboard.ts:62:  const element = await db.canvasElements.get(id);
+muwi/src/db/queries/blackboard.ts:64:    await db.blackboardCanvases.update(element.canvasId, { modifiedAt: new Date() });
+muwi/src/db/queries/blackboard.ts:70:  const element = await db.canvasElements.get(id);
+muwi/src/db/queries/blackboard.ts:72:    const canvas = await db.blackboardCanvases.get(element.canvasId);
+muwi/src/db/queries/blackboard.ts:74:      await db.blackboardCanvases.update(element.canvasId, {
+muwi/src/db/queries/blackboard.ts:80:  await db.canvasElements.delete(id);
+muwi/src/db/queries/blackboard.ts:97:  await db.blackboardCanvases.update(canvasId, { index });
+muwi/src/db/queries/scratchpad.ts:28:  await db.textBlocks.where('pageId').equals(id).delete();
+muwi/src/db/queries/scratchpad.ts:29:  await db.scratchpadPages.delete(id);
+muwi/src/db/queries/scratchpad.ts:33:  const pages = await db.scratchpadPages.orderBy('pageNumber').toArray();
+muwi/src/db/queries/scratchpad.ts:35:    const blocks = await db.textBlocks.where('pageId').equals(page.id).count();
+muwi/src/db/queries/scratchpad.ts:46:  const id = await db.textBlocks.add(block);
+muwi/src/db/queries/scratchpad.ts:48:  const page = await db.scratchpadPages.get(block.pageId);
+muwi/src/db/queries/scratchpad.ts:50:    await db.scratchpadPages.update(block.pageId, {
+muwi/src/db/queries/scratchpad.ts:67:  const result = await db.textBlocks.update(id, { ...updates, modifiedAt: new Date() });
+muwi/src/db/queries/scratchpad.ts:69:  const block = await db.textBlocks.get(id);
+muwi/src/db/queries/scratchpad.ts:71:    await db.scratchpadPages.update(block.pageId, { modifiedAt: new Date() });
+muwi/src/db/queries/scratchpad.ts:77:  const block = await db.textBlocks.get(id);
+muwi/src/db/queries/scratchpad.ts:80:    const page = await db.scratchpadPages.get(block.pageId);
+muwi/src/db/queries/scratchpad.ts:82:      await db.scratchpadPages.update(block.pageId, {
+muwi/src/db/queries/scratchpad.ts:88:  await db.textBlocks.delete(id);
+muwi/src/db/queries/longDrafts.ts:24:  await db.sections.where('longDraftId').equals(id).delete();
+muwi/src/db/queries/longDrafts.ts:25:  await db.longDrafts.delete(id);
+muwi/src/db/queries/longDrafts.ts:31:  const id = await db.sections.add(section);
+muwi/src/db/queries/longDrafts.ts:33:  const longDraft = await db.longDrafts.get(section.longDraftId);
+muwi/src/db/queries/longDrafts.ts:35:    await db.longDrafts.update(section.longDraftId, {
+muwi/src/db/queries/longDrafts.ts:64:  const result = await db.sections.update(id, { ...updates, modifiedAt: new Date() });
+muwi/src/db/queries/longDrafts.ts:66:  const section = await db.sections.get(id);
+muwi/src/db/queries/longDrafts.ts:68:    await db.longDrafts.update(section.longDraftId, { modifiedAt: new Date() });
+muwi/src/db/queries/longDrafts.ts:74:  const section = await db.sections.get(id);
+muwi/src/db/queries/longDrafts.ts:82:    const longDraft = await db.longDrafts.get(section.longDraftId);
+muwi/src/db/queries/longDrafts.ts:84:      await db.longDrafts.update(section.longDraftId, {
+muwi/src/db/queries/longDrafts.ts:90:  await db.sections.delete(id);
+muwi/src/db/queries/longDrafts.ts:94:  await db.transaction('rw', db.sections, async () => {
+muwi/src/db/queries/longDrafts.ts:96:      await db.sections.update(sectionIds[i], { order: i });
+muwi/src/db/queries/longDrafts.ts:99:  await db.longDrafts.update(longDraftId, {
+muwi/src/db/queries/longDrafts.test.ts:52:    await db.longDrafts.put(draft);
+muwi/src/db/queries/longDrafts.test.ts:56:    expect((await db.longDrafts.get(draft.id))?.sectionIds).toEqual([section.id]);
+muwi/src/db/queries/longDrafts.test.ts:60:    expect(await db.sections.get(orphanSection.id)).toBeDefined();
+muwi/src/db/queries/longDrafts.test.ts:61:    expect(await db.longDrafts.get('missing-draft')).toBeUndefined();
+muwi/src/db/queries/longDrafts.test.ts:67:    await db.longDrafts.put(draft);
+muwi/src/db/queries/longDrafts.test.ts:68:    await db.sections.put(section);
+muwi/src/db/queries/longDrafts.test.ts:74:    expect((await db.sections.get(section.id))?.title).toBe('Updated Title');
+muwi/src/db/queries/longDrafts.test.ts:88:    await db.sections.bulkPut([orphanParent, orphanChild]);
+muwi/src/db/queries/longDrafts.test.ts:93:    expect(await db.sections.get(orphanParent.id)).toBeUndefined();
+muwi/src/db/queries/longDrafts.test.ts:94:    expect(await db.sections.get(orphanChild.id)).toBeUndefined();

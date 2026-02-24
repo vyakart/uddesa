@@ -5,9 +5,56 @@ import renderer from 'vite-plugin-electron-renderer'
 import path from 'path'
 
 const isElectron =
-  process.env.ELECTRON === 'true' || process.env.npm_lifecycle_event?.startsWith('electron:') === true
+  process.env.MUWI_ELECTRON_BUILD === 'true' ||
+  process.env.ELECTRON === 'true' ||
+  process.env.npm_lifecycle_event?.startsWith('electron:') === true
 
 const manualChunks = (id: string): string | undefined => {
+  if (id.includes('/src/components/diaries/blackboard/ExcalidrawWrapper.tsx')) {
+    return 'blackboard-excalidraw-wrapper'
+  }
+
+  if (id.includes('/node_modules/katex/')) {
+    return 'blackboard-katex-vendor'
+  }
+
+  if (id.includes('/node_modules/mermaid/')) {
+    return 'blackboard-mermaid-vendor'
+  }
+
+  if (id.includes('/node_modules/@excalidraw/mermaid-to-excalidraw/')) {
+    return 'blackboard-mermaid-bridge'
+  }
+
+  if (
+    id.includes('/node_modules/@excalidraw/excalidraw/') ||
+    id.includes('/node_modules/roughjs/') ||
+    id.includes('/node_modules/perfect-freehand/')
+  ) {
+    return 'blackboard-excalidraw-core'
+  }
+
+  if (
+    id.includes('/src/components/diaries/academic/BibliographyManager.tsx') ||
+    id.includes('/src/components/diaries/academic/ReferenceLibraryPanel.tsx') ||
+    id.includes('/src/components/diaries/academic/CitationPicker.tsx')
+  ) {
+    return 'academic-reference-tools'
+  }
+
+  if (id.includes('/src/components/diaries/academic/TemplateSelector.tsx')) {
+    return 'academic-template-selector'
+  }
+
+  if (
+    id.includes('/src/utils/citation.ts') ||
+    id.includes('/src/utils/citeproc.ts') ||
+    id.includes('/node_modules/citation-js/') ||
+    id.includes('/node_modules/citeproc/')
+  ) {
+    return 'academic-citation'
+  }
+
   if (id.includes('/src/components/diaries/blackboard/')) {
     return 'diary-blackboard'
   }
@@ -56,6 +103,19 @@ export default defineConfig({
             },
             {
               entry: 'electron/preload.ts',
+              vite: {
+                build: {
+                  outDir: 'dist-electron',
+                  lib: {
+                    entry: 'electron/preload.ts',
+                    formats: ['cjs'],
+                    fileName: () => '[name].cjs',
+                  },
+                  rollupOptions: {
+                    external: ['electron'],
+                  },
+                },
+              },
               onstart(options) {
                 const hasElectronApp = Boolean(
                   (process as NodeJS.Process & { electronApp?: unknown }).electronApp

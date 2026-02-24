@@ -1,0 +1,421 @@
+{
+  "counts": {
+    "total": 29,
+    "bySeverity": {
+      "high": 23,
+      "moderate": 5,
+      "low": 1
+    },
+    "byInstallScope": {
+      "dev": 24,
+      "runtime": 1,
+      "unknown": 4
+    },
+    "byExposure": {
+      "dev/build-tooling-likely": 24,
+      "runtime-path-possible": 1,
+      "needs-manual-triage": 4
+    },
+    "byDirectType": {
+      "transitive": 26,
+      "direct-runtime": 1,
+      "direct-dev": 2
+    }
+  },
+  "rows": [
+    {
+      "name": "@electron/asar",
+      "severity": "high",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "dev",
+      "likelyExposure": "dev/build-tooling-likely",
+      "fix": "electron-builder@25.1.8 (major)",
+      "topLevelEffects": [],
+      "samplePaths": [
+        "node_modules/@electron/asar"
+      ]
+    },
+    {
+      "name": "@electron/rebuild",
+      "severity": "high",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "dev",
+      "likelyExposure": "dev/build-tooling-likely",
+      "fix": "electron-builder@25.1.8 (major)",
+      "topLevelEffects": [],
+      "samplePaths": [
+        "node_modules/@electron/rebuild"
+      ]
+    },
+    {
+      "name": "@electron/universal",
+      "severity": "high",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "dev",
+      "likelyExposure": "dev/build-tooling-likely",
+      "fix": "electron-builder@25.1.8 (major)",
+      "topLevelEffects": [],
+      "samplePaths": [
+        "node_modules/@electron/universal"
+      ]
+    },
+    {
+      "name": "@typescript-eslint/eslint-plugin",
+      "severity": "high",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "dev",
+      "likelyExposure": "dev/build-tooling-likely",
+      "fix": "true",
+      "topLevelEffects": [],
+      "samplePaths": [
+        "node_modules/@typescript-eslint/eslint-plugin"
+      ]
+    },
+    {
+      "name": "@typescript-eslint/parser",
+      "severity": "high",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "dev",
+      "likelyExposure": "dev/build-tooling-likely",
+      "fix": "typescript-eslint@8.36.0 (major)",
+      "topLevelEffects": [
+        "typescript-eslint"
+      ],
+      "samplePaths": [
+        "node_modules/@typescript-eslint/parser"
+      ]
+    },
+    {
+      "name": "@typescript-eslint/type-utils",
+      "severity": "high",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "dev",
+      "likelyExposure": "dev/build-tooling-likely",
+      "fix": "true",
+      "topLevelEffects": [],
+      "samplePaths": [
+        "node_modules/@typescript-eslint/type-utils"
+      ]
+    },
+    {
+      "name": "@typescript-eslint/typescript-estree",
+      "severity": "high",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "dev",
+      "likelyExposure": "dev/build-tooling-likely",
+      "fix": "typescript-eslint@8.36.0 (major)",
+      "topLevelEffects": [
+        "typescript-eslint"
+      ],
+      "samplePaths": [
+        "node_modules/@typescript-eslint/typescript-estree"
+      ]
+    },
+    {
+      "name": "@typescript-eslint/utils",
+      "severity": "high",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "dev",
+      "likelyExposure": "dev/build-tooling-likely",
+      "fix": "typescript-eslint@8.36.0 (major)",
+      "topLevelEffects": [
+        "typescript-eslint"
+      ],
+      "samplePaths": [
+        "node_modules/@typescript-eslint/utils"
+      ]
+    },
+    {
+      "name": "app-builder-lib",
+      "severity": "high",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "dev",
+      "likelyExposure": "dev/build-tooling-likely",
+      "fix": "electron-builder@25.1.8 (major)",
+      "topLevelEffects": [
+        "electron-builder"
+      ],
+      "samplePaths": [
+        "node_modules/app-builder-lib"
+      ]
+    },
+    {
+      "name": "cacache",
+      "severity": "high",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "dev",
+      "likelyExposure": "dev/build-tooling-likely",
+      "fix": "electron-builder@25.1.8 (major)",
+      "topLevelEffects": [],
+      "samplePaths": [
+        "node_modules/cacache"
+      ]
+    },
+    {
+      "name": "dir-compare",
+      "severity": "high",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "dev",
+      "likelyExposure": "dev/build-tooling-likely",
+      "fix": "electron-builder@25.1.8 (major)",
+      "topLevelEffects": [],
+      "samplePaths": [
+        "node_modules/dir-compare"
+      ]
+    },
+    {
+      "name": "dmg-builder",
+      "severity": "high",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "dev",
+      "likelyExposure": "dev/build-tooling-likely",
+      "fix": "electron-builder@25.1.8 (major)",
+      "topLevelEffects": [
+        "electron-builder"
+      ],
+      "samplePaths": [
+        "node_modules/dmg-builder"
+      ]
+    },
+    {
+      "name": "electron-builder",
+      "severity": "high",
+      "isDirect": true,
+      "directType": "direct-dev",
+      "installScope": "dev",
+      "likelyExposure": "dev/build-tooling-likely",
+      "fix": "electron-builder@25.1.8 (major)",
+      "topLevelEffects": [],
+      "samplePaths": [
+        "node_modules/electron-builder"
+      ]
+    },
+    {
+      "name": "electron-builder-squirrel-windows",
+      "severity": "high",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "dev",
+      "likelyExposure": "dev/build-tooling-likely",
+      "fix": "electron-builder@25.1.8 (major)",
+      "topLevelEffects": [],
+      "samplePaths": [
+        "node_modules/electron-builder-squirrel-windows"
+      ]
+    },
+    {
+      "name": "electron-winstaller",
+      "severity": "high",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "dev",
+      "likelyExposure": "dev/build-tooling-likely",
+      "fix": "electron-builder@25.1.8 (major)",
+      "topLevelEffects": [],
+      "samplePaths": [
+        "node_modules/electron-winstaller"
+      ]
+    },
+    {
+      "name": "filelist",
+      "severity": "high",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "dev",
+      "likelyExposure": "dev/build-tooling-likely",
+      "fix": "true",
+      "topLevelEffects": [],
+      "samplePaths": [
+        "node_modules/filelist"
+      ]
+    },
+    {
+      "name": "glob",
+      "severity": "high",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "dev",
+      "likelyExposure": "dev/build-tooling-likely",
+      "fix": "electron-builder@25.1.8 (major)",
+      "topLevelEffects": [],
+      "samplePaths": [
+        "node_modules/cacache/node_modules/glob",
+        "node_modules/glob"
+      ]
+    },
+    {
+      "name": "make-fetch-happen",
+      "severity": "high",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "dev",
+      "likelyExposure": "dev/build-tooling-likely",
+      "fix": "electron-builder@25.1.8 (major)",
+      "topLevelEffects": [],
+      "samplePaths": [
+        "node_modules/make-fetch-happen"
+      ]
+    },
+    {
+      "name": "minimatch",
+      "severity": "high",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "dev",
+      "likelyExposure": "dev/build-tooling-likely",
+      "fix": "typescript-eslint@8.36.0 (major)",
+      "topLevelEffects": [],
+      "samplePaths": [
+        "node_modules/@electron/universal/node_modules/minimatch",
+        "node_modules/@eslint/config-array/node_modules/minimatch",
+        "node_modules/@typescript-eslint/typescript-estree/node_modules/minimatch"
+      ]
+    },
+    {
+      "name": "node-gyp",
+      "severity": "high",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "dev",
+      "likelyExposure": "dev/build-tooling-likely",
+      "fix": "electron-builder@25.1.8 (major)",
+      "topLevelEffects": [],
+      "samplePaths": [
+        "node_modules/node-gyp"
+      ]
+    },
+    {
+      "name": "rimraf",
+      "severity": "high",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "dev",
+      "likelyExposure": "dev/build-tooling-likely",
+      "fix": "electron-builder@25.1.8 (major)",
+      "topLevelEffects": [],
+      "samplePaths": [
+        "node_modules/rimraf"
+      ]
+    },
+    {
+      "name": "temp",
+      "severity": "high",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "dev",
+      "likelyExposure": "dev/build-tooling-likely",
+      "fix": "electron-builder@25.1.8 (major)",
+      "topLevelEffects": [],
+      "samplePaths": [
+        "node_modules/temp"
+      ]
+    },
+    {
+      "name": "typescript-eslint",
+      "severity": "high",
+      "isDirect": true,
+      "directType": "direct-dev",
+      "installScope": "dev",
+      "likelyExposure": "dev/build-tooling-likely",
+      "fix": "typescript-eslint@8.36.0 (major)",
+      "topLevelEffects": [],
+      "samplePaths": [
+        "node_modules/typescript-eslint"
+      ]
+    },
+    {
+      "name": "@excalidraw/excalidraw",
+      "severity": "moderate",
+      "isDirect": true,
+      "directType": "direct-runtime",
+      "installScope": "runtime",
+      "likelyExposure": "runtime-path-possible",
+      "fix": "@excalidraw/excalidraw@0.17.6 (major)",
+      "topLevelEffects": [],
+      "samplePaths": [
+        "node_modules/@excalidraw/excalidraw"
+      ]
+    },
+    {
+      "name": "@excalidraw/mermaid-to-excalidraw",
+      "severity": "moderate",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "unknown",
+      "likelyExposure": "needs-manual-triage",
+      "fix": "@excalidraw/excalidraw@0.17.6 (major)",
+      "topLevelEffects": [
+        "@excalidraw/excalidraw"
+      ],
+      "samplePaths": [
+        "node_modules/@excalidraw/mermaid-to-excalidraw"
+      ]
+    },
+    {
+      "name": "ajv",
+      "severity": "moderate",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "dev",
+      "likelyExposure": "dev/build-tooling-likely",
+      "fix": "true",
+      "topLevelEffects": [],
+      "samplePaths": [
+        "node_modules/ajv"
+      ]
+    },
+    {
+      "name": "markdown-it",
+      "severity": "moderate",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "unknown",
+      "likelyExposure": "needs-manual-triage",
+      "fix": "true",
+      "topLevelEffects": [],
+      "samplePaths": [
+        "node_modules/markdown-it"
+      ]
+    },
+    {
+      "name": "nanoid",
+      "severity": "moderate",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "unknown",
+      "likelyExposure": "needs-manual-triage",
+      "fix": "@excalidraw/excalidraw@0.17.6 (major)",
+      "topLevelEffects": [],
+      "samplePaths": [
+        "node_modules/@excalidraw/mermaid-to-excalidraw/node_modules/nanoid",
+        "node_modules/docx/node_modules/nanoid",
+        "node_modules/nanoid"
+      ]
+    },
+    {
+      "name": "diff",
+      "severity": "low",
+      "isDirect": false,
+      "directType": "transitive",
+      "installScope": "unknown",
+      "likelyExposure": "needs-manual-triage",
+      "fix": "true",
+      "topLevelEffects": [],
+      "samplePaths": [
+        "node_modules/diff"
+      ]
+    }
+  ]
+}

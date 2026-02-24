@@ -1,0 +1,31 @@
+ 14M	dist
+total 28752
+-rw-r--r--@ 1 ziksartin  staff   3.9M Feb 24 16:04 blackboard-excalidraw-core-B_RFeXsM.js
+-rw-r--r--@ 1 ziksartin  staff   3.0M Feb 24 16:04 blackboard-mermaid-vendor-L4aDfgKv.js
+-rw-r--r--@ 1 ziksartin  staff   2.5M Feb 24 16:04 academic-citation-B6Tdhcn5.js
+-rw-r--r--@ 1 ziksartin  staff   1.1M Feb 24 16:04 diary-academic-CR3OIV-L.js
+-rw-r--r--@ 1 ziksartin  staff   259K Feb 24 16:04 blackboard-katex-vendor-XbL3y5x-.js
+-rw-r--r--@ 1 ziksartin  staff   196K Feb 24 16:04 html2canvas.esm-DXEQVQnt.js
+-rw-r--r--@ 1 ziksartin  staff   194K Feb 24 16:04 index-_ddTgUtR.js
+-rw-r--r--@ 1 ziksartin  staff   155K Feb 24 16:04 index.es-C36rpQ4d.js
+-rw-r--r--@ 1 ziksartin  staff   152K Feb 24 16:04 academic-reference-tools-XlPeQdO0.js
+-rw-r--r--@ 1 ziksartin  staff   142K Feb 24 16:04 blackboard-excalidraw-core-OdNREpkL.css
+-rw-r--r--@ 1 ziksartin  staff   136K Feb 24 16:04 index-BJTFnNfe.css
+-rw-r--r--@ 1 ziksartin  staff    59K Feb 24 16:04 caveat-latin-400-normal-BzhAQZkN.woff
+-rw-r--r--@ 1 ziksartin  staff    54K Feb 24 16:04 diary-long-drafts-CXJLrVY7.js
+-rw-r--r--@ 1 ziksartin  staff    52K Feb 24 16:04 caveat-cyrillic-400-normal-CebvvJET.woff
+-rw-r--r--@ 1 ziksartin  staff    48K Feb 24 16:04 caveat-latin-400-normal-D6LQsQ_v.woff2
+-rw-r--r--@ 1 ziksartin  staff    48K Feb 24 16:04 inter-latin-ext-600-normal-CIVaiw4L.woff
+-rw-r--r--@ 1 ziksartin  staff    47K Feb 24 16:04 inter-latin-ext-700-normal-TidjK2hL.woff
+-rw-r--r--@ 1 ziksartin  staff    47K Feb 24 16:04 inter-latin-ext-500-normal-BxGbmqWO.woff
+-rw-r--r--@ 1 ziksartin  staff    46K Feb 24 16:04 inter-latin-ext-400-normal-77YHD8bZ.woff
+-rw-r--r--@ 1 ziksartin  staff    45K Feb 24 16:04 image-blob-reduce.esm-BLtmMM_J.js
+-rw-r--r--@ 1 ziksartin  staff    44K Feb 24 16:04 caveat-cyrillic-400-normal-9cDH9rLW.woff2
+-rw-r--r--@ 1 ziksartin  staff    40K Feb 24 16:04 geist-sans-latin-700-normal-CjScfYeH.woff
+-rw-r--r--@ 1 ziksartin  staff    40K Feb 24 16:04 geist-sans-latin-600-normal-CA1yjETN.woff
+-rw-r--r--@ 1 ziksartin  staff    40K Feb 24 16:04 geist-sans-latin-500-normal-CN2lyvyL.woff
+-rw-r--r--@ 1 ziksartin  staff    38K Feb 24 16:04 geist-sans-latin-400-normal-BOaIZNA2.woff
+-rw-r--r--@ 1 ziksartin  staff    35K Feb 24 16:04 inter-latin-ext-600-normal-D2bJ5OIk.woff2
+-rw-r--r--@ 1 ziksartin  staff    35K Feb 24 16:04 inter-latin-ext-700-normal-Ca8adRJv.woff2
+-rw-r--r--@ 1 ziksartin  staff    35K Feb 24 16:04 inter-latin-ext-500-normal-CV4jyFjo.woff2
+-rw-r--r--@ 1 ziksartin  staff    35K Feb 24 16:04 geist-sans-latin-700-normal-BmN9tIp5.woff2

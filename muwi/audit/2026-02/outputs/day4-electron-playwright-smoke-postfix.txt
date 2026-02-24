@@ -1,0 +1,10 @@
+
+Running 1 test using 1 worker
+
+(node:81623) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:81623) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 e2e/electron-smoke.spec.ts:11:1 › electron app launches with preload API and loads blackboard route (4.6s)
+
+  1 passed (5.4s)

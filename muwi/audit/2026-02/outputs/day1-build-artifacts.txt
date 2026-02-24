@@ -1,0 +1,22 @@
+ 14M	dist
+8.0K	dist-electron
+ 14456742 total
+ 3969928 dist/assets/diary-academic-UeK10TUh.js
+ 1820546 dist/assets/subset-shared.chunk-lRIfjqMm.js
+ 1451589 dist/assets/flowchart-elk-definition-6af322e1-CeimiMre.js
+ 1137350 dist/assets/diary-blackboard-C6wv-VLi.js
+  541913 dist/assets/mindmap-definition-8da855dc-BPpDVvop.js
+  265417 dist/assets/katex-XbL3y5x-.js
+  260823 dist/assets/index-dlV0Uquo.js
+  201041 dist/assets/html2canvas.esm-DXEQVQnt.js
+  198864 dist/assets/index-Cdf-08uQ.js
+  158587 dist/assets/index.es-DfHb53W4.js
+  145063 dist/assets/diary-blackboard-OdNREpkL.css
+  139360 dist/assets/index-BJTFnNfe.css
+   84228 dist/assets/sequenceDiagram-c5b8d532-Bb15iyWN.js
+   68532 dist/assets/c4Diagram-c83219d4-DAQUsS1_.js
+   60445 dist/assets/ganttDiagram-a2739b55-o8Vl4oW1.js
+   60219 dist/assets/createText-1719965b-Bst3iWh-.js
+   60108 dist/assets/caveat-latin-400-normal-BzhAQZkN.woff
+   54762 dist/assets/diary-long-drafts-DQ_teiRJ.js
+   53096 dist/assets/caveat-cyrillic-400-normal-CebvvJET.woff
