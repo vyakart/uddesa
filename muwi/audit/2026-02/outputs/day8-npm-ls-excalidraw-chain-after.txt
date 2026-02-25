@@ -1,0 +1,11 @@
+muwi@0.0.0 /Users/ziksartin/tools/uddesa/muwi
+├─┬ @excalidraw/excalidraw@0.18.0
+│ ├─┬ @excalidraw/mermaid-to-excalidraw@1.1.2 (git+ssh://git@github.com/vyakart/mermaid-to-excalidraw-fork-work.git#33201bbc1bc29e2d6dccaacc7d19f7e61fa53ed9)
+│ │ ├── mermaid@10.9.5
+│ │ └── nanoid@5.0.9
+│ └── nanoid@3.3.11 overridden
+├─┬ docx@9.5.1
+│ └── nanoid@5.1.6
+└─┬ postcss@8.5.6
+  └── nanoid@3.3.11 deduped
+

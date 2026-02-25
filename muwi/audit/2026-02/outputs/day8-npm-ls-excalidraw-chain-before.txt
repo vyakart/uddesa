@@ -1,0 +1,11 @@
+muwi@0.0.0 /Users/ziksartin/tools/uddesa/muwi
+├─┬ @excalidraw/excalidraw@0.18.0
+│ ├─┬ @excalidraw/mermaid-to-excalidraw@1.1.2
+│ │ ├── mermaid@10.9.5 overridden
+│ │ └── nanoid@4.0.2
+│ └── nanoid@3.3.11 overridden
+├─┬ docx@9.5.1
+│ └── nanoid@5.1.6
+└─┬ postcss@8.5.6
+  └── nanoid@3.3.11 deduped
+
