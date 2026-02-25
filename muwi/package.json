@@ -94,8 +94,6 @@
     "@excalidraw/excalidraw": {
       "nanoid": "3.3.11"
     },
-    "@excalidraw/mermaid-to-excalidraw": {
-      "mermaid": "10.9.5"
-    }
+    "@excalidraw/mermaid-to-excalidraw": "git+https://github.com/vyakart/mermaid-to-excalidraw-fork-work.git#33201bbc1bc29e2d6dccaacc7d19f7e61fa53ed9"
   }
 }

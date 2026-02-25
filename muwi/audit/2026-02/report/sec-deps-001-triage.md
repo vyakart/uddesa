@@ -83,7 +83,86 @@ Updated residual risk (after controlled pass):
   - performs a validated Excalidraw-path remediation/feature mitigation, or
   - records a formal risk acceptance (owner + review date) for the remaining moderate runtime findings and packaging-chain high findings.
 
+### Decision Closure (2026-02-25)
+
+Decision selected: `Formal risk acceptance (owner/date/review date)` for release gating.
+
+Accepted disposition (effective `2026-02-25`):
+
+- `GO` for local/private beta distribution only, with explicit residual risk acceptance covering:
+  - `17` `High` dev/build-tooling findings in the `electron-builder` packaging chain
+  - `3` `Moderate` runtime-path findings in the Excalidraw/Mermaid chain (`@excalidraw/excalidraw`, `@excalidraw/mermaid-to-excalidraw`, `nanoid`)
+- `NO-GO` for public production launch under this acceptance alone. Public launch requires one of:
+  - validated Excalidraw/Mermaid runtime-path remediation, or
+  - validated feature-gate/disable of the affected Excalidraw Mermaid path(s), plus regression verification and a fresh audit re-run
+
+Risk acceptance record:
+
+- Risk ID: `SEC-DEPS-001`
+- Owner: `MUWI maintainers` (release owner)
+- Decision date: `2026-02-25`
+- Review date (or before public launch, whichever comes first): `2026-03-11`
+- Rationale:
+  - Controlled remediation pass reduced vulnerabilities `29 -> 20` and removed prior `low` residuals.
+  - Remaining `High` findings are concentrated in build/packaging tooling, not direct shipped runtime paths.
+  - Remaining runtime-path exposure is limited to `3` moderate Excalidraw/Mermaid-chain packages with no validated low-risk upgrade path recorded yet (downgrade blocked by React peer mismatch; nested override no-go previously documented).
+- Required follow-up before review date:
+  - Re-evaluate Excalidraw/Mermaid mitigation options (upgrade, patch-package, or feature-gate)
+  - Re-run dependency audit and update this record with current counts and decision
+
+## Day 8 Dependency-Level Remediation Pass (2026-02-25)
+
+Decision path selected and executed: `Remediate remaining Excalidraw/Mermaid runtime-path moderates`.
+
+Implementation summary:
+
+- Replaced transitive `@excalidraw/mermaid-to-excalidraw` with a commit-pinned GitHub fork in `muwi/package.json` overrides:
+  - `git+https://github.com/vyakart/mermaid-to-excalidraw-fork-work.git#33201bbc1bc29e2d6dccaacc7d19f7e61fa53ed9`
+- Fork patch updates:
+  - `mermaid` `10.9.3 -> 10.9.5`
+  - `nanoid` `4.0.2 -> 5.0.9`
+- `npm install` regenerated `package-lock.json` and converged the Excalidraw chain without `ELSPROBLEMS`.
+
+Evidence (before/after):
+
+- Before (same remaining Excalidraw chain):
+  - `muwi/audit/2026-02/outputs/day8-npm-ls-excalidraw-chain-before.txt`
+  - `muwi/audit/2026-02/outputs/day8-audit-deps-before-excalidraw-fork-json.txt`
+  - `muwi/audit/2026-02/outputs/day8-audit-deps-before-excalidraw-fork-json.txt.summary.md`
+- After (runtime-path moderates cleared):
+  - `muwi/audit/2026-02/outputs/day8-npm-ls-excalidraw-chain-after.txt`
+  - `muwi/audit/2026-02/outputs/day8-audit-deps-after-excalidraw-fork-json.txt`
+  - `muwi/audit/2026-02/outputs/day8-audit-deps-after-excalidraw-fork-json.txt.summary.md`
+
+Outcome:
+
+- `npm audit` reduced from `4` vulnerable packages (`1 high`, `3 moderate`) to `1` vulnerable package (`1 high`, `0 moderate`).
+- The Excalidraw/Mermaid runtime-path chain (`@excalidraw/excalidraw`, `@excalidraw/mermaid-to-excalidraw`, nested `nanoid`) no longer appears in the audit report.
+- `npm ls` confirms the resolved chain now contains:
+  - `@excalidraw/mermaid-to-excalidraw@1.1.2` (commit-pinned GitHub fork; `npm` lockfile canonicalized as `git+ssh://git@github.com/...`)
+  - nested `nanoid@5.0.9`
+  - nested `mermaid@10.9.5`
+
+Validation completed:
+
+- `npm run lint` ✅
+- `npm run test -- --run src/components/diaries/blackboard/ExcalidrawWrapper.test.tsx src/components/diaries/blackboard/Blackboard.test.tsx` ✅ (`9` tests)
+- `npm run build` ✅
+
+Updated release-risk disposition:
+
+- Runtime-path `moderate` findings for the Excalidraw/Mermaid chain are remediated.
+- Residual `SEC-DEPS-001` risk is now limited to the remaining build-tooling `high` (`minimatch` chain), which should continue to be handled under build-time risk acceptance/packaging controls.
+- The earlier `2026-02-25` beta-only risk acceptance entry is superseded for the Excalidraw runtime-path portion by this remediation pass.
+
+Important operational note:
+
+- `muwi/package.json` pins the dependency via `git+https://` to a public GitHub fork commit SHA for reproducibility.
+- `npm@11.4.2` canonicalized the lockfile `resolved` URL to `git+ssh://git@github.com/...` during install. If installs run on environments without GitHub SSH access, configure Git URL rewriting (`ssh://git@github.com/` -> `https://github.com/`) or use an internal package/tarball publication.
+
 ## Runtime / Mixed-Scope Vulnerabilities (prioritize for release risk)
+
+Historical snapshot retained from earlier triage passes; see `Day 8 Dependency-Level Remediation Pass (2026-02-25)` above for current Excalidraw-chain status (`0` moderate remaining in current audit).
 
 | Package | Sev | Direct | Scope | Exposure | Top-level effects | Sample lock paths | Fix |
 | --- | --- | --- | --- | --- | --- | --- | --- |
