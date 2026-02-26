@@ -1,0 +1,20 @@
+muwi@0.0.0 /Users/ziksartin/tools/uddesa/muwi
+├─┬ electron-builder@26.8.1
+│ └─┬ app-builder-lib@26.8.1
+│   ├─┬ @electron/asar@3.4.1
+│   │ ├─┬ glob@7.2.3
+│   │ │ └── minimatch@3.1.5 deduped
+│   │ └── minimatch@3.1.5
+│   ├─┬ @electron/universal@2.0.3
+│   │ ├─┬ dir-compare@4.2.0
+│   │ │ └── minimatch@3.1.5 deduped
+│   │ └── minimatch@9.0.8
+│   └── minimatch@10.2.2
+├─┬ eslint@10.0.1
+│ ├─┬ @eslint/config-array@0.23.2
+│ │ └── minimatch@10.2.2
+│ └── minimatch@10.2.2
+└─┬ typescript-eslint@8.56.1
+  └─┬ @typescript-eslint/typescript-estree@8.56.1
+    └── minimatch@10.2.2
+
