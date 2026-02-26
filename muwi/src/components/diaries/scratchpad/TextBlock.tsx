@@ -26,7 +26,10 @@ export function TextBlock({ block, isPageLocked = false }: TextBlockProps) {
   const closeDiary = useAppStore((state) => state.closeDiary);
   const openSettings = useAppStore((state) => state.openSettings);
   const hasPasskey = useSettingsStore((state) => state.hasPasskey);
+  const hasStoredPasskey = useSettingsStore((state) => Boolean(state.global.passkeyHash));
+  const areSettingsLoaded = useSettingsStore((state) => state.isLoaded);
   const passkeyHint = useSettingsStore((state) => state.global.passkeyHint);
+  const shouldCheckLockState = !isPageLocked && (!areSettingsLoaded || hasStoredPasskey);
   const {
     isLocked: isBlockLocked,
     lock,
@@ -35,7 +38,7 @@ export function TextBlock({ block, isPageLocked = false }: TextBlockProps) {
   } = useContentLocking({
     contentType: 'textBlock',
     contentId: block.id,
-    enabled: true,
+    enabled: shouldCheckLockState,
   });
   const isLocked = isPageLocked || isBlockLocked;
 
