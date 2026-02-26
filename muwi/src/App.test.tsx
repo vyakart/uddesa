@@ -110,4 +110,27 @@ describe('App routing', () => {
       expect(screen.getByTestId('shelf-view')).toBeInTheDocument();
     });
   });
+
+  it('renders a non-fatal startup warning banner and allows dismissing it', async () => {
+    useSettingsStore.setState({
+      ...useSettingsStore.getInitialState(),
+      isLoaded: true,
+      startupWarning: 'Settings failed to load (test). Using defaults for this session.',
+      clearStartupWarning: vi.fn(() => {
+        useSettingsStore.setState({ startupWarning: null });
+      }),
+      loadSettings: vi.fn().mockResolvedValue(undefined),
+    });
+
+    render(<App />);
+
+    expect(screen.getByTestId('app-warning-banner')).toBeInTheDocument();
+    expect(screen.getByText(/Settings failed to load/)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Dismiss' }));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('app-warning-banner')).not.toBeInTheDocument();
+    });
+  });
 });

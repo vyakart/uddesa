@@ -43,3 +43,93 @@ jobs:
       - name: Build (renderer)
         run: npm run build
 
+      - name: Bundle budget check
+        run: npm run bundle:budget:check
+
+  e2e-web:
+    name: Web E2E (Chromium/Firefox/WebKit)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: muwi
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: muwi/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: Run web E2E suite
+        env:
+          CI: "true"
+        run: npm run test:e2e:web:ci
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: muwi-playwright-report
+          path: muwi/playwright-report
+          if-no-files-found: ignore
+
+      - name: Upload Playwright test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: muwi-playwright-test-results
+          path: muwi/test-results
+          if-no-files-found: ignore
+
+  perf-web:
+    name: Web Perf Baseline Budget
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: muwi
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: muwi/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Capture perf baseline sample
+        env:
+          CI: "true"
+          MUWI_PERF_OUTPUT: test-results/perf-baseline.json
+        run: npm run perf:baseline:web
+
+      - name: Check perf budget
+        env:
+          MUWI_PERF_OUTPUT: test-results/perf-baseline.json
+        run: npm run perf:budget:check
+
+      - name: Upload perf artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: muwi-perf-artifacts
+          path: |
+            muwi/test-results/perf-baseline.json
+            muwi/playwright-report
+          if-no-files-found: ignore

@@ -1,0 +1,38 @@
+{
+  "source": "Initial web launch baseline budgets; tighten after first CI baseline capture.",
+  "coreEntry": {
+    "initialJsCssBytesMax": 3300000,
+    "regressionPercentMax": 10
+  },
+  "forbiddenIndexPreloadPrefixes": [
+    "diary-"
+  ],
+  "chunkBudgets": [
+    {
+      "prefix": "blackboard-excalidraw-core-",
+      "regressionPercentMax": 10,
+      "warnOnly": false
+    },
+    {
+      "prefix": "blackboard-mermaid-vendor-",
+      "regressionPercentMax": 10,
+      "warnOnly": false
+    },
+    {
+      "prefix": "academic-citation-",
+      "regressionPercentMax": 10,
+      "warnOnly": false
+    },
+    {
+      "prefix": "diary-personal-diary-",
+      "regressionPercentMax": 10,
+      "warnOnly": false
+    }
+  ],
+  "baselineChunkBytes": {
+    "blackboard-excalidraw-core-": 4073700,
+    "blackboard-mermaid-vendor-": 3127210,
+    "academic-citation-": 2649820,
+    "diary-personal-diary-": 1268110
+  }
+}

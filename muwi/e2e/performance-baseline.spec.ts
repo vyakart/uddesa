@@ -1,4 +1,9 @@
+import fs from 'fs/promises';
+import path from 'path';
 import { expect, test } from '@playwright/test';
+import { registerWebRuntimeGuards } from './support/webGuards';
+
+registerWebRuntimeGuards();
 
 interface SwitchSample {
   label: string;
@@ -16,7 +21,10 @@ interface StartupSample {
 
 test.describe.configure({ mode: 'serial' });
 
-test.skip(Boolean(process.env.CI), 'Local baseline capture; not a CI regression gate.');
+test.skip(
+  Boolean(process.env.CI) && process.env.MUWI_ENABLE_PERF_BASELINE_CI !== 'true',
+  'Local baseline capture unless explicitly enabled in CI.'
+);
 
 test('performance baseline: startup and shelf-mediated diary switches', async ({ page }, testInfo) => {
   const startupStart = Date.now();
@@ -93,6 +101,12 @@ test('performance baseline: startup and shelf-mediated diary switches', async ({
     startup: startupSample,
     switches: switchSamples,
   };
+
+  const perfOutputPath = process.env.MUWI_PERF_OUTPUT;
+  if (perfOutputPath) {
+    await fs.mkdir(path.dirname(perfOutputPath), { recursive: true });
+    await fs.writeFile(perfOutputPath, JSON.stringify(summary, null, 2), 'utf8');
+  }
 
   // Printed intentionally so the values can be copied into PROGRESS.md/TASKS notes.
   console.log(`[phase7-7.15.1-baseline] ${JSON.stringify(summary)}`);

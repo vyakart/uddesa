@@ -1,4 +1,7 @@
 import { expect, test } from '@playwright/test';
+import { registerWebRuntimeGuards } from './support/webGuards';
+
+registerWebRuntimeGuards();
 
 function activeElementLabel() {
   const active = document.activeElement as HTMLElement | null;

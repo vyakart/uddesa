@@ -1,4 +1,7 @@
 import { expect, test } from '@playwright/test';
+import { registerWebRuntimeGuards } from './support/webGuards';
+
+registerWebRuntimeGuards();
 
 test('long drafts flow: create document, add sections, reorder sections', async ({ page }) => {
   await page.goto('/');

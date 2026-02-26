@@ -59,6 +59,27 @@ describe('ErrorBoundary', () => {
     expect(screen.getByText('Recovered content')).toBeInTheDocument();
   });
 
+  it('renders optional recovery actions and invokes back-to-shelf callback', () => {
+    const onNavigateHome = vi.fn();
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText },
+      configurable: true,
+    });
+
+    render(
+      <ErrorBoundary onNavigateHome={onNavigateHome}>
+        <Bomb />
+      </ErrorBoundary>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Back to Shelf' }));
+    expect(onNavigateHome).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Copy Error Details' }));
+    expect(writeText).toHaveBeenCalledTimes(1);
+  });
+
   it('renders custom fallback when provided', () => {
     render(
       <ErrorBoundary fallback={<div>Custom fallback UI</div>}>

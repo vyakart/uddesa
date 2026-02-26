@@ -54,11 +54,13 @@ interface SettingsDataState extends DiarySettingsState {
   global: GlobalSettings;
   // Loading state
   isLoaded: boolean;
+  startupWarning: string | null;
 }
 
 export interface SettingsState extends SettingsDataState {
   // Actions
   loadSettings: () => Promise<void>;
+  clearStartupWarning: () => void;
   updateGlobalSettings: (updates: Partial<GlobalSettings>) => Promise<void>;
   updateTheme: (theme: ThemeMode) => Promise<void>;
   updateAccentColor: (color: string) => Promise<void>;
@@ -117,6 +119,7 @@ const initialState: SettingsDataState = {
   longDrafts: { ...defaultLongDraftsSettings },
   academic: { ...defaultAcademicSettings },
   isLoaded: false,
+  startupWarning: null,
 };
 
 export const useSettingsStore = create<SettingsState>()(
@@ -126,8 +129,26 @@ export const useSettingsStore = create<SettingsState>()(
         ...initialState,
 
         loadSettings: async () => {
-          const global = await settingsQueries.getGlobalSettings();
-          set({ global, isLoaded: true }, false, 'loadSettings');
+          try {
+            const global = await settingsQueries.getGlobalSettings();
+            set({ global, isLoaded: true, startupWarning: null }, false, 'loadSettings');
+          } catch (error) {
+            const message = error instanceof Error ? error.message : 'Unknown settings load error';
+            console.error('Failed to load settings, using defaults:', error);
+            set(
+              {
+                global: { ...defaultGlobalSettings },
+                isLoaded: true,
+                startupWarning: `Settings failed to load (${message}). Using defaults for this session.`,
+              },
+              false,
+              'loadSettings:recover'
+            );
+          }
+        },
+
+        clearStartupWarning: () => {
+          set({ startupWarning: null }, false, 'clearStartupWarning');
         },
 
         updateGlobalSettings: async (updates) => {

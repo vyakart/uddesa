@@ -11,6 +11,34 @@ MUWI is a local-first writing workspace with six focused "diary" modes in one ap
 
 It is built with React + TypeScript + Vite and packaged as an Electron desktop app.
 
+## Live Web Demo (Netlify)
+
+- Web demo: `https://uddesa.netlify.app/`
+- Deployment is Netlify-hosted from this repo and should use the repo-tracked `../netlify.toml` config.
+- Day-1 support target for the web launch is desktop modern browsers (`Chrome`, `Edge`, `Firefox`, `Safari/WebKit`).
+
+## Browser Mode vs Electron Mode
+
+Browser mode (Netlify web app) supports:
+
+- Core editing and navigation across all six diaries
+- Local-first data persistence in browser storage (IndexedDB)
+- Manual backup export/import using browser download/upload flows
+- Export downloads (for supported formats)
+
+Electron-only (desktop app) behaviors:
+
+- Native directory picker for backup location selection
+- Automatic backups to a chosen local folder
+- Desktop packaging/signing/notarization workflows
+
+## Data & Privacy Notes (Web Demo)
+
+- MUWI is local-first in the web demo: your data is stored in your browser profile on your device.
+- There is no cloud sync in the Netlify demo.
+- Clearing site data, using private/incognito mode, or browser storage quota pressure can remove data.
+- Export a backup regularly if you care about keeping your work.
+
 ## Requirements
 
 - Node.js 20+ (recommended)
@@ -85,6 +113,10 @@ npm run test:e2e:electron
 cd muwi
 npm run build
 ```
+
+Netlify deploy reproducibility:
+
+- Repo root `netlify.toml` is the source of truth for build base (`muwi`), publish directory (`dist`), SPA rewrites, and cache/security headers.
 
 ## Electron Packaging
 
@@ -167,11 +199,24 @@ muwi/
 
 - The project intentionally uses route-level splitting, but some heavy deferred chunks (e.g. Excalidraw / citation tooling) still trigger size warnings.
 - These are tracked as performance/bundle optimization follow-up work.
+- Web launch hardening adds bundle/perf regression gates so the current heavy routes do not regress while optimization work continues.
+
+## Feedback / Bug Reports
+
+- Preferred (technical): open a GitHub issue in this repository.
+- Include:
+  - browser + version
+  - OS
+  - which diary/route you were using
+  - steps to reproduce
+  - screenshot/screen recording (if possible)
+  - whether refresh fixed it
 
 ## Related Docs
 
 - `../AUDIT_PLAN.md`
 - `../AUDIT_PLAN_DETAILED.md`
+- `docs/web-launch-checklist.md` (Netlify launch gate checklist)
+- `docs/data-migrations.md` (Dexie/IndexedDB migration policy for web releases)
 - `../TESTING.md` (strategy/reference; may lag current config details)
 - `../IMPLEMENTATION.md` (historical/technical design reference; may lag current implementation)
-

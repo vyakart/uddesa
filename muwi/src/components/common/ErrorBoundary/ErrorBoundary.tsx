@@ -1,11 +1,13 @@
 import { Component, type ReactNode, type ErrorInfo } from 'react';
 import { Button } from '../Button';
+import { formatRuntimeDiagnostics } from '@/utils/runtimeDiagnostics';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
   fallback?: ReactNode;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
   onReset?: () => void;
+  onNavigateHome?: () => void;
 }
 
 interface ErrorBoundaryState {
@@ -31,6 +33,30 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   handleReset = (): void => {
     this.setState({ hasError: false, error: null });
     this.props.onReset?.();
+  };
+
+  handleCopyDiagnostics = async (): Promise<void> => {
+    if (typeof navigator === 'undefined' || !navigator.clipboard?.writeText) {
+      return;
+    }
+
+    const errorBlock = this.state.error
+      ? [
+          `Route: ${typeof window !== 'undefined' ? window.location.pathname : '/'}`,
+          `Error: ${this.state.error.message}`,
+          this.state.error.stack ?? '',
+        ]
+          .filter(Boolean)
+          .join('\n')
+      : '';
+
+    const diagnostics = formatRuntimeDiagnostics(10);
+    const payload = [errorBlock, diagnostics].filter(Boolean).join('\n\n');
+    if (!payload) {
+      return;
+    }
+
+    await navigator.clipboard.writeText(payload);
   };
 
   render(): ReactNode {
@@ -68,9 +94,21 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             )}
           </p>
 
-          <Button onClick={this.handleReset} variant="primary" size="md">
-            Try Again
-          </Button>
+          <div className="muwi-error-boundary__actions">
+            <Button onClick={this.handleReset} variant="primary" size="md">
+              Try Again
+            </Button>
+            {this.props.onNavigateHome ? (
+              <Button onClick={this.props.onNavigateHome} variant="secondary" size="md">
+                Back to Shelf
+              </Button>
+            ) : null}
+            {typeof navigator !== 'undefined' && Boolean(navigator.clipboard) ? (
+              <Button onClick={() => void this.handleCopyDiagnostics()} variant="ghost" size="md">
+                Copy Error Details
+              </Button>
+            ) : null}
+          </div>
         </div>
       );
     }

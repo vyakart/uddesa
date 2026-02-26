@@ -1,4 +1,7 @@
 import { expect, test } from '@playwright/test';
+import { registerWebRuntimeGuards } from './support/webGuards';
+
+registerWebRuntimeGuards();
 
 test('academic flow: create paper, add reference, insert citation', async ({ page }) => {
   await page.goto('/');

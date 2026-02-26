@@ -48,10 +48,10 @@ export class MUWIDatabase extends Dexie {
   settings!: Table<GlobalSettings, string>;
   lockedContent!: Table<LockedContent, string>;
 
-  constructor() {
-    super('muwi-database');
+  constructor(name = 'muwi-database') {
+    super(name);
 
-    this.version(1).stores({
+    const schemaV1 = {
       // Scratchpad
       scratchpadPages: 'id, pageNumber, categoryName, createdAt, modifiedAt, isLocked',
       textBlocks: 'id, pageId, createdAt',
@@ -80,7 +80,17 @@ export class MUWIDatabase extends Dexie {
       // Settings & Security
       settings: 'id',
       lockedContent: 'id, contentType, contentId',
-    });
+    } as const;
+
+    this.version(1).stores(schemaV1);
+
+    // v2 migration scaffold: keep schema identical for now to establish an explicit
+    // upgrade path and regression coverage before future schema/index changes.
+    this.version(2)
+      .stores(schemaV1)
+      .upgrade(async () => {
+        // no-op migration
+      });
   }
 }
 

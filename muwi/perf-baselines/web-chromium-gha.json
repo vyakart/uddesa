@@ -1,0 +1,35 @@
+{
+  "capturedAt": "2026-02-26T00:00:00.000Z",
+  "source": "Seeded from Day 5 local performance baseline; replace with CI-captured baseline after first strict web launch gate run.",
+  "browser": "chromium",
+  "startup": {
+    "shelfVisibleMs": 383,
+    "domContentLoadedMs": 167,
+    "loadEventMs": 173
+  },
+  "switches": {
+    "cold:scratchpad": 937,
+    "cold:long-drafts": 892,
+    "cold:blackboard": 1028,
+    "cold:academic": 899,
+    "warm:academic": 413
+  },
+  "thresholds": {
+    "shelfVisible": {
+      "relativeMultiplier": 1.4,
+      "absoluteMs": 1500
+    },
+    "coldRoutes": {
+      "relativeMultiplier": 1.35,
+      "absoluteMs": 2200
+    },
+    "coldBlackboard": {
+      "relativeMultiplier": 1.4,
+      "absoluteMs": 3000
+    },
+    "warmAcademic": {
+      "relativeMultiplier": 1.3,
+      "absoluteMs": 1000
+    }
+  }
+}

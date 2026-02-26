@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import {
   useAppStore,
   selectCurrentView,
@@ -13,6 +13,8 @@ import { Shelf } from '@/components/shelf';
 import { CommandPalette } from '@/components/common/CommandPalette';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { buildPathFromState, parseAppRoute, routeMatchesState } from '@/utils/appRouter';
+import { installGlobalRuntimeDiagnostics } from '@/utils/runtimeDiagnostics';
+import { formatStorageWarning, getStorageHealthStatus } from '@/utils/storageHealth';
 
 const PersonalDiary = lazy(async () => {
   const module = await import('@/components/diaries/personal-diary');
@@ -127,10 +129,17 @@ function App() {
   const loadSettings = useSettingsStore((state) => state.loadSettings);
   const isSettingsLoaded = useSettingsStore((state) => state.isLoaded);
   const themeMode = useSettingsStore((state) => state.global.theme);
+  const startupWarning = useSettingsStore((state) => state.startupWarning);
+  const clearStartupWarning = useSettingsStore((state) => state.clearStartupWarning);
+  const [storageWarning, setStorageWarning] = useState<string | null>(null);
 
   // Enable global keyboard shortcuts
   useGlobalShortcuts();
   usePasteHandler();
+
+  useEffect(() => {
+    return installGlobalRuntimeDiagnostics();
+  }, []);
 
   // Load settings on mount
   useEffect(() => {
@@ -155,6 +164,23 @@ function App() {
       applyThemeToDocument(theme);
     });
   }, [themeMode]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void getStorageHealthStatus()
+      .then((status) => {
+        if (cancelled) return;
+        setStorageWarning(formatStorageWarning(status));
+      })
+      .catch((error) => {
+        console.warn('Storage health estimate failed:', error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Sync store state from URL on first load and browser history navigation.
   useEffect(() => {
@@ -203,10 +229,34 @@ function App() {
     );
   }
 
+  const warningBanner = startupWarning || storageWarning ? (
+    <div
+      role="status"
+      aria-live="polite"
+      className="muwi-chrome-text flex items-start justify-between gap-3 border-b px-4 py-2 text-sm [background-color:var(--color-bg-secondary)] [border-color:var(--color-border-default)] [color:var(--color-text-secondary)]"
+      data-testid="app-warning-banner"
+    >
+      <div className="space-y-1">
+        {startupWarning ? <p>{startupWarning}</p> : null}
+        {storageWarning ? <p>{storageWarning}</p> : null}
+      </div>
+      {startupWarning ? (
+        <button
+          type="button"
+          className="rounded px-2 py-1 text-xs [background-color:var(--color-bg-tertiary)] [color:var(--color-text-primary)]"
+          onClick={clearStartupWarning}
+        >
+          Dismiss
+        </button>
+      ) : null}
+    </div>
+  ) : null;
+
   // Render based on current view
   if (currentView === 'shelf' || !activeDiary) {
     return (
       <>
+        {warningBanner}
         <Shelf />
         <CommandPalette />
       </>
@@ -235,7 +285,8 @@ function App() {
 
   return (
     <>
-      <ErrorBoundary key={activeDiary}>
+      {warningBanner}
+      <ErrorBoundary key={activeDiary} onNavigateHome={() => useAppStore.getState().closeDiary()}>
         <Suspense fallback={<DiaryLoadingState diary={activeDiary} />}>
           {renderDiary()}
         </Suspense>

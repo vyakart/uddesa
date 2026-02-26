@@ -1,5 +1,6 @@
 import { db } from '@/db';
 import { clearDatabase } from '@/test/db-utils';
+import * as settingsQueries from '@/db/queries/settings';
 import { useSettingsStore } from './settingsStore';
 
 describe('settingsStore', () => {
@@ -25,6 +26,25 @@ describe('settingsStore', () => {
 
     await state.updateTheme('system');
     expect(useSettingsStore.getState().global.theme).toBe('system');
+  });
+
+  it('recovers from settings load failure with defaults and a startup warning', async () => {
+    const getGlobalSettingsSpy = vi
+      .spyOn(settingsQueries, 'getGlobalSettings')
+      .mockRejectedValueOnce(new Error('Dexie open failed'));
+
+    await useSettingsStore.getState().loadSettings();
+
+    const next = useSettingsStore.getState();
+    expect(next.isLoaded).toBe(true);
+    expect(next.global.id).toBe('global');
+    expect(next.startupWarning).toContain('Settings failed to load');
+    expect(next.startupWarning).toContain('Dexie open failed');
+
+    next.clearStartupWarning();
+    expect(useSettingsStore.getState().startupWarning).toBeNull();
+
+    getGlobalSettingsSpy.mockRestore();
   });
 
   it('updates per-diary settings through generic and specific actions', () => {

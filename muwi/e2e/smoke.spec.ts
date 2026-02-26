@@ -1,4 +1,7 @@
 import { expect, test } from '@playwright/test';
+import { registerWebRuntimeGuards } from './support/webGuards';
+
+registerWebRuntimeGuards();
 
 test('shelf renders all diary cards', async ({ page }) => {
   await page.goto('/');
