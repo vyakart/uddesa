@@ -4,8 +4,6 @@ import type { ExcalidrawElement } from '@excalidraw/excalidraw/element/types';
 import type { AppState, ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types';
 import { useBlackboardStore } from '@/stores/blackboardStore';
 
-import '@excalidraw/excalidraw/index.css';
-
 interface ExcalidrawWrapperProps {
   onElementsChange?: () => void;
   navigationTarget?: {
@@ -21,6 +19,16 @@ interface BlackboardCanvasTokens {
   grid: string;
   text: string;
   strokeDefault: string;
+}
+
+let excalidrawStylesPromise: Promise<unknown> | null = null;
+
+function ensureExcalidrawStylesLoaded(): Promise<unknown> {
+  if (!excalidrawStylesPromise) {
+    excalidrawStylesPromise = import('@excalidraw/excalidraw/index.css');
+  }
+
+  return excalidrawStylesPromise;
 }
 
 const BLACKBOARD_TOKEN_FALLBACKS: BlackboardCanvasTokens = {
@@ -99,6 +107,10 @@ export function ExcalidrawWrapper({
   const gridPitch = Math.max(8, gridSize * viewport.zoom);
   const gridOffsetX = normalizeGridOffset(viewport.panX, gridPitch);
   const gridOffsetY = normalizeGridOffset(viewport.panY, gridPitch);
+
+  useEffect(() => {
+    void ensureExcalidrawStylesLoaded();
+  }, []);
 
   const handleExcalidrawAPI = useCallback((api: ExcalidrawImperativeAPI | null) => {
     if (!api) {

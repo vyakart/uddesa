@@ -7,7 +7,6 @@ import './styles/themes/dark.css'
 import './styles/utilities.css'
 import './styles/shell.css'
 import './styles/reset.css'
-import './styles/editor.css'
 import './index.css'
 import App from './App.tsx'
 
@@ -29,4 +28,10 @@ if (isWebFallbackHarnessRoute) {
       <App />
     </StrictMode>,
   )
+}
+
+if (import.meta.env.PROD && !window.electronAPI) {
+  void import('./pwa/registerServiceWorker.ts').then(({ registerPwaServiceWorker }) => {
+    registerPwaServiceWorker()
+  })
 }

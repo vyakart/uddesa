@@ -1,0 +1,31 @@
+{
+  "source": "Desktop Lighthouse route thresholds and audit expectations for MUWI web builds.",
+  "lighthouseVersion": "9.6.8",
+  "defaultBaseUrl": "http://127.0.0.1:4173",
+  "thresholds": {
+    "performanceMin": 95,
+    "bestPracticesMin": 90
+  },
+  "routes": [
+    "/",
+    "/scratchpad",
+    "/blackboard",
+    "/personal-diary",
+    "/drafts",
+    "/long-drafts",
+    "/academic"
+  ],
+  "pwaChecks": {
+    "route": "/",
+    "categoryScoreMin": 0.9,
+    "requiredAudits": {
+      "installable-manifest": 1,
+      "service-worker": 1,
+      "splash-screen": 1,
+      "themed-omnibox": 1,
+      "apple-touch-icon": 1,
+      "maskable-icon": 1
+    }
+  }
+}
+

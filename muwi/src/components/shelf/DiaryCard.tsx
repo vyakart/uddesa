@@ -97,7 +97,7 @@ export function DiaryCard({
       </span>
 
       <div className="muwi-diary-card__body">
-        <h3 className="muwi-diary-card__title">{info.name}</h3>
+        <h2 className="muwi-diary-card__title">{info.name}</h2>
         <p className="muwi-diary-card__description">{info.description}</p>
       </div>
 

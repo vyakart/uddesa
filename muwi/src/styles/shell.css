@@ -2827,10 +2827,25 @@
   width: min(960px, 100%);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(2, minmax(180px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-gap-relaxed);
   transition: opacity var(--duration-normal) var(--ease-in),
     transform var(--duration-normal) var(--ease-in);
+}
+
+@media (max-width: 480px) {
+  .muwi-shelf {
+    padding-inline: var(--space-4);
+    padding-top: var(--space-8);
+  }
+
+  .muwi-shelf__grid {
+    gap: var(--space-3);
+  }
+
+  .muwi-diary-card {
+    padding: var(--space-4);
+  }
 }
 
 @media (min-width: 768px) {
@@ -2867,7 +2882,7 @@
   margin: auto auto 0;
   text-align: center;
   font-size: var(--font-size-xs);
-  color: var(--color-text-tertiary);
+  color: var(--color-text-secondary);
 }
 
 .muwi-shelf[data-transitioning='true'] .muwi-shelf__grid {
@@ -2922,7 +2937,7 @@
 .muwi-diary-card__meta {
   margin: 0;
   font-size: var(--font-size-xs);
-  color: var(--color-text-tertiary);
+  color: var(--color-text-secondary);
 }
 
 .muwi-diary-card:hover {

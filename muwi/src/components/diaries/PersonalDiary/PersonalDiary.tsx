@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, type CSSProperties } from 'react';
 import { addDays, format, parseISO, subDays } from 'date-fns';
-import { Button, DiaryLayout } from '@/components/common';
+import { Button } from '@/components/common/Button';
+import { DiaryLayout } from '@/components/common/DiaryLayout';
 import { usePersonalDiaryStore } from '@/stores/personalDiaryStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { defaultPersonalDiarySettings } from '@/types/diary';

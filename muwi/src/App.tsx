@@ -10,7 +10,6 @@ import { useSettingsStore } from '@/stores/settingsStore';
 import { useGlobalShortcuts, usePasteHandler } from '@/hooks';
 import { applyThemeToDocument, getSystemPrefersDark, resolveTheme, watchSystemTheme } from '@/utils/theme';
 import { Shelf } from '@/components/shelf';
-import { CommandPalette } from '@/components/common/CommandPalette';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { buildPathFromState, parseAppRoute, routeMatchesState } from '@/utils/appRouter';
 import { installGlobalRuntimeDiagnostics } from '@/utils/runtimeDiagnostics';
@@ -44,6 +43,11 @@ const LongDrafts = lazy(async () => {
 const Academic = lazy(async () => {
   const module = await import('@/components/diaries/academic');
   return { default: module.Academic };
+});
+
+const CommandPalette = lazy(async () => {
+  const module = await import('@/components/common/CommandPalette');
+  return { default: module.CommandPalette };
 });
 
 const diaryDisplayNames: Record<DiaryType, string> = {
@@ -119,6 +123,74 @@ function DiaryLoadingState({ diary }: { diary: DiaryType }) {
         </aside>
       </div>
     </main>
+  );
+}
+
+function CommandPaletteFallback() {
+  return (
+    <div className="muwi-command-palette-backdrop" aria-hidden="true">
+      <div className="muwi-command-palette">
+        <div className="muwi-command-palette__input-row">
+          <div className="muwi-command-palette__search-icon" />
+          <div
+            className="h-4 w-40 animate-pulse rounded [background-color:var(--color-bg-secondary)] motion-reduce:animate-none"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LazyCommandPalette() {
+  const isCommandPaletteOpen = useAppStore((state) => state.isCommandPaletteOpen);
+  const [hasOpenedPalette, setHasOpenedPalette] = useState(false);
+
+  useEffect(() => {
+    if (isCommandPaletteOpen) {
+      setHasOpenedPalette(true);
+    }
+  }, [isCommandPaletteOpen]);
+
+  if (!hasOpenedPalette) {
+    return null;
+  }
+
+  return (
+    <Suspense fallback={isCommandPaletteOpen ? <CommandPaletteFallback /> : null}>
+      <CommandPalette />
+    </Suspense>
+  );
+}
+
+function OfflineStatusBanner() {
+  const [isOffline, setIsOffline] = useState(() => !navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  if (!isOffline) {
+    return null;
+  }
+
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      className="muwi-chrome-text border-b px-4 py-2 text-sm [background-color:var(--color-bg-secondary)] [border-color:var(--color-border-default)] [color:var(--color-text-secondary)]"
+      data-testid="app-offline-banner"
+    >
+      Offline mode: MUWI shell is cached. Local browser data may still be available; network actions are paused.
+    </div>
   );
 }
 
@@ -268,9 +340,10 @@ function App() {
   if (currentView === 'shelf' || !activeDiary) {
     return (
       <>
+        <OfflineStatusBanner />
         {warningBanner}
         <Shelf />
-        <CommandPalette />
+        <LazyCommandPalette />
       </>
     );
   }
@@ -297,13 +370,14 @@ function App() {
 
   return (
     <>
+      <OfflineStatusBanner />
       {warningBanner}
       <ErrorBoundary key={activeDiary} onNavigateHome={() => useAppStore.getState().closeDiary()}>
         <Suspense fallback={<DiaryLoadingState diary={activeDiary} />}>
           {renderDiary()}
         </Suspense>
       </ErrorBoundary>
-      <CommandPalette />
+      <LazyCommandPalette />
     </>
   );
 }

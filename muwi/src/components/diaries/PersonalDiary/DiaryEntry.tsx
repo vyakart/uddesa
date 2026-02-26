@@ -4,12 +4,14 @@ import Placeholder from '@tiptap/extension-placeholder';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import { format, parseISO } from 'date-fns';
-import { Button, PasskeyPrompt } from '@/components/common';
+import { Button } from '@/components/common/Button';
+import { PasskeyPrompt } from '@/components/common/PasskeyPrompt';
 import { useContentLocking, useEditorShortcuts } from '@/hooks';
 import { useAppStore } from '@/stores/appStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { DatePicker } from './DatePicker';
 import type { DiaryEntry as DiaryEntryType, PersonalDiarySettings } from '@/types/diary';
+import type { ReactNode } from 'react';
 
 // Helper to safely convert entry.date to Date object (handles both string and Date)
 function toDate(date: string | Date): Date {
@@ -92,7 +94,7 @@ function getEditorBackground(settings: PersonalDiarySettings): string {
 interface PersonalToolbarButtonProps {
   onClick: () => void;
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
   isActive?: boolean;
 }
 

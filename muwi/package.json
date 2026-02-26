@@ -21,6 +21,8 @@
     "perf:baseline:web": "node scripts/web/run-perf-baseline.mjs",
     "perf:budget:check": "node scripts/web/check-perf-budget.mjs",
     "bundle:budget:check": "node scripts/web/check-bundle-budget.mjs",
+    "lighthouse:routes:desktop": "node scripts/web/run-lighthouse-desktop-routes.mjs",
+    "lighthouse:routes:desktop:assert": "node scripts/web/run-lighthouse-desktop-routes.mjs --assert",
     "smoke:netlify": "node scripts/web/smoke-netlify.mjs",
     "audit:deps:json": "npm audit --json",
     "audit:deps:summary": "node scripts/security/summarize-npm-audit.mjs",
@@ -90,6 +92,7 @@
     "vite": "^7.2.4",
     "vite-plugin-electron": "^0.29.0",
     "vite-plugin-electron-renderer": "^0.14.6",
+    "vite-plugin-pwa": "^1.2.0",
     "vitest": "^4.0.17"
   },
   "overrides": {

@@ -39,6 +39,16 @@ For every checklist line, record:
 
 - [ ] Bundle budget checker passes
 - [ ] Perf baseline budget checker passes
+- [ ] Lighthouse desktop route audit matrix passes (`/`, `/scratchpad`, `/blackboard`, `/personal-diary`, `/drafts`, `/long-drafts`, `/academic`)
+- [ ] Lighthouse artifacts uploaded (JSON summary + route reports)
+
+## PWA Installability + Offline Shell
+
+- [ ] `manifest.webmanifest` served and valid
+- [ ] Service worker registers in production web build (not Electron)
+- [ ] Lighthouse PWA installability audits pass (`installable-manifest`, `service-worker`, icons, splash, theme color)
+- [ ] Offline shell fallback renders on refresh while disconnected
+- [ ] Update flow validated after redeploy (service worker refresh/update behavior)
 
 ## Manual Evidence (Blocking)
 
@@ -53,8 +63,14 @@ For every checklist line, record:
 
 - [ ] `netlify.toml` matches live settings
 - [ ] SPA rewrite verified on production URL
+- [ ] PWA manifest + service worker files cached/served with expected headers
 - [ ] Rollback procedure documented
 - [ ] Rollback verification smoke documented
+
+## PWA Update Troubleshooting Notes
+
+- [ ] Hard refresh steps documented for stale-cache recovery
+- [ ] Browser-specific uninstall/reinstall note documented (if install prompt behavior gets sticky)
 
 ## Share Readiness
 

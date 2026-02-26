@@ -39,6 +39,19 @@ const FOCUSABLE_SELECTOR =
 
 type ShellBreakpoint = 'overlay' | 'compact' | 'standard' | 'wide';
 
+let diaryLayoutStylesPromise: Promise<unknown> | null = null;
+
+function ensureDiaryLayoutStylesLoaded(): Promise<unknown> {
+  if (!diaryLayoutStylesPromise) {
+    diaryLayoutStylesPromise = Promise.all([
+      import('@/styles/editor.css'),
+      import('@/styles/fonts-content.css'),
+    ]);
+  }
+
+  return diaryLayoutStylesPromise;
+}
+
 function resolveShellBreakpoint(width: number): ShellBreakpoint {
   if (width < BREAKPOINT_OVERLAY) {
     return 'overlay';
@@ -109,6 +122,10 @@ export function DiaryLayout({
   const computedRightPanelTitle =
     rightPanelTitle ??
     (rightPanelState.panelType ? PANEL_TITLE_MAP[rightPanelState.panelType] ?? rightPanelState.panelType : 'Panel');
+
+  useEffect(() => {
+    void ensureDiaryLayoutStylesLoaded();
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {

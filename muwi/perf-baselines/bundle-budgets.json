@@ -5,7 +5,11 @@
     "regressionPercentMax": 10
   },
   "forbiddenIndexPreloadPrefixes": [
-    "diary-"
+    "diary-",
+    "academic-citation-",
+    "academic-reference-tools-",
+    "academic-template-selector-",
+    "blackboard-"
   ],
   "chunkBudgets": [
     {

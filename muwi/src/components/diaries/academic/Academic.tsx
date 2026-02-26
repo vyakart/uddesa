@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useMemo, useState, useCallback } from 'react';
 import { DiaryLayout } from '@/components/common/DiaryLayout';
-import { Toolbar, type ToolbarItem } from '@/components/common';
+import { Toolbar } from '@/components/common/Toolbar';
+import type { ToolbarItem } from '@/components/common/Toolbar';
 import {
   useAppStore,
   selectRightPanel,

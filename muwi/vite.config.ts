@@ -2,12 +2,24 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import electron from 'vite-plugin-electron'
 import renderer from 'vite-plugin-electron-renderer'
+import { VitePWA } from 'vite-plugin-pwa'
 import path from 'path'
 
 const isElectron =
   process.env.MUWI_ELECTRON_BUILD === 'true' ||
   process.env.ELECTRON === 'true' ||
   process.env.npm_lifecycle_event?.startsWith('electron:') === true
+
+const modulePreloadDenyPrefixes = [
+  'diary-',
+  'academic-citation-',
+  'academic-reference-tools-',
+  'academic-template-selector-',
+  'blackboard-',
+]
+
+const shouldPreloadDependency = (dep: string): boolean =>
+  !modulePreloadDenyPrefixes.some((prefix) => dep.includes(prefix))
 
 const manualChunks = (id: string): string | undefined => {
   if (id.includes('/src/components/diaries/blackboard/ExcalidrawWrapper.tsx')) {
@@ -86,6 +98,101 @@ const manualChunks = (id: string): string | undefined => {
 export default defineConfig({
   plugins: [
     react(),
+    ...(!isElectron
+      ? [
+          VitePWA({
+            registerType: 'autoUpdate',
+            injectRegister: false,
+            includeAssets: [
+              'robots.txt',
+              'apple-touch-icon.png',
+              'pwa-192x192.png',
+              'pwa-512x512.png',
+              'maskable-icon-512x512.png',
+            ],
+            manifest: {
+              id: '/?source=pwa',
+              name: 'MUWI',
+              short_name: 'MUWI',
+              description: 'Multi-Utility Writing Interface for scratchpads, drafts, and academic writing.',
+              start_url: '/',
+              scope: '/',
+              display: 'standalone',
+              background_color: '#f5f1e8',
+              theme_color: '#2f5f4f',
+              icons: [
+                {
+                  src: '/pwa-192x192.png',
+                  sizes: '192x192',
+                  type: 'image/png',
+                },
+                {
+                  src: '/pwa-512x512.png',
+                  sizes: '512x512',
+                  type: 'image/png',
+                },
+                {
+                  src: '/maskable-icon-512x512.png',
+                  sizes: '512x512',
+                  type: 'image/png',
+                  purpose: 'maskable',
+                },
+              ],
+            },
+            workbox: {
+              globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest,woff2}'],
+              globIgnores: [
+                '**/assets/diary-*.js',
+                '**/assets/blackboard-*.js',
+                '**/assets/academic-citation-*.js',
+              ],
+              navigateFallback: '/offline.html',
+              navigateFallbackDenylist: [/^\/assets\//, /^\/__e2e__\//, /^\/api\//],
+              cleanupOutdatedCaches: true,
+              runtimeCaching: [
+                {
+                  urlPattern: ({ request }) => request.mode === 'navigate',
+                  handler: 'NetworkFirst',
+                  options: {
+                    cacheName: 'pages',
+                    networkTimeoutSeconds: 3,
+                    expiration: {
+                      maxEntries: 20,
+                      maxAgeSeconds: 7 * 24 * 60 * 60,
+                    },
+                  },
+                },
+                {
+                  urlPattern: ({ request }) =>
+                    ['style', 'script', 'worker', 'font'].includes(request.destination),
+                  handler: 'CacheFirst',
+                  options: {
+                    cacheName: 'assets-static',
+                    expiration: {
+                      maxEntries: 100,
+                      maxAgeSeconds: 30 * 24 * 60 * 60,
+                    },
+                  },
+                },
+                {
+                  urlPattern: ({ request }) => request.destination === 'image',
+                  handler: 'StaleWhileRevalidate',
+                  options: {
+                    cacheName: 'assets-images',
+                    expiration: {
+                      maxEntries: 100,
+                      maxAgeSeconds: 30 * 24 * 60 * 60,
+                    },
+                  },
+                },
+              ],
+            },
+            devOptions: {
+              enabled: false,
+            },
+          }),
+        ]
+      : []),
     // Only include Electron plugins when building for Electron
     ...(isElectron
       ? [
@@ -152,7 +259,7 @@ export default defineConfig({
           return deps
         }
 
-        return deps.filter((dep) => !dep.includes('diary-'))
+        return deps.filter(shouldPreloadDependency)
       },
     },
     rollupOptions: {

@@ -61,3 +61,56 @@ Date: 2026-02-24
 
 - Local web-gate validation + checklist evidence: `muwi/audit/2026-02/report/2026-02-26-web-gates-validation.md`
 - Added web fallback E2E coverage for backup/export panel browser fallbacks: `muwi/e2e/web-fallback-panels.spec.ts`
+- Lighthouse mobile audit run captured for Netlify preview (`2026-02-26T18:16:39Z`, Moto G4 emulation, Lighthouse `9.6.8`).
+
+### Lighthouse Snapshot (Mobile, Netlify Preview)
+
+- Target URL: `https://69a08dcb9472fe0008624d2b--uddesa.netlify.app/`
+- Category scores:
+  - Performance: `46`
+  - Accessibility: `94`
+  - Best Practices: `92`
+  - SEO: `82`
+  - PWA: `20`
+- Core metrics (simulated mobile):
+  - FCP: `5.3s`
+  - LCP: `6.3s`
+  - TTI: `6.9s`
+  - TBT: `510ms`
+  - CLS: `0.014` (good)
+
+### Key Findings (Most Actionable)
+
+- Initial page is over-fetching deferred feature bundles on shelf load:
+  - `academic-citation-*.js` transferred `~605KB` (resource `~2.65MB`)
+  - `diary-personal-diary-*.js` transferred `~387KB` (resource `~1.27MB`)
+  - Total transfer `~1.12MB` across only `7` requests
+- Lighthouse flags high unused JS on initial load (estimated savings `~454KiB`), with the largest waste in `diary-personal-diary-*.js`.
+- Main-thread long tasks align with bundle execution:
+  - `index-*.js` long task `~486ms`
+  - `diary-personal-diary-*.js` long task `~123ms`
+  - `academic-citation-*.js` long task `~62ms`
+- CSS is mostly unused on the shelf route (estimated unused CSS `~24KB` of `~26KB` stylesheet); stylesheet is also render-blocking (`~140ms` potential savings).
+- Mobile layout overflow present (`content-width` failed): rendered content width exceeded viewport (`408px` vs `360px`).
+
+### Accessibility / SEO Follow-Up Items from Lighthouse
+
+- Accessibility:
+  - Low contrast on `.muwi-diary-card__meta` and `.muwi-shelf__hint` (`#9a9a9e` on white, `11px`)
+  - Heading order invalid (starts with `h3` in card titles without higher-level heading context)
+- SEO:
+  - Missing meta description
+  - `robots.txt` invalid (appears to return `index.html` instead of a robots file)
+
+### Best-Practice / PWA Notes (Lower Priority for Day 5 Perf, Still Open)
+
+- Console warning: CSP `frame-ancestors` delivered via `<meta>` is ignored (should be header-based if required).
+- No web app manifest / service worker / theme color / app icons (`apple-touch-icon`, maskable icon).
+
+### Day 5 Performance Follow-Up Priority (Web)
+
+1. Prevent shelf route from eagerly importing `academic-citation` and `diary-personal-diary` bundles; load only on card open/route transition.
+2. Split/prune route CSS so shelf view ships only shelf-critical styles.
+3. Fix mobile shelf grid overflow (card widths/gap/container math) and re-run Lighthouse mobile.
+4. Raise muted text contrast and add correct heading hierarchy on shelf page.
+5. Add `robots.txt` + meta description for deployed web preview/build.

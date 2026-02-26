@@ -4,14 +4,6 @@
 @import '@fontsource/geist-sans/700.css';
 @import '@fontsource/geist-mono/400.css';
 @import '@fontsource/geist-mono/500.css';
-@import '@fontsource/inter/400.css';
-@import '@fontsource/inter/500.css';
-@import '@fontsource/inter/600.css';
-@import '@fontsource/inter/700.css';
-@import '@fontsource/crimson-pro/400.css';
-@import '@fontsource/crimson-pro/600.css';
-@import '@fontsource/caveat/400.css';
-@import '@fontsource/jetbrains-mono/400.css';
 
 :root {
   --font-family-chrome-sans: 'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui,
