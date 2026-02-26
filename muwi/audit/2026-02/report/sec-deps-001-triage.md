@@ -202,6 +202,8 @@ Outcome:
   - removed vulnerable set: `3.1.2`, `5.1.6`, `9.0.5`
   - observed post-fix set includes: `3.1.5`, `5.1.9`, `9.0.8`, `10.2.2`
 - `npm run build` passed after applying the lockfile refresh (chunk-size warnings unchanged and non-blocking).
+- Post-merge packaging smoke (`electron-builder` path on `main`, `2026-02-26`) executed through macOS packaging for `x64` and `arm64` and produced local artifacts; code signing/notarization were skipped locally due missing credentials as expected:
+  - `muwi/audit/2026-02/outputs/2026-02-26-electron-builder-packaging-smoke-main.txt`
 
 Updated release-risk disposition (Day 9):
 
