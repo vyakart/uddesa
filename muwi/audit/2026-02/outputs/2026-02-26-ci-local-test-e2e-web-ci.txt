@@ -1,0 +1,233 @@
+
+> muwi@0.0.0 test:e2e:web:ci
+> playwright test --config playwright.config.ts
+
+[2m[WebServer] [22m(node:7602) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 33 tests using 4 workers
+
+(node:7641) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7640) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7642) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7639) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7641) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7639) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7642) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7640) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   4 [chromium] › e2e/accessibility-audit.spec.ts:20:1 › keyboard-only focus order follows visual order on shelf and overlays (1.3s)
+  ✓   3 [chromium] › e2e/accessibility-audit.spec.ts:73:1 › screen-reader spot-check via accessibility tree snapshots (2.1s)
+  ✓   2 [chromium] › e2e/long-drafts.spec.ts:6:1 › long drafts flow: create document, add sections, reorder sections (3.9s)
+  ✓   7 [chromium] › e2e/routing-web.spec.ts:14:1 › unknown route falls back to shelf safely (405ms)
+  ✓   8 [chromium] › e2e/smoke.spec.ts:6:1 › shelf renders all diary cards (511ms)
+  ✓   1 [chromium] › e2e/academic.spec.ts:6:1 › academic flow: create paper, add reference, insert citation (5.0s)
+  ✓  10 [chromium] › e2e/web-fallback-panels.spec.ts:7:1 › BackupPanel web fallbacks: download save, file-picker restore, and Electron-only auto-backup limitation (1.0s)
+[phase7-7.15.1-baseline] {"capturedAt":"2026-02-26T17:52:40.234Z","browser":"chromium","startup":{"shelfVisibleMs":641,"route":"/","domContentLoadedMs":472,"loadEventMs":473},"switches":[{"label":"cold:scratchpad","durationMs":949,"route":"/scratchpad","shellBreakpoint":"wide"},{"label":"cold:long-drafts","durationMs":892,"route":"/long-drafts","shellBreakpoint":"wide"},{"label":"cold:blackboard","durationMs":900,"route":"/blackboard","shellBreakpoint":"wide"},{"label":"cold:academic","durationMs":885,"route":"/academic","shellBreakpoint":"wide"},{"label":"warm:academic","durationMs":397,"route":"/academic","shellBreakpoint":"wide"}]}
+  ✓   9 [chromium] › e2e/smoke.spec.ts:20:1 › resize smoke: sidebar and right panel adapt across desktop and narrow widths (1.5s)
+  ✓   5 [chromium] › e2e/performance-baseline.spec.ts:29:1 › performance baseline: startup and shelf-mediated diary switches (5.1s)
+(node:7715) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7716) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  11 [chromium] › e2e/web-fallback-panels.spec.ts:57:1 › ExportPanel web fallback triggers browser download (860ms)
+(node:7715) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7716) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7717) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   6 [chromium] › e2e/routing-web.spec.ts:6:1 › deep-link refresh works for academic and drafts item paths (5.4s)
+(node:7759) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7717) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7759) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  13 [firefox] › e2e/accessibility-audit.spec.ts:20:1 › keyboard-only focus order follows visual order on shelf and overlays (2.2s)
+  ✓  14 [firefox] › e2e/accessibility-audit.spec.ts:73:1 › screen-reader spot-check via accessibility tree snapshots (2.8s)
+  ✓  15 [firefox] › e2e/long-drafts.spec.ts:6:1 › long drafts flow: create document, add sections, reorder sections (5.1s)
+  ✓  18 [firefox] › e2e/routing-web.spec.ts:14:1 › unknown route falls back to shelf safely (1.1s)
+  ✓  12 [firefox] › e2e/academic.spec.ts:6:1 › academic flow: create paper, add reference, insert citation (6.4s)
+  ✓  19 [firefox] › e2e/smoke.spec.ts:6:1 › shelf renders all diary cards (1.0s)
+[phase7-7.15.1-baseline] {"capturedAt":"2026-02-26T17:52:51.176Z","browser":"firefox","startup":{"shelfVisibleMs":614,"route":"/","domContentLoadedMs":427,"loadEventMs":564},"switches":[{"label":"cold:scratchpad","durationMs":1059,"route":"/scratchpad","shellBreakpoint":"wide"},{"label":"cold:long-drafts","durationMs":969,"route":"/long-drafts","shellBreakpoint":"wide"},{"label":"cold:blackboard","durationMs":1225,"route":"/blackboard","shellBreakpoint":"wide"},{"label":"cold:academic","durationMs":972,"route":"/academic","shellBreakpoint":"wide"},{"label":"warm:academic","durationMs":771,"route":"/academic","shellBreakpoint":"wide"}]}
+  ✓  16 [firefox] › e2e/performance-baseline.spec.ts:29:1 › performance baseline: startup and shelf-mediated diary switches (7.3s)
+  ✘  17 [firefox] › e2e/routing-web.spec.ts:6:1 › deep-link refresh works for academic and drafts item paths (6.7s)
+(node:7868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  20 [firefox] › e2e/smoke.spec.ts:20:1 › resize smoke: sidebar and right panel adapt across desktop and narrow widths (3.0s)
+  ✓  22 [firefox] › e2e/web-fallback-panels.spec.ts:57:1 › ExportPanel web fallback triggers browser download (2.0s)
+  ✓  21 [firefox] › e2e/web-fallback-panels.spec.ts:7:1 › BackupPanel web fallbacks: download save, file-picker restore, and Electron-only auto-backup limitation (3.1s)
+(node:7868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7869) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7870) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7875) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7869) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7870) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7875) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  25 [webkit] › e2e/accessibility-audit.spec.ts:73:1 › screen-reader spot-check via accessibility tree snapshots (3.3s)
+  ✓  26 [webkit] › e2e/long-drafts.spec.ts:6:1 › long drafts flow: create document, add sections, reorder sections (4.2s)
+  ✓  23 [webkit] › e2e/academic.spec.ts:6:1 › academic flow: create paper, add reference, insert citation (4.9s)
+  ✓  29 [webkit] › e2e/routing-web.spec.ts:14:1 › unknown route falls back to shelf safely (604ms)
+  ✓  30 [webkit] › e2e/smoke.spec.ts:6:1 › shelf renders all diary cards (582ms)
+  ✘  24 [webkit] › e2e/accessibility-audit.spec.ts:20:1 › keyboard-only focus order follows visual order on shelf and overlays (7.4s)
+(node:8015) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  31 [webkit] › e2e/smoke.spec.ts:20:1 › resize smoke: sidebar and right panel adapt across desktop and narrow widths (2.0s)
+[phase7-7.15.1-baseline] {"capturedAt":"2026-02-26T17:53:03.785Z","browser":"webkit","startup":{"shelfVisibleMs":419,"route":"/","domContentLoadedMs":230,"loadEventMs":248},"switches":[{"label":"cold:scratchpad","durationMs":936,"route":"/scratchpad","shellBreakpoint":"wide"},{"label":"cold:long-drafts","durationMs":900,"route":"/long-drafts","shellBreakpoint":"wide"},{"label":"cold:blackboard","durationMs":949,"route":"/blackboard","shellBreakpoint":"wide"},{"label":"cold:academic","durationMs":1000,"route":"/academic","shellBreakpoint":"wide"},{"label":"warm:academic","durationMs":409,"route":"/academic","shellBreakpoint":"wide"}]}
+(node:8015) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  27 [webkit] › e2e/performance-baseline.spec.ts:29:1 › performance baseline: startup and shelf-mediated diary switches (5.5s)
+  ✓  32 [webkit] › e2e/web-fallback-panels.spec.ts:57:1 › ExportPanel web fallback triggers browser download (1.3s)
+  ✘  28 [webkit] › e2e/routing-web.spec.ts:6:1 › deep-link refresh works for academic and drafts item paths (5.8s)
+  ✓  33 [webkit] › e2e/web-fallback-panels.spec.ts:7:1 › BackupPanel web fallbacks: download save, file-picker restore, and Electron-only auto-backup limitation (1.8s)
+
+
+  1) [chromium] › e2e/routing-web.spec.ts:6:1 › deep-link refresh works for academic and drafts item paths 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('button', { name: 'Back to shelf' })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('button', { name: 'Back to shelf' })[22m
+
+
+       6 | test('deep-link refresh works for academic and drafts item paths', async ({ page }) => {
+       7 |   await page.goto('/academic');
+    >  8 |   await expect(page.getByRole('button', { name: 'Back to shelf' })).toBeVisible();
+         |                                                                     ^
+       9 |
+      10 |   await page.goto('/drafts/draft-123');
+      11 |   await expect(page.getByRole('button', { name: 'Back to shelf' })).toBeVisible();
+        at /Users/ziksartin/tools/uddesa/muwi/e2e/routing-web.spec.ts:8:69
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/routing-web-deep-link-refr-e0daa-demic-and-drafts-item-paths-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/routing-web-deep-link-refr-e0daa-demic-and-drafts-item-paths-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/routing-web-deep-link-refr-e0daa-demic-and-drafts-item-paths-chromium/error-context.md
+
+  2) [firefox] › e2e/routing-web.spec.ts:6:1 › deep-link refresh works for academic and drafts item paths 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('button', { name: 'Back to shelf' })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('button', { name: 'Back to shelf' })[22m
+
+
+       6 | test('deep-link refresh works for academic and drafts item paths', async ({ page }) => {
+       7 |   await page.goto('/academic');
+    >  8 |   await expect(page.getByRole('button', { name: 'Back to shelf' })).toBeVisible();
+         |                                                                     ^
+       9 |
+      10 |   await page.goto('/drafts/draft-123');
+      11 |   await expect(page.getByRole('button', { name: 'Back to shelf' })).toBeVisible();
+        at /Users/ziksartin/tools/uddesa/muwi/e2e/routing-web.spec.ts:8:69
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/routing-web-deep-link-refr-e0daa-demic-and-drafts-item-paths-firefox/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/routing-web-deep-link-refr-e0daa-demic-and-drafts-item-paths-firefox/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/routing-web-deep-link-refr-e0daa-demic-and-drafts-item-paths-firefox/error-context.md
+
+  3) [webkit] › e2e/accessibility-audit.spec.ts:20:1 › keyboard-only focus order follows visual order on shelf and overlays 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"Open Scratchpad"[39m
+    Received: [31m"MUWIScratchpadQuick capture of fleeting ideasNo entries yetBlackboardVisual thinking and idea mappingNo entries yetPersonal DiaryDaily journaling with dated entriesNo entries yetDraftsEssays, posts, and shorter piecesNo entries yetLong DraftsBooks, theses, and long-form workNo entries yetAcademic PapersResearch writing with citationsNo entries yet⌘K to open command palette"[39m
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      39 |   for (const expected of expectedShelfOrder) {
+      40 |     await page.keyboard.press('Tab');
+    > 41 |     await expect.poll(() => page.evaluate(activeElementLabel)).toBe(expected);
+         |     ^
+      42 |   }
+      43 |
+      44 |   await page.keyboard.press(`${mod}+,`);
+        at /Users/ziksartin/tools/uddesa/muwi/e2e/accessibility-audit.spec.ts:41:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/accessibility-audit-keyboa-7e260-order-on-shelf-and-overlays-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/accessibility-audit-keyboa-7e260-order-on-shelf-and-overlays-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/accessibility-audit-keyboa-7e260-order-on-shelf-and-overlays-webkit/error-context.md
+
+  4) [webkit] › e2e/routing-web.spec.ts:6:1 › deep-link refresh works for academic and drafts item paths 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('button', { name: 'Back to shelf' })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('button', { name: 'Back to shelf' })[22m
+
+
+       6 | test('deep-link refresh works for academic and drafts item paths', async ({ page }) => {
+       7 |   await page.goto('/academic');
+    >  8 |   await expect(page.getByRole('button', { name: 'Back to shelf' })).toBeVisible();
+         |                                                                     ^
+       9 |
+      10 |   await page.goto('/drafts/draft-123');
+      11 |   await expect(page.getByRole('button', { name: 'Back to shelf' })).toBeVisible();
+        at /Users/ziksartin/tools/uddesa/muwi/e2e/routing-web.spec.ts:8:69
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/routing-web-deep-link-refr-e0daa-demic-and-drafts-item-paths-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/routing-web-deep-link-refr-e0daa-demic-and-drafts-item-paths-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/routing-web-deep-link-refr-e0daa-demic-and-drafts-item-paths-webkit/error-context.md
+
+  4 failed
+    [chromium] › e2e/routing-web.spec.ts:6:1 › deep-link refresh works for academic and drafts item paths 
+    [firefox] › e2e/routing-web.spec.ts:6:1 › deep-link refresh works for academic and drafts item paths 
+    [webkit] › e2e/accessibility-audit.spec.ts:20:1 › keyboard-only focus order follows visual order on shelf and overlays 
+    [webkit] › e2e/routing-web.spec.ts:6:1 › deep-link refresh works for academic and drafts item paths 
+  29 passed (34.8s)

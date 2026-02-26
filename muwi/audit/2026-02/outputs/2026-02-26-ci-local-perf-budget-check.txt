@@ -1,0 +1,12 @@
+
+> muwi@0.0.0 perf:budget:check
+> node scripts/web/check-perf-budget.mjs
+
+[perf-budget] Checking performance samples
+- startup:shelfVisibleMs: actual 323ms, baseline 383ms, max 536ms
+- cold:scratchpad: actual 942ms, baseline 937ms, max 1265ms
+- cold:long-drafts: actual 903ms, baseline 892ms, max 1204ms
+- cold:academic: actual 893ms, baseline 899ms, max 1214ms
+- cold:blackboard: actual 1024ms, baseline 1028ms, max 1439ms
+- warm:academic: actual 393ms, baseline 413ms, max 537ms
+[perf-budget] PASS

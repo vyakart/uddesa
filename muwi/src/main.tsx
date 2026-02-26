@@ -11,8 +11,22 @@ import './styles/editor.css'
 import './index.css'
 import App from './App.tsx'
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+const root = createRoot(document.getElementById('root')!)
+const isWebFallbackHarnessRoute =
+  import.meta.env.DEV && window.location.pathname === '/__e2e__/web-fallbacks'
+
+if (isWebFallbackHarnessRoute) {
+  void import('./e2e/WebFallbackHarness.tsx').then(({ WebFallbackHarness }) => {
+    root.render(
+      <StrictMode>
+        <WebFallbackHarness />
+      </StrictMode>,
+    )
+  })
+} else {
+  root.render(
+    <StrictMode>
+      <App />
+    </StrictMode>,
+  )
+}

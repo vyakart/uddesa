@@ -1,0 +1,42 @@
+{
+  "capturedAt": "2026-02-26T17:48:15.827Z",
+  "browser": "chromium",
+  "startup": {
+    "shelfVisibleMs": 323,
+    "route": "/",
+    "domContentLoadedMs": 156,
+    "loadEventMs": 162
+  },
+  "switches": [
+    {
+      "label": "cold:scratchpad",
+      "durationMs": 942,
+      "route": "/scratchpad",
+      "shellBreakpoint": "wide"
+    },
+    {
+      "label": "cold:long-drafts",
+      "durationMs": 903,
+      "route": "/long-drafts",
+      "shellBreakpoint": "wide"
+    },
+    {
+      "label": "cold:blackboard",
+      "durationMs": 1024,
+      "route": "/blackboard",
+      "shellBreakpoint": "wide"
+    },
+    {
+      "label": "cold:academic",
+      "durationMs": 893,
+      "route": "/academic",
+      "shellBreakpoint": "wide"
+    },
+    {
+      "label": "warm:academic",
+      "durationMs": 393,
+      "route": "/academic",
+      "shellBreakpoint": "wide"
+    }
+  ]
+}

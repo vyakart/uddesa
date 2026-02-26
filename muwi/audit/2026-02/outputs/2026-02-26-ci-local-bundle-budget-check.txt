@@ -1,0 +1,10 @@
+
+> muwi@0.0.0 bundle:budget:check
+> node scripts/web/check-bundle-budget.mjs
+
+[bundle-budget] initial assets referenced by index.html
+- index-D-wAkuDQ.js: 199,892 B
+- academic-citation-B6Tdhcn5.js: 2,649,818 B
+- index-BJTFnNfe.css: 139,360 B
+[bundle-budget] total initial JS/CSS bytes: 2,989,070 B
+[bundle-budget] PASS

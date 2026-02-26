@@ -56,3 +56,8 @@ Date: 2026-02-24
 1. Run `muwi/audit/2026-02/report/day5-manual-react-profiler-checklist.md` and fill `muwi/audit/2026-02/report/day5-manual-react-profiler-results.md`.
 2. Consider extending metadata coalescing to create/delete/reorder flows if profiling still shows write pressure outside `updateSection()`.
 3. Run Blackboard large-canvas runtime profiling scenario (500+ elements) and attach screenshots/FPS observations.
+
+## 2026-02-26 Follow-Up (Web Gates / Launch Checklist)
+
+- Local web-gate validation + checklist evidence: `muwi/audit/2026-02/report/2026-02-26-web-gates-validation.md`
+- Added web fallback E2E coverage for backup/export panel browser fallbacks: `muwi/e2e/web-fallback-panels.spec.ts`

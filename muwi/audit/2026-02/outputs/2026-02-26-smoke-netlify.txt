@@ -1,0 +1,16 @@
+
+> muwi@0.0.0 smoke:netlify
+> node scripts/web/smoke-netlify.mjs
+
+[smoke-netlify] FAIL TypeError: fetch failed
+    at node:internal/deps/undici/undici:15482:13
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async main (file:///Users/ziksartin/tools/uddesa/muwi/scripts/web/smoke-netlify.mjs:12:22) {
+  [cause]: Error: getaddrinfo ENOTFOUND uddesa.netlify.app
+      at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+    errno: -3008,
+    code: 'ENOTFOUND',
+    syscall: 'getaddrinfo',
+    hostname: 'uddesa.netlify.app'
+  }
+}
