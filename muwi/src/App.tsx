@@ -210,6 +210,18 @@ function App() {
 
   // Sync URL when store-based navigation changes.
   useEffect(() => {
+    const latestState = useAppStore.getState();
+
+    // Route-sync and popstate handlers can update the store earlier in the same effect flush.
+    // Skip URL writes from a stale render snapshot and let the next render apply the real state.
+    if (
+      latestState.currentView !== currentView ||
+      latestState.activeDiary !== activeDiary ||
+      latestState.activeItemId !== activeItemId
+    ) {
+      return;
+    }
+
     const targetPath = buildPathFromState(currentView, activeDiary, activeItemId);
     if (window.location.pathname === targetPath) {
       return;
