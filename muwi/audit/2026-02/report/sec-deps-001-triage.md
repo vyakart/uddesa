@@ -160,6 +160,55 @@ Important operational note:
 - `muwi/package.json` pins the dependency via `git+https://` to a public GitHub fork commit SHA for reproducibility.
 - `npm@11.4.2` canonicalized the lockfile `resolved` URL to `git+ssh://git@github.com/...` during install. If installs run on environments without GitHub SSH access, configure Git URL rewriting (`ssh://git@github.com/` -> `https://github.com/`) or use an internal package/tarball publication.
 
+## Day 9 Dev / Build-Tooling Minimatch Remediation (2026-02-26)
+
+Decision path selected and executed: `Lockfile-only remediation for remaining minimatch high (dev/build-tooling path)`.
+
+Implementation summary:
+
+- Confirmed `main` still had `1` remaining `high` (`minimatch`) and `0` `moderate` findings in a live `npm audit` re-run (`2026-02-25` snapshot).
+- Captured a runtime-only (`--omit=dev`) audit on `main`, which reported `0` vulnerabilities (`2026-02-26`), confirming the remaining finding was dev/build-tooling scoped.
+- Created a dedicated remediation branch: `sec-deps-001-minimatch-lockfile-only`.
+- Applied `npm audit fix --package-lock-only` and regenerated only `muwi/package-lock.json` (no `package.json` changes).
+- Verified and merged via GitHub PR `#2`:
+  - remediation commit: `c033926` (`fix(security): remediate minimatch audit via lockfile refresh`)
+  - merge commit on `main`: `dc00bdc` (`Merge pull request #2 from vyakart/sec-deps-001-minimatch-lockfile-only`)
+
+Lockfile remediation notes:
+
+- The lockfile refresh updated the vulnerable `minimatch` copies in the build-tooling chain and related transitive packages (notably `brace-expansion`/`balanced-match`).
+- `npm` also refreshed `rollup` and its optional platform binaries to patch-level `4.59.0` during the lockfile-only pass.
+- `npm audit fix --package-lock-only --json` reported an inconsistent `"changed": 0` despite a real lockfile diff; the embedded audit payload still reported `0` vulnerabilities.
+
+Evidence (live verification artifacts):
+
+- Pre-fix live audit on `main` (full audit):
+  - `muwi/audit/2026-02/outputs/2026-02-25-audit-deps-main-live-json.txt`
+  - `muwi/audit/2026-02/outputs/2026-02-25-audit-deps-main-live-json.txt.summary.md`
+- Runtime-only proof on `main` (`--omit=dev`):
+  - `muwi/audit/2026-02/outputs/2026-02-26-audit-deps-main-live-omit-dev-json.txt`
+  - `muwi/audit/2026-02/outputs/2026-02-26-audit-deps-main-live-omit-dev-json.txt.summary.md`
+- Lockfile-only remediation trial + verification:
+  - `muwi/audit/2026-02/outputs/2026-02-26-audit-fix-package-lock-only-minimatch-trial.json`
+  - `muwi/audit/2026-02/outputs/2026-02-26-audit-deps-minimatch-lockfile-trial-after-json.txt`
+  - `muwi/audit/2026-02/outputs/2026-02-26-audit-deps-minimatch-lockfile-trial-after-json.txt.summary.md`
+  - `muwi/audit/2026-02/outputs/2026-02-26-npm-ls-minimatch-lockfile-trial-after.txt`
+  - `muwi/audit/2026-02/outputs/2026-02-26-minimatch-lockfile-trial-build.txt`
+
+Outcome:
+
+- Post-fix full `npm audit` reported `0` vulnerabilities (including dev dependencies) on the remediation branch before merge.
+- `npm ls minimatch` confirmed vulnerable versions were removed from the installed tree:
+  - removed vulnerable set: `3.1.2`, `5.1.6`, `9.0.5`
+  - observed post-fix set includes: `3.1.5`, `5.1.9`, `9.0.8`, `10.2.2`
+- `npm run build` passed after applying the lockfile refresh (chunk-size warnings unchanged and non-blocking).
+
+Updated release-risk disposition (Day 9):
+
+- The Day 8 residual note that `SEC-DEPS-001` risk was limited to the `minimatch` build-tooling chain is superseded by this Day 9 remediation pass.
+- `SEC-DEPS-001` Excalidraw/Mermaid runtime-path moderates remain remediated (Day 8), and the remaining dev/build-tooling `minimatch` high was remediated and merged on `2026-02-26`.
+- Based on the captured `2026-02-26` evidence, dependency audit findings from this triage track are closed at this time (`0` runtime/prod findings and `0` total findings in the verified lockfile-remediation branch state).
+
 ## Runtime / Mixed-Scope Vulnerabilities (prioritize for release risk)
 
 Historical snapshot retained from earlier triage passes; see `Day 8 Dependency-Level Remediation Pass (2026-02-25)` above for current Excalidraw-chain status (`0` moderate remaining in current audit).
@@ -169,6 +218,8 @@ Historical snapshot retained from earlier triage passes; see `Day 8 Dependency-L
 | @excalidraw/excalidraw | moderate | direct-runtime | runtime | runtime-path-possible | n/a | node_modules/@excalidraw/excalidraw | @excalidraw/excalidraw@0.17.6 (major) |
 
 ## Dev / Build Tooling Vulnerabilities
+
+Historical snapshot retained from earlier triage passes; see `Day 9 Dev / Build-Tooling Minimatch Remediation (2026-02-26)` above for the merged `minimatch` remediation and current status.
 
 | Package | Sev | Direct | Scope | Exposure | Top-level effects | Sample lock paths | Fix |
 | --- | --- | --- | --- | --- | --- | --- | --- |
