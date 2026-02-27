@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -10,8 +10,12 @@ import {
   selectAcademicViewMode,
   selectCurrentPaper,
 } from '@/stores/academicStore';
-import { CitationPicker } from './CitationPicker';
 import { useCitationShortcut } from './useCitationShortcut';
+
+const CitationPicker = lazy(async () => {
+  const module = await import('./CitationPicker');
+  return { default: module.CitationPicker };
+});
 
 interface AcademicSectionEditorProps {
   section: AcademicSection | null;
@@ -380,11 +384,13 @@ export function AcademicSectionEditor({
         </div>
 
         {showCitationPicker ? (
-          <CitationPicker
-            onInsert={handleInsertCitation}
-            onClose={() => setShowCitationPicker(false)}
-            position={citationPickerPosition}
-          />
+          <Suspense fallback={<div className="muwi-academic-sidebar__empty">Loading citations...</div>}>
+            <CitationPicker
+              onInsert={handleInsertCitation}
+              onClose={() => setShowCitationPicker(false)}
+              position={citationPickerPosition}
+            />
+          </Suspense>
         ) : null}
       </div>
     );
@@ -722,7 +728,9 @@ export function AcademicSectionEditor({
             }
           }}
         >
-          <CitationPicker onInsert={handleInsertCitation} onClose={() => setShowCitationPicker(false)} />
+          <Suspense fallback={<div className="muwi-academic-sidebar__empty">Loading citations...</div>}>
+            <CitationPicker onInsert={handleInsertCitation} onClose={() => setShowCitationPicker(false)} />
+          </Suspense>
         </div>
       ) : null}
     </div>

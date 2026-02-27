@@ -131,50 +131,53 @@ describe('AcademicSectionEditor', () => {
     expect(screen.getByText('Select a section or create a new one')).toBeInTheDocument();
   });
 
-  it('renders normal mode, auto-saves title/content, and inserts citations', () => {
+  it('renders normal mode, auto-saves title/content, and inserts citations', async () => {
     vi.useFakeTimers();
-    const onTitleChange = vi.fn();
-    const onContentChange = vi.fn();
+    try {
+      const onTitleChange = vi.fn();
+      const onContentChange = vi.fn();
 
-    render(
-      <AcademicSectionEditor
-        section={makeSection()}
-        onTitleChange={onTitleChange}
-        onContentChange={onContentChange}
-      />
-    );
+      render(
+        <AcademicSectionEditor
+          section={makeSection()}
+          onTitleChange={onTitleChange}
+          onContentChange={onContentChange}
+        />
+      );
 
-    fireEvent.change(screen.getByPlaceholderText('Section Title'), {
-      target: { value: 'Updated Academic Intro' },
-    });
-    act(() => {
-      vi.advanceTimersByTime(500);
-    });
-    expect(onTitleChange).toHaveBeenCalledWith('Updated Academic Intro');
-
-    act(() => {
-      capturedOnUpdate?.({
-        editor: {
-          getHTML: () => '<p>one two three</p>',
-          getText: () => 'one two three',
-        },
+      fireEvent.change(screen.getByPlaceholderText('Section Title'), {
+        target: { value: 'Updated Academic Intro' },
       });
-      vi.advanceTimersByTime(500);
-    });
-    expect(onContentChange).toHaveBeenCalledWith('<p>one two three</p>');
-    expect(screen.getByText('3 words')).toBeInTheDocument();
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+      expect(onTitleChange).toHaveBeenCalledWith('Updated Academic Intro');
 
-    fireEvent.click(screen.getByTitle('Insert Citation (Ctrl+Shift+C)'));
-    expect(screen.getByTestId('citation-picker')).toBeInTheDocument();
+      act(() => {
+        capturedOnUpdate?.({
+          editor: {
+            getHTML: () => '<p>one two three</p>',
+            getText: () => 'one two three',
+          },
+        });
+        vi.advanceTimersByTime(500);
+      });
+      expect(onContentChange).toHaveBeenCalledWith('<p>one two three</p>');
+      expect(screen.getByText('3 words')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Insert Mock Citation' }));
-    expect(chain.insertContent).toHaveBeenCalledWith('(Doe, 2024)');
-    expect(screen.queryByTestId('citation-picker')).not.toBeInTheDocument();
+      vi.useRealTimers();
+      fireEvent.click(screen.getByTitle('Insert Citation (Ctrl+Shift+C)'));
+      expect(await screen.findByTestId('citation-picker')).toBeInTheDocument();
 
-    fireEvent.keyDown(window, { key: 'C', ctrlKey: true, shiftKey: true });
-    expect(screen.getByTestId('citation-picker')).toBeInTheDocument();
+      fireEvent.click(screen.getByRole('button', { name: 'Insert Mock Citation' }));
+      expect(chain.insertContent).toHaveBeenCalledWith('(Doe, 2024)');
+      expect(screen.queryByTestId('citation-picker')).not.toBeInTheDocument();
 
-    vi.useRealTimers();
+      fireEvent.keyDown(window, { key: 'C', ctrlKey: true, shiftKey: true });
+      expect(await screen.findByTestId('citation-picker')).toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('renders simplified focus mode', () => {
@@ -192,7 +195,7 @@ describe('AcademicSectionEditor', () => {
     expect(screen.getByText('2 words')).toBeInTheDocument();
   });
 
-  it('supports overlay close behavior and active/disabled toolbar branches', () => {
+  it('supports overlay close behavior and active/disabled toolbar branches', async () => {
     mockEditor.isActive.mockImplementation((name?: string) => name === 'bold');
     mockEditor.can.mockReturnValue({
       undo: () => false,
@@ -212,6 +215,9 @@ describe('AcademicSectionEditor', () => {
     expect(screen.getByTitle('Redo (Ctrl+Shift+Z)')).toBeDisabled();
 
     fireEvent.click(screen.getByTitle('Insert Citation (Ctrl+Shift+C)'));
+    await act(async () => {
+      await Promise.resolve();
+    });
     expect(screen.getByTestId('citation-picker')).toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId('citation-picker'));
