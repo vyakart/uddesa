@@ -33,6 +33,13 @@ export function Blackboard() {
   const rebuildIndex = useBlackboardStore((state) => state.rebuildIndex);
   const updateSettings = useBlackboardStore((state) => state.updateSettings);
 
+  useEffect(() => {
+    document.body.classList.add('muwi-blackboard-route');
+    return () => {
+      document.body.classList.remove('muwi-blackboard-route');
+    };
+  }, []);
+
   // Initialize: load canvas on mount
   useEffect(() => {
     const initialize = async () => {

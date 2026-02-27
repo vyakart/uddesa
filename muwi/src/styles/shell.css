@@ -2209,6 +2209,12 @@
   overflow: hidden;
 }
 
+/* Excalidraw hint overlays are rendered in a portal and became the /blackboard LCP candidate.
+   Suppress them only while blackboard route is active. */
+.muwi-blackboard-route .HintViewer {
+  display: none !important;
+}
+
 .muwi-blackboard-state {
   position: absolute;
   top: 50%;
