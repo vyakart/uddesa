@@ -26,8 +26,8 @@ test('academic flow: create paper, add reference, insert citation', async ({ pag
   await expect(page.locator('#academic-paper-select')).toContainText('Playwright Academic Paper');
   await expect(page.locator('.ProseMirror')).toBeVisible();
 
-  await page.getByRole('button', { name: 'Bibliography', exact: true }).click();
-  await expect(page.getByText('Reference Library')).toBeVisible();
+  await page.getByRole('button', { name: /open bibliography panel/i }).click();
+  await expect(page.getByPlaceholder('Search references...')).toBeVisible();
   await page.getByRole('button', { name: 'Add', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Add Reference' })).toBeVisible();
 
@@ -37,7 +37,7 @@ test('academic flow: create paper, add reference, insert citation', async ({ pag
   await expect(page.getByText('Playwright Reference')).toBeVisible();
 
   await page.locator('button[title="Insert Citation (Ctrl+Shift+C)"]').click();
-  await page.getByText('Playwright Reference').first().click();
+  await page.locator('[data-entry]').filter({ hasText: 'Playwright Reference' }).first().click();
   await page.getByRole('button', { name: 'Insert Citation', exact: true }).click();
 
   await expect(page.locator('.ProseMirror')).toContainText('Tester');

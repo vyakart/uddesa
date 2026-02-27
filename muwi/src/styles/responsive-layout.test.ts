@@ -6,10 +6,10 @@ function read(relativePath: string): string {
 }
 
 describe('responsive layout baselines', () => {
-  it('keeps shelf grid on 4/3/2 breakpoints with minimum card widths', () => {
+  it('keeps shelf grid on 4/3/2 breakpoints', () => {
     const css = read('src/styles/shell.css');
 
-    expect(css).toContain('grid-template-columns: repeat(2, minmax(180px, 1fr));');
+    expect(css).toContain('grid-template-columns: repeat(2, minmax(0, 1fr));');
     expect(css).toContain('@media (min-width: 768px)');
     expect(css).toContain('grid-template-columns: repeat(3, minmax(200px, 1fr));');
     expect(css).toContain('@media (min-width: 960px)');

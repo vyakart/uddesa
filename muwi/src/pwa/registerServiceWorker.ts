@@ -9,10 +9,16 @@ export function registerPwaServiceWorker(): void {
     return
   }
 
-  window.addEventListener('load', () => {
+  const register = () => {
     void navigator.serviceWorker.register(SERVICE_WORKER_URL).catch((error) => {
       console.warn('PWA service worker registration failed:', error)
     })
-  })
-}
+  }
 
+  if (document.readyState === 'complete') {
+    register()
+    return
+  }
+
+  window.addEventListener('load', register, { once: true })
+}

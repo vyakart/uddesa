@@ -7,7 +7,7 @@ vi.mock('@/components/shelf', () => ({
   Shelf: () => <div data-testid="shelf-view">Shelf</div>,
 }));
 
-vi.mock('@/components/diaries/personal-diary', () => ({
+vi.mock('@/components/diaries/PersonalDiary/PersonalDiary', () => ({
   PersonalDiary: () => <div data-testid="personal-diary-view">Personal Diary</div>,
 }));
 
