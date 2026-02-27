@@ -22,6 +22,39 @@ const shouldPreloadDependency = (dep: string): boolean =>
   !modulePreloadDenyPrefixes.some((prefix) => dep.includes(prefix))
 
 const manualChunks = (id: string): string | undefined => {
+  if (
+    id.includes('/node_modules/react/') ||
+    id.includes('/node_modules/react-dom/') ||
+    id.includes('/node_modules/scheduler/')
+  ) {
+    return 'vendor-react'
+  }
+
+  if (id.includes('/node_modules/lucide-react/')) {
+    return 'vendor-icons'
+  }
+
+  if (
+    id.includes('/src/components/common/CommandPalette/') ||
+    id.includes('/src/utils/commands.ts')
+  ) {
+    return 'app-shell-command-palette'
+  }
+
+  if (id.includes('/src/components/common/ContextMenu/')) {
+    return 'app-shell-ui'
+  }
+
+  if (
+    id.includes('/src/hooks/useGlobalShortcuts.ts') ||
+    id.includes('/src/hooks/useKeyboardShortcuts.ts') ||
+    id.includes('/src/hooks/usePasteHandler.ts') ||
+    id.includes('/src/hooks/usePrefersReducedMotion.ts') ||
+    id.includes('/src/utils/keyboard.ts')
+  ) {
+    return 'app-shell-hooks'
+  }
+
   if (id.includes('/src/components/diaries/blackboard/ExcalidrawWrapper.tsx')) {
     return 'blackboard-excalidraw-wrapper'
   }
@@ -65,6 +98,42 @@ const manualChunks = (id: string): string | undefined => {
     id.includes('/node_modules/citeproc/')
   ) {
     return 'academic-citation'
+  }
+
+  if (
+    id.includes('/src/components/common/ExportPanel/') ||
+    id.includes('/src/components/common/BackupPanel/')
+  ) {
+    return 'app-shell-panels'
+  }
+
+  if (
+    id.includes('/src/components/common/Button/') ||
+    id.includes('/src/components/common/DiaryLayout/') ||
+    id.includes('/src/components/common/ErrorBoundary/') ||
+    id.includes('/src/components/common/FormControls/') ||
+    id.includes('/src/components/common/Modal/') ||
+    id.includes('/src/components/common/NavigationHeader/') ||
+    id.includes('/src/components/common/PageStack/') ||
+    id.includes('/src/components/common/PasskeyPrompt/') ||
+    id.includes('/src/components/common/Sidebar/') ||
+    id.includes('/src/components/common/StatusBar/') ||
+    id.includes('/src/components/common/Toolbar/') ||
+    id.includes('/src/components/common/TitleBar/')
+  ) {
+    return 'diary-shared-ui'
+  }
+
+  if (id.includes('/src/hooks/useContentLocking.ts')) {
+    return 'diary-shared-ui'
+  }
+
+  if (id.includes('/src/stores/scratchpadStore.ts')) {
+    return 'diary-scratchpad'
+  }
+
+  if (id.includes('/src/stores/appStore.ts') || id.includes('/src/stores/settingsStore.ts')) {
+    return 'app-shell-state'
   }
 
   if (id.includes('/src/components/diaries/blackboard/')) {

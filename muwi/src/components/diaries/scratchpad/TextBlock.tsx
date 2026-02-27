@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Lock } from 'lucide-react';
-import { PasskeyPrompt } from '@/components/common';
-import { useContentLocking } from '@/hooks';
+import { PasskeyPrompt } from '@/components/common/PasskeyPrompt';
+import { useContentLocking } from '@/hooks/useContentLocking';
 import { useAppStore } from '@/stores/appStore';
 import type { TextBlock as TextBlockType } from '@/types/scratchpad';
 import { useScratchpadStore } from '@/stores/scratchpadStore';

@@ -1,7 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, Lock, RefreshCcw, Unlock } from 'lucide-react';
-import { Button, DiaryLayout, PasskeyPrompt } from '@/components/common';
-import { useContentLocking } from '@/hooks';
+import { Button } from '@/components/common/Button';
+import { DiaryLayout } from '@/components/common/DiaryLayout';
+import { PasskeyPrompt } from '@/components/common/PasskeyPrompt';
+import { useContentLocking } from '@/hooks/useContentLocking';
 import { useScratchpadStore } from '@/stores/scratchpadStore';
 import { useAppStore } from '@/stores/appStore';
 import { useSettingsStore } from '@/stores/settingsStore';

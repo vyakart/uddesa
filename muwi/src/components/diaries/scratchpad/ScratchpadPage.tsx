@@ -2,7 +2,7 @@ import { useCallback, useRef } from 'react';
 import type { CSSProperties } from 'react';
 import { Lock, NotebookPen } from 'lucide-react';
 import type { ScratchpadPage as ScratchpadPageType, TextBlock as TextBlockType } from '@/types/scratchpad';
-import { Button } from '@/components/common';
+import { Button } from '@/components/common/Button';
 import { TextBlock } from './TextBlock';
 import { useScratchpadStore } from '@/stores/scratchpadStore';
 

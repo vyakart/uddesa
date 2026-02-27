@@ -7,7 +7,8 @@ import {
   type DiaryType,
 } from '@/stores/appStore';
 import { useSettingsStore } from '@/stores/settingsStore';
-import { useGlobalShortcuts, usePasteHandler } from '@/hooks';
+import { useGlobalShortcuts } from '@/hooks/useGlobalShortcuts';
+import { usePasteHandler } from '@/hooks/usePasteHandler';
 import { applyThemeToDocument, getSystemPrefersDark, resolveTheme, watchSystemTheme } from '@/utils/theme';
 import { Shelf } from '@/components/shelf';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
@@ -16,7 +17,7 @@ import { installGlobalRuntimeDiagnostics } from '@/utils/runtimeDiagnostics';
 import { formatStorageWarning, getStorageHealthStatus } from '@/utils/storageHealth';
 
 const PersonalDiary = lazy(async () => {
-  const module = await import('@/components/diaries/personal-diary');
+  const module = await import('@/components/diaries/PersonalDiary/PersonalDiary');
   return { default: module.PersonalDiary };
 });
 

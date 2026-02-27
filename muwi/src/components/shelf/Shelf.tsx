@@ -1,11 +1,10 @@
 import { useMemo, useRef, useState, useEffect } from 'react';
-import { formatDistanceToNow } from 'date-fns';
 import { Settings } from 'lucide-react';
 import { db } from '@/db/database';
 import { DiaryCard } from './DiaryCard';
 import { useAppStore, type DiaryType } from '@/stores/appStore';
 import { useSettingsStore, selectShelfLayout } from '@/stores/settingsStore';
-import { usePrefersReducedMotion } from '@/hooks';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { Button } from '@/components/common/Button';
 import { ContextMenu, type ContextMenuItem } from '@/components/common/ContextMenu';
 import { Modal } from '@/components/common/Modal';
@@ -68,7 +67,47 @@ function formatMetadata(type: DiaryType, count: number, lastModified: Date | nul
     return `${count} ${unitLabel}`;
   }
 
-  return `${count} ${unitLabel} · ${formatDistanceToNow(lastModified, { addSuffix: true })}`;
+  return `${count} ${unitLabel} · ${formatRelativeTime(lastModified)}`;
+}
+
+function formatRelativeTime(value: Date, now = new Date()): string {
+  const diffMs = value.getTime() - now.getTime();
+  const absMs = Math.abs(diffMs);
+
+  if (absMs < 45_000) {
+    return 'just now';
+  }
+
+  const minuteMs = 60_000;
+  const hourMs = 60 * minuteMs;
+  const dayMs = 24 * hourMs;
+  const weekMs = 7 * dayMs;
+  const monthMs = 30 * dayMs;
+  const yearMs = 365 * dayMs;
+
+  let unit: Intl.RelativeTimeFormatUnit = 'minute';
+  let unitMs = minuteMs;
+
+  if (absMs >= yearMs) {
+    unit = 'year';
+    unitMs = yearMs;
+  } else if (absMs >= monthMs) {
+    unit = 'month';
+    unitMs = monthMs;
+  } else if (absMs >= weekMs) {
+    unit = 'week';
+    unitMs = weekMs;
+  } else if (absMs >= dayMs) {
+    unit = 'day';
+    unitMs = dayMs;
+  } else if (absMs >= hourMs) {
+    unit = 'hour';
+    unitMs = hourMs;
+  }
+
+  const valueInUnits = Math.round(diffMs / unitMs);
+  const formatter = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' });
+  return formatter.format(valueInUnits, unit);
 }
 
 function createEmptyMetadata(): DiaryMetadata {

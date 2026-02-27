@@ -114,3 +114,21 @@ Date: 2026-02-24
 3. Fix mobile shelf grid overflow (card widths/gap/container math) and re-run Lighthouse mobile.
 4. Raise muted text contrast and add correct heading hierarchy on shelf page.
 5. Add `robots.txt` + meta description for deployed web preview/build.
+
+## 2026-02-27 Follow-Up (Chunk Graph Cleanup: Scratchpad + Shell Ownership)
+
+- Objective: remove route chunk leakage where shell/scratchpad paths were pulling unrelated diary route chunks.
+- Implemented ownership fixes:
+  - `App` now imports shell hooks directly (`useGlobalShortcuts`, `usePasteHandler`) instead of `@/hooks` barrel.
+  - Personal diary lazy import now targets component source directly (`@/components/diaries/PersonalDiary/PersonalDiary`) to avoid re-export inlining side effects.
+  - Shelf no longer uses `date-fns/formatDistanceToNow`; replaced with a local `Intl.RelativeTimeFormat` helper (`formatRelativeTime`) to avoid dragging date-fns ownership into route chunks.
+  - Added explicit manual chunk ownership:
+    - `app-shell-hooks` for shell keyboard/shortcut hooks + `utils/keyboard`.
+    - `app-shell-ui` for shared `ContextMenu`.
+    - `app-shell-command-palette` for command palette modules.
+    - Existing scratchpad/shared-ui/app-shell-state chunk rules retained.
+- Verification (`npm run build`):
+  - No circular chunk warnings.
+  - `dist/assets/index-*.js` now imports shell hook symbols from `app-shell-hooks-*` rather than `diary-personal-diary-*`.
+  - `dist/assets/diary-scratchpad-*.js` imports `vendor-react`, `diary-shared-ui`, `app-shell-state`, `vendor-icons`, and `app-shell-hooks`, with no imports of `diary-personal-diary` or `diary-blackboard`.
+  - Shell route bundle remains lean (`index-*.js` ~21.44 kB minified in latest run), with route-heavy bundles still deferred.
