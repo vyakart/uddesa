@@ -5,7 +5,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
 import { format } from 'date-fns';
 import { Footnote } from '@/extensions';
-import { Toolbar, type ToolbarItem } from '@/components/common';
+import { Toolbar, type ToolbarItem } from '@/components/common/Toolbar';
 import type { Section, Footnote as SectionFootnote } from '@/types/longDrafts';
 import { useEditorShortcuts } from '@/hooks';
 import {

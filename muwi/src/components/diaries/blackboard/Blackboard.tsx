@@ -1,6 +1,8 @@
 import { lazy, Suspense, useEffect, useState, useCallback, useRef, type MouseEvent } from 'react';
 import { Presentation } from 'lucide-react';
-import { Button, DiaryLayout, FontSelector } from '@/components/common';
+import { Button } from '@/components/common/Button';
+import { DiaryLayout } from '@/components/common/DiaryLayout';
+import { FontSelector } from '@/components/common/FontSelector';
 import { useBlackboardStore } from '@/stores/blackboardStore';
 import { IndexPanel } from './IndexPanel';
 import { BlackboardToolbar } from './BlackboardToolbar';

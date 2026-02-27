@@ -18,7 +18,7 @@ const wrapperPropsRef = {
   },
 };
 
-vi.mock('@/components/common', () => ({
+vi.mock('@/components/common/DiaryLayout', () => ({
   DiaryLayout: ({
     children,
     sidebar,
@@ -55,6 +55,9 @@ vi.mock('@/components/common', () => ({
       </div>
     );
   },
+}));
+
+vi.mock('@/components/common/FontSelector', () => ({
   FontSelector: ({
     fonts,
     value,
@@ -72,6 +75,9 @@ vi.mock('@/components/common', () => ({
       ))}
     </div>
   ),
+}));
+
+vi.mock('@/components/common/Button', () => ({
   Button: ({
     children,
     onClick,

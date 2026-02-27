@@ -10,7 +10,7 @@ import {
 import { useAppStore } from '@/stores/appStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useContentLocking } from '@/hooks';
-import { PasskeyPrompt } from '@/components/common';
+import { PasskeyPrompt } from '@/components/common/PasskeyPrompt';
 import type { Section } from '@/types/longDrafts';
 
 interface TableOfContentsProps {

@@ -132,3 +132,23 @@ Date: 2026-02-24
   - `dist/assets/index-*.js` now imports shell hook symbols from `app-shell-hooks-*` rather than `diary-personal-diary-*`.
   - `dist/assets/diary-scratchpad-*.js` imports `vendor-react`, `diary-shared-ui`, `app-shell-state`, `vendor-icons`, and `app-shell-hooks`, with no imports of `diary-personal-diary` or `diary-blackboard`.
   - Shell route bundle remains lean (`index-*.js` ~21.44 kB minified in latest run), with route-heavy bundles still deferred.
+
+## 2026-02-27 Follow-Up (Deeper Route Dependency Trimming: Common Barrel Decoupling)
+
+- Objective: remove deferred chain leakage where diary route modules inherited `app-shell-panels`, `academic-citation`, and command-palette dependencies through `@/components/common` barrel imports.
+- Implemented route import rewires:
+  - `blackboard`: replaced `@/components/common` import with direct imports from `Button`, `DiaryLayout`, `FontSelector`.
+  - `drafts` + `long-drafts`: replaced `@/components/common` imports with direct `Toolbar` / `PasskeyPrompt` module imports.
+  - Updated Blackboard component test mocks to target direct module paths (`DiaryLayout`, `FontSelector`, `Button`) so targeted suite behavior remains unchanged.
+- Verification (`npm run build` + targeted tests):
+  - No circular chunk warnings in final build.
+  - `dist/assets/diary-blackboard-*.js` no longer imports `app-shell-panels-*`, `academic-citation-*`, or `app-shell-command-palette-*`.
+  - `dist/assets/diary-drafts-*.js` and `dist/assets/diary-long-drafts-*.js` no longer import `app-shell-panels-*` / `academic-citation-*`.
+  - Build size shifts (minified):
+    - `diary-academic`: ~`1,138 kB` -> ~`22.94 kB` (route shell now small; heavy citation/vendor payloads remain deferred chunks).
+    - `diary-blackboard`: ~`10.5 kB` -> ~`13.9 kB` (small increase from direct module ownership, with heavy Excalidraw/Mermaid still deferred).
+    - `app-shell-panels`: reduced to tiny stub (`~0.15 kB`) and no longer appears in blackboard/drafts/long-drafts route dependency chains.
+  - Targeted tests passed:
+    - `src/components/diaries/blackboard/Blackboard.test.tsx`
+    - `src/components/diaries/long-drafts/LongDrafts.test.tsx`
+    - `src/components/diaries/drafts/Drafts.test.tsx`

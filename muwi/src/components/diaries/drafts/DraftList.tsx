@@ -11,7 +11,7 @@ import {
 import { useAppStore } from '@/stores/appStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useContentLocking } from '@/hooks';
-import { PasskeyPrompt } from '@/components/common';
+import { PasskeyPrompt } from '@/components/common/PasskeyPrompt';
 import type { Draft, DraftStatus } from '@/types/drafts';
 import { StatusBadge } from './StatusBadge';
 

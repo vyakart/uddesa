@@ -4,7 +4,7 @@ import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
 import { format } from 'date-fns';
-import { Toolbar, type ToolbarItem } from '@/components/common';
+import { Toolbar, type ToolbarItem } from '@/components/common/Toolbar';
 import type { Draft } from '@/types/drafts';
 import { useEditorShortcuts } from '@/hooks';
 import { StatusBadge } from './StatusBadge';

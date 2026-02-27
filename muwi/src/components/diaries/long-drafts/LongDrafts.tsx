@@ -1,7 +1,7 @@
 import { useEffect, useCallback, useState } from 'react';
 import { format } from 'date-fns';
 import { DiaryLayout } from '@/components/common/DiaryLayout';
-import { Toolbar, type ToolbarItem } from '@/components/common';
+import { Toolbar, type ToolbarItem } from '@/components/common/Toolbar';
 import { useAppStore, selectIsSidebarOpen, selectRightPanel } from '@/stores/appStore';
 import {
   useLongDraftsStore,

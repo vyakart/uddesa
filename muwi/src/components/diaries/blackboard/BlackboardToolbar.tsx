@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useBlackboardStore } from '@/stores/blackboardStore';
-import { FontSelector } from '@/components/common';
+import { FontSelector } from '@/components/common/FontSelector';
 
 interface BlackboardToolbarProps {
   isIndexVisible: boolean;
