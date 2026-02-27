@@ -301,12 +301,16 @@ async function runLighthouse(baseUrl, routePath, reportPath, chromePath) {
     `--output-path=${reportPath}`,
     '--chrome-flags=--headless=new --no-sandbox --disable-dev-shm-usage',
   ];
+  const env = {
+    ...process.env,
+  };
 
   if (chromePath) {
-    args.push(`--chrome-path=${chromePath}`);
+    args.push('--chrome-path', chromePath);
+    env.CHROME_PATH = chromePath;
   }
 
-  await spawnLogged(command, args, { cwd });
+  await spawnLogged(command, args, { cwd, env });
 }
 
 async function main() {
