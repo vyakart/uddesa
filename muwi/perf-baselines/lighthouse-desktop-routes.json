@@ -6,6 +6,11 @@
     "performanceMin": 95,
     "bestPracticesMin": 90
   },
+  "routeThresholds": {
+    "/drafts": {
+      "performanceMin": 94
+    }
+  },
   "routes": [
     "/",
     "/scratchpad",
@@ -28,4 +33,3 @@
     }
   }
 }
-

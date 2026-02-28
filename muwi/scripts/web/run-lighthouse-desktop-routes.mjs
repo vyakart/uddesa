@@ -393,15 +393,16 @@ async function main() {
       results.push(summary);
 
       if (options.assert) {
-        if (performance !== null && performance < baseline.thresholds.performanceMin) {
-          failures.push(
-            `${routePath}: performance ${performance} < ${baseline.thresholds.performanceMin}`
-          );
+        const routeThresholds = baseline.routeThresholds?.[routePath] ?? {};
+        const performanceMin = routeThresholds.performanceMin ?? baseline.thresholds.performanceMin;
+        const bestPracticesMin =
+          routeThresholds.bestPracticesMin ?? baseline.thresholds.bestPracticesMin;
+
+        if (performance !== null && performance < performanceMin) {
+          failures.push(`${routePath}: performance ${performance} < ${performanceMin}`);
         }
-        if (bestPractices !== null && bestPractices < baseline.thresholds.bestPracticesMin) {
-          failures.push(
-            `${routePath}: best-practices ${bestPractices} < ${baseline.thresholds.bestPracticesMin}`
-          );
+        if (bestPractices !== null && bestPractices < bestPracticesMin) {
+          failures.push(`${routePath}: best-practices ${bestPractices} < ${bestPracticesMin}`);
         }
       }
 
@@ -430,6 +431,7 @@ async function main() {
       baseUrl,
       lighthouseVersion: LIGHTHOUSE_VERSION,
       thresholds: baseline.thresholds,
+      routeThresholds: baseline.routeThresholds ?? {},
       pwaChecks: baseline.pwaChecks,
       routes: results,
     };
