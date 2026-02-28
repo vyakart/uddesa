@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen, waitFor } from '@/test';
 import { useAppStore } from '@/stores/appStore';
 import { useSettingsStore } from '@/stores/settingsStore';
+import * as storageHealth from '@/utils/storageHealth';
 import App from './App';
 
 vi.mock('@/components/shelf', () => ({
@@ -31,8 +32,13 @@ vi.mock('@/components/diaries/academic', () => ({
   Academic: () => <div data-testid="academic-view">Academic</div>,
 }));
 
+vi.mock('@/components/common/CommandPalette', () => ({
+  CommandPalette: () => <div data-testid="command-palette-view">Command Palette</div>,
+}));
+
 describe('App routing', () => {
   beforeEach(() => {
+    vi.restoreAllMocks();
     useAppStore.setState(useAppStore.getInitialState(), true);
     useSettingsStore.setState({
       ...useSettingsStore.getInitialState(),
@@ -132,5 +138,92 @@ describe('App routing', () => {
     await waitFor(() => {
       expect(screen.queryByTestId('app-warning-banner')).not.toBeInTheDocument();
     });
+  });
+
+  it('shows loading UI and calls loadSettings when settings are not yet loaded', async () => {
+    const loadSettings = vi.fn().mockResolvedValue(undefined);
+    useSettingsStore.setState({
+      ...useSettingsStore.getInitialState(),
+      isLoaded: false,
+      loadSettings,
+    });
+
+    render(<App />);
+
+    expect(screen.getByText('Loading settings...')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(loadSettings).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('renders offline banner and removes it after online event', async () => {
+    vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false);
+
+    render(<App />);
+    expect(screen.getByTestId('app-offline-banner')).toBeInTheDocument();
+
+    act(() => {
+      window.dispatchEvent(new Event('online'));
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('app-offline-banner')).not.toBeInTheDocument();
+    });
+  });
+
+  it('loads command palette lazily after first open and renders additional diary routes', async () => {
+    window.history.replaceState({}, '', '/');
+    render(<App />);
+
+    act(() => {
+      useAppStore.setState({ isCommandPaletteOpen: true }, false);
+    });
+    await waitFor(() => {
+      expect(screen.getByTestId('command-palette-view')).toBeInTheDocument();
+    });
+
+    act(() => {
+      useAppStore.setState({ isCommandPaletteOpen: false }, false);
+    });
+    await waitFor(() => {
+      expect(screen.getByTestId('command-palette-view')).toBeInTheDocument();
+    });
+
+    for (const [diary, testId] of [
+      ['scratchpad', 'scratchpad-view'],
+      ['blackboard', 'blackboard-view'],
+      ['long-drafts', 'long-drafts-view'],
+      ['academic', 'academic-view'],
+    ] as const) {
+      act(() => {
+        useAppStore.getState().openDiary(diary);
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId(testId)).toBeInTheDocument();
+      });
+    }
+  });
+
+  it('shows storage-only warning message without startup dismiss action', async () => {
+    vi.spyOn(storageHealth, 'getStorageHealthStatus').mockResolvedValue({
+      available: true,
+      lowHeadroom: true,
+      quotaBytes: 100,
+      usageBytes: 95,
+      remainingBytes: 5,
+    });
+    vi.spyOn(storageHealth, 'formatStorageWarning').mockReturnValue(
+      'Storage warning only (test).'
+    );
+
+    render(<App />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('app-warning-banner')).toBeInTheDocument();
+      expect(screen.getByText('Storage warning only (test).')).toBeInTheDocument();
+    });
+
+    expect(screen.queryByRole('button', { name: 'Dismiss' })).not.toBeInTheDocument();
   });
 });
