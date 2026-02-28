@@ -16,7 +16,7 @@
   },
   "thresholds": {
     "shelfVisible": {
-      "relativeMultiplier": 1.4,
+      "relativeMultiplier": 2.1,
       "absoluteMs": 1500
     },
     "coldRoutes": {
